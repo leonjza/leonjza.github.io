@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Php on #!/slash/note</title>
+    <link>http://leonjza.github.io/categories/php/</link>
+    <description>Recent content in Php on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 30 Sep 2015 19:39:55 +0000</lastBuildDate>
+    <atom:link href="http://leonjza.github.io/categories/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>a totally unnecessary composer shell</title>
+      <link>http://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/</link>
+      <pubDate>Wed, 30 Sep 2015 19:39:55 +0000</pubDate>
+      
+      <guid>http://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/</guid>
+      <description>
+
+&lt;h2 id=&#34;background:81933f3676c079333a579b7c058765d8&#34;&gt;background&lt;/h2&gt;
+
+&lt;p&gt;{% img right &lt;a href=&#34;https://i.imgur.com/9kOuWWP.png&#34;&gt;https://i.imgur.com/9kOuWWP.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;p&gt;A silly reverse shell invoked via the Composer Dependency Manager. &lt;a href=&#34;https://github.com/leonjza/composer-shell&#34;&gt;Source here&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://getcomposer.org/&#34;&gt;Composer&lt;/a&gt;, which is most probably &lt;em&gt;the&lt;/em&gt; most popular PHP dependency manager allows for &lt;a href=&#34;https://getcomposer.org/doc/articles/scripts.md&#34;&gt;scripts&lt;/a&gt; to run as callbacks on based an event.
+Callbacks are normally triggered just before or after certain events.&lt;/p&gt;
+
+&lt;p&gt;It is possible to provide shell commands to the &lt;code&gt;scripts&lt;/code&gt; property in the required &lt;code&gt;composer.json&lt;/code&gt; file (with a few restrictions), but this method echoes the command that it executes.
+A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.&lt;/p&gt;
+
+&lt;h2 id=&#34;why:81933f3676c079333a579b7c058765d8&#34;&gt;why?&lt;/h2&gt;
+
+&lt;p&gt;I thought a little about which scenarios this may actually be useful in and figured maybe only really strange edge cases where you can only run composer (as root lol?).
+I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/community/metasploit/blog/2015/01/01/12-days-of-haxmas-exploiting-cve-2014-9390-in-git-and-mercurial&#34;&gt;git&lt;/a&gt; (CVE-2014-9390) that allowed for code execution via &amp;lsquo;poisoned&amp;rsquo; repositories. Well, I guess depending on your perspective, this may be a very similar.&lt;/p&gt;
+
+&lt;h2 id=&#34;poc:81933f3676c079333a579b7c058765d8&#34;&gt;PoC&lt;/h2&gt;
+
+&lt;p&gt;As part of a PoC, I just used the popular &lt;a href=&#34;http://pentestmonkey.net/tools/web-shells/php-reverse-shell&#34;&gt;pentest-monkey PHP reverse shell&lt;/a&gt;, but really, anything is possible that is possible with PHP at this point.&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/b64qlhadvl7zn1912ihwi09wt.js&#34; id=&#34;asciicast-b64qlhadvl7zn1912ihwi09wt&#34; data-size=&#34;medium&#34; async&gt;&lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hello World! Oh and here&#39;s some code!</title>
+      <link>http://leonjza.github.io/blog/2013/05/24/hello-world-oh-and-heres-some-code/</link>
+      <pubDate>Fri, 24 May 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://leonjza.github.io/blog/2013/05/24/hello-world-oh-and-heres-some-code/</guid>
+      <description>
+
+&lt;h3 id=&#34;introduction:a2d2952aa7e376f74cac82694243c763&#34;&gt;Introduction&lt;/h3&gt;
+
+&lt;p&gt;Finally! A blog engine I like! :) No exceptionally bloated backend database with plugins that just get hacked. Yup, slim and sleek. &lt;em&gt;And&lt;/em&gt;, I get to make posts using Vi :D
+Want in on this love? Have a look at &lt;a href=&#34;http://octopress.org&#34;&gt;Octopress&lt;/a&gt; . Yes, it was a real ball ache to get setup thanks to the ruby dependencies, but now that were rollin&amp;rsquo; this should be good :D&lt;/p&gt;
+
+&lt;h3 id=&#34;frustrations-breed-ideas:a2d2952aa7e376f74cac82694243c763&#34;&gt;Frustrations breed Ideas&lt;/h3&gt;
+
+&lt;p&gt;In my day job, I am exposed to a lot of work that will relate around the &lt;a href=&#34;http://www.tenable.com/products/nessus&#34;&gt;Nessus Vulnerability Scanner&lt;/a&gt;.
+Originally, interfacing with this scanner used be via a old and clunky &lt;em&gt;flash&lt;/em&gt; interface. It was bad. They have since moved over to a HTML5, ajaxy interface that is light years better. However, for my needs, the default Nessus Interface just does not cut it.&lt;/p&gt;
+
+&lt;h3 id=&#34;open-source-where-do-i-start:a2d2952aa7e376f74cac82694243c763&#34;&gt;Open source? Where do I start?&lt;/h3&gt;
+
+&lt;p&gt;Based on this old crappy interface, and the need to be able to automate things, I pulled closer the XMLRPC API reference &lt;a href=&#34;http://static.tenable.com/documentation/nessus_5.0_XMLRPC_protocol_guide.pdf&#34;&gt;documentation&lt;/a&gt;. Reading this revealed the API is actually very straight forward. Login -&amp;gt; get a token -&amp;gt; make POST with this token and receive XML. Great.&lt;/p&gt;
+
+&lt;p&gt;I started hacking away at some PHP to test this out. Back then I was really &lt;em&gt;very&lt;/em&gt; new to this &amp;ldquo;development&amp;rdquo; thing, so it was really tough to get my head around the concepts of working with the API. Nonetheless, we had something to work with, and this was implemented internally for numerous functions.&lt;/p&gt;
+
+&lt;p&gt;Since then, &lt;code&gt;nessus.php&lt;/code&gt; was born. The first iteration of this code was, well, worse than it is now, but its now very easy to use ( I believe ).&lt;/p&gt;
+
+&lt;h3 id=&#34;instantiate-a-nessusinterface-instance:a2d2952aa7e376f74cac82694243c763&#34;&gt;Instantiate a NessusInterface instance&lt;/h3&gt;
+
+&lt;p&gt;To use this API, we first need to include it in our script, and then init the Class. Effectively, this will log into the scanner using the provided arguments and store the token in the object. Should it fail, it will raise an error.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+require &amp;quot;nessus.php&amp;quot;;
+
+try {
+    $api = new NessusInterface(
+        $__url,
+        $__port,
+        $__username,
+        $__password
+    );
+} catch(Exception $e) {
+    preprint($e-&amp;gt;getMessage());
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;do-some-api-calls:a2d2952aa7e376f74cac82694243c763&#34;&gt;Do some API calls&lt;/h4&gt;
+
+&lt;p&gt;Once you have the &lt;code&gt;$api&lt;/code&gt; variable setup with a instance of &lt;strong&gt;NessusInterface&lt;/strong&gt;, you can use any of the available calls. Most of the API calls will return some form of array:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+try {
+
+    $api-&amp;gt;feed();
+    # // Will return an array like:
+    #  Array
+    #  (
+    #    [feed] =&amp;gt; ProFeed
+    #    [server_version] =&amp;gt; 5.2.1
+    #    [web_server_version] =&amp;gt; 4.0.37 (Build H20130515A)
+    #    [expiration] =&amp;gt; 1406174400
+    #    [msp] =&amp;gt; FALSE
+    #    [loaded_plugin_set] =&amp;gt; 201305240915
+    #    [expiration_time] =&amp;gt; 425
+    # )
+
+} catch(Exception $e) {
+
+    preprint($e-&amp;gt;getMessage());
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reading the sources will reveal the structures of the returned arrays.
+Get the code &lt;a href=&#34;https://github.com/th3l33k/php-nessus-api&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;its-the-small-things:a2d2952aa7e376f74cac82694243c763&#34;&gt;Its the small things&lt;/h3&gt;
+
+&lt;p&gt;This is by no means and elaborate &amp;ldquo;solution&amp;rdquo; really. It&amp;rsquo;s purely another building block for something bigger. A believe there are quite a few fundamentals that the Nessus Scanner does not cover, but perhaps that is beyond the scope of what its designed to do :)&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

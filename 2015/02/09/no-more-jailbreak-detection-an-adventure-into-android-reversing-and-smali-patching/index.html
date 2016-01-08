@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>no more jailbreak detection - an adventure into Android app reversing and smali patching &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>no more jailbreak detection - an adventure into Android app reversing and smali patching</h1>
+    <span class="post-date">Feb 9, 2015 &middot; 18 minute read &middot; <a href="http://leonjza.github.io/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/android">android</a><a class="label" href="http://leonjza.github.io/categories/jailbreak">jailbreak</a><a class="label" href="http://leonjza.github.io/categories/root">root</a><a class="label" href="http://leonjza.github.io/categories/reverse-engineer">reverse engineer</a><a class="label" href="http://leonjza.github.io/categories/sandbox">sandbox</a><a class="label" href="http://leonjza.github.io/categories/java">java</a><a class="label" href="http://leonjza.github.io/categories/smali">smali</a>
+    </span>
+    
+
+<h2 id="introduction:f0c467d8e3464f63b945a49a8c9a31f0">introduction</h2>
+
+<p>I will start by saying that I am by <em>no means</em> a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.</p>
+
+<p>{% img right <a href="https://i.imgur.com/mRLYDs8.png">https://i.imgur.com/mRLYDs8.png</a> %}</p>
+
+<p>Recently I had the opportunity to poke at an Android <code>.apk</code>. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the <code>apk</code>, I needed to get some tools setup and learn a few things about the Android environment <em>really</em> fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the <code>apk</code> had and let it continue normal operations.</p>
+
+<h2 id="so-what-about-jailbreaking:f0c467d8e3464f63b945a49a8c9a31f0">so what about jailbreaking</h2>
+
+<p>While I refer to jailbreaking, there are a number of terms used out there to describe the same thing. In the Android world, <em>rooting</em> seems to be what is more commonly known. However, the premise remains the same. Rooting/Jailbreaking your device means that you escape the OS implemented sandboxing and gain full <code>root</code> access to your device. Many mobile applications are against this as a compromised sandbox may have occurred unknowingly, effectively meaning that the device is compromised. So, as a safety measure, applications check for this and refuse to run because of it.</p>
+
+<p>Jailbreak detection itself is a interesting field. From simple static file existence checks, to checking the exit codes of calls to <code>fork()</code> and <code>su</code> all the way to inspecting loaded <code>dynalibs</code> (in the iOS world), everything is fair game. While a compromised device is a totally legit reason to not run any sensitive applications (think credential theft, traffic redirection etc), there are cases where a jailbroken device occurred on purpose. In these cases, power users may find application jailbreak detection very annoying :)</p>
+
+<h2 id="getting-started:f0c467d8e3464f63b945a49a8c9a31f0">getting started</h2>
+
+<p>The very first thing one would obviously need is the application you want to modify. I already had the <code>apk</code> I wanted to modify at hand. If you don’t have it then there are many ways to get an already installed <code>apk</code> off a device. You just need to Google it :) Like, <a href="http://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device">this</a>.</p>
+
+<p>Just having the <code>apk</code> though was not very useful. I needed something to run it on. I don’t have a hardware device handy so in comes the Android Studio, which includes the SDK and a Emulator. I downloaded the Android Studio <a href="http://developer.android.com/sdk/index.html">here</a> and promptly installed it. I fired it up and clicked next furiously, waiting for more crap to download, till finally it looked like it was done.</p>
+
+<p>{% img <a href="https://i.imgur.com/FZmO5ru.png">https://i.imgur.com/FZmO5ru.png</a> %}</p>
+
+<p>The next daunting task was to find the SDK updater. I wanted to install the x86 Emulator Accelerator amongst other things. Some searching around got me to the directory <code>~/Library/Android/sdk/tools</code> which had the <code>android</code> and <code>emulator</code> programs I was after. I fired up the SDK updater with <code>~/Library/Android/sdk/tools/android</code> and updated/installed all the stuff I wanted (yay more downloading). In the end, my installed packages ended up as follows:</p>
+
+<p>{% img <a href="https://i.imgur.com/pYlFwMz.png">https://i.imgur.com/pYlFwMz.png</a> %}</p>
+
+<h2 id="preparing-an-actual-emulator:f0c467d8e3464f63b945a49a8c9a31f0">preparing an actual emulator</h2>
+
+<p>With the software I needed for the emulator downloaded and ready, it was time to configure a <code>avd</code> (Android Virtual Device). I fired up the command <code>~/Library/Android/sdk/tools/android avd</code> and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:</p>
+
+<p>{% img <a href="https://i.imgur.com/ySGUvUt.png">https://i.imgur.com/ySGUvUt.png</a> %}</p>
+
+<p>Saved that and quit the AVD Manager. That is all that I needed for the hardware portion. To test the <code>avd</code> that I have just made, I chose to run it quickly using <code>~/Library/Android/sdk/tools/emulator -avd test</code>:</p>
+
+<p>{% img <a href="https://i.imgur.com/NoWhu6I.png">https://i.imgur.com/NoWhu6I.png</a> %}</p>
+
+<p>Aaaand it works! I was actually testing network connectivity of the <code>apk</code> in question, so I will add the information for that at the end of the post as a small FYI.</p>
+
+<p>With the emulator running and working, it was time to install the <code>apk</code> to test. To do this, we use a tool call <code>adb</code>. This can be found in <code>~/Library/Android/sdk/platform-tools/adb</code>. A number of features are available to us using <code>adb</code>, such as pushing files to and from the device and installing applications. The <code>apk</code> I was testing, was installed while the emulator was running:</p>
+
+<pre><code class="language-bash">leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk 
+* daemon not running. starting it now on port 5037 *
+* daemon started successfully *
+2383 KB/s (4184313 bytes in 1.714s)
+    pkg: /data/local/tmp/MyApplication.apk
+Success
+</code></pre>
+
+<p>The application popped up under the menu on the emulator and I was able to launch it. However, the application sees the Andriod Emulator as a jailbroken device, and refuses to start up. Not a problem :)</p>
+
+<p><strong>Note</strong> If you get a error such as <em>INSTALL_FAILED_DUPLICATE_PERMISSION</em>, it usually meant that the application is already installed. Simply uninstall it from the emulator and retry the install. The storage on the emulator was persistent throughout reboots for me which was quite nice too.</p>
+
+<h2 id="looking-at-the-apk-getting-the-juicy-bits:f0c467d8e3464f63b945a49a8c9a31f0">looking at the apk, getting the juicy bits</h2>
+
+<p>Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a <code>apk</code> gets to be, and what it contains. Most importantly, the <code>apk</code> can be unzipped and its contents further examined. <a href="http://en.wikipedia.org/wiki/Android_application_package">Wikipedia</a> does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in <code>classes.dex</code>. This is what looks like to be the compiled logic in the <a href="http://en.wikipedia.org/wiki/Dalvik_(software">dex file format</a> understandable by the Dalvik virtual machine. Ok. But how do I make that into something <strong>I</strong> can understand?</p>
+
+<p>In comes <a href="https://code.google.com/p/dex2jar/">dex2jar</a>. A utility that will convert android dex files into Java source. :) I <a href="https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip">downloaded</a> the latest archive and extracted it. I then extracted classes.dex from the <code>apk</code> too:</p>
+
+<pre><code class="language-bash">leonjza@Laptop » unzip MyApplication.apk classes.dex
+Archive:  MyApplication.apk
+  inflating: classes.dex
+</code></pre>
+
+<p>With the <code>classes.dex</code> file ready, I ran it through <code>dex2jar</code>:</p>
+
+<pre><code class="language-bash">leonjza@Laptop » dex2jar-0.0.9.15/dex2jar.sh classes.dex
+this cmd is deprecated, use the d2j-dex2jar if possible
+dex2jar version: translator-0.0.9.15
+dex2jar classes.dex -&gt; classes_dex2jar.jar
+Done.
+</code></pre>
+
+<p>I now have a <code>jar</code> file that I could open up in something like <a href="http://deathmarine.github.io/Luyten/">Luyten</a> and examine further. I downloaded the latest <a href="https://github.com/deathmarine/Luyten/releases/download/v0.4.3/luyten-0.4.3.jar">Luyten jar</a> and opened the <code>classes_dex2jar.jar</code> file with <code>java -jar luyten-0.4.3.jar classes_dex2jar.jar</code>. This totally looks like Java sources for the application :D</p>
+
+<p>I went through quite a large amount of code, trying to piece together how everything fits into one another. After some time, I finally came across <code>RootDetection.class</code>:</p>
+
+<p>{% img <a href="https://i.imgur.com/JkeAr3Z.png">https://i.imgur.com/JkeAr3Z.png</a> %}</p>
+
+<p>This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called <code>isRooted</code>. You will see in the next few paragraphs how trivial it is to bypass this.</p>
+
+<h2 id="decompiling-the-classes-dex:f0c467d8e3464f63b945a49a8c9a31f0">decompiling the classes.dex</h2>
+
+<p>With some knowledge about the code, and knowing what I am after (the <code>RootDetection</code> class, <code>isRooted</code> method), it was time to move on to decompiling the dex to smali. This can be done easily using <a href="https://code.google.com/p/smali/">smali/baksmali</a> which is an assembler/disassembler for Android&rsquo;s dex format. I downloaded the latest versions of <a href="https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar">smali</a> and <a href="https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar">baksmali</a> and prepared to disassemble the <code>classes.dex</code> file that we used earlier to get some Java sources out of.</p>
+
+<p>Using the <code>baksmali</code> tool, I pushed <code>classes.dex</code> through it to a output directory of <code>out</code> with <code>java -jar baksmali-2.0.5.jar classes.dex -o out</code>. This produced the disassembled version of the classes.dex and allowed me to read through it. I don’t really get a lot of this <code>smali</code>, but it is not that hard to find what you may be looking for. A simple grep may reveal all the answers:</p>
+
+<pre><code class="language-bash">leonjza@Laptop » grep -Ri isRooted out/
+Binary file out//classes.dex matches
+out//com/MyApplication/utils/RootDetection.smali:.method public isRooted(Landroid/content/pm/PackageManager;)Z
+</code></pre>
+
+<p>Yay. the <code>isRooted</code> method is easily identifiable. Opening the file containing the the <code>isRooted</code> method reveals the smali too:</p>
+
+<pre><code class="language-text">.method public isRooted(Landroid/content/pm/PackageManager;)Z
+    .registers 3
+    .param p1, &quot;pm&quot;    # Landroid/content/pm/PackageManager;
+
+    .prologue
+    .line 74
+    invoke-direct {p0}, Lcom/MyApplication/utils/RootDetection;-&gt;isTestKeyBuild()Z
+
+[... snip ...]
+
+    .line 76
+    :goto_19
+    return v0
+
+    :cond_1a
+    const/4 v0, 0x0
+
+    goto :goto_19
+.end method
+</code></pre>
+
+<p>Awesome.</p>
+
+<h2 id="preparing-the-patch:f0c467d8e3464f63b945a49a8c9a31f0">preparing the patch</h2>
+
+<p>As we can see, <code>isRooted</code> has quite a bit of logic in it. Referring back to the <code>jar</code> file I created with <code>dex2jar</code>, we can deduce that we want <code>isRooted</code> to return <code>false</code>. Makes sense right? Now, I don’t write smali out of my head, but that did not stop me. How can I see what smali code would look like to just return <code>false</code>? Well, I could just write my own <code>.java</code> code, compile it, and check what the output is like once its disassembled right? Yep!</p>
+
+<p>So I created <code>RootDetection.java</code>:</p>
+
+<pre><code class="language-java">public class RootDetection
+{
+    public boolean isRooted() {
+        return false;
+    }
+}
+</code></pre>
+
+<p>As you can see, <code>isRooted</code> will now just return false as I&rsquo;d like it to! I had to hack away a bit at it to get the compilation to pass without errors, and this is probably the step that will usually require a bit of intuition. An important thing to note here is that I had to remove the argument from the original <code>isRooted</code> call. I had to keep this in mind when I was going to patch the original method. Anyways, I compiled the file <code>RootDetection.java</code> using the <code>javac</code> command line:</p>
+
+<pre><code class="language-bash">leonjza@Laptop » javac -source 1.6 -target 1.6 RootDetection.java
+warning: [options] bootstrap class path not set in conjunction with -source 1.6
+1 warning
+------------------------------------------------------------
+leonjza@Laptop » file RootDetection.class
+RootDetection.class: compiled Java class data, version 50.0 (Java 1.6)
+</code></pre>
+
+<p>You will notice I specified the <code>-source</code> and <code>-target</code> flags for <code>javac</code>. If I did not do this, <code>baksmali</code> would have not been able to decompile the java class :(</p>
+
+<p>With my compiled method ready, it was time to see what this looks like in smali. There was just one more thing stopping me from seeing that though. The compiled java is not in the dex format that Andriod uses. Luckily there is a tool to convert this that comes with the Android sdk and lives in <code>~/Library/Android/sdk/build-tools/21.1.1/dx</code>. I converted the <code>class</code> to <code>dex</code> format using the command <code>~/Library/Android/sdk/build-tools/21.1.1/dx --dex  --output=RootDetection.dex RootDetection.class</code>. This produced a new file called <code>RootDetection.dex</code> which is recognizable by <code>baksmali</code>. I  then proceeded to decompile the generated <code>.dex</code> with <code>baksmali</code> and set the output to <code>RootDetection/</code> with <code>java -jar baksmali-2.0.5.jar RootDetection.dex -o RootDetection/</code>. Inspecting the generated smali code, I now had a sample of what it would look like if it should simply return false:</p>
+
+<pre><code class="language-text"># virtual methods
+.method public isRooted()Z
+    .registers 2
+
+    .prologue
+    .line 4
+    const/4 v0, 0x0
+
+    return v0
+.end method
+</code></pre>
+
+<p>The plan now was to simply replace the originally generated smali from the <code>apk</code>&rsquo;s <code>classes.dex</code> and re-assemble it using <code>smali</code>. I opened up the original <code>isRooted</code> code and replaced it with the sample that I had generated myself. Remembering the argument I had to remove from my compiled version, I figured that because the original method defined <code>.registers 3</code>, and mine defined <code>.registers 2</code>, I had to up it to 3 to keep the method argument in mind. This was the last modification that I did.</p>
+
+<p>With the <code>RootDetection</code> class now patched, I re-assembled the <code>classes.dex</code> file from the generated smali code with <code>java -jar smali-2.0.5.jar -o classes.dex out</code>. The Reassembly generated no errors so I assumed it was successful.</p>
+
+<h2 id="repackaging-and-signing-the-apk:f0c467d8e3464f63b945a49a8c9a31f0">repackaging and signing the apk</h2>
+
+<p>With the patch applied and the new <code>classes.dex</code> generated, it was time to repackage the <code>apk</code>. The first step was to add the new <code>classes.dex</code> to the <code>apk</code>:</p>
+
+<pre><code class="language-bash">leonjza@Laptop » zip MyApplication.apk classes.dex
+updating: classes.dex (deflated 56%)
+</code></pre>
+
+<p>Next, the package has to be resigned as the <code>classes.dex</code> will no longer have the same hashes in <code>META-INF/MANIFEST.MF</code> as it originally had. Attempts to install the repackeged <code>apk</code> without resigning it may result in a error such as <em>Failure [INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION]</em>. I used a tool called &lsquo;sign&rsquo; found <a href="https://github.com/appium/sign">here</a> to get hold of <code>sign.jar</code>. This would sign my apk using the test keys. I downloaded it using <code>wget https://github.com/appium/sign/raw/master/dist/sign.jar</code>, and ran it to sign my patched <code>apk</code> with <code>java -jar sign.jar MyApplication_no_root.apk</code>. This produced a file called <code>MyApplication_no_root.s.apk</code>.</p>
+
+<p>Excellent. The only thing left for me to do was to install the application using <code>adb</code> and see if my patch worked, which it did! :D The usual error message about the jailbreak no longer displayed and I could continue with the rest of my testing.</p>
+
+<h2 id="notes-about-traffic-interception:f0c467d8e3464f63b945a49a8c9a31f0">notes about traffic interception</h2>
+
+<p>I have covered what I originally intended with the jailbreak detection patching, but want to add a few notes about traffic interception using the Emulator.</p>
+
+<p>I used <a href="http://portswigger.net/burp/">Burp Suite</a> to intercept traffic and had it running locally, with a proxy open on <code>tcp/8080</code>. To redirect the emulators traffic though, I had to add a startup option to the emulator as follows:</p>
+
+<pre><code class="language-bash">~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8080
+</code></pre>
+
+<p>This proved affective and I was able to see <code>http</code> traffic just fine. However, when it came to <code>https</code> traffic, I wanted to take a spoon and remove my eye. Requests would just &lsquo;hang&rsquo;, the browser would freak out, the application I was testing would just stall, it was just a mess. Some research into the topic revealed I was not the only one planning some personal surgery and a few bright people have come up with some solutions.</p>
+
+<p>The first pain I had was even though I installed the PortSwagger CA onto the device (via <code>~/Library/Android/sdk/platform-tools/adb push ~/Downloads/BurpCa.cer /storage/sdcard</code> and then the devices Settings -&gt; Security -&gt; Install form SD Card), the certificate validation would still just fail due to date errors. So, I moved the devices date on by 3 days, and viola! Grr.</p>
+
+<p>The next pain was the fact that the Emulator (or Android OS?) would not attempt to make a request to hostnames, but to the IP&rsquo;s directly, making it very hard to trace in Burp. Luckily though, I found a script (and lost the original source, but I take no credit for this), that will help with the rewrites to hostnames and pass them to Burp as expected. This was mostly a problem in the application itself and not so much the web browser. The script to help with this was:</p>
+
+<pre><code class="language-python"># TODO's:
+# - Script currently doesn't treat TCP connections a streamed data. Normally we should buffer input
+#   untill enough data has been received and then do our checks. However since the connections are
+#   local all data is received at once (most of the time) so this code does work :)
+import twisted
+from twisted.names import server, dns, client
+from twisted.internet import reactor, defer
+from twisted.internet.endpoints import TCP4ServerEndpoint
+from twisted.protocols import portforward
+import re
+from socket import *
+import struct
+
+# symbolic definition of getsockopt parameter
+SO_ORIGINAL_DST = 80
+
+# Mapping of domain name to given unique IP
+mappings = dict()
+# Mapping of given unique IP to domain name
+reversemappings = dict()
+
+
+# --------------------------------------- DNS SERVER ---------------------------------------
+
+
+# Custom DNS server which assigns a unique IP address to every domain, even if
+# in reality two domains share the same IP.
+class ProxyResolver(client.Resolver):
+
+        # Start with IP 1.1.1.1
+        def __init__(self, servers):
+                client.Resolver.__init__(self, servers=servers)
+                self.ttl = 10
+                self.ip = [1, 1, 1, 1]
+
+        # Helper function: Move to next IP and return it as a string
+        def nextIp(self):
+                self.ip[3] += 1
+                for i in range(3,1,-1):
+                        if (self.ip[i] == 255):
+                                self.ip[i] = 1
+                                self.ip[i-1] += 1
+                return str(self.ip[0]) + &quot;.&quot; + str(self.ip[1]) + &quot;.&quot; +str(self.ip[2]) + &quot;.&quot; +str(self.ip[3])
+
+        def lookupAddress(self, name, timeout = None):
+                # If it's the first time a DNS lookup is done for this domain, assign it
+                # a unique IP and update the mappings
+                if (not mappings.has_key(name)):
+                        ip = self.nextIp()
+                        mappings[name] = ip
+                        reversemappings[str(self.ip[0]) + &quot;.&quot; + str(self.ip[1]) + &quot;.&quot; +str(self.ip[2]) + &quot;.&quot; +str(self.ip[3])] = name
+
+                # Get the mapped IP!
+                ip = mappings[name]
+                print &quot;DNS:&quot;, name, &quot;-&gt;&quot;, ip
+
+                # From the manual: &quot;Defer is useful when you're writing synchronous code to an asynchronous
+                # interface: i.e., some code is calling you expecting a Deferred result, but you don't actually
+                # need to do anything asynchronous. Just return defer.succeed(theResult).&quot;
+                return defer.succeed([(dns.RRHeader(name, dns.A, dns.IN, self.ttl, dns.Record_A(ip, self.ttl)),), (), ()])
+
+
+# --------------------------------------- HTTP PROXY ---------------------------------------
+
+
+# Communication between your actual proxy (Burp, WebScarab, ..) and our script.
+class ProxyClient(portforward.ProxyClient):
+        def __init__(self):
+                self.gotestablished = False
+                self.requestdata = None
+
+        def setRequestData(self, data):
+                self.requestdata = data
+
+        def dataReceived(self, data):
+                # TODO: How does this work when proxying a real device?! Connect shouldn't be sent then?!
+                if self.gotestablished or self.requestdata == None:
+                        # If the connection has been established just forward the data to the emulator
+                        # TODO: Check this
+                        portforward.ProxyClient.dataReceived(self, data)
+                else:
+                        # TODO: Check this
+                        if not &quot;HTTP/1.0 200 Connection established\r\n\r\n&quot; in data:
+                                print &quot;Warning: Unexpected proxy reply:&quot;, repr(data[:30])
+                        else:
+                                print &quot;Proxy CONNECT reply: &gt;&quot;, repr(data[:30])
+
+                        self.gotestablished = True
+                        # Forward data to Android
+                        self.transport.write(self.requestdata)
+
+
+# TODO: Check this
+class ProxyClientFactory(portforward.ProxyClientFactory):
+        protocol = ProxyClient
+
+
+# Custom HTTP proxy. Intercepts the CONNECT &lt;ip&gt; command, looks up the corresponding domain name, and
+# forwards the correct CONNECT &lt;domain&gt; command to your actual proxy.
+class ProxyServer(portforward.ProxyServer):
+        clientProtocolFactory = ProxyClientFactory
+
+        def __init__(self):
+                self.receivedfirst = False
+                self.connectre = re.compile(r'CONNECT (\d+\.\d+\.\d+\.\d+):\d+ HTTP')
+                self.otherre = re.compile(r'\w+ http://(\d+\.\d+\.\d+\.\d+)')
+                self.firstdata = None
+
+
+        def dataReceived(self, data):
+                # The first time we recieve data we must check for invisible proxiying and rewrite
+                # the CONNECT/GET requests to use the actual domain name.
+                if not self.receivedfirst:
+                        print &quot;INCOMING TCP CONN: &gt;&quot;, repr(data.split(&quot;\r&quot;)[0][:40])
+
+                        # Of course invisible proxying is unnecessairy if the CONNECT command is actually used!
+
+                        # ------------------------- Invisible Proxying Support ---------------------------
+
+                        # TODO: This is UNTESTED and EXPERIMENTAL code
+                        &quot;&quot;&quot;
+
+                        # TODO: Get ourselves an Android VMWare image and test this :)
+                        # Only do invisible proxifying if there is no CONNECT command
+                        # TODO: We should actually check if it *START* with CONNECT
+                        if not &quot;CONNECT&quot; in data:
+
+                                # We support invisible proxying for real Android devicec, where the computer is configured
+                                # as the router, and all HTTP(S) traffic is redirected to our tool. In this scenario we
+                                # don't receive a CONNECT request. Instead we get the original destination IP address and
+                                # manually construct the CONNECT request.
+
+                                # TODO: Test this on other operating systems than Linux
+                                try:
+                                        # Ask the OS the original destination of the connection
+                                        dst = socket.getsockopt(self.transport.socket, SOL_IP, SO_ORIGINAL_DST, 16)
+                                        # Exclamation mark tells unpack that dst is big-endian
+                                        # 2x  : two pad bytes
+                                        # H   : unsigned short (port)
+                                        # 4s  : char string of 4 bytes (ip)
+                                        # 8x  : eight pad bytes
+                                        srv_port, srv_ip = struct.unpack(&quot;!2xH4s8x&quot;, dst)
+
+                                        if srv_port == 443:
+                                                self.peer.setRequestData(data)
+                                                data = &quot;CONNECT &quot; + inet_ntoa(srv_ip) + &quot;:&quot; + str(srv_port) + &quot; HTTP/1.1\r\n\r\n&quot;
+                                                print &quot;PROXIFYING HTTPS: &quot; + repr(data.strip())
+                                        # NOTE: If you uncomment this elif block, your proxy must support invisible proxying
+                                        elif srv_port == 80:
+                                                # Rewrite to absolute GET request if info available
+                                                if reversemappings.has_key(inet_ntoa(srv_ip)):
+                                                        data = re.sub(r'^GET ', &quot;GET http://&quot; + reversemappings[inet_ntoa(srv_ip)] + &quot;:&quot; + str(srv_port), data)
+                                                else:
+                                                        print &quot;Warning: got redirected HTTP request but unable to find destination hostname:port&quot;
+
+                                except Exception, e:
+                                        print &quot;Something went wrong with invisible proxying:&quot;, e.getMessage()
+                        &quot;&quot;&quot;
+
+                        # ------------------- Rewrite CONNECT/GET/POST with domain name ---------------------
+
+                        resultconnect = self.connectre.match(data)
+                        resultother = self.otherre.match(data)
+
+                        # TODO: We shouldn't use a normal replace after using regular expressions..
+                        # Replace IP in CONNECT
+                        if (resultconnect != None and reversemappings.has_key(resultconnect.group(1))):
+                                data = data.replace(resultconnect.group(1), reversemappings[resultconnect.group(1)])
+                                print &quot;REWRITING CONNECT:&quot;, resultconnect.group(1), &quot;-&gt;&quot;, reversemappings[resultconnect.group(1)]
+                        # Replace IP in GET, POST, HEAD, etc
+                        elif (resultother != None and reversemappings.has_key(resultother.group(1))):
+                                data = data.replace(resultother.group(1), reversemappings[resultother.group(1)])
+                                print &quot;REWRITING HTTP METHOD:&quot;, resultother.group(1), &quot;-&gt;&quot;, reversemappings[resultother.group(1)]
+
+                        self.firstdata = data
+                        self.receivedfirst = True
+
+                        print &quot;OUTGOING TCP: &gt;&quot;, repr(data.split(&quot;\r&quot;)[0][:40])
+
+
+                # forward data
+                portforward.ProxyServer.dataReceived(self, data)
+
+
+
+class ProxyFactory(portforward.ProxyFactory):
+        protocol = ProxyServer
+
+        def doStart(self):
+                print &quot;\t==== Android Proxy Up and Running ====\n&quot;
+
+
+def main():
+        print &quot;AndroidProxy   ---   (C) Mathy Vanhoef&quot;
+        print &quot;This program comes with ABSOLUTELY NO WARRANTY.&quot;
+        print
+        print &quot;DNS server will listen on localhost:53&quot;
+        print &quot;HTTP Proxy will listen on localhost:8007&quot;
+        print
+        #print &quot;Physical device: Configure your computer dns server and as router (NOT as proxy) and execute&quot;
+        #print &quot;\tiptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8007&quot;
+        #print &quot;\tiptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8007&quot;
+        #print
+        print &quot;Emulator: start it using: emulator @AvdName -http-proxy http://localhost:8007 -dns-server localhost&quot;
+        print
+        print &quot;Don't forget to start your normal proxy on localhost:8080&quot;
+        print
+
+        # Setup custom DNS server
+        resolvers = []
+        #resolvers.append(ProxyResolver([('8.8.8.8', 53)]))
+        resolvers.append(ProxyResolver([('10.0.141.20', 53)]))
+        f = server.DNSServerFactory(clients=resolvers)
+        p = dns.DNSDatagramProtocol(f)
+        reactor.listenUDP(53, p)
+
+        # Setup TCP proxy server
+        endpoint = TCP4ServerEndpoint(reactor, 8007)
+        endpoint.listen(ProxyFactory('localhost', 8080))
+
+        # Start DNS and TCP server
+        reactor.run();
+
+
+if __name__ == &quot;__main__&quot;:
+        main()
+</code></pre>
+
+<p>Run this with <code>sudo python AndroidProxy.py</code> (assuming you saved it as that), and change your Emulators launch options to <code>~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8007 -dns-server localhost -debug-proxy</code>. Running it with sudo is needed as the script starts a DNS server locally. The <code>-debug-proxy</code> option is optional, but is useful for further debugging of the traffic.</p>
+
+<p>As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as <code>DNS: clients3.google.com -&gt; 1.1.1.4</code>. This is just the internal storage key and not the IP it resolved :D</p>
+
+<h2 id="summary:f0c467d8e3464f63b945a49a8c9a31f0">summary</h2>
+
+<p>Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

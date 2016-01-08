@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Hello World! Oh and here&#39;s some code! &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Hello World! Oh and here&#39;s some code!</h1>
+    <span class="post-date">May 24, 2013 &middot; 3 minute read &middot; <a href="http://leonjza.github.io/blog/2013/05/24/hello-world-oh-and-heres-some-code/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/nessus">Nessus</a><a class="label" href="http://leonjza.github.io/categories/php">PHP</a><a class="label" href="http://leonjza.github.io/categories/api">API</a>
+    </span>
+    
+
+<h3 id="introduction:a2d2952aa7e376f74cac82694243c763">Introduction</h3>
+
+<p>Finally! A blog engine I like! :) No exceptionally bloated backend database with plugins that just get hacked. Yup, slim and sleek. <em>And</em>, I get to make posts using Vi :D
+Want in on this love? Have a look at <a href="http://octopress.org">Octopress</a> . Yes, it was a real ball ache to get setup thanks to the ruby dependencies, but now that were rollin&rsquo; this should be good :D</p>
+
+<h3 id="frustrations-breed-ideas:a2d2952aa7e376f74cac82694243c763">Frustrations breed Ideas</h3>
+
+<p>In my day job, I am exposed to a lot of work that will relate around the <a href="http://www.tenable.com/products/nessus">Nessus Vulnerability Scanner</a>.
+Originally, interfacing with this scanner used be via a old and clunky <em>flash</em> interface. It was bad. They have since moved over to a HTML5, ajaxy interface that is light years better. However, for my needs, the default Nessus Interface just does not cut it.</p>
+
+<h3 id="open-source-where-do-i-start:a2d2952aa7e376f74cac82694243c763">Open source? Where do I start?</h3>
+
+<p>Based on this old crappy interface, and the need to be able to automate things, I pulled closer the XMLRPC API reference <a href="http://static.tenable.com/documentation/nessus_5.0_XMLRPC_protocol_guide.pdf">documentation</a>. Reading this revealed the API is actually very straight forward. Login -&gt; get a token -&gt; make POST with this token and receive XML. Great.</p>
+
+<p>I started hacking away at some PHP to test this out. Back then I was really <em>very</em> new to this &ldquo;development&rdquo; thing, so it was really tough to get my head around the concepts of working with the API. Nonetheless, we had something to work with, and this was implemented internally for numerous functions.</p>
+
+<p>Since then, <code>nessus.php</code> was born. The first iteration of this code was, well, worse than it is now, but its now very easy to use ( I believe ).</p>
+
+<h3 id="instantiate-a-nessusinterface-instance:a2d2952aa7e376f74cac82694243c763">Instantiate a NessusInterface instance</h3>
+
+<p>To use this API, we first need to include it in our script, and then init the Class. Effectively, this will log into the scanner using the provided arguments and store the token in the object. Should it fail, it will raise an error.</p>
+
+<pre><code class="language-php">&lt;?php
+require &quot;nessus.php&quot;;
+
+try {
+    $api = new NessusInterface(
+        $__url,
+        $__port,
+        $__username,
+        $__password
+    );
+} catch(Exception $e) {
+    preprint($e-&gt;getMessage());
+}
+</code></pre>
+
+<h4 id="do-some-api-calls:a2d2952aa7e376f74cac82694243c763">Do some API calls</h4>
+
+<p>Once you have the <code>$api</code> variable setup with a instance of <strong>NessusInterface</strong>, you can use any of the available calls. Most of the API calls will return some form of array:</p>
+
+<pre><code class="language-php">&lt;?php
+try {
+
+    $api-&gt;feed();
+    # // Will return an array like:
+    #  Array
+    #  (
+    #    [feed] =&gt; ProFeed
+    #    [server_version] =&gt; 5.2.1
+    #    [web_server_version] =&gt; 4.0.37 (Build H20130515A)
+    #    [expiration] =&gt; 1406174400
+    #    [msp] =&gt; FALSE
+    #    [loaded_plugin_set] =&gt; 201305240915
+    #    [expiration_time] =&gt; 425
+    # )
+
+} catch(Exception $e) {
+
+    preprint($e-&gt;getMessage());
+}
+</code></pre>
+
+<p>Reading the sources will reveal the structures of the returned arrays.
+Get the code <a href="https://github.com/th3l33k/php-nessus-api">here</a></p>
+
+<h3 id="its-the-small-things:a2d2952aa7e376f74cac82694243c763">Its the small things</h3>
+
+<p>This is by no means and elaborate &ldquo;solution&rdquo; really. It&rsquo;s purely another building block for something bigger. A believe there are quite a few fundamentals that the Nessus Scanner does not cover, but perhaps that is beyond the scope of what its designed to do :)</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

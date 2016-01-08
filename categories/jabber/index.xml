@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jabber on #!/slash/note</title>
+    <link>http://leonjza.github.io/categories/jabber/</link>
+    <description>Recent content in Jabber on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 07 Jun 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://leonjza.github.io/categories/jabber/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Jabber to Email using SleekXMPP</title>
+      <link>http://leonjza.github.io/2013/06/07/jabber-to-email-using-sleekxmpp/</link>
+      <pubDate>Fri, 07 Jun 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://leonjza.github.io/2013/06/07/jabber-to-email-using-sleekxmpp/</guid>
+      <description>
+
+&lt;h3 id=&#34;so-why-would-you-even-want-this:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;So, why would you even want this..?&lt;/h3&gt;
+
+&lt;p&gt;Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::&lt;/p&gt;
+
+&lt;h3 id=&#34;introducing-sleekxmpp:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Introducing SleekXMPP&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://sleekxmpp.com/&#34;&gt;SleekXMPP&lt;/a&gt; is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like &lt;code&gt;pip install mailer sleekxmpp&lt;/code&gt; or for the older school, &lt;code&gt;easy_install sleekxmpp mailer&lt;/code&gt; should do the trick. It can&amp;rsquo;t hurt to check if the distro you use has these are packages already too.&lt;/p&gt;
+
+&lt;h3 id=&#34;configuration-and-testing-time:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Configuration and testing time&lt;/h3&gt;
+
+&lt;p&gt;Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.&lt;/p&gt;
+
+&lt;p&gt;```python Check dependencies
+% python2
+Python 2.7.5 (default, May 12 2013, 12:00:47)
+[GCC 4.8.0 20130502 (prerelease)] on linux2
+Type &amp;ldquo;help&amp;rdquo;, &amp;ldquo;copyright&amp;rdquo;, &amp;ldquo;credits&amp;rdquo; or &amp;ldquo;license&amp;rdquo; for more information.
+&amp;gt;&amp;gt;&amp;gt; import sleekxmpp
+&amp;gt;&amp;gt;&amp;gt; import mailer
+&amp;gt;&amp;gt;&amp;gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+Next, you need a *bot* account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.
+
+### Ok, code
+Next, we take the [sample](http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot) echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.
+
+First, we import the mailer requirements with:
+
+```python mailer imports
+
+from mailer import Mailer
+from mailer import Message
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The above can be placed right after the option parser has been imported. Then, we only need to change the &lt;code&gt;message&lt;/code&gt; method within the &lt;code&gt;EchoBot&lt;/code&gt; class really:&lt;/p&gt;
+
+&lt;p&gt;```python Shameless SleekXMPP modification of the echobot &lt;a href=&#34;http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot&#34;&gt;http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot&lt;/a&gt;
+#!/usr/bin/env python
+if msg[&amp;lsquo;type&amp;rsquo;] in (&amp;lsquo;chat&amp;rsquo;, &amp;lsquo;normal&amp;rsquo;):&lt;/p&gt;
+
+&lt;p&gt;print &amp;ldquo;Received Message:\n%(body)s&amp;rdquo; % msg&lt;/p&gt;
+
+&lt;p&gt;# Mail the message Received
+   message = Message(From=&amp;ldquo;&amp;lsquo;Jabber Email Service&amp;rsquo; &lt;a href=&#34;mailto:someone@domain.com&#34;&gt;someone@domain.com&lt;/a&gt;&amp;rdquo;,
+         To=[&amp;ldquo;someone@domain.com&amp;rdquo;],
+         Subject=&amp;rdquo;[Jabber Message Received] From: %s&amp;rdquo; % msg[&amp;ldquo;from&amp;rdquo;])
+   themessage = msg[&amp;ldquo;body&amp;rdquo;]
+   themessage = themessage.decode(&amp;lsquo;unicode_escape&amp;rsquo;).encode(&amp;lsquo;ascii&amp;rsquo;,&amp;lsquo;ignore&amp;rsquo;)
+   message.Body = themessage&lt;/p&gt;
+
+&lt;p&gt;sender = Mailer(&amp;ldquo;127.0.0.1&amp;rdquo;)
+   sender.send(message)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;
+A complete modified example that includes the above changes:
+
+```python Shameless SleekXMPP modification of the echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+&amp;quot;&amp;quot;&amp;quot;
+    SleekXMPP: The Sleek XMPP Library
+    Copyright (C) 2010  Nathanael C. Fritz
+    This file is part of SleekXMPP.
+
+    See the file LICENSE for copying permission.
+&amp;quot;&amp;quot;&amp;quot;
+
+import sys
+import logging
+import getpass
+from optparse import OptionParser
+
+from mailer import Mailer
+from mailer import Message
+
+import sleekxmpp
+
+# Python versions before 3.0 do not use UTF-8 encoding
+# by default. To ensure that Unicode is handled properly
+# throughout SleekXMPP, we will set the default encoding
+# ourselves to UTF-8.
+if sys.version_info &amp;lt; (3, 0):
+    reload(sys)
+    sys.setdefaultencoding(&#39;utf8&#39;)
+else:
+    raw_input = input
+
+
+class EchoBot(sleekxmpp.ClientXMPP):
+
+    &amp;quot;&amp;quot;&amp;quot;
+    A simple SleekXMPP bot that will echo messages it
+    receives, along with a short thank you message.
+    &amp;quot;&amp;quot;&amp;quot;
+
+    def __init__(self, jid, password):
+        sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+        # The session_start event will be triggered when
+        # the bot establishes its connection with the server
+        # and the XML streams are ready for use. We want to
+        # listen for this event so that we we can initialize
+        # our roster.
+        self.add_event_handler(&amp;quot;session_start&amp;quot;, self.start)
+
+        # The message event is triggered whenever a message
+        # stanza is received. Be aware that that includes
+        # MUC messages and error messages.
+        self.add_event_handler(&amp;quot;message&amp;quot;, self.message)
+
+    def start(self, event):
+        &amp;quot;&amp;quot;&amp;quot;
+        Process the session_start event.
+
+        Typical actions for the session_start event are
+        requesting the roster and broadcasting an initial
+        presence stanza.
+
+        Arguments:
+            event -- An empty dictionary. The session_start
+                     event does not provide any additional
+                     data.
+        &amp;quot;&amp;quot;&amp;quot;
+        self.send_presence()
+        self.get_roster()
+        self.nick = &amp;quot;jabberMailBot&amp;quot;
+
+    def message(self, msg):
+        &amp;quot;&amp;quot;&amp;quot;
+        Process incoming message stanzas. Be aware that this also
+        includes MUC messages and error messages. It is usually
+        a good idea to check the messages&#39;s type before processing
+        or sending replies.
+
+        Arguments:
+            msg -- The received message stanza. See the documentation
+                   for stanza objects and the Message stanza to see
+                   how it may be used.
+        &amp;quot;&amp;quot;&amp;quot;
+        if msg[&#39;type&#39;] in (&#39;chat&#39;, &#39;normal&#39;):
+
+            print &amp;quot;Received Message:\n%(body)s&amp;quot; % msg
+
+            # Mail the message Received
+            message = Message(From=&amp;quot;&#39;Jabber Email Service&#39; &amp;lt;someone@domain.com&amp;gt;&amp;quot;,
+                  To=[&amp;quot;someone@domain.com&amp;quot;],
+                  Subject=&amp;quot;[Jabber Message Received] From: %s&amp;quot; % msg[&amp;quot;from&amp;quot;])
+            themessage = msg[&amp;quot;body&amp;quot;]
+            themessage = themessage.decode(&#39;unicode_escape&#39;).encode(&#39;ascii&#39;,&#39;ignore&#39;)
+            message.Body = themessage
+
+            sender = Mailer(&amp;quot;127.0.0.1&amp;quot;)
+            sender.send(message)
+
+if __name__ == &#39;__main__&#39;:
+    # Setup the command line arguments.
+    optp = OptionParser()
+
+    # Output verbosity options.
+    optp.add_option(&#39;-q&#39;, &#39;--quiet&#39;, help=&#39;set logging to ERROR&#39;,
+                    action=&#39;store_const&#39;, dest=&#39;loglevel&#39;,
+                    const=logging.ERROR, default=logging.INFO)
+    optp.add_option(&#39;-d&#39;, &#39;--debug&#39;, help=&#39;set logging to DEBUG&#39;,
+                    action=&#39;store_const&#39;, dest=&#39;loglevel&#39;,
+                    const=logging.DEBUG, default=logging.INFO)
+    optp.add_option(&#39;-v&#39;, &#39;--verbose&#39;, help=&#39;set logging to COMM&#39;,
+                    action=&#39;store_const&#39;, dest=&#39;loglevel&#39;,
+                    const=5, default=logging.INFO)
+
+    # JID and password options.
+    optp.add_option(&amp;quot;-j&amp;quot;, &amp;quot;--jid&amp;quot;, dest=&amp;quot;jid&amp;quot;,
+                    help=&amp;quot;JID to use&amp;quot;)
+    optp.add_option(&amp;quot;-p&amp;quot;, &amp;quot;--password&amp;quot;, dest=&amp;quot;password&amp;quot;,
+                    help=&amp;quot;password to use&amp;quot;)
+
+    opts, args = optp.parse_args()
+
+    # Setup logging.
+    logging.basicConfig(level=opts.loglevel,
+                        format=&#39;%(levelname)-8s %(message)s&#39;)
+
+    if opts.jid is None:
+        opts.jid = raw_input(&amp;quot;Username: &amp;quot;)
+    if opts.password is None:
+        opts.password = getpass.getpass(&amp;quot;Password: &amp;quot;)
+
+    # Setup the EchoBot and register plugins. Note that while plugins may
+    # have interdependencies, the order in which you register them does
+    # not matter.
+    xmpp = EchoBot(opts.jid, opts.password)
+    xmpp.register_plugin(&#39;xep_0030&#39;) # Service Discovery
+    xmpp.register_plugin(&#39;xep_0004&#39;) # Data Forms
+    xmpp.register_plugin(&#39;xep_0060&#39;) # PubSub
+    xmpp.register_plugin(&#39;xep_0199&#39;) # XMPP Ping
+
+    # If you are working with an OpenFire server, you may need
+    # to adjust the SSL version used:
+    # xmpp.ssl_version = ssl.PROTOCOL_SSLv3
+
+    # If you want to verify the SSL certificates offered by a server:
+    # xmpp.ca_certs = &amp;quot;path/to/ca/cert&amp;quot;
+
+    # Connect to the XMPP server and start processing XMPP stanzas.
+    if xmpp.connect():
+        # If you do not have the dnspython library installed, you will need
+        # to manually specify the name of the server if it does not match
+        # the one in the JID. For example, to use Google Talk you would
+        # need to use:
+        #
+        # if xmpp.connect((&#39;talk.google.com&#39;, 5222)):
+        #     ...
+        xmpp.process(block=True)
+        print(&amp;quot;Done&amp;quot;)
+    else:
+        print(&amp;quot;Unable to connect.&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;so-how-do-i-actually-use-this-thing-i-just-saw:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;So how do I actually use this thing I just saw?&lt;/h3&gt;
+
+&lt;p&gt;Take the complete example and save it to a file like &lt;code&gt;bot.py&lt;/code&gt;. Then, run it!
+The complete example will echo the message just before it attempts to mail it. You can comment out line &lt;strong&gt;86&lt;/strong&gt; to stop this from happening and run the script with the &lt;code&gt;-q&lt;/code&gt; argument once you are happy all is working.&lt;/p&gt;
+
+&lt;p&gt;```bash sample run
+% python bot.py -j &amp;ldquo;myEmailbot@myJabberServer.local&amp;rdquo;
+Password:
+INFO     Negotiating TLS
+INFO     Using SSL version: 3
+INFO     CERT: Time until certificate expiration: 952 days, 6:46:01.014041&lt;/p&gt;
+
+&lt;p&gt;Received Message:
+This is a test message that will be mailed :D
+```&lt;/p&gt;
+
+&lt;h3 id=&#34;things-to-note:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Things to note.&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Even though the script allows you to specify a &lt;code&gt;-p&lt;/code&gt; argument, I would highly discourage the usage of this. Any person that has access to your machine, be it legitimate or not, would then see your bot&amp;rsquo;s process, with the password in the &lt;code&gt;ps&lt;/code&gt; output!&lt;/li&gt;
+&lt;li&gt;Ensure the SMTP server specified in line &lt;strong&gt;96&lt;/strong&gt; of the complete example allows yo to relay! Change it if needed.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;test-d:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Test! :D&lt;/h3&gt;
+
+&lt;p&gt;Send your bot a message and see if your mail arrives ^^&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;EDIT&lt;/strong&gt;: Modify the message encoding to ASCII as the utf8 stuff seems to barf out sometimes :|&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How To: Extremely simple python Jabber Broadcast Bot</title>
+      <link>http://leonjza.github.io/blog/2013/05/25/how-to-extremely-simple-python-jabber-broadcast-bot/</link>
+      <pubDate>Sat, 25 May 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://leonjza.github.io/blog/2013/05/25/how-to-extremely-simple-python-jabber-broadcast-bot/</guid>
+      <description>
+
+&lt;h3 id=&#34;bots-bots-bots:6ad72ee237fe0bdb4213bb80c2b4b174&#34;&gt;Bots! Bots! Bots!&lt;/h3&gt;
+
+&lt;p&gt;Generally speaking, a &amp;ldquo;bot&amp;rdquo; is something that like &lt;em&gt;does work for you&lt;/em&gt;. But, for this purpose, the need for a jabber bot came from the fact that I had to deal with a lot of email on a daily basis. This large amount of mail sometimes would cause me to completely miss critical mail alerts. Realising later that I could have prevented a catastrophe if I didn&amp;rsquo;t miss that &lt;strong&gt;one&lt;/strong&gt; email was just not on anymore. So, I started investigating ways to get the &lt;em&gt;important&lt;/em&gt; stuff delivered faster.&lt;/p&gt;
+
+&lt;p&gt;As a team at work, we have long gone dropped the whole Skype group chat thing for our own Jabber server. My privacy related concerns back then was recently heightened &lt;a href=&#34;http://lists.randombit.net/pipermail/cryptography/2013-May/004224.html&#34;&gt;here&lt;/a&gt; when a trap URL received a HEAD request from &lt;strong&gt;65.52.100.214&lt;/strong&gt;. The user that received the URL in a chat was under strict instructions not to actually click it&amp;hellip;&lt;/p&gt;
+
+&lt;h3 id=&#34;so-how-do-we-do-this:6ad72ee237fe0bdb4213bb80c2b4b174&#34;&gt;So, how do we do this?&lt;/h3&gt;
+
+&lt;p&gt;We implemented a &lt;a href=&#34;http://www.igniterealtime.org/projects/openfire/&#34;&gt;Openfire Server&lt;/a&gt; that was really easy to setup and get going. Whats really nice about this Jabber server is that it supports plugins, some of which you can simply install via the web interface.&lt;/p&gt;
+
+&lt;p&gt;One such plugin that was installed is called the &lt;a href=&#34;http://www.igniterealtime.org/projects/openfire/plugins/broadcast/readme.html&#34;&gt;broadcast&lt;/a&gt; plugin. This allows you to broadcast a message to all users on the server or those in defined groups.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;http://leonjza.github.io/images/openfire_screenshot.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Once this plugin is installed, some minor configuration is required to allow the broadcasting feature to work. In no way is this an extensive guide on the power of the plugin, but for the purpose of this post well just quickly rush over it.&lt;/p&gt;
+
+&lt;p&gt;Head over to &lt;em&gt;Server&lt;/em&gt; -&amp;gt; &lt;em&gt;Server Manager&lt;/em&gt; -&amp;gt; &lt;em&gt;System Properties&lt;/em&gt;. From here you need to add the fields that are not there with the &lt;strong&gt;plugin.broadcast.&lt;/strong&gt; prefix. Don&amp;rsquo;t worry if they are not there, just add them.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;http://leonjza.github.io/images/openfire_screenshot2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The above is just a sample of a working configuration. Feel free to play around more with different setups.&lt;/p&gt;
+
+&lt;p&gt;With everything configured, you should now be able to send a message to something like &lt;em&gt;all@broadcast.jabber.server&lt;/em&gt;. In my configuration, &lt;em&gt;plugin.broadcast.all2offline&lt;/em&gt; is set to &lt;strong&gt;true&lt;/strong&gt;. So, when a message is broadcasted and I was offline, I&amp;rsquo;ll receive the broadcast as soon as I&amp;rsquo;m back :)&lt;/p&gt;
+
+&lt;h3 id=&#34;introducing-jabbersend-py:6ad72ee237fe0bdb4213bb80c2b4b174&#34;&gt;Introducing jabbersend.py&lt;/h3&gt;
+
+&lt;p&gt;With our jabber server now configured and working, we are ready to start automating things. From here we need two things. Something that will broadcast for us, and something &lt;em&gt;to&lt;/em&gt; broadcast. The &lt;em&gt;what to broadcast&lt;/em&gt; is entirely up to you, as the script will accept a text file to broadcast.&lt;/p&gt;
+
+&lt;p&gt;The only dependency you probably need to satisfy will be &lt;code&gt;xmpp&lt;/code&gt;. This should be easily doable with something like &lt;code&gt;easy_install xmpp&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/python
+import sys,os,xmpp,time
+
+# check the received arguments
+if len(sys.argv) &amp;lt; 2:
+    print &amp;quot;Syntax: jabbersend.py JID textfile&amp;quot;
+    sys.exit(0)
+
+# set the values to work with and read the file
+tojid=sys.argv[1]
+m = open(sys.argv[2],&#39;r&#39;)
+array = m.readlines()
+m.close()
+
+msg=&amp;quot;&amp;quot;
+for record in array:
+        msg = msg + record
+
+# configure your jabber account for the bot here.
+username = &#39;jabber_bot@jabber.server&#39; # from whom will the message be sent
+password = &#39;jabber_bot_secret_password&#39;
+
+jid=xmpp.protocol.JID(username)
+
+# for debugging purposes, uncomment the below line so that &#39;debug&#39; is 1.
+# This makes the script very verbose though, but its helpful if you stuck ^^
+#cl=xmpp.Client(jid.getDomain(),debug=1)
+cl=xmpp.Client(jid.getDomain(),debug=[])
+
+# Sadly I don&#39;t have a valid certificate for my jabber server, so this had to
+# be set to False. I do however recommend, if you can, to get a valid certificate
+# and enable this
+con=cl.connect(secure=False) # Set this to validate the servers certificate.
+if not con:
+    print &amp;quot;Could not connect&amp;quot;
+    sys.exit()
+
+# authenticate the client
+auth=cl.auth(jid.getNode(),password,resource=jid.getResource())
+if not auth:
+    print &amp;quot;Authentication failed&amp;quot;
+    sys.exit()
+
+# send the message
+id=cl.send(xmpp.protocol.Message(tojid, msg))
+
+# some older servers will not send the message if you disconnect immediately
+time.sleep(1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;we-have-the-code-now-use-it:6ad72ee237fe0bdb4213bb80c2b4b174&#34;&gt;We have the code, now use it!&lt;/h3&gt;
+
+&lt;p&gt;Save this code to something like &lt;code&gt;jabbersend.py&lt;/code&gt; and execute it like this:
+&lt;code&gt;python jabbersend.py all@broadcast.jabber.server message_file.txt&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;If all went OK, you should have received a message from jabber_bot@jabber.server :P&lt;/p&gt;
+
+&lt;p&gt;Our internal implementation of this has been used in multiple areas. From broadcasting OSSEC alerts to broadcasting important events from cronjobs.
+The OSSEC broadcasting I&amp;rsquo;ll blog a little later, but you can obviously see the value that something like this brings. No more missing emails, if I receive a message from the bot, its important :)&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

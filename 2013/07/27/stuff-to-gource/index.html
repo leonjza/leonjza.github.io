@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>&#39;stuff&#39; to Gource. &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>&#39;stuff&#39; to Gource.</h1>
+    <span class="post-date">Jul 27, 2013 &middot; 7 minute read &middot; <a href="http://leonjza.github.io/2013/07/27/stuff-to-gource/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/gource">gource</a><a class="label" href="http://leonjza.github.io/categories/visualization">visualization</a><a class="label" href="http://leonjza.github.io/categories/python">python</a>
+    </span>
+    
+
+<h3 id="stuff-to-what:5730425bc2060ed9870ccf2cfd790cac">Stuff to what&hellip;?</h3>
+
+<p>Not too long ago, a colleague introduced me to Gource. In case you have not heard of <a href="https://code.google.com/p/gource/">Gource</a> before, I highly suggest you take a few minutes and check out the project home page <a href="https://code.google.com/p/gource/">here</a>. If you have been developing, or are part of a development project that has been around a while, then Gource should be able to tell you a tale in a strangely mesmerising way about its progression. Go ahead, download and install it. You are going to need it to try the rest of the stuff anyways.</p>
+
+<p>*Be warned though, watching the output is highly addictive and strangely entertaining, so if you value your productivity, <strong>don&rsquo;t</strong> continue reading this post.*</p>
+
+<p>{% img <a href="http://i.imgur.com/gFkD3z5.png">http://i.imgur.com/gFkD3z5.png</a> %}</p>
+
+<p>In short, Gource will take your repos commit logs from Git, Mecurial, SVN or even CVS (with some work) and splash out a graphical representation of the commits, by committer, across time. It also has a number of tweaks that allows you to change some visuals, focus on specific comitters and add titles etc.</p>
+
+<p>You can also create a Gource &lsquo;movie&rsquo; by specifying the <code>-o</code> option for output. This will provide a sequence of screenshots in PPM format that can later be encoded using something like FFMPEG. Keep in mind that this output is <em>massive</em>. 5mins of output generated something like a 5GB .ppm file for me. You can also just pipe your Gource output directly into ffmpeg, skipping the need to create the .ppm as FFMPEG can read a stream. I of course have no idea how you&rsquo;d accomplish this in Windows, but ok ;D</p>
+
+<p>Majong released a video of exactly this for the Minecraft dev tree. 800+ days worth of work, depicting the commit logs from a alpha 1.2 version through to the 1.5 release bought down 8 minutes. <a href="http://www.youtube.com/watch?v=zRjTyRly5WA">Direct Link</a></p>
+
+<h3 id="taking-it-one-step-further:5730425bc2060ed9870ccf2cfd790cac">Taking it one step further.</h3>
+
+<p>So all this is cool and stuff. Watching the stories of code get told in a uber cool fashion, causing a lot of productive time to be lost. However, browsing through the Gource Wiki Pages, revealed a rather interesting section. Gource accepts a argument called <code>--log-format custom</code> that allows you to generate, well, custom logs.</p>
+
+<p>According to the <a href="https://code.google.com/p/gource/wiki/CustomLogFormat">wiki documentation</a>, the format for a custom log entry needs to be pipe delimited and have the following format:</p>
+
+<p>```bash Gource sample custom log <a href="https://code.google.com/p/gource/wiki/CustomLogFormat">https://code.google.com/p/gource/wiki/CustomLogFormat</a></p>
+
+<h1 id="minimum-custom-log-format:5730425bc2060ed9870ccf2cfd790cac">minimum custom log format</h1>
+
+<p>1275543595|andrew|A|src/main.cpp</p>
+
+<h1 id="optionally-we-can-set-a-color-value:5730425bc2060ed9870ccf2cfd790cac">optionally, we can set a color value</h1>
+
+<p>1275543595|andrew|A|src/main.cpp|FF0000</p>
+
+<pre><code>
+So this is, nice. Gource *also* accepts input from stdin, via `-` as input obviously. To sum this up. Any, correctly formatted, pipe delimited input can be accepted as a 'log' entry, that Gource should understand. Lets try it out.
+
+### Introducing py2gource.py
+My initial thought on this was that 90% if the custom log formats could be generated on the shell. Rightfully so. With tools like **awk** and **sed**, you can do some pretty neat stuff. However, as powerful as they may be, the approach of writing some middleware that would do all of the parsing and log generation *for* me, seemed like a better idea. And so, `py2gource.py` was born. Another terribly coded piece of python to do things I am too lazy to do in any other way.
+
+So far based on what has been coded, the basic idea to use this middleware in a very simple form is: `cat something | python py2gource.py | gource`
+
+### Gource for... Nmap?
+But, we don't have to `cat` something for output, right. Just do `nmap 127.0.0.1 -v | python py2gource.py | gource`. `py2gource.py` will happily read *stdin* and parse the output for input formats it understands, specified by `-t` as needed. For example:
+
+```bash Parsed Nmap Output
+# Nmap output before its parsed by py2gource.py
+$ nmap 127.0.0.1 -v
+
+Starting Nmap 6.25 ( http://nmap.org ) at 2013-07-25 19:58 SAST
+Initiating Ping Scan at 19:58
+Scanning 127.0.0.1 [2 ports]
+Completed Ping Scan at 19:58, 0.00s elapsed (1 total hosts)
+Initiating Connect Scan at 19:58
+Scanning localhost (127.0.0.1) [1000 ports]
+Discovered open port 8080/tcp on 127.0.0.1
+Discovered open port 22/tcp on 127.0.0.1
+Discovered open port 80/tcp on 127.0.0.1
+Discovered open port 3306/tcp on 127.0.0.1
+Discovered open port 5222/tcp on 127.0.0.1
+[...]
+
+# now, parsed by py2gource.py
+$ nmap 127.0.0.1 -v | python py2gource.py -t nmap
+
+1374774922|nmap|A|127.0.0.1/tcp/8080|9C9841
+1374774922|nmap|A|127.0.0.1/tcp/22|9C9841
+1374774922|nmap|A|127.0.0.1/tcp/80|9C9841
+1374774922|nmap|A|127.0.0.1/tcp/3306|9C9841
+1374774923|nmap|A|127.0.0.1/tcp/4000|9C9841
+</code></pre>
+
+<p>From the above example we can see that the verbose Nmap output has been parsed to be complaint to the custom log format as per the Gource wiki. So, lets pipe this to gource:</p>
+
+<p>```bash Nmap to gource
+$ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource &ndash;realtime &ndash;log-format custom - -1440x900 &ndash;bloom-intensity 0.3 -e 0.2 -i 120 &ndash;title &ldquo;Nmap of 192.168.137.0/24&rdquo;</p>
+
+<pre><code>
+You should now have a Gource window pop up, with your Nmap results being displayed in a similar fashion as you saw in the Minecraft example. The above command completes the 3 parts required to get output to Gource using the middleware. Granted in the Nmap case, the parser will just not output anything if the IP or IP range that you are scanning has no open ports, or, you forgot to specify the `-v` argument. *This requirement may change later*. 
+
+Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!
+
+### Visualising a Network Telescope
+Where I am currently employed, I am fortunate enough to have access to the data our blackhole provides to us. The setup is pretty simple. There are 13, random /24's (IPV6 coming soon™), sink holed to a box running the [Argus](http://qosient.com/argus/) server software. Argus provides a set of client tools that you can use to connect to the server and 'see' what is happening, live.
+
+This was a golden opportunity to add a parser that would parse the output this client receives into Gource. The result? See for yourself:
+
+{% img http://i.imgur.com/eDc3EPlh.png %}
+
+Moments later, even more activity... :)
+
+{% img http://i.imgur.com/yPAGoLwh.png %}
+
+The parser will take the Argus client output and split the results of the IPv4 destination address by octet. Each octet will form part of the tree structure. Each bubble represents a port that was touched. Finally, each full destination IP address will get its own *unique* colour, so it will be easy to see when a specific IP has been scanned across multiple ports. Each *user* is a source IP address. Remember, this is IP space that is used for nothing other than seeing what is happening on it. So things like people scanning your Darknet for open SSH ports will make your Gource go mad, in a good way ofc.
+
+The above screenshots were taken by specifying the `--hide dirnames` arguments, as we obviously want to try and keep the IP space of the blackhole classified.
+
+### Ok, how did you do THAT
+```bash Visualising the Argus Darknet with Gource
+$ ~/Downloads/argus-clients-3.0.6.2/bin/ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title &quot;Live Darknet Port Activity&quot; -i 30 -f
+</code></pre>
+
+<p>I am going to assume you have the Argus server setup complete, and you are able to connect using the <code>ra</code> client. For more information on setting it up, refer to the Argus wiki <a href="http://nsmwiki.org/index.php?title=Argus">here</a>. Which ever machine your using to run Gource on, obviously needs to be able to connect as well.</p>
+
+<p>The Argus parser works without specifying any fancy command line options. I have used <code>-n</code> in the example as I did not want to have the destination port names, but the raw port numbers instead. This output is piped into <code>tee</code>, that will write the output to the file <em>raw</em> as well as stdout. This is not a requirement, but its interesting to see <strong>what</strong> is being parsed. I tail the file in a separate terminal usually and inspect the output. Then the output is passed to <code>py2gource.py</code> with the type set to argus via <code>-t argus</code>. The output generated by this middleware is then finally &lsquo;tee&rsquo;d&rsquo; and sent to Gource, which is configured to accept input in realtime from stdin with <code>--realtime --log-format custom -</code>. The rest of the options I used in the example for Gource is purely graphically related.</p>
+
+<p>The file <em>parsed</em> can be seen as a &lsquo;history&rsquo; file that can be piped into Gource again at a later time to replay potentially interesting events, or, if you are not able to connect directly to argus, and need to grab and parse output on one machine, and then replay on another machine with Gource installed.</p>
+
+<h3 id="get-the-code-setup-your-own:5730425bc2060ed9870ccf2cfd790cac">Get the code, setup your own.</h3>
+
+<p>The parser&rsquo;s code is hosted on Github <a href="https://github.com/th3l33k/py2gource">here</a>. Grab the code with <code>git clone https://github.com/th3l33k/py2gource.git</code>. Parsers live in <code>lib/Parsers</code> if you are interested in parsing some other interesting information you may have.</p>
+
+<p>Have fun! :D</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

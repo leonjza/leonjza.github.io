@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>a totally unnecessary composer shell &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>a totally unnecessary composer shell</h1>
+    <span class="post-date">Sep 30, 2015 &middot; 1 minute read &middot; <a href="http://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/php">php</a><a class="label" href="http://leonjza.github.io/categories/reverse">reverse</a><a class="label" href="http://leonjza.github.io/categories/shell">shell</a><a class="label" href="http://leonjza.github.io/categories/composer">composer</a>
+    </span>
+    
+
+<h2 id="background:81933f3676c079333a579b7c058765d8">background</h2>
+
+<p>{% img right <a href="https://i.imgur.com/9kOuWWP.png">https://i.imgur.com/9kOuWWP.png</a> %}</p>
+
+<p>A silly reverse shell invoked via the Composer Dependency Manager. <a href="https://github.com/leonjza/composer-shell">Source here</a></p>
+
+<p><a href="https://getcomposer.org/">Composer</a>, which is most probably <em>the</em> most popular PHP dependency manager allows for <a href="https://getcomposer.org/doc/articles/scripts.md">scripts</a> to run as callbacks on based an event.
+Callbacks are normally triggered just before or after certain events.</p>
+
+<p>It is possible to provide shell commands to the <code>scripts</code> property in the required <code>composer.json</code> file (with a few restrictions), but this method echoes the command that it executes.
+A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.</p>
+
+<h2 id="why:81933f3676c079333a579b7c058765d8">why?</h2>
+
+<p>I thought a little about which scenarios this may actually be useful in and figured maybe only really strange edge cases where you can only run composer (as root lol?).
+I also remembered a bug in <a href="https://community.rapid7.com/community/metasploit/blog/2015/01/01/12-days-of-haxmas-exploiting-cve-2014-9390-in-git-and-mercurial">git</a> (CVE-2014-9390) that allowed for code execution via &lsquo;poisoned&rsquo; repositories. Well, I guess depending on your perspective, this may be a very similar.</p>
+
+<h2 id="poc:81933f3676c079333a579b7c058765d8">PoC</h2>
+
+<p>As part of a PoC, I just used the popular <a href="http://pentestmonkey.net/tools/web-shells/php-reverse-shell">pentest-monkey PHP reverse shell</a>, but really, anything is possible that is possible with PHP at this point.</p>
+
+<script type="text/javascript" src="https://asciinema.org/a/b64qlhadvl7zn1912ihwi09wt.js" id="asciicast-b64qlhadvl7zn1912ihwi09wt" data-size="medium" async></script>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

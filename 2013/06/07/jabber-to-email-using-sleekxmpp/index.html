@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Jabber to Email using SleekXMPP &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Jabber to Email using SleekXMPP</h1>
+    <span class="post-date">Jun 7, 2013 &middot; 6 minute read &middot; <a href="http://leonjza.github.io/2013/06/07/jabber-to-email-using-sleekxmpp/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/jabber">jabber</a><a class="label" href="http://leonjza.github.io/categories/sleekxmpp">sleekxmpp</a><a class="label" href="http://leonjza.github.io/categories/bot">bot</a>
+    </span>
+    
+
+<h3 id="so-why-would-you-even-want-this:21a2ba69985e2ed9ad7c50c0ea2ca302">So, why would you even want this..?</h3>
+
+<p>Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::</p>
+
+<h3 id="introducing-sleekxmpp:21a2ba69985e2ed9ad7c50c0ea2ca302">Introducing SleekXMPP</h3>
+
+<p><a href="http://sleekxmpp.com/">SleekXMPP</a> is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like <code>pip install mailer sleekxmpp</code> or for the older school, <code>easy_install sleekxmpp mailer</code> should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too.</p>
+
+<h3 id="configuration-and-testing-time:21a2ba69985e2ed9ad7c50c0ea2ca302">Configuration and testing time</h3>
+
+<p>Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.</p>
+
+<p>```python Check dependencies
+% python2
+Python 2.7.5 (default, May 12 2013, 12:00:47)
+[GCC 4.8.0 20130502 (prerelease)] on linux2
+Type &ldquo;help&rdquo;, &ldquo;copyright&rdquo;, &ldquo;credits&rdquo; or &ldquo;license&rdquo; for more information.
+&gt;&gt;&gt; import sleekxmpp
+&gt;&gt;&gt; import mailer
+&gt;&gt;&gt;</p>
+
+<pre><code>
+Next, you need a *bot* account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.
+
+### Ok, code
+Next, we take the [sample](http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot) echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.
+
+First, we import the mailer requirements with:
+
+```python mailer imports
+
+from mailer import Mailer
+from mailer import Message
+</code></pre>
+
+<p>The above can be placed right after the option parser has been imported. Then, we only need to change the <code>message</code> method within the <code>EchoBot</code> class really:</p>
+
+<p>```python Shameless SleekXMPP modification of the echobot <a href="http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot">http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot</a>
+#!/usr/bin/env python
+if msg[&lsquo;type&rsquo;] in (&lsquo;chat&rsquo;, &lsquo;normal&rsquo;):</p>
+
+<p>print &ldquo;Received Message:\n%(body)s&rdquo; % msg</p>
+
+<p># Mail the message Received
+   message = Message(From=&ldquo;&lsquo;Jabber Email Service&rsquo; <a href="mailto:someone@domain.com">someone@domain.com</a>&rdquo;,
+         To=[&ldquo;someone@domain.com&rdquo;],
+         Subject=&rdquo;[Jabber Message Received] From: %s&rdquo; % msg[&ldquo;from&rdquo;])
+   themessage = msg[&ldquo;body&rdquo;]
+   themessage = themessage.decode(&lsquo;unicode_escape&rsquo;).encode(&lsquo;ascii&rsquo;,&lsquo;ignore&rsquo;)
+   message.Body = themessage</p>
+
+<p>sender = Mailer(&ldquo;127.0.0.1&rdquo;)
+   sender.send(message)</p>
+
+<pre><code>
+A complete modified example that includes the above changes:
+
+```python Shameless SleekXMPP modification of the echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+&quot;&quot;&quot;
+    SleekXMPP: The Sleek XMPP Library
+    Copyright (C) 2010  Nathanael C. Fritz
+    This file is part of SleekXMPP.
+
+    See the file LICENSE for copying permission.
+&quot;&quot;&quot;
+
+import sys
+import logging
+import getpass
+from optparse import OptionParser
+
+from mailer import Mailer
+from mailer import Message
+
+import sleekxmpp
+
+# Python versions before 3.0 do not use UTF-8 encoding
+# by default. To ensure that Unicode is handled properly
+# throughout SleekXMPP, we will set the default encoding
+# ourselves to UTF-8.
+if sys.version_info &lt; (3, 0):
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+else:
+    raw_input = input
+
+
+class EchoBot(sleekxmpp.ClientXMPP):
+
+    &quot;&quot;&quot;
+    A simple SleekXMPP bot that will echo messages it
+    receives, along with a short thank you message.
+    &quot;&quot;&quot;
+
+    def __init__(self, jid, password):
+        sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+        # The session_start event will be triggered when
+        # the bot establishes its connection with the server
+        # and the XML streams are ready for use. We want to
+        # listen for this event so that we we can initialize
+        # our roster.
+        self.add_event_handler(&quot;session_start&quot;, self.start)
+
+        # The message event is triggered whenever a message
+        # stanza is received. Be aware that that includes
+        # MUC messages and error messages.
+        self.add_event_handler(&quot;message&quot;, self.message)
+
+    def start(self, event):
+        &quot;&quot;&quot;
+        Process the session_start event.
+
+        Typical actions for the session_start event are
+        requesting the roster and broadcasting an initial
+        presence stanza.
+
+        Arguments:
+            event -- An empty dictionary. The session_start
+                     event does not provide any additional
+                     data.
+        &quot;&quot;&quot;
+        self.send_presence()
+        self.get_roster()
+        self.nick = &quot;jabberMailBot&quot;
+
+    def message(self, msg):
+        &quot;&quot;&quot;
+        Process incoming message stanzas. Be aware that this also
+        includes MUC messages and error messages. It is usually
+        a good idea to check the messages's type before processing
+        or sending replies.
+
+        Arguments:
+            msg -- The received message stanza. See the documentation
+                   for stanza objects and the Message stanza to see
+                   how it may be used.
+        &quot;&quot;&quot;
+        if msg['type'] in ('chat', 'normal'):
+
+            print &quot;Received Message:\n%(body)s&quot; % msg
+
+            # Mail the message Received
+            message = Message(From=&quot;'Jabber Email Service' &lt;someone@domain.com&gt;&quot;,
+                  To=[&quot;someone@domain.com&quot;],
+                  Subject=&quot;[Jabber Message Received] From: %s&quot; % msg[&quot;from&quot;])
+            themessage = msg[&quot;body&quot;]
+            themessage = themessage.decode('unicode_escape').encode('ascii','ignore')
+            message.Body = themessage
+
+            sender = Mailer(&quot;127.0.0.1&quot;)
+            sender.send(message)
+
+if __name__ == '__main__':
+    # Setup the command line arguments.
+    optp = OptionParser()
+
+    # Output verbosity options.
+    optp.add_option('-q', '--quiet', help='set logging to ERROR',
+                    action='store_const', dest='loglevel',
+                    const=logging.ERROR, default=logging.INFO)
+    optp.add_option('-d', '--debug', help='set logging to DEBUG',
+                    action='store_const', dest='loglevel',
+                    const=logging.DEBUG, default=logging.INFO)
+    optp.add_option('-v', '--verbose', help='set logging to COMM',
+                    action='store_const', dest='loglevel',
+                    const=5, default=logging.INFO)
+
+    # JID and password options.
+    optp.add_option(&quot;-j&quot;, &quot;--jid&quot;, dest=&quot;jid&quot;,
+                    help=&quot;JID to use&quot;)
+    optp.add_option(&quot;-p&quot;, &quot;--password&quot;, dest=&quot;password&quot;,
+                    help=&quot;password to use&quot;)
+
+    opts, args = optp.parse_args()
+
+    # Setup logging.
+    logging.basicConfig(level=opts.loglevel,
+                        format='%(levelname)-8s %(message)s')
+
+    if opts.jid is None:
+        opts.jid = raw_input(&quot;Username: &quot;)
+    if opts.password is None:
+        opts.password = getpass.getpass(&quot;Password: &quot;)
+
+    # Setup the EchoBot and register plugins. Note that while plugins may
+    # have interdependencies, the order in which you register them does
+    # not matter.
+    xmpp = EchoBot(opts.jid, opts.password)
+    xmpp.register_plugin('xep_0030') # Service Discovery
+    xmpp.register_plugin('xep_0004') # Data Forms
+    xmpp.register_plugin('xep_0060') # PubSub
+    xmpp.register_plugin('xep_0199') # XMPP Ping
+
+    # If you are working with an OpenFire server, you may need
+    # to adjust the SSL version used:
+    # xmpp.ssl_version = ssl.PROTOCOL_SSLv3
+
+    # If you want to verify the SSL certificates offered by a server:
+    # xmpp.ca_certs = &quot;path/to/ca/cert&quot;
+
+    # Connect to the XMPP server and start processing XMPP stanzas.
+    if xmpp.connect():
+        # If you do not have the dnspython library installed, you will need
+        # to manually specify the name of the server if it does not match
+        # the one in the JID. For example, to use Google Talk you would
+        # need to use:
+        #
+        # if xmpp.connect(('talk.google.com', 5222)):
+        #     ...
+        xmpp.process(block=True)
+        print(&quot;Done&quot;)
+    else:
+        print(&quot;Unable to connect.&quot;)
+</code></pre>
+
+<h3 id="so-how-do-i-actually-use-this-thing-i-just-saw:21a2ba69985e2ed9ad7c50c0ea2ca302">So how do I actually use this thing I just saw?</h3>
+
+<p>Take the complete example and save it to a file like <code>bot.py</code>. Then, run it!
+The complete example will echo the message just before it attempts to mail it. You can comment out line <strong>86</strong> to stop this from happening and run the script with the <code>-q</code> argument once you are happy all is working.</p>
+
+<p>```bash sample run
+% python bot.py -j &ldquo;myEmailbot@myJabberServer.local&rdquo;
+Password:
+INFO     Negotiating TLS
+INFO     Using SSL version: 3
+INFO     CERT: Time until certificate expiration: 952 days, 6:46:01.014041</p>
+
+<p>Received Message:
+This is a test message that will be mailed :D
+```</p>
+
+<h3 id="things-to-note:21a2ba69985e2ed9ad7c50c0ea2ca302">Things to note.</h3>
+
+<ul>
+<li>Even though the script allows you to specify a <code>-p</code> argument, I would highly discourage the usage of this. Any person that has access to your machine, be it legitimate or not, would then see your bot&rsquo;s process, with the password in the <code>ps</code> output!</li>
+<li>Ensure the SMTP server specified in line <strong>96</strong> of the complete example allows yo to relay! Change it if needed.</li>
+</ul>
+
+<h3 id="test-d:21a2ba69985e2ed9ad7c50c0ea2ca302">Test! :D</h3>
+
+<p>Send your bot a message and see if your mail arrives ^^</p>
+
+<p><strong>EDIT</strong>: Modify the message encoding to ASCII as the utf8 stuff seems to barf out sometimes :|</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

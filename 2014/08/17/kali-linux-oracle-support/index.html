@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Kali Linux Oracle Support &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>Kali Linux Oracle Support</h1>
+    <span class="post-date">Aug 17, 2014 &middot; 3 minute read &middot; <a href="http://leonjza.github.io/2014/08/17/kali-linux-oracle-support/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/how-to">how to</a><a class="label" href="http://leonjza.github.io/categories/kali-linux">kali linux</a><a class="label" href="http://leonjza.github.io/categories/oracle">oracle</a><a class="label" href="http://leonjza.github.io/categories/metasploit">metasploit</a><a class="label" href="http://leonjza.github.io/categories/oci">OCI</a><a class="label" href="http://leonjza.github.io/categories/library">library</a>
+    </span>
+    
+
+<p><strong>EDIT</strong> This guide has been updated to accomodate a few changes (see <a href="https://github.com/rapid7/metasploit-framework/issues/5422">here</a>)</p>
+
+<p>Recently I have had to get Oracle support sorted in my Kali Linux install. I will try not to rant about the reasons why it doesn&rsquo;t just work out of the box and just get the steps written down quickly. Typically, when you try to use a module such as <code>oracle_login</code>, metasploit may error out with:</p>
+
+<p>```bash Metasploit Oracle Error
+msf auxiliary(oracle_login) &gt; run</p>
+
+<p>[-] Failed to load the OCI library: cannot load such file &ndash; oci8
+[-] See <a href="http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage">http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage</a> for installation instructions
+[*] Auxiliary module execution completed
+msf auxiliary(oracle_login) &gt; run</p>
+
+<pre><code>
+The link provided seems a little out of date, so here is an updated guide.
+
+
+
+##getting started
+First, if you dont have an account at oracle.com, you will _unfortunately_ need one here. If you don't want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.
+
+##sorting oracle first
+Anyways. Create yourself a directory `/opt/oracle` and `cd` there. In a browser, navigate to the [instant client downloads](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html) url and choose your architecture. If you hate 32bit Kali, choose [Linux x86](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html), and 64bit Kali choose [Linux x86-64](http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html).
+
+Next, download the following packages and save them to `/opt/oracle`:
+
+- instantclient-basic-linux-12.1.0.1.0.zip
+- instantclient-sqlplus-linux-12.1.0.1.0.zip
+- instantclient-sdk-linux-12.1.0.1.0.zip
+
+With those downloaded, extract the archives with the `unzip` command. This should leave you with a directory `/opt/oracle/instantclient_12_1/`. This is all the files needed to at least get the `sqlplus` client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:
+
+```bash so symlink
+root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
+
+root@kali:/opt/oracle/instantclient_12_1# ls -lh libclntsh.so
+lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&gt; libclntsh.so.12.1
+</code></pre>
+
+<p>The last step is to configure the environment so that your shell is&hellip; <em>oracle aware</em>. We do this by setting a few environment variables. I have chosen to just append the lines to the end of my <code>.bashrc</code> file</p>
+
+<p>```bash .bashrc
+root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc</p>
+
+<h1 id="oracle:3c033c270d2469b645034951f41b8df2">ORACLE</h1>
+
+<p>export PATH=$PATH:/opt/oracle/instantclient_12_1
+export SQLPATH=/opt/oracle/instantclient_12_1
+export TNS_ADMIN=/opt/oracle/instantclient_12_1
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
+export ORACLE_HOME=/opt/oracle/instantclient_12_1</p>
+
+<pre><code>
+Done! Log out and back and check that these are present in the output of `env`.
+
+##sorting out metasploit
+The last thing we need to do is setup the metasploit part. For this we need to download [ruby-oci8](https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip). In `/opt/oracle`, download it:
+
+```bash download ruby-oci8
+root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
+[...]
+2014-08-17 16:11:31 (42.8 KB/s) - `ruby-oci8-2.1.7.zip' saved [278270]
+
+root@kali:/opt/oracle# unzip ruby-oci8-2.1.7.zip
+Archive:  ruby-oci8-2.1.7.zip
+fb913e32d8a09bd46e5bf549bd8e554f0870d384
+   creating: ruby-oci8-ruby-oci8-2.1.7/
+  inflating: ruby-oci8-ruby-oci8-2.1.7/.gitignore
+  inflating: ruby-oci8-ruby-oci8-2.1.7/.yardopts
+[...]
+  inflating: ruby-oci8-ruby-oci8-2.1.7/test/test_rowid.rb
+root@kali:/opt/oracle#
+</code></pre>
+
+<p>Next, move to the extracted directory and install the <code>ruby-dev</code> and <code>libgmp-dev</code> packages if you have not already done so:</p>
+
+<p>```bash ruby-dev
+root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/</p>
+
+<p>root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev</p>
+
+<pre><code>
+Next, ensure that the `ruby` interpreter that you will be use is the same as that of Metasploit with
+
+```bash
+export PATH=/opt/metasploit/ruby/bin:$PATH
+</code></pre>
+
+<p>Ensure that you are using the correct version of ruby</p>
+
+<pre><code># ruby -v
+ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
+</code></pre>
+
+<p>Lastly, we will <code>make</code> &amp;&amp; <code>make install</code>. Logout and back in and test that the oracle tools in metasploit are functional :)</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>a trivial iOS jailbreak detection bypass &middot; </title>
+
+  
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="http://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="http://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="http://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="http://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>a trivial iOS jailbreak detection bypass</h1>
+    <span class="post-date">Feb 20, 2015 &middot; 6 minute read &middot; <a href="http://leonjza.github.io/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="http://leonjza.github.io/categories/ios">ios</a><a class="label" href="http://leonjza.github.io/categories/jailbreak">jailbreak</a><a class="label" href="http://leonjza.github.io/categories/hex">hex</a><a class="label" href="http://leonjza.github.io/categories/bypass">bypass</a>
+    </span>
+    
+
+<h2 id="introduction:13a45ed3377ed5d26650846aced5e9e5">introduction</h2>
+
+<p>Not too long ago, I toyed with a <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/">Android root detection bypass</a>. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I <em>actually</em> wanted to do impossible as I&rsquo;d very much like to dig under the hood :)</p>
+
+<p>{% img right <a href="https://i.imgur.com/hWgQMnl.png">https://i.imgur.com/hWgQMnl.png</a> %}</p>
+
+<p>So, its was time to try and bypass the jailbreak detection of the application.
+All I had to work with was a <code>.ipa</code>. Similar to the android <code>.apk</code> file, the <code>.ipa</code> is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications <code>.ipa</code> archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.</p>
+
+<h2 id="understanding-the-behavior:13a45ed3377ed5d26650846aced5e9e5">understanding the behavior</h2>
+
+<p>I installed the app onto my iPad, and started to inspect its behavior. When the application starts, it would immediately throw a security related error, notifying the user that it has detected the environment as one that is jailbroken. This happens pretty fast too. Once the jailbreak detection error shows, the application refuses to continue to run. Restarting the application simply continues this loop.</p>
+
+<p>I studied some iOS jailbreak detection methods online which revealed many of them as being pretty obvious. From detecting the presence of <code>/bin/bash</code> or <code>Cydia.app</code>, to examining the exit status if <code>fork()</code>. There are some more advanced methods as well such as checking the existence of certain known <a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/DynamicLibraryUsageGuidelines.html">dylib</a>&rsquo;s too (which apparently is the hardest to circumvent). For the purpose of this post, the jailbreak detection was pretty weak and did not have any of the more advanced methods implemented. In fact, I am pretty sure there won’t be that many apps out there that will be this easy to bypass.</p>
+
+<h2 id="discovering-the-implementation:13a45ed3377ed5d26650846aced5e9e5">discovering the implementation</h2>
+
+<p>Armed with some knowledge of how its typically done in the iOS world, I proceeded to take a look at the actual application binary:</p>
+
+<pre><code class="language-bash">leonjza@laptop » file myApplication
+myApplication: Mach-O executable arm
+</code></pre>
+
+<p>Compiled as a <em>Mach-O executable</em> from Objective-C, I loaded up the binary from the extracted <code>.ipa</code> into the Hopper disassembler to help me get an idea of what is happening. Hopper has some nice features such as generating pseudo code etc, so I quite like using it for these types of excursions. To start off, I searched around for strings that were related to the word <strong>jailbreak</strong> within the app. Class definitions, methods or any strings related to the term jailbreak was ok. I just wanted to get something to start off with. I found nothing.</p>
+
+<p>Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term <code>/bin/bash</code> in the <em>string</em> section:</p>
+
+<p>{% img <a href="https://i.imgur.com/ORnAMFU.png">https://i.imgur.com/ORnAMFU.png</a> %}</p>
+
+<p>In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. <em>-[MobileDisplay isRetinaDisplay]:</em>. Very sneaky :) So we are working with the <code>isRetinaDisplay</code> method which is the one doing the jailbreak detection:</p>
+
+<p>{% img <a href="https://i.imgur.com/1xhyzIB.png">https://i.imgur.com/1xhyzIB.png</a> %}</p>
+
+<p>As can be seen in the above screenshot, the <code>fileExistsAtPath</code> for <code>/Applications/Cydia.app</code> is hardly something I would have expected in a <code>isRetinaDisplay</code> implementation :P</p>
+
+<h2 id="planning-an-attack:13a45ed3377ed5d26650846aced5e9e5">planning an attack</h2>
+
+<p>At this stage, I was fairly certain that I had found the code I was looking for. From the method name <em>isRetinaDisplay</em>, I reasoned a little and guessed that this was actually supposed to say <code>isJailBroken</code>. I want this method to return false. My mind went straight to getting <a href="http://www.cycript.org/">cycript</a> ready for some <a href="http://iphonedevwiki.net/index.php/Cycript_Tricks">method swizzling</a>. I started to set things up and played around a little, when I realized that I don&rsquo;t think I will be able to manipulate the runtime fast enough for this to work. Remember, the first thing the app does is check the jailbreak status.</p>
+
+<p>A bit of thinking, a few coffees, special alone time with Google and lots of reading, I come to realize that even if I <em>was</em> able to get this method swizzling to work, I&rsquo;d have to do this every time the application starts up. This was not going to work for me. It was time to rethink my strategy.</p>
+
+<p>Considering <em>how</em> the jailbreak detection works, most of the ways that I saw in the application were related to file existence checks. There was also an attempt to write to <code>/private/jailbreak.txt</code>, as well as open a <code>cydia://</code> url. I realized that I could probably just change these strings to things that will inherently fail and cause the method to not return true for any of the checks.</p>
+
+<h2 id="in-1992-we-had-hex-editors-too:13a45ed3377ed5d26650846aced5e9e5">in 1992 we had hex editors too</h2>
+
+<p>I ssh&rsquo;d into my iPad and located the applications installed directory. Once I had found this, I <code>scp</code>&rsquo;d the compiled binary to my kali linux install, and opened it in a hex editor. I realized later I could have probably just used the binary I already had locally :P</p>
+
+<p>Referencing the disassembly of <code>isRetinaDisplay</code>, I searched for the strings it used using a Hex editor. Each string I would replace a few characters with <code>0</code> ensuring that I keep the original string length intact. For eg: <code>/bin/bash</code> was replaced with <code>/bin/ba00</code>.</p>
+
+<p>I ended up editing the following strings using the hex editor:</p>
+
+<ul>
+<li>/Applications/Cydia.app -&gt; /Applications/Cyd00.app</li>
+<li>/Library/MobileSubstrate/MobileSubstrate.dylib -&gt; /Library/MobileSubstrate/MobileSubstra00.dylib</li>
+<li>/bin/bash -&gt; /bin/ba00</li>
+<li>/usr/sbin/sshd -&gt; /usr/sbin/ss00</li>
+<li>/etc/apt -&gt; /etc/a00</li>
+<li>/private/jailbreak.txt -&gt; /0000000/0000000000000</li>
+<li>cydia://package/com.example.package -&gt; cyd00://package/com.example.package</li>
+</ul>
+
+<p>{% img <a href="https://i.imgur.com/J0sefoY.png">https://i.imgur.com/J0sefoY.png</a> %}</p>
+
+<p>I saved the modifications that I had done, and <code>scp</code>&rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P</p>
+
+<h2 id="summary:13a45ed3377ed5d26650846aced5e9e5">summary</h2>
+
+<p>In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="http://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
