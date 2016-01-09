@@ -6,8 +6,7 @@ categories:
 - Zacon
 comments: true
 date: 2013-11-18T00:00:00Z
-title: /root/flag.txt - Solving the Relativity Vulnerable VM
-url: /2013/11/18/slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/
+title: /root/flag.txt Solving the Relativity Vulnerable VM
 ---
 
 ## foreword

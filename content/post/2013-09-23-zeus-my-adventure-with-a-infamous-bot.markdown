@@ -6,7 +6,7 @@ categories:
 comments: true
 date: 2013-09-23T00:00:00Z
 published: true
-title: Zeus - My Adventure with a Infamous Bot
+title: Zeus My Adventure with a Infamous Bot
 ---
 
 **NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET**

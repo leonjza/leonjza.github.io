@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2015-02-21T15:55:03Z
-title: beating sokar - the vulnhub turns 0b10 challenge
+title: beating sokar the vulnhub turns 0b10 challenge
 ---
 
 ## introduction

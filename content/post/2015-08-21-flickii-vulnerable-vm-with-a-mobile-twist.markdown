@@ -6,7 +6,7 @@ categories:
 - challenge
 comments: true
 date: 2015-08-21T06:36:19Z
-title: flick II - vuln vm with a mobile twist
+title: flick II vuln vm with a mobile twist
 ---
 
 {{< figure src="/images/flickII_logo.png" >}}

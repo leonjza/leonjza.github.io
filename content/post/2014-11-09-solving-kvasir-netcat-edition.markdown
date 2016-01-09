@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-11-09T10:27:09Z
-title: solving kvasir - netcat edition
+title: solving kvasir netcat edition
 ---
 
 ## introduction

@@ -6,7 +6,7 @@ categories:
 - challenge
 comments: true
 date: 2014-08-07T12:17:53Z
-title: flick - can you find the flag?
+title: flick can you find the flag?
 ---
 
 {{< figure src="/images/flick_logo.png" >}}

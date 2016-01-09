@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-10-10T17:32:35Z
-title: another troll tamed - solving troll 2
+title: another troll tamed solving troll 2
 ---
 
 ## foreword

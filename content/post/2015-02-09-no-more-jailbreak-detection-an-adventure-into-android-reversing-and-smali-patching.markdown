@@ -9,7 +9,7 @@ categories:
 - smali
 comments: true
 date: 2015-02-09T19:10:23Z
-title: no more jailbreak detection - an adventure into Android app reversing and smali
+title: no more jailbreak detection an adventure into Android app reversing and smali
   patching
 ---
 

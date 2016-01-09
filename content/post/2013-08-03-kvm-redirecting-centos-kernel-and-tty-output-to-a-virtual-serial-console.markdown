@@ -7,7 +7,7 @@ categories:
 comments: true
 date: 2013-08-03T00:00:00Z
 published: true
-title: KVM - Redirecting CentOS Kernel and tty output to a virtual serial console
+title: KVM Redirecting CentOS Kernel and tty output to a virtual serial console
 ---
 
 ### Console all the things!
