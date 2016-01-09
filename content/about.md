@@ -1,11 +1,10 @@
 +++
 categories = []
 date = "2016-01-08T19:03:56+02:00"
-description = ""
+description = "About Me"
 keywords = []
 title = "About"
 menu = "main"
-
 +++
 
 ### Get hold of me via these methods:
