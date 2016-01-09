@@ -1,6 +1,6 @@
 # leonjza.github.io
 
-A checkbox Uncheckers' Notepad
+A checkbox Uncheckers' Notepad  
 Setup on a new computer with:
 
 ```bash
