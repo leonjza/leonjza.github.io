@@ -3,7 +3,7 @@ categories = []
 date = "2016-01-08T19:03:56+02:00"
 description = "About Me"
 keywords = []
-title = "About"
+title = "About Me"
 menu = "main"
 +++
 
