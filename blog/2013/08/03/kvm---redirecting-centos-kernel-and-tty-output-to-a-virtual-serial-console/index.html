@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>KVM - Redirecting CentOS Kernel and tty output to a virtual serial console &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>KVM - Redirecting CentOS Kernel and tty output to a virtual serial console</h1>
+    <span class="post-date">Aug 3, 2013 &middot; 3 minute read &middot; <a href="https://leonjza.github.io/blog/2013/08/03/kvm---redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/linux">linux</a><a class="label" href="https://leonjza.github.io/categories/kvm">kvm</a><a class="label" href="https://leonjza.github.io/categories/centos">centos</a><a class="label" href="https://leonjza.github.io/categories/how-to">how to</a>
+    </span>
+    
+
+<h3 id="console-all-the-things:a1f29655d26175227393d389d0601eca">Console all the things!</h3>
+
+<p>First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.</p>
+
+<h3 id="example-virsh-console-access:a1f29655d26175227393d389d0601eca">Example virsh console access</h3>
+
+<p>Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:</p>
+
+<pre><code class="language-bash"># a primitive virsh console access example
+$ virsh --connect qemu:///system
+Welcome to virsh, the virtualization interactive terminal.
+
+Type:  'help' for help with commands
+       'quit' to quit
+
+ Id    Name                           State
+----------------------------------------------------
+ 6     console-test                   running
+
+virsh # console console-test
+Connected to domain console-test
+Escape character is ^]
+
+CentOS release 6.4 (Final)
+Kernel 2.6.32-358.el6.x86_64 on an x86_64
+
+localhost.localdomain login: root
+Password:
+Last login: Sat Aug  3 08:31:13 on ttyS0
+[root@localhost ~]$
+</code></pre>
+
+<p>You can escape the console by pressing <code>^]</code>, which will drop you back into the virsh shell.</p>
+
+<pre><code class="language-bash"># virsh guest console escape
+[root@localhost ~]$ echo &quot;testing123&quot;
+testing123
+[root@localhost ~]$                       # I pressed ^] here
+virsh #
+</code></pre>
+
+<h3 id="ok-gimme-ze-commands-already:a1f29655d26175227393d389d0601eca">Ok, gimme ze commands already&hellip;</h3>
+
+<p>This I have tested on CentOS 6.4. The 2 commands to get it setup would be:</p>
+
+<pre><code class="language-bash"># Enabling KVM Console access
+$ cat &gt; /etc/init/ttyS0.conf &lt;&lt; EOL
+# ttyS0 - agetty
+#
+# This service maintains a agetty on ttyS0.
+
+stop on runlevel [S016]
+start on runlevel [23]
+
+respawn
+exec agetty -h -L -w /dev/ttyS0 115200 vt102
+EOL
+$ grubby --update-kernel=ALL --args='console=ttyS0,115200n8 console=tty0'
+</code></pre>
+
+<p>Now, you can reboot the server and connect to the domains console via virsh. If all went well, you <em>should</em> be seeing kernel messages and eventually service starts up&rsquo;s, followed by a login prompt in the console.</p>
+
+<p>If rebooting is not a option, you can enable it on the fly, after saving <code>ttyS0.conf</code> with <code>$ initctl start ttyS0</code> as root.</p>
+
+<p>The <code>grubby</code> command is not mandatory, however this is what allows you to see the kernel messages as the guest boots. I <strong>highly</strong> recommend it.</p>
+
+<h3 id="i-have-console-but-can-t-log-in-as-root:a1f29655d26175227393d389d0601eca">I have console, but can&rsquo;t log in as root</h3>
+
+<p>If you followed this guide, then that would in fact be the case. Logging in directly as root is not something I would recommend. Rather log in as a unprivileged user, and su/sudo up to root. In some cases however it is actually necessary. So, to fix this problem, simply add <code>ttyS0</code> as a &ldquo;securetty&rdquo; in <code>/etc/securetty</code> by running: <code>$ echo &quot;ttyS0&quot; &gt;&gt; /etc/securetty</code>. This will allow root logins via the virsh console.</p>
+
+<h3 id="serial-conf-has-the-answers:a1f29655d26175227393d389d0601eca">serial.conf has the answers</h3>
+
+<p>If you are looking for more in-depth explanations as to how this works, I suggest you take a look at <code>/etc/init/serial.conf</code> (again on CentOS 6.4). You&rsquo;ll notice the configuration for <code>ttyS0.conf</code> also comes from here :)</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

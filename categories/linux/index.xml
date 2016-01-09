@@ -11,10 +11,10 @@
     
     <item>
       <title>KVM - Redirecting CentOS Kernel and tty output to a virtual serial console</title>
-      <link>https://leonjza.github.io/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</link>
+      <link>https://leonjza.github.io/blog/2013/08/03/kvm---redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</link>
       <pubDate>Sat, 03 Aug 2013 00:00:00 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</guid>
+      <guid>https://leonjza.github.io/blog/2013/08/03/kvm---redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</guid>
       <description>
 
 &lt;h3 id=&#34;console-all-the-things:a1f29655d26175227393d389d0601eca&#34;&gt;Console all the things!&lt;/h3&gt;
@@ -25,36 +25,36 @@
 
 &lt;p&gt;Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:&lt;/p&gt;
 
-&lt;p&gt;```bash a primitive virsh console access example
-$ virsh &amp;ndash;connect qemu:///system
-Welcome to virsh, the virtualization interactive terminal.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# a primitive virsh console access example
+$ virsh --connect qemu:///system
+Welcome to virsh, the virtualization interactive terminal.
 
-&lt;p&gt;Type:  &amp;lsquo;help&amp;rsquo; for help with commands
-       &amp;lsquo;quit&amp;rsquo; to quit&lt;/p&gt;
+Type:  &#39;help&#39; for help with commands
+       &#39;quit&#39; to quit
 
-&lt;h2 id=&#34;id-name-state:a1f29655d26175227393d389d0601eca&#34;&gt;Id    Name                           State&lt;/h2&gt;
+ Id    Name                           State
+----------------------------------------------------
+ 6     console-test                   running
 
-&lt;p&gt;6     console-test                   running&lt;/p&gt;
-
-&lt;p&gt;virsh # console console-test
+virsh # console console-test
 Connected to domain console-test
-Escape character is ^]&lt;/p&gt;
+Escape character is ^]
 
-&lt;p&gt;CentOS release 6.4 (Final)
-Kernel 2.6.32-358.el6.x86_64 on an x86_64&lt;/p&gt;
+CentOS release 6.4 (Final)
+Kernel 2.6.32-358.el6.x86_64 on an x86_64
 
-&lt;p&gt;localhost.localdomain login: root
+localhost.localdomain login: root
 Password:
 Last login: Sat Aug  3 08:31:13 on ttyS0
-[root@localhost ~]$&lt;/p&gt;
+[root@localhost ~]$
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-You can escape the console by pressing `^]`, which will drop you back into the virsh shell.
+&lt;p&gt;You can escape the console by pressing &lt;code&gt;^]&lt;/code&gt;, which will drop you back into the virsh shell.&lt;/p&gt;
 
-```bash virsh guest console escape
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# virsh guest console escape
 [root@localhost ~]$ echo &amp;quot;testing123&amp;quot;
 testing123
-[root@localhost ~]$                       # I pressed ^] here  
+[root@localhost ~]$                       # I pressed ^] here
 virsh #
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -62,23 +62,20 @@ virsh #
 
 &lt;p&gt;This I have tested on CentOS 6.4. The 2 commands to get it setup would be:&lt;/p&gt;
 
-&lt;p&gt;```bash Enabling KVM Console access
-$ cat &amp;gt; /etc/init/ttyS0.conf &amp;lt;&amp;lt; EOL&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Enabling KVM Console access
+$ cat &amp;gt; /etc/init/ttyS0.conf &amp;lt;&amp;lt; EOL
+# ttyS0 - agetty
+#
+# This service maintains a agetty on ttyS0.
 
-&lt;h1 id=&#34;ttys0-agetty:a1f29655d26175227393d389d0601eca&#34;&gt;ttyS0 - agetty&lt;/h1&gt;
+stop on runlevel [S016]
+start on runlevel [23]
 
-&lt;p&gt;#&lt;/p&gt;
-
-&lt;h1 id=&#34;this-service-maintains-a-agetty-on-ttys0:a1f29655d26175227393d389d0601eca&#34;&gt;This service maintains a agetty on ttyS0.&lt;/h1&gt;
-
-&lt;p&gt;stop on runlevel [S016]
-start on runlevel [23]&lt;/p&gt;
-
-&lt;p&gt;respawn
+respawn
 exec agetty -h -L -w /dev/ttyS0 115200 vt102
 EOL
-$ grubby &amp;ndash;update-kernel=ALL &amp;ndash;args=&amp;lsquo;console=ttyS0,115200n8 console=tty0&amp;rsquo;
-```&lt;/p&gt;
+$ grubby --update-kernel=ALL --args=&#39;console=ttyS0,115200n8 console=tty0&#39;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now, you can reboot the server and connect to the domains console via virsh. If all went well, you &lt;em&gt;should&lt;/em&gt; be seeing kernel messages and eventually service starts up&amp;rsquo;s, followed by a login prompt in the console.&lt;/p&gt;
 

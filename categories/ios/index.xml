@@ -11,17 +11,24 @@
     
     <item>
       <title>a trivial iOS jailbreak detection bypass</title>
-      <link>https://leonjza.github.io/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</link>
+      <link>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</link>
       <pubDate>Fri, 20 Feb 2015 21:09:21 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
+      <guid>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
       <description>
 
 &lt;h2 id=&#34;introduction:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Not too long ago, I toyed with a &lt;a href=&#34;https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/&#34;&gt;Android root detection bypass&lt;/a&gt;. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I &lt;em&gt;actually&lt;/em&gt; wanted to do impossible as I&amp;rsquo;d very much like to dig under the hood :)&lt;/p&gt;
 
-&lt;p&gt;{% img right &lt;a href=&#34;https://i.imgur.com/hWgQMnl.png&#34;&gt;https://i.imgur.com/hWgQMnl.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
@@ -44,11 +51,25 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term &lt;code&gt;/bin/bash&lt;/code&gt; in the &lt;em&gt;string&lt;/em&gt; section:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/ORnAMFU.png&#34;&gt;https://i.imgur.com/ORnAMFU.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. &lt;em&gt;-[MobileDisplay isRetinaDisplay]:&lt;/em&gt;. Very sneaky :) So we are working with the &lt;code&gt;isRetinaDisplay&lt;/code&gt; method which is the one doing the jailbreak detection:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/1xhyzIB.png&#34;&gt;https://i.imgur.com/1xhyzIB.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;As can be seen in the above screenshot, the &lt;code&gt;fileExistsAtPath&lt;/code&gt; for &lt;code&gt;/Applications/Cydia.app&lt;/code&gt; is hardly something I would have expected in a &lt;code&gt;isRetinaDisplay&lt;/code&gt; implementation :P&lt;/p&gt;
 
@@ -78,7 +99,14 @@ myApplication: Mach-O executable arm
 &lt;li&gt;cydia://package/com.example.package -&amp;gt; cyd00://package/com.example.package&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/J0sefoY.png&#34;&gt;https://i.imgur.com/J0sefoY.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hex_editor.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;I saved the modifications that I had done, and &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P&lt;/p&gt;
 

@@ -11,45 +11,46 @@
     
     <item>
       <title>Kali Linux Oracle Support</title>
-      <link>https://leonjza.github.io/2014/08/17/kali-linux-oracle-support/</link>
+      <link>https://leonjza.github.io/blog/2014/08/17/kali-linux-oracle-support/</link>
       <pubDate>Sun, 17 Aug 2014 15:46:49 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2014/08/17/kali-linux-oracle-support/</guid>
+      <guid>https://leonjza.github.io/blog/2014/08/17/kali-linux-oracle-support/</guid>
       <description>
 
 &lt;p&gt;&lt;strong&gt;EDIT&lt;/strong&gt; This guide has been updated to accomodate a few changes (see &lt;a href=&#34;https://github.com/rapid7/metasploit-framework/issues/5422&#34;&gt;here&lt;/a&gt;)&lt;/p&gt;
 
 &lt;p&gt;Recently I have had to get Oracle support sorted in my Kali Linux install. I will try not to rant about the reasons why it doesn&amp;rsquo;t just work out of the box and just get the steps written down quickly. Typically, when you try to use a module such as &lt;code&gt;oracle_login&lt;/code&gt;, metasploit may error out with:&lt;/p&gt;
 
-&lt;p&gt;```bash Metasploit Oracle Error
-msf auxiliary(oracle_login) &amp;gt; run&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;msf auxiliary(oracle_login) &amp;gt; run
 
-&lt;p&gt;[-] Failed to load the OCI library: cannot load such file &amp;ndash; oci8
-[-] See &lt;a href=&#34;http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage&#34;&gt;http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage&lt;/a&gt; for installation instructions
+[-] Failed to load the OCI library: cannot load such file -- oci8
+[-] See http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage for installation instructions
 [*] Auxiliary module execution completed
-msf auxiliary(oracle_login) &amp;gt; run&lt;/p&gt;
+msf auxiliary(oracle_login) &amp;gt; run
 
-&lt;pre&gt;&lt;code&gt;
-The link provided seems a little out of date, so here is an updated guide.
+&lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;The link provided seems a little out of date, so here is an updated guide.&lt;/p&gt;
 
+&lt;h2 id=&#34;getting-started:3c033c270d2469b645034951f41b8df2&#34;&gt;getting started&lt;/h2&gt;
 
-##getting started
-First, if you dont have an account at oracle.com, you will _unfortunately_ need one here. If you don&#39;t want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.
+&lt;p&gt;First, if you dont have an account at oracle.com, you will &lt;em&gt;unfortunately&lt;/em&gt; need one here. If you don&amp;rsquo;t want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.&lt;/p&gt;
 
-##sorting oracle first
-Anyways. Create yourself a directory `/opt/oracle` and `cd` there. In a browser, navigate to the [instant client downloads](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html) url and choose your architecture. If you hate 32bit Kali, choose [Linux x86](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html), and 64bit Kali choose [Linux x86-64](http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html).
+&lt;h2 id=&#34;sorting-oracle-first:3c033c270d2469b645034951f41b8df2&#34;&gt;sorting oracle first&lt;/h2&gt;
 
-Next, download the following packages and save them to `/opt/oracle`:
+&lt;p&gt;Anyways. Create yourself a directory &lt;code&gt;/opt/oracle&lt;/code&gt; and &lt;code&gt;cd&lt;/code&gt; there. In a browser, navigate to the &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;instant client downloads&lt;/a&gt; url and choose your architecture. If you hate 32bit Kali, choose &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;Linux x86&lt;/a&gt;, and 64bit Kali choose &lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Linux x86-64&lt;/a&gt;.&lt;/p&gt;
 
-- instantclient-basic-linux-12.1.0.1.0.zip
-- instantclient-sqlplus-linux-12.1.0.1.0.zip
-- instantclient-sdk-linux-12.1.0.1.0.zip
+&lt;p&gt;Next, download the following packages and save them to &lt;code&gt;/opt/oracle&lt;/code&gt;:&lt;/p&gt;
 
-With those downloaded, extract the archives with the `unzip` command. This should leave you with a directory `/opt/oracle/instantclient_12_1/`. This is all the files needed to at least get the `sqlplus` client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:
+&lt;ul&gt;
+&lt;li&gt;instantclient-basic-linux-12.1.0.1.0.zip&lt;/li&gt;
+&lt;li&gt;instantclient-sqlplus-linux-12.1.0.1.0.zip&lt;/li&gt;
+&lt;li&gt;instantclient-sdk-linux-12.1.0.1.0.zip&lt;/li&gt;
+&lt;/ul&gt;
 
-```bash so symlink
-root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
+&lt;p&gt;With those downloaded, extract the archives with the &lt;code&gt;unzip&lt;/code&gt; command. This should leave you with a directory &lt;code&gt;/opt/oracle/instantclient_12_1/&lt;/code&gt;. This is all the files needed to at least get the &lt;code&gt;sqlplus&lt;/code&gt; client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
 
 root@kali:/opt/oracle/instantclient_12_1# ls -lh libclntsh.so
 lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&amp;gt; libclntsh.so.12.1
@@ -57,25 +58,23 @@ lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&amp;gt; libclntsh.so.12.1
 
 &lt;p&gt;The last step is to configure the environment so that your shell is&amp;hellip; &lt;em&gt;oracle aware&lt;/em&gt;. We do this by setting a few environment variables. I have chosen to just append the lines to the end of my &lt;code&gt;.bashrc&lt;/code&gt; file&lt;/p&gt;
 
-&lt;p&gt;```bash .bashrc
-root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc
 
-&lt;h1 id=&#34;oracle:3c033c270d2469b645034951f41b8df2&#34;&gt;ORACLE&lt;/h1&gt;
-
-&lt;p&gt;export PATH=$PATH:/opt/oracle/instantclient_12_1
+# ORACLE
+export PATH=$PATH:/opt/oracle/instantclient_12_1
 export SQLPATH=/opt/oracle/instantclient_12_1
 export TNS_ADMIN=/opt/oracle/instantclient_12_1
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
-export ORACLE_HOME=/opt/oracle/instantclient_12_1&lt;/p&gt;
+export ORACLE_HOME=/opt/oracle/instantclient_12_1
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-Done! Log out and back and check that these are present in the output of `env`.
+&lt;p&gt;Done! Log out and back and check that these are present in the output of &lt;code&gt;env&lt;/code&gt;.&lt;/p&gt;
 
-##sorting out metasploit
-The last thing we need to do is setup the metasploit part. For this we need to download [ruby-oci8](https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip). In `/opt/oracle`, download it:
+&lt;h2 id=&#34;sorting-out-metasploit:3c033c270d2469b645034951f41b8df2&#34;&gt;sorting out metasploit&lt;/h2&gt;
 
-```bash download ruby-oci8
-root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
+&lt;p&gt;The last thing we need to do is setup the metasploit part. For this we need to download &lt;a href=&#34;https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip&#34;&gt;ruby-oci8&lt;/a&gt;. In &lt;code&gt;/opt/oracle&lt;/code&gt;, download it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
 [...]
 2014-08-17 16:11:31 (42.8 KB/s) - `ruby-oci8-2.1.7.zip&#39; saved [278270]
 
@@ -92,16 +91,14 @@ root@kali:/opt/oracle#
 
 &lt;p&gt;Next, move to the extracted directory and install the &lt;code&gt;ruby-dev&lt;/code&gt; and &lt;code&gt;libgmp-dev&lt;/code&gt; packages if you have not already done so:&lt;/p&gt;
 
-&lt;p&gt;```bash ruby-dev
-root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/
 
-&lt;p&gt;root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev&lt;/p&gt;
+root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-Next, ensure that the `ruby` interpreter that you will be use is the same as that of Metasploit with
+&lt;p&gt;Next, ensure that the &lt;code&gt;ruby&lt;/code&gt; interpreter that you will be use is the same as that of Metasploit with&lt;/p&gt;
 
-```bash
-export PATH=/opt/metasploit/ruby/bin:$PATH
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;export PATH=/opt/metasploit/ruby/bin:$PATH
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Ensure that you are using the correct version of ruby&lt;/p&gt;
@@ -116,10 +113,10 @@ ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
     
     <item>
       <title>KVM - Redirecting CentOS Kernel and tty output to a virtual serial console</title>
-      <link>https://leonjza.github.io/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</link>
+      <link>https://leonjza.github.io/blog/2013/08/03/kvm---redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</link>
       <pubDate>Sat, 03 Aug 2013 00:00:00 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</guid>
+      <guid>https://leonjza.github.io/blog/2013/08/03/kvm---redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</guid>
       <description>
 
 &lt;h3 id=&#34;console-all-the-things:a1f29655d26175227393d389d0601eca&#34;&gt;Console all the things!&lt;/h3&gt;
@@ -130,36 +127,36 @@ ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
 
 &lt;p&gt;Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:&lt;/p&gt;
 
-&lt;p&gt;```bash a primitive virsh console access example
-$ virsh &amp;ndash;connect qemu:///system
-Welcome to virsh, the virtualization interactive terminal.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# a primitive virsh console access example
+$ virsh --connect qemu:///system
+Welcome to virsh, the virtualization interactive terminal.
 
-&lt;p&gt;Type:  &amp;lsquo;help&amp;rsquo; for help with commands
-       &amp;lsquo;quit&amp;rsquo; to quit&lt;/p&gt;
+Type:  &#39;help&#39; for help with commands
+       &#39;quit&#39; to quit
 
-&lt;h2 id=&#34;id-name-state:a1f29655d26175227393d389d0601eca&#34;&gt;Id    Name                           State&lt;/h2&gt;
+ Id    Name                           State
+----------------------------------------------------
+ 6     console-test                   running
 
-&lt;p&gt;6     console-test                   running&lt;/p&gt;
-
-&lt;p&gt;virsh # console console-test
+virsh # console console-test
 Connected to domain console-test
-Escape character is ^]&lt;/p&gt;
+Escape character is ^]
 
-&lt;p&gt;CentOS release 6.4 (Final)
-Kernel 2.6.32-358.el6.x86_64 on an x86_64&lt;/p&gt;
+CentOS release 6.4 (Final)
+Kernel 2.6.32-358.el6.x86_64 on an x86_64
 
-&lt;p&gt;localhost.localdomain login: root
+localhost.localdomain login: root
 Password:
 Last login: Sat Aug  3 08:31:13 on ttyS0
-[root@localhost ~]$&lt;/p&gt;
+[root@localhost ~]$
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-You can escape the console by pressing `^]`, which will drop you back into the virsh shell.
+&lt;p&gt;You can escape the console by pressing &lt;code&gt;^]&lt;/code&gt;, which will drop you back into the virsh shell.&lt;/p&gt;
 
-```bash virsh guest console escape
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# virsh guest console escape
 [root@localhost ~]$ echo &amp;quot;testing123&amp;quot;
 testing123
-[root@localhost ~]$                       # I pressed ^] here  
+[root@localhost ~]$                       # I pressed ^] here
 virsh #
 &lt;/code&gt;&lt;/pre&gt;
 
@@ -167,23 +164,20 @@ virsh #
 
 &lt;p&gt;This I have tested on CentOS 6.4. The 2 commands to get it setup would be:&lt;/p&gt;
 
-&lt;p&gt;```bash Enabling KVM Console access
-$ cat &amp;gt; /etc/init/ttyS0.conf &amp;lt;&amp;lt; EOL&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Enabling KVM Console access
+$ cat &amp;gt; /etc/init/ttyS0.conf &amp;lt;&amp;lt; EOL
+# ttyS0 - agetty
+#
+# This service maintains a agetty on ttyS0.
 
-&lt;h1 id=&#34;ttys0-agetty:a1f29655d26175227393d389d0601eca&#34;&gt;ttyS0 - agetty&lt;/h1&gt;
+stop on runlevel [S016]
+start on runlevel [23]
 
-&lt;p&gt;#&lt;/p&gt;
-
-&lt;h1 id=&#34;this-service-maintains-a-agetty-on-ttys0:a1f29655d26175227393d389d0601eca&#34;&gt;This service maintains a agetty on ttyS0.&lt;/h1&gt;
-
-&lt;p&gt;stop on runlevel [S016]
-start on runlevel [23]&lt;/p&gt;
-
-&lt;p&gt;respawn
+respawn
 exec agetty -h -L -w /dev/ttyS0 115200 vt102
 EOL
-$ grubby &amp;ndash;update-kernel=ALL &amp;ndash;args=&amp;lsquo;console=ttyS0,115200n8 console=tty0&amp;rsquo;
-```&lt;/p&gt;
+$ grubby --update-kernel=ALL --args=&#39;console=ttyS0,115200n8 console=tty0&#39;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Now, you can reboot the server and connect to the domains console via virsh. If all went well, you &lt;em&gt;should&lt;/em&gt; be seeing kernel messages and eventually service starts up&amp;rsquo;s, followed by a login prompt in the console.&lt;/p&gt;
 

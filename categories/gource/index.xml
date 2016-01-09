@@ -11,10 +11,10 @@
     
     <item>
       <title>&#39;stuff&#39; to Gource.</title>
-      <link>https://leonjza.github.io/2013/07/27/stuff-to-gource/</link>
+      <link>https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./</link>
       <pubDate>Sat, 27 Jul 2013 00:00:00 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2013/07/27/stuff-to-gource/</guid>
+      <guid>https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./</guid>
       <description>
 
 &lt;h3 id=&#34;stuff-to-what:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Stuff to what&amp;hellip;?&lt;/h3&gt;
@@ -23,7 +23,14 @@
 
 &lt;p&gt;*Be warned though, watching the output is highly addictive and strangely entertaining, so if you value your productivity, &lt;strong&gt;don&amp;rsquo;t&lt;/strong&gt; continue reading this post.*&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;http://i.imgur.com/gFkD3z5.png&#34;&gt;http://i.imgur.com/gFkD3z5.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/gourcelogo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;In short, Gource will take your repos commit logs from Git, Mecurial, SVN or even CVS (with some work) and splash out a graphical representation of the commits, by committer, across time. It also has a number of tweaks that allows you to change some visuals, focus on specific comitters and add titles etc.&lt;/p&gt;
 
@@ -37,29 +44,26 @@
 
 &lt;p&gt;According to the &lt;a href=&#34;https://code.google.com/p/gource/wiki/CustomLogFormat&#34;&gt;wiki documentation&lt;/a&gt;, the format for a custom log entry needs to be pipe delimited and have the following format:&lt;/p&gt;
 
-&lt;p&gt;```bash Gource sample custom log &lt;a href=&#34;https://code.google.com/p/gource/wiki/CustomLogFormat&#34;&gt;https://code.google.com/p/gource/wiki/CustomLogFormat&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Gource sample custom log https://code.google.com/p/gource/wiki/CustomLogFormat
+# minimum custom log format
+1275543595|andrew|A|src/main.cpp
+# optionally, we can set a color value
+1275543595|andrew|A|src/main.cpp|FF0000
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;minimum-custom-log-format:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;minimum custom log format&lt;/h1&gt;
+&lt;p&gt;So this is, nice. Gource &lt;em&gt;also&lt;/em&gt; accepts input from stdin, via &lt;code&gt;-&lt;/code&gt; as input obviously. To sum this up. Any, correctly formatted, pipe delimited input can be accepted as a &amp;lsquo;log&amp;rsquo; entry, that Gource should understand. Lets try it out.&lt;/p&gt;
 
-&lt;p&gt;1275543595|andrew|A|src/main.cpp&lt;/p&gt;
+&lt;h3 id=&#34;introducing-py2gource-py:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Introducing py2gource.py&lt;/h3&gt;
 
-&lt;h1 id=&#34;optionally-we-can-set-a-color-value:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;optionally, we can set a color value&lt;/h1&gt;
+&lt;p&gt;My initial thought on this was that 90% if the custom log formats could be generated on the shell. Rightfully so. With tools like &lt;strong&gt;awk&lt;/strong&gt; and &lt;strong&gt;sed&lt;/strong&gt;, you can do some pretty neat stuff. However, as powerful as they may be, the approach of writing some middleware that would do all of the parsing and log generation &lt;em&gt;for&lt;/em&gt; me, seemed like a better idea. And so, &lt;code&gt;py2gource.py&lt;/code&gt; was born. Another terribly coded piece of python to do things I am too lazy to do in any other way.&lt;/p&gt;
 
-&lt;p&gt;1275543595|andrew|A|src/main.cpp|FF0000&lt;/p&gt;
+&lt;p&gt;So far based on what has been coded, the basic idea to use this middleware in a very simple form is: &lt;code&gt;cat something | python py2gource.py | gource&lt;/code&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;
-So this is, nice. Gource *also* accepts input from stdin, via `-` as input obviously. To sum this up. Any, correctly formatted, pipe delimited input can be accepted as a &#39;log&#39; entry, that Gource should understand. Lets try it out.
+&lt;h3 id=&#34;gource-for-nmap:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Gource for&amp;hellip; Nmap?&lt;/h3&gt;
 
-### Introducing py2gource.py
-My initial thought on this was that 90% if the custom log formats could be generated on the shell. Rightfully so. With tools like **awk** and **sed**, you can do some pretty neat stuff. However, as powerful as they may be, the approach of writing some middleware that would do all of the parsing and log generation *for* me, seemed like a better idea. And so, `py2gource.py` was born. Another terribly coded piece of python to do things I am too lazy to do in any other way.
+&lt;p&gt;But, we don&amp;rsquo;t have to &lt;code&gt;cat&lt;/code&gt; something for output, right. Just do &lt;code&gt;nmap 127.0.0.1 -v | python py2gource.py | gource&lt;/code&gt;. &lt;code&gt;py2gource.py&lt;/code&gt; will happily read &lt;em&gt;stdin&lt;/em&gt; and parse the output for input formats it understands, specified by &lt;code&gt;-t&lt;/code&gt; as needed. For example:&lt;/p&gt;
 
-So far based on what has been coded, the basic idea to use this middleware in a very simple form is: `cat something | python py2gource.py | gource`
-
-### Gource for... Nmap?
-But, we don&#39;t have to `cat` something for output, right. Just do `nmap 127.0.0.1 -v | python py2gource.py | gource`. `py2gource.py` will happily read *stdin* and parse the output for input formats it understands, specified by `-t` as needed. For example:
-
-```bash Parsed Nmap Output
-# Nmap output before its parsed by py2gource.py
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Nmap output before its parsed by py2gource.py
 $ nmap 127.0.0.1 -v
 
 Starting Nmap 6.25 ( http://nmap.org ) at 2013-07-25 19:58 SAST
@@ -87,32 +91,48 @@ $ nmap 127.0.0.1 -v | python py2gource.py -t nmap
 
 &lt;p&gt;From the above example we can see that the verbose Nmap output has been parsed to be complaint to the custom log format as per the Gource wiki. So, lets pipe this to gource:&lt;/p&gt;
 
-&lt;p&gt;```bash Nmap to gource
-$ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource &amp;ndash;realtime &amp;ndash;log-format custom - -1440x900 &amp;ndash;bloom-intensity 0.3 -e 0.2 -i 120 &amp;ndash;title &amp;ldquo;Nmap of 192.168.137.0/24&amp;rdquo;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Nmap to gource
+$ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 -e 0.2 -i 120 --title &amp;quot;Nmap of 192.168.137.0/24&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-You should now have a Gource window pop up, with your Nmap results being displayed in a similar fashion as you saw in the Minecraft example. The above command completes the 3 parts required to get output to Gource using the middleware. Granted in the Nmap case, the parser will just not output anything if the IP or IP range that you are scanning has no open ports, or, you forgot to specify the `-v` argument. *This requirement may change later*. 
+&lt;p&gt;You should now have a Gource window pop up, with your Nmap results being displayed in a similar fashion as you saw in the Minecraft example. The above command completes the 3 parts required to get output to Gource using the middleware. Granted in the Nmap case, the parser will just not output anything if the IP or IP range that you are scanning has no open ports, or, you forgot to specify the &lt;code&gt;-v&lt;/code&gt; argument. &lt;em&gt;This requirement may change later&lt;/em&gt;.&lt;/p&gt;
 
-Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!
+&lt;p&gt;Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!&lt;/p&gt;
 
-### Visualising a Network Telescope
-Where I am currently employed, I am fortunate enough to have access to the data our blackhole provides to us. The setup is pretty simple. There are 13, random /24&#39;s (IPV6 coming soon™), sink holed to a box running the [Argus](http://qosient.com/argus/) server software. Argus provides a set of client tools that you can use to connect to the server and &#39;see&#39; what is happening, live.
+&lt;h3 id=&#34;visualising-a-network-telescope:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Visualising a Network Telescope&lt;/h3&gt;
 
-This was a golden opportunity to add a parser that would parse the output this client receives into Gource. The result? See for yourself:
+&lt;p&gt;Where I am currently employed, I am fortunate enough to have access to the data our blackhole provides to us. The setup is pretty simple. There are 13, random /24&amp;rsquo;s (IPV6 coming soon™), sink holed to a box running the &lt;a href=&#34;http://qosient.com/argus/&#34;&gt;Argus&lt;/a&gt; server software. Argus provides a set of client tools that you can use to connect to the server and &amp;lsquo;see&amp;rsquo; what is happening, live.&lt;/p&gt;
 
-{% img http://i.imgur.com/eDc3EPlh.png %}
+&lt;p&gt;This was a golden opportunity to add a parser that would parse the output this client receives into Gource. The result? See for yourself:&lt;/p&gt;
 
-Moments later, even more activity... :)
 
-{% img http://i.imgur.com/yPAGoLwh.png %}
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/argus1.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
 
-The parser will take the Argus client output and split the results of the IPv4 destination address by octet. Each octet will form part of the tree structure. Each bubble represents a port that was touched. Finally, each full destination IP address will get its own *unique* colour, so it will be easy to see when a specific IP has been scanned across multiple ports. Each *user* is a source IP address. Remember, this is IP space that is used for nothing other than seeing what is happening on it. So things like people scanning your Darknet for open SSH ports will make your Gource go mad, in a good way ofc.
 
-The above screenshots were taken by specifying the `--hide dirnames` arguments, as we obviously want to try and keep the IP space of the blackhole classified.
+&lt;p&gt;Moments later, even more activity&amp;hellip; :)&lt;/p&gt;
 
-### Ok, how did you do THAT
-```bash Visualising the Argus Darknet with Gource
-$ ~/Downloads/argus-clients-3.0.6.2/bin/ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title &amp;quot;Live Darknet Port Activity&amp;quot; -i 30 -f
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/argus2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The parser will take the Argus client output and split the results of the IPv4 destination address by octet. Each octet will form part of the tree structure. Each bubble represents a port that was touched. Finally, each full destination IP address will get its own &lt;em&gt;unique&lt;/em&gt; colour, so it will be easy to see when a specific IP has been scanned across multiple ports. Each &lt;em&gt;user&lt;/em&gt; is a source IP address. Remember, this is IP space that is used for nothing other than seeing what is happening on it. So things like people scanning your Darknet for open SSH ports will make your Gource go mad, in a good way ofc.&lt;/p&gt;
+
+&lt;p&gt;The above screenshots were taken by specifying the &lt;code&gt;--hide dirnames&lt;/code&gt; arguments, as we obviously want to try and keep the IP space of the blackhole classified.&lt;/p&gt;
+
+&lt;h3 id=&#34;ok-how-did-you-do-that:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Ok, how did you do THAT&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Visualising the Argus Darknet with Gource
+$ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title &amp;quot;Live Darknet Port Activity&amp;quot; -i 30 -f
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;I am going to assume you have the Argus server setup complete, and you are able to connect using the &lt;code&gt;ra&lt;/code&gt; client. For more information on setting it up, refer to the Argus wiki &lt;a href=&#34;http://nsmwiki.org/index.php?title=Argus&#34;&gt;here&lt;/a&gt;. Which ever machine your using to run Gource on, obviously needs to be able to connect as well.&lt;/p&gt;
@@ -123,7 +143,7 @@ $ ~/Downloads/argus-clients-3.0.6.2/bin/ra -S [argus_server]:[argus_port] -n | t
 
 &lt;h3 id=&#34;get-the-code-setup-your-own:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Get the code, setup your own.&lt;/h3&gt;
 
-&lt;p&gt;The parser&amp;rsquo;s code is hosted on Github &lt;a href=&#34;https://github.com/th3l33k/py2gource&#34;&gt;here&lt;/a&gt;. Grab the code with &lt;code&gt;git clone https://github.com/th3l33k/py2gource.git&lt;/code&gt;. Parsers live in &lt;code&gt;lib/Parsers&lt;/code&gt; if you are interested in parsing some other interesting information you may have.&lt;/p&gt;
+&lt;p&gt;The parser&amp;rsquo;s code is hosted on Github &lt;a href=&#34;https://github.com/leonjza/py2gource&#34;&gt;here&lt;/a&gt;. Grab the code with &lt;code&gt;git clone https://github.com/leonjza/py2gource.git&lt;/code&gt;. Parsers live in &lt;code&gt;lib/Parsers&lt;/code&gt; if you are interested in parsing some other interesting information you may have.&lt;/p&gt;
 
 &lt;p&gt;Have fun! :D&lt;/p&gt;
 </description>

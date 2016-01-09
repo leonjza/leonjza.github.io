@@ -11,13 +11,20 @@
     
     <item>
       <title>jenkins to meterpreter - toying with powersploit</title>
-      <link>https://leonjza.github.io/2015/05/27/jenkins-to-meterpreter-toying-with-powersploit/</link>
+      <link>https://leonjza.github.io/blog/2015/05/27/jenkins-to-meterpreter---toying-with-powersploit/</link>
       <pubDate>Wed, 27 May 2015 20:40:40 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2015/05/27/jenkins-to-meterpreter-toying-with-powersploit/</guid>
+      <guid>https://leonjza.github.io/blog/2015/05/27/jenkins-to-meterpreter---toying-with-powersploit/</guid>
       <description>
 
-&lt;p&gt;{% img right &lt;a href=&#34;https://i.imgur.com/DNRQ8Nv.png&#34;&gt;https://i.imgur.com/DNRQ8Nv.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.&lt;/p&gt;
 
@@ -25,7 +32,14 @@
 
 &lt;p&gt;At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the &lt;em&gt;Script Console&lt;/em&gt; that Jenkins provides:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/5X43NOP.png&#34;&gt;https://i.imgur.com/5X43NOP.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_script_console.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;This looked promising. &lt;em&gt;&amp;lsquo;Type in an arbitrary Groovy script and execute it on the server.&amp;rsquo;&lt;/em&gt; I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the &lt;a href=&#34;http://www.groovy-lang.org/groovy-dev-kit.html#process-management&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
 
@@ -35,7 +49,14 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/UY83gvp.png&#34;&gt;https://i.imgur.com/UY83gvp.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_console_command_exec.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Nice and easy command execution! :D&lt;/p&gt;
 
@@ -86,7 +107,14 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;So, I now had the &lt;code&gt;payload&lt;/code&gt; file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/xBh1Uz9.png&#34;&gt;https://i.imgur.com/xBh1Uz9.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_powershell_payload.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;From the python web server we can see the request come in for the payload:&lt;/p&gt;
 

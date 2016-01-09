@@ -88,35 +88,36 @@
 
 <p>Recently I have had to get Oracle support sorted in my Kali Linux install. I will try not to rant about the reasons why it doesn&rsquo;t just work out of the box and just get the steps written down quickly. Typically, when you try to use a module such as <code>oracle_login</code>, metasploit may error out with:</p>
 
-<p>```bash Metasploit Oracle Error
-msf auxiliary(oracle_login) &gt; run</p>
+<pre><code class="language-bash">msf auxiliary(oracle_login) &gt; run
 
-<p>[-] Failed to load the OCI library: cannot load such file &ndash; oci8
-[-] See <a href="http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage">http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage</a> for installation instructions
+[-] Failed to load the OCI library: cannot load such file -- oci8
+[-] See http://www.metasploit.com/redmine/projects/framework/wiki/OracleUsage for installation instructions
 [*] Auxiliary module execution completed
-msf auxiliary(oracle_login) &gt; run</p>
+msf auxiliary(oracle_login) &gt; run
 
-<pre><code>
-The link provided seems a little out of date, so here is an updated guide.
+</code></pre>
 
+<p>The link provided seems a little out of date, so here is an updated guide.</p>
 
+<h2 id="getting-started:3c033c270d2469b645034951f41b8df2">getting started</h2>
 
-##getting started
-First, if you dont have an account at oracle.com, you will _unfortunately_ need one here. If you don't want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.
+<p>First, if you dont have an account at oracle.com, you will <em>unfortunately</em> need one here. If you don&rsquo;t want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.</p>
 
-##sorting oracle first
-Anyways. Create yourself a directory `/opt/oracle` and `cd` there. In a browser, navigate to the [instant client downloads](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html) url and choose your architecture. If you hate 32bit Kali, choose [Linux x86](http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html), and 64bit Kali choose [Linux x86-64](http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html).
+<h2 id="sorting-oracle-first:3c033c270d2469b645034951f41b8df2">sorting oracle first</h2>
 
-Next, download the following packages and save them to `/opt/oracle`:
+<p>Anyways. Create yourself a directory <code>/opt/oracle</code> and <code>cd</code> there. In a browser, navigate to the <a href="http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html">instant client downloads</a> url and choose your architecture. If you hate 32bit Kali, choose <a href="http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html">Linux x86</a>, and 64bit Kali choose <a href="http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html">Linux x86-64</a>.</p>
 
-- instantclient-basic-linux-12.1.0.1.0.zip
-- instantclient-sqlplus-linux-12.1.0.1.0.zip
-- instantclient-sdk-linux-12.1.0.1.0.zip
+<p>Next, download the following packages and save them to <code>/opt/oracle</code>:</p>
 
-With those downloaded, extract the archives with the `unzip` command. This should leave you with a directory `/opt/oracle/instantclient_12_1/`. This is all the files needed to at least get the `sqlplus` client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:
+<ul>
+<li>instantclient-basic-linux-12.1.0.1.0.zip</li>
+<li>instantclient-sqlplus-linux-12.1.0.1.0.zip</li>
+<li>instantclient-sdk-linux-12.1.0.1.0.zip</li>
+</ul>
 
-```bash so symlink
-root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
+<p>With those downloaded, extract the archives with the <code>unzip</code> command. This should leave you with a directory <code>/opt/oracle/instantclient_12_1/</code>. This is all the files needed to at least get the <code>sqlplus</code> client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:</p>
+
+<pre><code class="language-bash">root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
 
 root@kali:/opt/oracle/instantclient_12_1# ls -lh libclntsh.so
 lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&gt; libclntsh.so.12.1
@@ -124,25 +125,23 @@ lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&gt; libclntsh.so.12.1
 
 <p>The last step is to configure the environment so that your shell is&hellip; <em>oracle aware</em>. We do this by setting a few environment variables. I have chosen to just append the lines to the end of my <code>.bashrc</code> file</p>
 
-<p>```bash .bashrc
-root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc</p>
+<pre><code class="language-bash">root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc
 
-<h1 id="oracle:3c033c270d2469b645034951f41b8df2">ORACLE</h1>
-
-<p>export PATH=$PATH:/opt/oracle/instantclient_12_1
+# ORACLE
+export PATH=$PATH:/opt/oracle/instantclient_12_1
 export SQLPATH=/opt/oracle/instantclient_12_1
 export TNS_ADMIN=/opt/oracle/instantclient_12_1
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
-export ORACLE_HOME=/opt/oracle/instantclient_12_1</p>
+export ORACLE_HOME=/opt/oracle/instantclient_12_1
+</code></pre>
 
-<pre><code>
-Done! Log out and back and check that these are present in the output of `env`.
+<p>Done! Log out and back and check that these are present in the output of <code>env</code>.</p>
 
-##sorting out metasploit
-The last thing we need to do is setup the metasploit part. For this we need to download [ruby-oci8](https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip). In `/opt/oracle`, download it:
+<h2 id="sorting-out-metasploit:3c033c270d2469b645034951f41b8df2">sorting out metasploit</h2>
 
-```bash download ruby-oci8
-root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
+<p>The last thing we need to do is setup the metasploit part. For this we need to download <a href="https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip">ruby-oci8</a>. In <code>/opt/oracle</code>, download it:</p>
+
+<pre><code class="language-bash">root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
 [...]
 2014-08-17 16:11:31 (42.8 KB/s) - `ruby-oci8-2.1.7.zip' saved [278270]
 
@@ -159,16 +158,14 @@ root@kali:/opt/oracle#
 
 <p>Next, move to the extracted directory and install the <code>ruby-dev</code> and <code>libgmp-dev</code> packages if you have not already done so:</p>
 
-<p>```bash ruby-dev
-root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/</p>
+<pre><code class="language-bash">root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/
 
-<p>root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev</p>
+root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev
+</code></pre>
 
-<pre><code>
-Next, ensure that the `ruby` interpreter that you will be use is the same as that of Metasploit with
+<p>Next, ensure that the <code>ruby</code> interpreter that you will be use is the same as that of Metasploit with</p>
 
-```bash
-export PATH=/opt/metasploit/ruby/bin:$PATH
+<pre><code class="language-bash">export PATH=/opt/metasploit/ruby/bin:$PATH
 </code></pre>
 
 <p>Ensure that you are using the correct version of ruby</p>

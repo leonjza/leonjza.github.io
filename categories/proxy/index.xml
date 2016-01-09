@@ -11,10 +11,10 @@
     
     <item>
       <title>dtob.py: Digest to Basic authentication; A simple example of a authentication &#39;downgrade&#39; attack</title>
-      <link>https://leonjza.github.io/2013/06/25/dtob-dot-py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/</link>
+      <link>https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/</link>
       <pubDate>Tue, 25 Jun 2013 00:00:00 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2013/06/25/dtob-dot-py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/</guid>
+      <guid>https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/</guid>
       <description>
 
 &lt;h3 id=&#34;introduction:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Introduction&lt;/h3&gt;
@@ -36,7 +36,7 @@ HTTP level authentication mechanisms include &lt;a href=&#34;http://tools.ietf.o
 
 &lt;p&gt;To demonstrate this, lets assume we have a website that wants to make use of basic authentication. A sample request header would look like:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;GET /auth/basic/ HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
 Cache-Control: max-age=0
@@ -49,7 +49,7 @@ Accept-Language: en-US,en;q=0.8,af;q=0.6
 
 &lt;p&gt;The website, configured to use basic authentication, will see that there is no &lt;code&gt;Authorisation&lt;/code&gt; header presented by the client, and respond with a &lt;code&gt;401&lt;/code&gt;, as well as a &lt;code&gt;WWW-Authenticate&lt;/code&gt; header.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;HTTP/1.0 401 Unauthorised
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;HTTP/1.0 401 Unauthorised
 Date: Tue, 25 Jun 2013 17:33:37 GMT
 Server: Apache/2.2.22 (Unix) DAV/2 PHP/5.3.15 with Suhosin-Patch mod_ssl/2.2.22 OpenSSL/0.9.8x
 X-Powered-By: PHP/5.3.15
@@ -64,7 +64,7 @@ Text to send if user hits Cancel button
 &lt;p&gt;The response we got when attempting to access the website told us that we need to provide a authentication response first. Based on the &lt;code&gt;WWW-Authenticate&lt;/code&gt; header, this mechanism should be &lt;code&gt;Basic&lt;/code&gt; for the realm &lt;em&gt;Basic Auth Testing&lt;/em&gt;. Don&amp;rsquo;t stress too much about the realm part. In short, this is usually used to give the user a short message like &amp;ldquo;Restricted Area&amp;rdquo; etc.
 In the authentication dialog that the browser presents, we provide some credentials, and submit them for processing. Your browser now goes and prepares the &lt;code&gt;Authorisation&lt;/code&gt; header.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;GET /auth/basic/ HTTP/1.1
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
 Cache-Control: max-age=0
@@ -100,12 +100,12 @@ $
 
 &lt;p&gt;Lets look at an example, and then dig into the details. Requesting a digest protected web resource @&lt;em&gt;/login&lt;/em&gt; without a valid &lt;code&gt;Authorisation&lt;/code&gt; header, will cause our sample application to respond with a &lt;code&gt;401&lt;/code&gt; and a &lt;code&gt;WWW-Authenticate&lt;/code&gt; header as follows:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;WWW-Authenticate: Digest realm=&amp;quot;test.dev&amp;quot;,qop=&amp;quot;auth&amp;quot;,nonce=&amp;quot;064af982c5b571cea6450d8eda91c20d&amp;quot;,opaque=&amp;quot;d8ea7aa61a1693024c4cc3a516f49b3c&amp;quot;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;WWW-Authenticate: Digest realm=&amp;quot;test.dev&amp;quot;,qop=&amp;quot;auth&amp;quot;,nonce=&amp;quot;064af982c5b571cea6450d8eda91c20d&amp;quot;,opaque=&amp;quot;d8ea7aa61a1693024c4cc3a516f49b3c&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Just as the Basic example, the browser will prompt the user for credentials now and prepare the response. The response then to the server would include the following &lt;code&gt;Authorisation&lt;/code&gt; header:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Authorisation: Digest username=&amp;quot;user.name&amp;quot;, realm=&amp;quot;test.dev&amp;quot;, nonce=&amp;quot;064af982c5b571cea6450d8eda91c20d&amp;quot;, uri=&amp;quot;/login&amp;quot;, response=&amp;quot;70eda34f1683041fd9ab72056c51b740&amp;quot;, opaque=&amp;quot;d8ea7aa61a1693024c4cc3a516f49b3c&amp;quot;, qop=auth, nc=00000001, cnonce=&amp;quot;61417766e50cb980&amp;quot;
+&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;Authorisation: Digest username=&amp;quot;user.name&amp;quot;, realm=&amp;quot;test.dev&amp;quot;, nonce=&amp;quot;064af982c5b571cea6450d8eda91c20d&amp;quot;, uri=&amp;quot;/login&amp;quot;, response=&amp;quot;70eda34f1683041fd9ab72056c51b740&amp;quot;, opaque=&amp;quot;d8ea7aa61a1693024c4cc3a516f49b3c&amp;quot;, qop=auth, nc=00000001, cnonce=&amp;quot;61417766e50cb980&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Clearly the response here is much more complex when compared to the Basic example. So, lets refer to the Wikipedia Article &lt;a href=&#34;http://en.wikipedia.org/wiki/Digest_access_authentication#Overview&#34;&gt;here&lt;/a&gt;, or the official RFC &lt;a href=&#34;http://tools.ietf.org/html/rfc2069#section-2.1.2&#34;&gt;here&lt;/a&gt; to help us understand what is going on here.&lt;/p&gt;
@@ -120,84 +120,76 @@ ha1 = md5(md5(username : realm : password) : nonce : cnonce)
 # For ha2, if the qop directive is &#39;auth&#39; or unspecified
 ha2 = md5(method : digestURI)
 # Else, if the qop directive is &#39;auth-int&#39;
-# Where entity body is the actual response HTML from the doctype down to the last &amp;lt;/html&amp;gt;. See: http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7  
+# Where entity body is the actual response HTML from the doctype down to the last &amp;lt;/html&amp;gt;. See: http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7
 ha2 = md5(method : digestURI : md5(entityBody))
 
 # Lastly, for the response, if the qop directive is &#39;auth&#39; or &#39;auth-int&#39;
 response = md5(ha1 : nonce : nonceCount : clientNonce : qop : ha2)
-# Else, if qop is unspecified 
+# Else, if qop is unspecified
 response = md5(ha1 : nonce : ha2)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;So, lets take this formula, step by step and try and replicate the response &lt;code&gt;Authorisation&lt;/code&gt; header in a shell. If one of the &lt;code&gt;WWW-Authenticate&lt;/code&gt; headers don&amp;rsquo;t make sense then I&amp;rsquo;ll highly reccomend you read the RFC.&lt;/p&gt;
 
-&lt;p&gt;```bash Example of Calculating a Digest Authentication Response header in a shell with a qop of &amp;ldquo;auth&amp;rdquo;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Example of Calculating a Digest Authentication Response
+# header in a shell with a qop of &amp;quot;auth&amp;quot;
 
-&lt;h1 id=&#34;assign-some-values-to-variables-these-values-will-come-from-the-above-headers:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Assign some values to variables. These values will come from the above headers&lt;/h1&gt;
+# Assign some values to variables. These values will come from the above headers
+qop=&amp;quot;auth&amp;quot;
+realm=&amp;quot;test.dev&amp;quot;
+nonce=&amp;quot;064af982c5b571cea6450d8eda91c20d&amp;quot;
+uri=&amp;quot;/login&amp;quot;
+cnonce=&amp;quot;61417766e50cb980&amp;quot;
+nc=&amp;quot;00000001&amp;quot;
+username=&amp;quot;user.name&amp;quot; # This is what the user enters
+password=&amp;quot;s3cr3tP@ssw0rd&amp;quot; # This is what the user enters
+method=&amp;quot;GET&amp;quot;
+# Start off with calculating ha1.
+# We do not have the algorithm directive specified, so ha1 is calculated as:
+$ ha1=`echo -n $username&amp;quot;:&amp;quot;$realm&amp;quot;:&amp;quot;$password | md5`
 
-&lt;p&gt;qop=&amp;ldquo;auth&amp;rdquo;
-realm=&amp;ldquo;test.dev&amp;rdquo;
-nonce=&amp;ldquo;064af982c5b571cea6450d8eda91c20d&amp;rdquo;
-uri=&amp;ldquo;/login&amp;rdquo;
-cnonce=&amp;ldquo;61417766e50cb980&amp;rdquo;
-nc=&amp;ldquo;00000001&amp;rdquo;
-username=&amp;ldquo;user.name&amp;rdquo; # This is what the user enters
-password=&amp;ldquo;s3cr3tP@ssw0rd&amp;rdquo; # This is what the user enters
-method=&amp;ldquo;GET&amp;rdquo;&lt;/p&gt;
+# Confirm  that the value is set.
+$ print $ha1
+d5d7ef83a9b3ad5bb0b5201b2bace033
 
-&lt;h1 id=&#34;start-off-with-calculating-ha1:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Start off with calculating ha1.&lt;/h1&gt;
+# Next calculate the value of ha2.
+# Our application presented the qop directive as &#39;auth&#39;, so ha2 is calculated as:
+$ ha2=`echo -n $method&amp;quot;:&amp;quot;$uri | md5`
 
-&lt;h1 id=&#34;we-do-not-have-the-algorithm-directive-specified-so-ha1-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;We do not have the algorithm directive specified, so ha1 is calculated as:&lt;/h1&gt;
+# Again, confirm that its set.
+$ print $ha2
+315c3fb2f18fd4c6e5a3175e489464ad
 
-&lt;p&gt;$ ha1=&lt;code&gt;echo -n $username&amp;quot;:&amp;quot;$realm&amp;quot;:&amp;quot;$password | md5&lt;/code&gt;&lt;/p&gt;
+# With both &#39;ha1&#39; and &#39;ha2&#39; set, we can calculate the response
+# We have the qop directive specified, so our response is calculated as:
+$ response=`echo -n $ha1&amp;quot;:&amp;quot;$nonce&amp;quot;:&amp;quot;$nc&amp;quot;:&amp;quot;$cnonce&amp;quot;:&amp;quot;$qop&amp;quot;:&amp;quot;$ha2 | md5`
 
-&lt;h1 id=&#34;confirm-that-the-value-is-set:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Confirm  that the value is set.&lt;/h1&gt;
+# And did we get the right response?
+$ print $response
+70eda34f1683041fd9ab72056c51b740
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;$ print $ha1
-d5d7ef83a9b3ad5bb0b5201b2bace033&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;70eda34f1683041fd9ab72056c51b740&lt;/code&gt; is the valid &lt;code&gt;response&lt;/code&gt; header for this request. Note that the next client request will set &lt;code&gt;nc=00000002&lt;/code&gt; and therefore the response will be different due to this value being part of the response calculation. However, the fact remains that the authorisation is continuously done via header exchanges between the client and the server, relying on the server to validate them.&lt;/p&gt;
 
-&lt;h1 id=&#34;next-calculate-the-value-of-ha2:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Next calculate the value of ha2.&lt;/h1&gt;
+&lt;p&gt;It is also clear that this can not be easily reversed. Even though some attributes that make up the hash function are known, the username and password are at least hashed and factored into the response attribute. It is not impossible, though not as easy as Basic authentication.&lt;/p&gt;
 
-&lt;h1 id=&#34;our-application-presented-the-qop-directive-as-auth-so-ha2-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Our application presented the qop directive as &amp;lsquo;auth&amp;rsquo;, so ha2 is calculated as:&lt;/h1&gt;
+&lt;h3 id=&#34;o-k-so-i-now-get-how-the-basic-vs-digest-stuff-works-whats-next:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;O..K.. so I now get how the Basic vs Digest stuff works, whats next?&lt;/h3&gt;
 
-&lt;p&gt;$ ha2=&lt;code&gt;echo -n $method&amp;quot;:&amp;quot;$uri | md5&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;What if we could make the browser think that the server wants basic authentication, and then capture the encdoded credentials? That would mean we dont need any l33t cracking skeelz or anything. Just a &lt;code&gt;base64 -d&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;again-confirm-that-its-set:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Again, confirm that its set.&lt;/h1&gt;
+&lt;h3 id=&#34;downgrade-all-the-auth:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Downgrade all the auth!&lt;/h3&gt;
 
-&lt;p&gt;$ print $ha2
-315c3fb2f18fd4c6e5a3175e489464ad&lt;/p&gt;
+&lt;p&gt;Assuming you are able to get some form of MiTM between the client and the server, by whichever means you use, we can intercept the headers and change them to tell the browser that we actually want basic authentication. Remember, the browser responds based on what the server asks, so if the server only asks for Basic authentication&amp;hellip; :D&lt;/p&gt;
 
-&lt;h1 id=&#34;with-both-ha1-and-ha2-set-we-can-calculate-the-response:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;With both &amp;lsquo;ha1&amp;rsquo; and &amp;lsquo;ha2&amp;rsquo; set, we can calculate the response&lt;/h1&gt;
+&lt;p&gt;&amp;ldquo;Downgrade&amp;rdquo; attacks are a known flaw in Digest authentication. Where Digest authentication is not necessarily vulnerable to MiTM attacks in the sense that the hash still needs to be cracked, Basic authentication is and therefore such an attack can prove to be valuable to an attacker.&lt;/p&gt;
 
-&lt;h1 id=&#34;we-have-the-qop-directive-specified-so-our-response-is-calculated-as:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;We have the qop directive specified, so our response is calculated as:&lt;/h1&gt;
+&lt;h3 id=&#34;enough-talk-poc:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Enough talk, PoC!&lt;/h3&gt;
 
-&lt;p&gt;$ response=&lt;code&gt;echo -n $ha1&amp;quot;:&amp;quot;$nonce&amp;quot;:&amp;quot;$nc&amp;quot;:&amp;quot;$cnonce&amp;quot;:&amp;quot;$qop&amp;quot;:&amp;quot;$ha2 | md5&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Using &lt;a href=&#34;https://code.google.com/p/proxpy/&#34;&gt;proxpy&lt;/a&gt;, which is a pluggable python proxy server, I wrote a PoC demoing this exact attack. There are a lot of scenarios where this doesn&amp;rsquo;t work very well, but this is only meant to demonstrate the problem.&lt;/p&gt;
 
-&lt;h1 id=&#34;and-did-we-get-the-right-response:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;And did we get the right response?&lt;/h1&gt;
+&lt;h4 id=&#34;the-plugin:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;The plugin&lt;/h4&gt;
 
-&lt;p&gt;$ print $response
-70eda34f1683041fd9ab72056c51b740&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;
-`70eda34f1683041fd9ab72056c51b740` is the valid `response` header for this request. Note that the next client request will set `nc=00000002` and therefore the response will be different due to this value being part of the response calculation. However, the fact remains that the authorisation is continuously done via header exchanges between the client and the server, relying on the server to validate them.
-
-It is also clear that this can not be easily reversed. Even though some attributes that make up the hash function are known, the username and password are at least hashed and factored into the response attribute. It is not impossible, though not as easy as Basic authentication.
-
-### O..K.. so I now get how the Basic vs Digest stuff works, whats next?
-What if we could make the browser think that the server wants basic authentication, and then capture the encdoded credentials? That would mean we dont need any l33t cracking skeelz or anything. Just a `base64 -d`.
-
-### Downgrade all the auth!
-Assuming you are able to get some form of MiTM between the client and the server, by whichever means you use, we can intercept the headers and change them to tell the browser that we actually want basic authentication. Remember, the browser responds based on what the server asks, so if the server only asks for Basic authentication... :D
-
-&amp;quot;Downgrade&amp;quot; attacks are a known flaw in Digest authentication. Where Digest authentication is not necessarily vulnerable to MiTM attacks in the sense that the hash still needs to be cracked, Basic authentication is and therefore such an attack can prove to be valuable to an attacker.
-
-### Enough talk, PoC!
-Using [proxpy](https://code.google.com/p/proxpy/), which is a pluggable python proxy server, I wrote a PoC demoing this exact attack. There are a lot of scenarios where this doesn&#39;t work very well, but this is only meant to demonstrate the problem.
-
-#### The plugin
-
-```python dtob.py
-# dtob.py
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# dtob.py
 # Digest to Basic downgrade attack PoC plugin for proxpy (https://code.google.com/p/proxpy/)
 #
 # 2013 Leon Jacobs
@@ -264,7 +256,14 @@ A sample command to get this running would be: &lt;code&gt;python proxpy.py -p 8
 &lt;li&gt;&lt;p&gt;Ensure that your MiTM is successful, and watch as digest authentication gets downgraded to basic auth, and your credentials echoed to the terminal :P Something like this&amp;hellip;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;http://i.imgur.com/NQFboBV.png&#34;&gt;http://i.imgur.com/NQFboBV.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/dtobpoc.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;h3 id=&#34;what-is-the-user-experience-with-this:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;What is the user experience with this?&lt;/h3&gt;
 
@@ -272,7 +271,14 @@ A sample command to get this running would be: &lt;code&gt;python proxpy.py -p 8
 
 &lt;p&gt;On my computer, the authentication dialog has the follow look and feel:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;http://i.imgur.com/9NTWg0W.png&#34;&gt;http://i.imgur.com/9NTWg0W.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/dtobhttpauth.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Notice the &amp;ldquo;Server Says:&amp;rdquo; Section. This is typically the &lt;code&gt;realm&lt;/code&gt; part of the authentication request. When using the &lt;code&gt;dtob.py&lt;/code&gt; plugin, it is changed to &lt;code&gt;pwnd&lt;/code&gt;. This dialog looks no different when using any form of HTTP based authentication. Hence, when the downgrade attack occurs, the user is unaware that anything different is happening in the background.&lt;/p&gt;
 

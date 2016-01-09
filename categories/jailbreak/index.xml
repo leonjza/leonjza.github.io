@@ -11,17 +11,24 @@
     
     <item>
       <title>a trivial iOS jailbreak detection bypass</title>
-      <link>https://leonjza.github.io/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</link>
+      <link>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</link>
       <pubDate>Fri, 20 Feb 2015 21:09:21 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
+      <guid>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
       <description>
 
 &lt;h2 id=&#34;introduction:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Not too long ago, I toyed with a &lt;a href=&#34;https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/&#34;&gt;Android root detection bypass&lt;/a&gt;. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I &lt;em&gt;actually&lt;/em&gt; wanted to do impossible as I&amp;rsquo;d very much like to dig under the hood :)&lt;/p&gt;
 
-&lt;p&gt;{% img right &lt;a href=&#34;https://i.imgur.com/hWgQMnl.png&#34;&gt;https://i.imgur.com/hWgQMnl.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
@@ -44,11 +51,25 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term &lt;code&gt;/bin/bash&lt;/code&gt; in the &lt;em&gt;string&lt;/em&gt; section:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/ORnAMFU.png&#34;&gt;https://i.imgur.com/ORnAMFU.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. &lt;em&gt;-[MobileDisplay isRetinaDisplay]:&lt;/em&gt;. Very sneaky :) So we are working with the &lt;code&gt;isRetinaDisplay&lt;/code&gt; method which is the one doing the jailbreak detection:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/1xhyzIB.png&#34;&gt;https://i.imgur.com/1xhyzIB.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;As can be seen in the above screenshot, the &lt;code&gt;fileExistsAtPath&lt;/code&gt; for &lt;code&gt;/Applications/Cydia.app&lt;/code&gt; is hardly something I would have expected in a &lt;code&gt;isRetinaDisplay&lt;/code&gt; implementation :P&lt;/p&gt;
 
@@ -78,7 +99,14 @@ myApplication: Mach-O executable arm
 &lt;li&gt;cydia://package/com.example.package -&amp;gt; cyd00://package/com.example.package&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/J0sefoY.png&#34;&gt;https://i.imgur.com/J0sefoY.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hex_editor.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;I saved the modifications that I had done, and &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P&lt;/p&gt;
 
@@ -90,17 +118,24 @@ myApplication: Mach-O executable arm
     
     <item>
       <title>no more jailbreak detection - an adventure into Android app reversing and smali patching</title>
-      <link>https://leonjza.github.io/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/</link>
+      <link>https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection---an-adventure-into-android-app-reversing-and-smali-patching/</link>
       <pubDate>Mon, 09 Feb 2015 19:10:23 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/</guid>
+      <guid>https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection---an-adventure-into-android-app-reversing-and-smali-patching/</guid>
       <description>
 
 &lt;h2 id=&#34;introduction:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;I will start by saying that I am by &lt;em&gt;no means&lt;/em&gt; a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&amp;rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.&lt;/p&gt;
 
-&lt;p&gt;{% img right &lt;a href=&#34;https://i.imgur.com/mRLYDs8.png&#34;&gt;https://i.imgur.com/mRLYDs8.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Recently I had the opportunity to poke at an Android &lt;code&gt;.apk&lt;/code&gt;. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the &lt;code&gt;apk&lt;/code&gt;, I needed to get some tools setup and learn a few things about the Android environment &lt;em&gt;really&lt;/em&gt; fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the &lt;code&gt;apk&lt;/code&gt; had and let it continue normal operations.&lt;/p&gt;
 
@@ -116,27 +151,55 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;Just having the &lt;code&gt;apk&lt;/code&gt; though was not very useful. I needed something to run it on. I don’t have a hardware device handy so in comes the Android Studio, which includes the SDK and a Emulator. I downloaded the Android Studio &lt;a href=&#34;http://developer.android.com/sdk/index.html&#34;&gt;here&lt;/a&gt; and promptly installed it. I fired it up and clicked next furiously, waiting for more crap to download, till finally it looked like it was done.&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/FZmO5ru.png&#34;&gt;https://i.imgur.com/FZmO5ru.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_android_studio.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;The next daunting task was to find the SDK updater. I wanted to install the x86 Emulator Accelerator amongst other things. Some searching around got me to the directory &lt;code&gt;~/Library/Android/sdk/tools&lt;/code&gt; which had the &lt;code&gt;android&lt;/code&gt; and &lt;code&gt;emulator&lt;/code&gt; programs I was after. I fired up the SDK updater with &lt;code&gt;~/Library/Android/sdk/tools/android&lt;/code&gt; and updated/installed all the stuff I wanted (yay more downloading). In the end, my installed packages ended up as follows:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/pYlFwMz.png&#34;&gt;https://i.imgur.com/pYlFwMz.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_sdk_manager.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;h2 id=&#34;preparing-an-actual-emulator:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;preparing an actual emulator&lt;/h2&gt;
 
 &lt;p&gt;With the software I needed for the emulator downloaded and ready, it was time to configure a &lt;code&gt;avd&lt;/code&gt; (Android Virtual Device). I fired up the command &lt;code&gt;~/Library/Android/sdk/tools/android avd&lt;/code&gt; and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/ySGUvUt.png&#34;&gt;https://i.imgur.com/ySGUvUt.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_avd.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Saved that and quit the AVD Manager. That is all that I needed for the hardware portion. To test the &lt;code&gt;avd&lt;/code&gt; that I have just made, I chose to run it quickly using &lt;code&gt;~/Library/Android/sdk/tools/emulator -avd test&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/NoWhu6I.png&#34;&gt;https://i.imgur.com/NoWhu6I.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_emulator_running.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;Aaaand it works! I was actually testing network connectivity of the &lt;code&gt;apk&lt;/code&gt; in question, so I will add the information for that at the end of the post as a small FYI.&lt;/p&gt;
 
 &lt;p&gt;With the emulator running and working, it was time to install the &lt;code&gt;apk&lt;/code&gt; to test. To do this, we use a tool call &lt;code&gt;adb&lt;/code&gt;. This can be found in &lt;code&gt;~/Library/Android/sdk/platform-tools/adb&lt;/code&gt;. A number of features are available to us using &lt;code&gt;adb&lt;/code&gt;, such as pushing files to and from the device and installing applications. The &lt;code&gt;apk&lt;/code&gt; I was testing, was installed while the emulator was running:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk 
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
 * daemon not running. starting it now on port 5037 *
 * daemon started successfully *
 2383 KB/s (4184313 bytes in 1.714s)
@@ -172,7 +235,14 @@ Done.
 
 &lt;p&gt;I went through quite a large amount of code, trying to piece together how everything fits into one another. After some time, I finally came across &lt;code&gt;RootDetection.class&lt;/code&gt;:&lt;/p&gt;
 
-&lt;p&gt;{% img &lt;a href=&#34;https://i.imgur.com/JkeAr3Z.png&#34;&gt;https://i.imgur.com/JkeAr3Z.png&lt;/a&gt; %}&lt;/p&gt;
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/android_jailbreak_root_detection_class.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
 
 &lt;p&gt;This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called &lt;code&gt;isRooted&lt;/code&gt;. You will see in the next few paragraphs how trivial it is to bypass this.&lt;/p&gt;
 

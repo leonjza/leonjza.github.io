@@ -92,36 +92,36 @@
 
 <p>Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:</p>
 
-<p>```bash a primitive virsh console access example
-$ virsh &ndash;connect qemu:///system
-Welcome to virsh, the virtualization interactive terminal.</p>
+<pre><code class="language-bash"># a primitive virsh console access example
+$ virsh --connect qemu:///system
+Welcome to virsh, the virtualization interactive terminal.
 
-<p>Type:  &lsquo;help&rsquo; for help with commands
-       &lsquo;quit&rsquo; to quit</p>
+Type:  'help' for help with commands
+       'quit' to quit
 
-<h2 id="id-name-state:a1f29655d26175227393d389d0601eca">Id    Name                           State</h2>
+ Id    Name                           State
+----------------------------------------------------
+ 6     console-test                   running
 
-<p>6     console-test                   running</p>
-
-<p>virsh # console console-test
+virsh # console console-test
 Connected to domain console-test
-Escape character is ^]</p>
+Escape character is ^]
 
-<p>CentOS release 6.4 (Final)
-Kernel 2.6.32-358.el6.x86_64 on an x86_64</p>
+CentOS release 6.4 (Final)
+Kernel 2.6.32-358.el6.x86_64 on an x86_64
 
-<p>localhost.localdomain login: root
+localhost.localdomain login: root
 Password:
 Last login: Sat Aug  3 08:31:13 on ttyS0
-[root@localhost ~]$</p>
+[root@localhost ~]$
+</code></pre>
 
-<pre><code>
-You can escape the console by pressing `^]`, which will drop you back into the virsh shell.
+<p>You can escape the console by pressing <code>^]</code>, which will drop you back into the virsh shell.</p>
 
-```bash virsh guest console escape
+<pre><code class="language-bash"># virsh guest console escape
 [root@localhost ~]$ echo &quot;testing123&quot;
 testing123
-[root@localhost ~]$                       # I pressed ^] here  
+[root@localhost ~]$                       # I pressed ^] here
 virsh #
 </code></pre>
 
@@ -129,23 +129,20 @@ virsh #
 
 <p>This I have tested on CentOS 6.4. The 2 commands to get it setup would be:</p>
 
-<p>```bash Enabling KVM Console access
-$ cat &gt; /etc/init/ttyS0.conf &lt;&lt; EOL</p>
+<pre><code class="language-bash"># Enabling KVM Console access
+$ cat &gt; /etc/init/ttyS0.conf &lt;&lt; EOL
+# ttyS0 - agetty
+#
+# This service maintains a agetty on ttyS0.
 
-<h1 id="ttys0-agetty:a1f29655d26175227393d389d0601eca">ttyS0 - agetty</h1>
+stop on runlevel [S016]
+start on runlevel [23]
 
-<p>#</p>
-
-<h1 id="this-service-maintains-a-agetty-on-ttys0:a1f29655d26175227393d389d0601eca">This service maintains a agetty on ttyS0.</h1>
-
-<p>stop on runlevel [S016]
-start on runlevel [23]</p>
-
-<p>respawn
+respawn
 exec agetty -h -L -w /dev/ttyS0 115200 vt102
 EOL
-$ grubby &ndash;update-kernel=ALL &ndash;args=&lsquo;console=ttyS0,115200n8 console=tty0&rsquo;
-```</p>
+$ grubby --update-kernel=ALL --args='console=ttyS0,115200n8 console=tty0'
+</code></pre>
 
 <p>Now, you can reboot the server and connect to the domains console via virsh. If all went well, you <em>should</em> be seeing kernel messages and eventually service starts up&rsquo;s, followed by a login prompt in the console.</p>
 

