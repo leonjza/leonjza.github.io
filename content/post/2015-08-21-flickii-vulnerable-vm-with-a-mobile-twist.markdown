@@ -7,10 +7,9 @@ categories:
 comments: true
 date: 2015-08-21T06:36:19Z
 title: flick II - vuln vm with a mobile twist
-url: /2015/08/21/flickii-vulnerable-vm-with-a-mobile-twist/
 ---
 
-{% img https://i.imgur.com/PxfWpkG.png %}
+{{< figure src="/images/flickII_logo.png" >}}
 
 # tl;dr
 Flick II just got published on [Vulnhub](https://www.vulnhub.com/entry/flick-2,122/)! You should try it =)

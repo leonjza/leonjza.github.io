@@ -7,7 +7,6 @@ comments: true
 date: 2014-03-11T00:00:00Z
 published: true
 title: dnsfilexfer - yet another take on file transfer via DNS
-url: /2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/
 ---
 
 This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.
@@ -131,7 +130,7 @@ The idea is simple. Create a fake DNS server that would listen and parse DNS pac
 # dnsfilexfer
 So, I took a day (literally), and a few more hours afterwards for bug fixes and wrote something that does this. Consisting of two pretty self explanatory parts; `dns_send.py` & `dns_recv.py`, one is able to 'send files' using DNS lookups and store them on the remote end. You also have the option of only using the send part with the `-X` flag, and have the output ready to use with `xxd -r` later on your server.
 
-The code can be [found here](https://github.com/th3l33k/dnsfilexfer)
+The code can be [found here](https://github.com/leonjza/dnsfilexfer)
 
 ## sample usage
 Below a full example of the usage, both on the client & server:
@@ -213,5 +212,5 @@ Using encryption by specifying a secret is entirely optional, as well as specify
 So this technique obviously has many challenges, such as the classic stateless nature of UDP that may cause out-of-sequence/lost frames (I am actually thinking of building some re-transmission logic into the scripts for lulz), the fact that the outgoing DNS port may be destination natted etc. In the case of a destination nat for udp/53, once could potentially query a zone whos name server you have control over, and capture the requests using a tcpdump there. One would then specify a specific fake domain to use with `--domain` on the sending script, and have something like `fake.<your valid zone>.com`, which will result in you still being able to grep for `fake` in the tcpdump replay.
 
 ### further reading
-https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306  
+https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306
 http://www.aldeid.com/wiki/File-transfer-via-DNS

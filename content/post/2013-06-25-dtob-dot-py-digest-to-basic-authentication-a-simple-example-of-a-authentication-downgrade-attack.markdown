@@ -9,7 +9,6 @@ date: 2013-06-25T00:00:00Z
 published: true
 title: 'dtob.py: Digest to Basic authentication; A simple example of a authentication
   ''downgrade'' attack'
-url: /2013/06/25/dtob-dot-py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/
 ---
 
 ### Introduction
@@ -30,7 +29,7 @@ Basic authentication is considered the *least secure* method of HTTP authenticat
 
 To demonstrate this, lets assume we have a website that wants to make use of basic authentication. A sample request header would look like:
 
-```
+``` text
 GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
@@ -40,11 +39,11 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_4) AppleWebKit/537.36 (K
 DNT: 1
 Accept-Encoding: gzip,deflate,sdch
 Accept-Language: en-US,en;q=0.8,af;q=0.6
-``` 
-
-The website, configured to use basic authentication, will see that there is no `Authorisation` header presented by the client, and respond with a `401`, as well as a `WWW-Authenticate` header. 
-
 ```
+
+The website, configured to use basic authentication, will see that there is no `Authorisation` header presented by the client, and respond with a `401`, as well as a `WWW-Authenticate` header.
+
+``` text
 HTTP/1.0 401 Unauthorised
 Date: Tue, 25 Jun 2013 17:33:37 GMT
 Server: Apache/2.2.22 (Unix) DAV/2 PHP/5.3.15 with Suhosin-Patch mod_ssl/2.2.22 OpenSSL/0.9.8x
@@ -60,7 +59,7 @@ Text to send if user hits Cancel button
 The response we got when attempting to access the website told us that we need to provide a authentication response first. Based on the `WWW-Authenticate` header, this mechanism should be `Basic` for the realm *Basic Auth Testing*. Don't stress too much about the realm part. In short, this is usually used to give the user a short message like "Restricted Area" etc.
 In the authentication dialog that the browser presents, we provide some credentials, and submit them for processing. Your browser now goes and prepares the `Authorisation` header.
 
-```
+``` text
 GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
@@ -80,7 +79,7 @@ This header now needs to be present in every request that is made to the website
 So lets take a moment and relook at the `Authorisation` header. `Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk`
 Lets strip the *Authorisation: Basic* section and just work with the `dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk`. We will echo this, and pipe it through a base64 decoder in a shell session:
 
-```bash
+``` bash
 $ echo "dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk" | base64 -d
 user.name:s3cr3tP@ssw0rd
 $
@@ -96,13 +95,13 @@ Digest authentication is considered to be *more* secure, as it actually applies 
 
 Lets look at an example, and then dig into the details. Requesting a digest protected web resource @*/login* without a valid `Authorisation` header, will cause our sample application to respond with a `401` and a `WWW-Authenticate` header as follows:
 
-```
+``` text
 WWW-Authenticate: Digest realm="test.dev",qop="auth",nonce="064af982c5b571cea6450d8eda91c20d",opaque="d8ea7aa61a1693024c4cc3a516f49b3c"
 ```
 
 Just as the Basic example, the browser will prompt the user for credentials now and prepare the response. The response then to the server would include the following `Authorisation` header:
 
-```
+``` text
 Authorisation: Digest username="user.name", realm="test.dev", nonce="064af982c5b571cea6450d8eda91c20d", uri="/login", response="70eda34f1683041fd9ab72056c51b740", opaque="d8ea7aa61a1693024c4cc3a516f49b3c", qop=auth, nc=00000001, cnonce="61417766e50cb980"
 ```
 
@@ -110,7 +109,7 @@ Clearly the response here is much more complex when compared to the Basic exampl
 
 According to the Wikipedia article, the response `Authorisation` header for Digest authentication for [RFC 2617](http://tools.ietf.org/html/rfc2617#section-3.2.2) is calculated as follows:
 
-```bash
+``` bash
 # If the algorithm directive in the WWW-Authenticate header is 'MD5' or unspecified
 ha1 = md5(username : realm : password)
 # Else, if the algorithm directive is 'MD5-Sess', the nonce and client nonce becomes part of ha1
@@ -119,18 +118,21 @@ ha1 = md5(md5(username : realm : password) : nonce : cnonce)
 # For ha2, if the qop directive is 'auth' or unspecified
 ha2 = md5(method : digestURI)
 # Else, if the qop directive is 'auth-int'
-# Where entity body is the actual response HTML from the doctype down to the last </html>. See: http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7  
+# Where entity body is the actual response HTML from the doctype down to the last </html>. See: http://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7
 ha2 = md5(method : digestURI : md5(entityBody))
 
 # Lastly, for the response, if the qop directive is 'auth' or 'auth-int'
 response = md5(ha1 : nonce : nonceCount : clientNonce : qop : ha2)
-# Else, if qop is unspecified 
+# Else, if qop is unspecified
 response = md5(ha1 : nonce : ha2)
 ```
 
 So, lets take this formula, step by step and try and replicate the response `Authorisation` header in a shell. If one of the `WWW-Authenticate` headers don't make sense then I'll highly reccomend you read the RFC.
 
-```bash Example of Calculating a Digest Authentication Response header in a shell with a qop of "auth"
+```bash
+# Example of Calculating a Digest Authentication Response
+# header in a shell with a qop of "auth"
+
 # Assign some values to variables. These values will come from the above headers
 qop="auth"
 realm="test.dev"
@@ -183,7 +185,7 @@ Using [proxpy](https://code.google.com/p/proxpy/), which is a pluggable python p
 
 #### The plugin
 
-```python dtob.py
+```python
 # dtob.py
 # Digest to Basic downgrade attack PoC plugin for proxpy (https://code.google.com/p/proxpy/)
 #
@@ -249,14 +251,14 @@ A sample command to get this running would be: `python proxpy.py -p 8090 -x plug
 
 5. Ensure that your MiTM is successful, and watch as digest authentication gets downgraded to basic auth, and your credentials echoed to the terminal :P Something like this...
 
-{% img http://i.imgur.com/NQFboBV.png %}
+{{< figure src="/images/dtobpoc.png" >}}
 
 ### What is the user experience with this?
 That is a good question. The actual dialog that the user sees, again, is up to the browser to render. Depending on **which** browser you use on **which** OS, this may look different. In the back, the client *should* function normally, blissfully unaware that the headers for stronger authentication were swapped out.
 
 On my computer, the authentication dialog has the follow look and feel:
 
-{% img http://i.imgur.com/9NTWg0W.png %}
+{{< figure src="/images/dtobhttpauth.png" >}}
 
 Notice the "Server Says:" Section. This is typically the `realm` part of the authentication request. When using the `dtob.py` plugin, it is changed to `pwnd`. This dialog looks no different when using any form of HTTP based authentication. Hence, when the downgrade attack occurs, the user is unaware that anything different is happening in the background.
 

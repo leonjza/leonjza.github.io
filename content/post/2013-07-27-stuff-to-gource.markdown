@@ -7,7 +7,6 @@ comments: true
 date: 2013-07-27T00:00:00Z
 published: true
 title: '''stuff'' to Gource.'
-url: /2013/07/27/stuff-to-gource/
 ---
 
 ### Stuff to what...?
@@ -15,7 +14,7 @@ Not too long ago, a colleague introduced me to Gource. In case you have not hear
 
 *Be warned though, watching the output is highly addictive and strangely entertaining, so if you value your productivity, **don't** continue reading this post.*
 
-{% img http://i.imgur.com/gFkD3z5.png %}
+{{< figure src="/images/gourcelogo.png" >}}
 
 <!--more-->
 
@@ -30,7 +29,8 @@ So all this is cool and stuff. Watching the stories of code get told in a uber c
 
 According to the [wiki documentation](https://code.google.com/p/gource/wiki/CustomLogFormat), the format for a custom log entry needs to be pipe delimited and have the following format:
 
-```bash Gource sample custom log https://code.google.com/p/gource/wiki/CustomLogFormat
+```bash
+# Gource sample custom log https://code.google.com/p/gource/wiki/CustomLogFormat
 # minimum custom log format
 1275543595|andrew|A|src/main.cpp
 # optionally, we can set a color value
@@ -47,7 +47,7 @@ So far based on what has been coded, the basic idea to use this middleware in a 
 ### Gource for... Nmap?
 But, we don't have to `cat` something for output, right. Just do `nmap 127.0.0.1 -v | python py2gource.py | gource`. `py2gource.py` will happily read *stdin* and parse the output for input formats it understands, specified by `-t` as needed. For example:
 
-```bash Parsed Nmap Output
+```bash
 # Nmap output before its parsed by py2gource.py
 $ nmap 127.0.0.1 -v
 
@@ -76,11 +76,12 @@ $ nmap 127.0.0.1 -v | python py2gource.py -t nmap
 
 From the above example we can see that the verbose Nmap output has been parsed to be complaint to the custom log format as per the Gource wiki. So, lets pipe this to gource:
 
-```bash Nmap to gource
+```bash
+# Nmap to gource
 $ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 -e 0.2 -i 120 --title "Nmap of 192.168.137.0/24"
 ```
 
-You should now have a Gource window pop up, with your Nmap results being displayed in a similar fashion as you saw in the Minecraft example. The above command completes the 3 parts required to get output to Gource using the middleware. Granted in the Nmap case, the parser will just not output anything if the IP or IP range that you are scanning has no open ports, or, you forgot to specify the `-v` argument. *This requirement may change later*. 
+You should now have a Gource window pop up, with your Nmap results being displayed in a similar fashion as you saw in the Minecraft example. The above command completes the 3 parts required to get output to Gource using the middleware. Granted in the Nmap case, the parser will just not output anything if the IP or IP range that you are scanning has no open ports, or, you forgot to specify the `-v` argument. *This requirement may change later*.
 
 Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!
 
@@ -89,19 +90,20 @@ Where I am currently employed, I am fortunate enough to have access to the data 
 
 This was a golden opportunity to add a parser that would parse the output this client receives into Gource. The result? See for yourself:
 
-{% img http://i.imgur.com/eDc3EPlh.png %}
+{{< figure src="/images/argus1.png" >}}
 
 Moments later, even more activity... :)
 
-{% img http://i.imgur.com/yPAGoLwh.png %}
+{{< figure src="/images/argus2.png" >}}
 
 The parser will take the Argus client output and split the results of the IPv4 destination address by octet. Each octet will form part of the tree structure. Each bubble represents a port that was touched. Finally, each full destination IP address will get its own *unique* colour, so it will be easy to see when a specific IP has been scanned across multiple ports. Each *user* is a source IP address. Remember, this is IP space that is used for nothing other than seeing what is happening on it. So things like people scanning your Darknet for open SSH ports will make your Gource go mad, in a good way ofc.
 
 The above screenshots were taken by specifying the `--hide dirnames` arguments, as we obviously want to try and keep the IP space of the blackhole classified.
 
 ### Ok, how did you do THAT
-```bash Visualising the Argus Darknet with Gource
-$ ~/Downloads/argus-clients-3.0.6.2/bin/ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title "Live Darknet Port Activity" -i 30 -f
+```bash
+# Visualising the Argus Darknet with Gource
+$ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title "Live Darknet Port Activity" -i 30 -f
 ```
 
 I am going to assume you have the Argus server setup complete, and you are able to connect using the `ra` client. For more information on setting it up, refer to the Argus wiki [here](http://nsmwiki.org/index.php?title=Argus). Which ever machine your using to run Gource on, obviously needs to be able to connect as well.
@@ -111,6 +113,6 @@ The Argus parser works without specifying any fancy command line options. I have
 The file *parsed* can be seen as a 'history' file that can be piped into Gource again at a later time to replay potentially interesting events, or, if you are not able to connect directly to argus, and need to grab and parse output on one machine, and then replay on another machine with Gource installed.
 
 ### Get the code, setup your own.
-The parser's code is hosted on Github [here](https://github.com/th3l33k/py2gource). Grab the code with `git clone https://github.com/th3l33k/py2gource.git`. Parsers live in `lib/Parsers` if you are interested in parsing some other interesting information you may have.
+The parser's code is hosted on Github [here](https://github.com/leonjza/py2gource). Grab the code with `git clone https://github.com/leonjza/py2gource.git`. Parsers live in `lib/Parsers` if you are interested in parsing some other interesting information you may have.
 
 Have fun! :D

@@ -8,7 +8,6 @@ comments: true
 date: 2013-08-03T00:00:00Z
 published: true
 title: KVM - Redirecting CentOS Kernel and tty output to a virtual serial console
-url: /2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/
 ---
 
 ### Console all the things!
@@ -20,7 +19,8 @@ First and foremost, I will start with a warning. Like any other virtualization s
 
 Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:
 
-```bash a primitive virsh console access example
+```bash
+# a primitive virsh console access example
 $ virsh --connect qemu:///system
 Welcome to virsh, the virtualization interactive terminal.
 
@@ -46,17 +46,19 @@ Last login: Sat Aug  3 08:31:13 on ttyS0
 
 You can escape the console by pressing `^]`, which will drop you back into the virsh shell.
 
-```bash virsh guest console escape
+```bash
+# virsh guest console escape
 [root@localhost ~]$ echo "testing123"
 testing123
-[root@localhost ~]$                       # I pressed ^] here  
+[root@localhost ~]$                       # I pressed ^] here
 virsh #
 ```
 
 ### Ok, gimme ze commands already...
 This I have tested on CentOS 6.4. The 2 commands to get it setup would be:
 
-```bash Enabling KVM Console access
+```bash
+# Enabling KVM Console access
 $ cat > /etc/init/ttyS0.conf << EOL
 # ttyS0 - agetty
 #

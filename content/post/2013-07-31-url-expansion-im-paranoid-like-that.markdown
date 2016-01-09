@@ -7,7 +7,6 @@ comments: true
 date: 2013-07-31T00:00:00Z
 published: true
 title: URL Expansion - I'm paranoid like that
-url: /2013/07/31/url-expansion-im-paranoid-like-that/
 ---
 
 ### So there is a good use
@@ -28,11 +27,11 @@ This is cool and all. But how do I know that those services are not modifying th
 ### Time for longurl.py
 I wanted something to use on the command line, that would allow me to see **exactly** where I was going. Thus, *longurl.py* came to be.
 
-Get the script with: `$ git clone https://github.com/th3l33k/longurl.git`
+Get the script with: `$ git clone https://github.com/leonjza/longurl.git`
 
 With this, I am able to see each 30x type redirect, as well as where it will take me. A sample usage case would be:
 
-```bash longurl.py Usage
+```bash
 % ./longurl.py http://t.co/CHwi0q7DyF
 [*] Next stop: 'http://t.co/CHwi0q7DyF'
 [*] Got status: 301 with reason: Moved Permanently
@@ -49,6 +48,3 @@ With this, I am able to see each 30x type redirect, as well as where it will tak
 ```
 
 Now you can see each 'hop' it would have taken, as well as have your 'check before click' ability back. Like I said, there are lots of other ways to get the same thing done, but I preferred knowing exactly what is going on, rather than just getting the final URL, missing potential bad URL's in between that could lead to other _interesting_ finding. :)
-
-**EDIT**
-A similar effect can be seen with this one curl command:

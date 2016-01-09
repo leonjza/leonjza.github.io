@@ -3,6 +3,18 @@
 # Deploy a hugo generated site!
 # @leonjza - 2016
 
+# Update local source with remote
+echo -e "\033[0;32mGetting project source updated..\033[0m"
+git pull
+
+# Add local changes
+echo -e "\033[0;32mStaging source update for Github...\033[0m"
+git add -A
+git commit -m 'Updating Blog Source'
+
+echo -e "\033[0;32mDeploying source to Github...\033[0m"
+git push origin source
+
 # Build the project.
 echo -e "\033[0;32mBuilding the project...\033[0m"
 hugo
@@ -11,10 +23,8 @@ hugo
 echo -e "\033[0;32mStaging updates for GitHub...\033[0m"
 cd public
 
-# Get latest (if any)
+# Get latest (if any) and new local changes
 git pull
-
-# Add changes to git.
 git add -A
 
 # Commit changes.

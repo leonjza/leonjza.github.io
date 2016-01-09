@@ -7,10 +7,9 @@ categories:
 comments: true
 date: 2014-08-07T12:17:53Z
 title: flick - can you find the flag?
-url: /2014/08/07/flick-can-you-find-the-flag/
 ---
 
-{% img https://i.imgur.com/kxwW1J8.png %}
+{{< figure src="/images/flick_logo.png" >}}
 
 ### TL;DR
 I made a CTF! You should try it! Find it [on Vulnhub](http://vulnhub.com/entry/flick-1,99/)

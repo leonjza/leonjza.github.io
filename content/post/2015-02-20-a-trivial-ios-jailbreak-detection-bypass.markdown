@@ -7,13 +7,12 @@ categories:
 comments: true
 date: 2015-02-20T21:09:21Z
 title: a trivial iOS jailbreak detection bypass
-url: /2015/02/20/a-trivial-ios-jailbreak-detection-bypass/
 ---
 
 ## introduction
 Not too long ago, I toyed with a [Android root detection bypass](https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/). In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I *actually* wanted to do impossible as I'd very much like to dig under the hood :)
 
-{% img right https://i.imgur.com/hWgQMnl.png %}
+{{< figure src="/images/ios_jailbreak_logo.png" >}}
 
 So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a `.ipa`. Similar to the android `.apk` file, the `.ipa` is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications `.ipa` archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.
@@ -37,11 +36,11 @@ Compiled as a *Mach-O executable* from Objective-C, I loaded up the binary from 
 
 Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term `/bin/bash` in the *string* section:
 
-{% img https://i.imgur.com/ORnAMFU.png %}
+{{< figure src="/images/ios_jailbreak_hopper.png" >}}
 
 In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. *-[MobileDisplay isRetinaDisplay]:*. Very sneaky :) So we are working with the `isRetinaDisplay` method which is the one doing the jailbreak detection:
 
-{% img https://i.imgur.com/1xhyzIB.png %}
+{{< figure src="/images/ios_jailbreak_hopper2.png" >}}
 
 As can be seen in the above screenshot, the `fileExistsAtPath` for `/Applications/Cydia.app` is hardly something I would have expected in a `isRetinaDisplay` implementation :P
 
@@ -67,7 +66,7 @@ I ended up editing the following strings using the hex editor:
  - /private/jailbreak.txt -> /0000000/0000000000000
  - cydia://package/com.example.package -> cyd00://package/com.example.package
 
-{% img https://i.imgur.com/J0sefoY.png %}
+{{< figure src="/images/ios_jailbreak_hex_editor.png" >}}
 
 I saved the modifications that I had done, and `scp`'d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P
 

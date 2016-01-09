@@ -8,14 +8,13 @@ categories:
 comments: true
 date: 2015-02-21T15:55:03Z
 title: beating sokar - the vulnhub turns 0b10 challenge
-url: /2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/
 ---
 
 ## introduction
 [Vulnhub is 0b10](http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html) years old. That is binary for 2 :) In order to celebrate this, [@_RastaMouse](https://twitter.com/_RastaMouse)
  created [Sokar](https://www.vulnhub.com/entry/sokar-1,113/).
 
- {% img right https://i.imgur.com/brPBCGq.png %}
+{{< figure src="/images/sokar_logo.png" >}}
 
 Sokar was used as another writeup competition (the first for 2015), similar to the [Persistence](https://leonjza.github.io/blog/2014/09/18/from-persistence/) challenge from Sep '14.
 From the [competition announcement blogpost](http://blog.vulnhub.com/2015/01/competition-sokar.html), the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
@@ -62,7 +61,7 @@ One port open on tcp. `tcp/591`.
 ## /cgi-bin/cat
 The service on `tcp/591` appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML `<iframe>` to http://192.168.217.163:591/cgi-bin/cat. Requesting this page alone was the same stats, minus that creepy pink color ;)
 
-{% img https://i.imgur.com/nAoNCnK.png %}
+{{< figure src="/images/sokar_cat.png" >}}
 
 I toyed around quite a bit with this webserver. The textbook approach of running `wfuzz` to discover some web paths, `nikto` to discover some interesting information etc. was used. Alas, none of these tools proved really useful.
 

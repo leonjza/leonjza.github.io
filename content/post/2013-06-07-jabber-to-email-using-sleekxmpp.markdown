@@ -7,7 +7,6 @@ comments: true
 date: 2013-06-07T00:00:00Z
 published: true
 title: Jabber to Email using SleekXMPP
-url: /2013/06/07/jabber-to-email-using-sleekxmpp/
 ---
 
 ### So, why would you even want this..?
@@ -21,7 +20,7 @@ Well, to be honest, I am not really sure of many use cases for this, however may
 ### Configuration and testing time
 Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.
 
-```python Check dependencies
+```python
 % python2
 Python 2.7.5 (default, May 12 2013, 12:00:47)
 [GCC 4.8.0 20130502 (prerelease)] on linux2
@@ -38,16 +37,19 @@ Next, we take the [sample](http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
 
 First, we import the mailer requirements with:
 
-```python mailer imports
-
+```python
 from mailer import Mailer
 from mailer import Message
 ```
 
 The above can be placed right after the option parser has been imported. Then, we only need to change the `message` method within the `EchoBot` class really:
 
-```python Shameless SleekXMPP modification of the echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
+```python
 #!/usr/bin/env python
+
+# Shameless SleekXMPP modification of the
+# echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
+
 if msg['type'] in ('chat', 'normal'):
 
    print "Received Message:\n%(body)s" % msg
@@ -66,9 +68,12 @@ if msg['type'] in ('chat', 'normal'):
 
 A complete modified example that includes the above changes:
 
-```python Shameless SleekXMPP modification of the echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
+```python
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Shameless SleekXMPP modification of the
+# echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot
 
 """
     SleekXMPP: The Sleek XMPP Library
@@ -232,7 +237,7 @@ if __name__ == '__main__':
 Take the complete example and save it to a file like `bot.py`. Then, run it!
 The complete example will echo the message just before it attempts to mail it. You can comment out line **86** to stop this from happening and run the script with the `-q` argument once you are happy all is working.
 
-```bash sample run
+```bash
 % python bot.py -j "myEmailbot@myJabberServer.local"
 Password:
 INFO     Negotiating TLS

@@ -11,13 +11,12 @@ comments: true
 date: 2015-02-09T19:10:23Z
 title: no more jailbreak detection - an adventure into Android app reversing and smali
   patching
-url: /2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/
 ---
 
 ## introduction
 I will start by saying that I am by *no means* a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don't know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
 
-{% img right https://i.imgur.com/mRLYDs8.png %}
+{{< figure src="/images/android_jailbreak_logo.png" >}}
 
 Recently I had the opportunity to poke at an Android `.apk`. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the `apk`, I needed to get some tools setup and learn a few things about the Android environment *really* fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the `apk` had and let it continue normal operations.
 
@@ -33,27 +32,27 @@ The very first thing one would obviously need is the application you want to mod
 
 Just having the `apk` though was not very useful. I needed something to run it on. I don’t have a hardware device handy so in comes the Android Studio, which includes the SDK and a Emulator. I downloaded the Android Studio [here](http://developer.android.com/sdk/index.html) and promptly installed it. I fired it up and clicked next furiously, waiting for more crap to download, till finally it looked like it was done.
 
-{% img https://i.imgur.com/FZmO5ru.png %}
+{{< figure src="/images/android_jailbreak_android_studio.png" >}}
 
 The next daunting task was to find the SDK updater. I wanted to install the x86 Emulator Accelerator amongst other things. Some searching around got me to the directory `~/Library/Android/sdk/tools` which had the `android` and `emulator` programs I was after. I fired up the SDK updater with `~/Library/Android/sdk/tools/android` and updated/installed all the stuff I wanted (yay more downloading). In the end, my installed packages ended up as follows:
 
-{% img https://i.imgur.com/pYlFwMz.png %}
+{{< figure src="/images/android_jailbreak_sdk_manager.png" >}}
 
 ## preparing an actual emulator
 With the software I needed for the emulator downloaded and ready, it was time to configure a `avd` (Android Virtual Device). I fired up the command `~/Library/Android/sdk/tools/android avd` and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:
 
-{% img https://i.imgur.com/ySGUvUt.png %}
+{{< figure src="/images/android_jailbreak_avd.png" >}}
 
 Saved that and quit the AVD Manager. That is all that I needed for the hardware portion. To test the `avd` that I have just made, I chose to run it quickly using `~/Library/Android/sdk/tools/emulator -avd test`:
 
-{% img https://i.imgur.com/NoWhu6I.png %}
+{{< figure src="/images/android_jailbreak_emulator_running.png" >}}
 
 Aaaand it works! I was actually testing network connectivity of the `apk` in question, so I will add the information for that at the end of the post as a small FYI.
 
 With the emulator running and working, it was time to install the `apk` to test. To do this, we use a tool call `adb`. This can be found in `~/Library/Android/sdk/platform-tools/adb`. A number of features are available to us using `adb`, such as pushing files to and from the device and installing applications. The `apk` I was testing, was installed while the emulator was running:
 
 ```bash
-leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk 
+leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
 * daemon not running. starting it now on port 5037 *
 * daemon started successfully *
 2383 KB/s (4184313 bytes in 1.714s)
@@ -90,7 +89,7 @@ I now have a `jar` file that I could open up in something like [Luyten](http://d
 
 I went through quite a large amount of code, trying to piece together how everything fits into one another. After some time, I finally came across `RootDetection.class`:
 
-{% img https://i.imgur.com/JkeAr3Z.png %}
+{{< figure src="/images/android_jailbreak_root_detection_class.png" >}}
 
 This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called `isRooted`. You will see in the next few paragraphs how trivial it is to bypass this.
 

