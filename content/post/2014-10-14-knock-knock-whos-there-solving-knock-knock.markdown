@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-10-14T09:14:26Z
-title: knock-knock who’s there?
+title: knock-knock who’s there? solving knock knock
 ---
 
 ## introduction

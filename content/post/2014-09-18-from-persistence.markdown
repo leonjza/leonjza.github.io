@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-09-18T06:58:53Z
-title: From Persistence, to pain, to PWN
+title: From Persistence
 ---
 
 ## persist we must!

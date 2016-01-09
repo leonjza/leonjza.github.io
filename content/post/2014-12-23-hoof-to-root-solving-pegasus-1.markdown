@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-12-23T08:29:49Z
-title: hoof to root ? solving pegasus 1
+title: hoof to root solving pegasus 1
 ---
 
 ## introduction

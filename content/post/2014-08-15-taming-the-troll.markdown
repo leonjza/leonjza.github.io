@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-08-15T07:12:03Z
-title: taming (actually just solving) the troll
+title: taming the troll
 ---
 
 ## foreword

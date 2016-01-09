@@ -7,7 +7,7 @@ categories:
 - VulnHub
 comments: true
 date: 2014-08-09T16:59:53Z
-title: Beating Xerxes 2 (no, not the Persian King)
+title: Beating Xerxes 2
 ---
 
 ## foreword
