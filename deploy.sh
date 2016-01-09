@@ -4,8 +4,8 @@
 # @leonjza - 2016
 
 # Update local source with remote
-echo -e "\033[0;32mGetting project source updated..\033[0m"
-git pull
+echo -e "\033[0;32mUpdating local copy of project sources..\033[0m"
+git pull origin source
 
 # Add local changes
 echo -e "\033[0;32mStaging source update for Github...\033[0m"
