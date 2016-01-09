@@ -396,4 +396,4 @@ In this post we saw how it is possible to 'crack' badly passworded and configure
 
 Then, we explored how it is possible to extract Domain Account hashes using the mimikatz _DCSync_ feature and generate a Kerberos Golden Ticket with high access levels in the domain.
 
-I think there is still a loooong road ahead for the Microsoft Kerberos Implementations... Until they 'fix' this stuff, thing should remain interesting for quite some time to come.
+I think there is still a loooong road ahead for the Microsoft Kerberos Implementations... Until they 'fix' this stuff, things should remain interesting for quite some time to come.
