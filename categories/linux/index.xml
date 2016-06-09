@@ -17,11 +17,11 @@
       <guid>https://leonjza.github.io/blog/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/</guid>
       <description>
 
-&lt;h3 id=&#34;console-all-the-things:a1f29655d26175227393d389d0601eca&#34;&gt;Console all the things!&lt;/h3&gt;
+&lt;h3 id=&#34;console-all-the-things&#34;&gt;Console all the things!&lt;/h3&gt;
 
 &lt;p&gt;First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.&lt;/p&gt;
 
-&lt;h3 id=&#34;example-virsh-console-access:a1f29655d26175227393d389d0601eca&#34;&gt;Example virsh console access&lt;/h3&gt;
+&lt;h3 id=&#34;example-virsh-console-access&#34;&gt;Example virsh console access&lt;/h3&gt;
 
 &lt;p&gt;Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:&lt;/p&gt;
 
@@ -58,7 +58,7 @@ testing123
 virsh #
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;ok-gimme-ze-commands-already:a1f29655d26175227393d389d0601eca&#34;&gt;Ok, gimme ze commands already&amp;hellip;&lt;/h3&gt;
+&lt;h3 id=&#34;ok-gimme-ze-commands-already&#34;&gt;Ok, gimme ze commands already&amp;hellip;&lt;/h3&gt;
 
 &lt;p&gt;This I have tested on CentOS 6.4. The 2 commands to get it setup would be:&lt;/p&gt;
 
@@ -83,11 +83,11 @@ $ grubby --update-kernel=ALL --args=&#39;console=ttyS0,115200n8 console=tty0&#39
 
 &lt;p&gt;The &lt;code&gt;grubby&lt;/code&gt; command is not mandatory, however this is what allows you to see the kernel messages as the guest boots. I &lt;strong&gt;highly&lt;/strong&gt; recommend it.&lt;/p&gt;
 
-&lt;h3 id=&#34;i-have-console-but-can-t-log-in-as-root:a1f29655d26175227393d389d0601eca&#34;&gt;I have console, but can&amp;rsquo;t log in as root&lt;/h3&gt;
+&lt;h3 id=&#34;i-have-console-but-can-t-log-in-as-root&#34;&gt;I have console, but can&amp;rsquo;t log in as root&lt;/h3&gt;
 
 &lt;p&gt;If you followed this guide, then that would in fact be the case. Logging in directly as root is not something I would recommend. Rather log in as a unprivileged user, and su/sudo up to root. In some cases however it is actually necessary. So, to fix this problem, simply add &lt;code&gt;ttyS0&lt;/code&gt; as a &amp;ldquo;securetty&amp;rdquo; in &lt;code&gt;/etc/securetty&lt;/code&gt; by running: &lt;code&gt;$ echo &amp;quot;ttyS0&amp;quot; &amp;gt;&amp;gt; /etc/securetty&lt;/code&gt;. This will allow root logins via the virsh console.&lt;/p&gt;
 
-&lt;h3 id=&#34;serial-conf-has-the-answers:a1f29655d26175227393d389d0601eca&#34;&gt;serial.conf has the answers&lt;/h3&gt;
+&lt;h3 id=&#34;serial-conf-has-the-answers&#34;&gt;serial.conf has the answers&lt;/h3&gt;
 
 &lt;p&gt;If you are looking for more in-depth explanations as to how this works, I suggest you take a look at &lt;code&gt;/etc/init/serial.conf&lt;/code&gt; (again on CentOS 6.4). You&amp;rsquo;ll notice the configuration for &lt;code&gt;ttyS0.conf&lt;/code&gt; also comes from here :)&lt;/p&gt;
 </description>

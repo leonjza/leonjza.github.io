@@ -17,13 +17,13 @@
       <guid>https://leonjza.github.io/blog/2013/11/18/slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/</guid>
       <description>
 
-&lt;h2 id=&#34;foreword:148726962b60da82f616754f53c617fb&#34;&gt;foreword&lt;/h2&gt;
+&lt;h2 id=&#34;foreword&#34;&gt;foreword&lt;/h2&gt;
 
 &lt;p&gt;At the time of writing this post, this VM was part of a local security communities (&lt;a href=&#34;http://zacon.org.za/&#34;&gt;zacon&lt;/a&gt;) pre-con challenge. Finding /root/flag.txt would have entered you into a draw for winning a prize :D However, the greater goal of the challenge was to learn something. I set out some time and attempted the challenge. Fortunately, I managed to complete it in time. So, this is the journey I took to solve this. You can now download and try this VM yourself over at &lt;a href=&#34;http://vulnhub.com/entry/devrandom_relativity,55/&#34;&gt;VulnHub&lt;/a&gt;. Unzip, mount and boot the VM. Once the VM is booted, it should have an IP assigned via DHCP.&lt;/p&gt;
 
 &lt;p&gt;I think it is interesting to note that I used a very limited set of tools to complete this. No bruteforcers, metasploits, vulnerability scanners and or fancy proxies were used. My toolset consisted out of netcat, nmap and other basic bash commands. There are probably a gazillion ways to do this as lots of this stuff is preference based on how they are approached. However, the basic ideas of the vulnerabilities remain the same.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-challenge:148726962b60da82f616754f53c617fb&#34;&gt;the challenge&lt;/h3&gt;
+&lt;h3 id=&#34;the-challenge&#34;&gt;the challenge&lt;/h3&gt;
 
 &lt;p&gt;It all started with an announcement on the Zacon mailing list. A friendly heads-up about the challenge and some details were made available. We were given a hostname of where the challenge lived with clear instructions to find &lt;code&gt;flag.txt&lt;/code&gt;. Sounds simple. I slapped the hostname as a url in a browser and was met with a image of M.C. Eshter&amp;rsquo;s &amp;lsquo;Relativity&amp;rsquo;. Great. Something to start thinking about. I also nmapped the box. I mean, how else would you start, right? :)&lt;/p&gt;
 
@@ -39,7 +39,7 @@ PORT   STATE SERVICE
 
 &lt;p&gt;Alright. This gives you a good idea of whats happening on the host, as well as some points to start off with.&lt;/p&gt;
 
-&lt;h3 id=&#34;initial-enumeration:148726962b60da82f616754f53c617fb&#34;&gt;initial enumeration&lt;/h3&gt;
+&lt;h3 id=&#34;initial-enumeration&#34;&gt;initial enumeration&lt;/h3&gt;
 
 &lt;p&gt;Enumeration is key to starting something like this. The more you know about the host, the more you are able to adapt and think about as you go through the challenge. So, we know we have a SSH Server, a FTP server and a Web server exposed.&lt;/p&gt;
 
@@ -98,13 +98,13 @@ ftp&amp;gt;
 * Closing connection #0
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h4 id=&#34;putting-the-enumeration-together:148726962b60da82f616754f53c617fb&#34;&gt;putting the enumeration together&lt;/h4&gt;
+&lt;h4 id=&#34;putting-the-enumeration-together&#34;&gt;putting the enumeration together&lt;/h4&gt;
 
 &lt;p&gt;With the little bit of poking around we have just done, we are able to say that this may be a Fedora Core Server, running Apache 2.2.13, with ProFTPD and the mod_sql plugin. This already gives us quite a lot to work with in the sense of researching the respective software in search of known vulnerabilities.&lt;/p&gt;
 
 &lt;p&gt;With me loving web based security, my first attempt at further enumerating the machine was via the web server. I searched for &lt;code&gt;cgi-bin/&lt;/code&gt; type problems, potentially hidden directories via &lt;code&gt;robots.txt&lt;/code&gt;, username enumeration via home directories etc. to no avail. At some stage it became very apparent that the initial entry point for this server was not via the Web.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-initial-attack:148726962b60da82f616754f53c617fb&#34;&gt;the initial attack&lt;/h3&gt;
+&lt;h3 id=&#34;the-initial-attack&#34;&gt;the initial attack&lt;/h3&gt;
 
 &lt;p&gt;The next step was the FTP server. As it was purposely disclosing the fact that it was using mod_sql, instinct kicked in and I attempted to check the responses if I tried to login with username &lt;strong&gt;&amp;lsquo;&lt;/strong&gt; and password &lt;strong&gt;&amp;lsquo;&lt;/strong&gt;.&lt;/p&gt;
 
@@ -152,7 +152,7 @@ ftp&amp;gt;
 
 &lt;p&gt;w00t. Notice the difference though? The SQL commenting was changed from &amp;ndash; to #. Apparently, MySQL is pretty finicky about the fact that the &amp;ndash; style comments should have a space afterwards. This means that a payload ending with say, &lt;code&gt;from users; -- NOTHING_OF_VALUE&lt;/code&gt; would have worked too. Just putting a space after the &amp;ndash; did not work as the software most probably does a type of &lt;code&gt;trim()&lt;/code&gt; on the field, hence the need to have something after the space too. Awesome, something learnt.&lt;/p&gt;
 
-&lt;h3 id=&#34;web-based-attack:148726962b60da82f616754f53c617fb&#34;&gt;web based attack&lt;/h3&gt;
+&lt;h3 id=&#34;web-based-attack&#34;&gt;web based attack&lt;/h3&gt;
 
 &lt;p&gt;Now that we have FTP access to the host, we simply needed to &lt;code&gt;ls&lt;/code&gt; to learn what is the next step.&lt;/p&gt;
 
@@ -170,7 +170,7 @@ ftp&amp;gt;
 
 &lt;p&gt;A directory called &amp;lsquo;0f756638e0737f4a0de1c53bf8937a08&amp;rsquo; was present, however our FTP user does not have access to this. We are able to deduce that this is in the web folder based on the content of the directory we have access to. So, time to slap &lt;a href=&#34;http://192.16.56.21/0f756638e0737f4a0de1c53bf8937a08&#34;&gt;http://192.16.56.21/0f756638e0737f4a0de1c53bf8937a08&lt;/a&gt; into a web browser.&lt;/p&gt;
 
-&lt;h3 id=&#34;exploiting-the-web-based-vulnerability:148726962b60da82f616754f53c617fb&#34;&gt;exploiting the web based vulnerability&lt;/h3&gt;
+&lt;h3 id=&#34;exploiting-the-web-based-vulnerability&#34;&gt;exploiting the web based vulnerability&lt;/h3&gt;
 
 &lt;p&gt;Browsing to the above mentioned URL revealed a PHP driven website filled with information about the Relativity artwork. While this in itself was interesting, the real interest was in the url&amp;rsquo;s to different parts of the website. More specifically, the urls were composed as &lt;code&gt;index.php?page=definition.php&lt;/code&gt;. Immediately this suggested that the file &lt;code&gt;index.php&lt;/code&gt; was programmed to include other files in order to render the content. In the examples case it included definition.php.&lt;/p&gt;
 
@@ -209,7 +209,7 @@ $page = $_GET[&#39;page&#39;];
 include ($page);
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;gaining-further-access:148726962b60da82f616754f53c617fb&#34;&gt;gaining further access&lt;/h3&gt;
+&lt;h3 id=&#34;gaining-further-access&#34;&gt;gaining further access&lt;/h3&gt;
 
 &lt;p&gt;From here you can of course take the time to set yourself up with a very nice interactive shell using this web based remote file inclusion vulnerability. However, browsing around the file system its clear that you can browse in the user &lt;code&gt;mauk&lt;/code&gt;&amp;rsquo;s home directory. While the directory itself has nothing of real value, there are still the hidden directories to view. Usually, these include things such as the users bash_history, bashrc etc. Also, ssh key related information would typically reside inside .ssh/. In this users .ssh/ directory, he left he’s SSH private key there, with permissions set so that anyone can read it. So, using the web based remote file include shell we are able to steal this off the server with the command &lt;code&gt;cat /home/mauk/.ssh/id_rsa&lt;/code&gt;, which would echo us the key.&lt;/p&gt;
 
@@ -252,7 +252,7 @@ uid=1001(mauk) gid=1001(mauk) groups=1001(mauk)
 
 &lt;p&gt;w00t. Now, we have a proper interactive shell as the user &lt;code&gt;mauk&lt;/code&gt;! :)&lt;/p&gt;
 
-&lt;h3 id=&#34;enumerating-the-next-step:148726962b60da82f616754f53c617fb&#34;&gt;enumerating the next step&lt;/h3&gt;
+&lt;h3 id=&#34;enumerating-the-next-step&#34;&gt;enumerating the next step&lt;/h3&gt;
 
 &lt;p&gt;Again, enumerate-&amp;gt;exploit-&amp;gt;post-exploit are very important steps. Now we find ourselves at the post-exploitation part again. Learn as much as you can about everything you can. Having the interactive SSH session that we have now, it was a breeze to learn quite a lot about the server. More importantly, learning about that which we also don’t have access to.&lt;/p&gt;
 
@@ -269,7 +269,7 @@ su -
 
 &lt;p&gt;The bash_history confirmed the use of the ircd, and as such, I re-setup my ssh connection to the server, this time forwarding port 6667 to my laptop so that I may connect to it with a local irc client. The ssh command now looked something like this: &lt;code&gt;ssh -L 6667:127.0.0.1:6667 mauk@192.168.56.21 -i key&lt;/code&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;good-ol-irc:148726962b60da82f616754f53c617fb&#34;&gt;good &amp;lsquo;ol irc&lt;/h3&gt;
+&lt;h3 id=&#34;good-ol-irc&#34;&gt;good &amp;lsquo;ol irc&lt;/h3&gt;
 
 &lt;p&gt;With the now forwarded IRC port, my local client connected to the irc service, and the following MOTD was sent:&lt;/p&gt;
 
@@ -365,7 +365,7 @@ error: (12)
 
 &lt;p&gt;&lt;strong&gt;EVENTUALLY&lt;/strong&gt;, after a number of tactical coffees and rethinking of what I have seen so far, I came back to re-attempt this.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-shortest-straw:148726962b60da82f616754f53c617fb&#34;&gt;the shortest straw&lt;/h3&gt;
+&lt;h3 id=&#34;the-shortest-straw&#34;&gt;the shortest straw&lt;/h3&gt;
 
 &lt;p&gt;I reran &lt;code&gt;auth_server&lt;/code&gt; a few more times, and decided to push the binary through strings one more time, just to see if &lt;em&gt;maybe&lt;/em&gt; the clue will be more clear now:&lt;/p&gt;
 
@@ -422,7 +422,7 @@ sh-4.2$
 
 &lt;p&gt;&amp;hellip; wait a sec. &lt;code&gt;fortune&lt;/code&gt; is not called from its full relative path, however /usr/bin/cowsay is. This means if I can fool the binary into thinking something else is this &lt;code&gt;fortune&lt;/code&gt; command, then I may be able to root the box. Especially if I can make it think my bash shell is &lt;code&gt;fortune&lt;/code&gt; :)&lt;/p&gt;
 
-&lt;h3 id=&#34;finishing-off:148726962b60da82f616754f53c617fb&#34;&gt;finishing off&lt;/h3&gt;
+&lt;h3 id=&#34;finishing-off&#34;&gt;finishing off&lt;/h3&gt;
 
 &lt;p&gt;With all the knowledge I have gained now, I moved on to finishing off by rooting the box. This was achieved by firstly creating a script called &lt;code&gt;fortune&lt;/code&gt;, which was simply the old bash command pushed over /dev/tcp again, and placing it in &lt;em&gt;/home/jetta/bin&lt;/em&gt;. I then ensured that &lt;code&gt;fortune&lt;/code&gt; was executable and tested it by just running it alone. It was working fine :)&lt;/p&gt;
 

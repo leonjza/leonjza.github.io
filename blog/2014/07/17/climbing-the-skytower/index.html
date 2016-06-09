@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Climbing the SkyTower</h1>
+    <h1 class="post-title">Climbing the SkyTower</h1>
     <span class="post-date">Jul 17, 2014 &middot; 12 minute read &middot; <a href="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,13 +95,13 @@
     </span>
     
 
-<h2 id="foreword:75e5a735a50eb678419419456b7154b6">foreword</h2>
+<h2 id="foreword">foreword</h2>
 
 <p>Recently, at a local Security Conference, <a href="https://twitter.com/telspacesystems">@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href="http://vulnhub.com/entry/skytower-1,96/">VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
 
 <p>In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)</p>
 
-<h2 id="starting-off:75e5a735a50eb678419419456b7154b6">starting off</h2>
+<h2 id="starting-off">starting off</h2>
 
 <p>The very first thing to do was get the IP assigned by my home router to the VM. Loaded this up into a web browser and saw the skytower web page as per the screenshots in the vulnhub entry. The IP I got was 192.168.137.242.</p>
 
@@ -111,7 +122,7 @@ PORT     STATE    SERVICE    REASON
 
 <p>Next morning I reviewed the results and continued to poke around.</p>
 
-<h2 id="learn-all-you-can:75e5a735a50eb678419419456b7154b6">learn all you can</h2>
+<h2 id="learn-all-you-can">learn all you can</h2>
 
 <p>With the information gathered so far, I realized that the SSH (tcp/22) was explicitly filtered, however the squid proxy was open. I tried to telnet and use the CONNECT method to see if I was able to access the SSH service:</p>
 
@@ -176,7 +187,7 @@ There was an error running the query [You have an error in your SQL syntax; chec
 
 <p>And success. We have made some progress :D Little did I know that I don&rsquo;t actually completely understand the progress made yet, but just keep this in mind :)</p>
 
-<h2 id="climbing-the-tower-and-faling-hard:75e5a735a50eb678419419456b7154b6">climbing the tower and faling hard</h2>
+<h2 id="climbing-the-tower-and-faling-hard">climbing the tower and faling hard</h2>
 
 <p>From the auth bypass results, we can see specific mention for users to SSH into the server. This particular user has a username <code>john</code> and a password <code>hereisjohn</code>. So lets try this.
 I setup my <code>proxychains</code> install to use the http proxy available on the server (<code>http 192.168.137.242 3128</code>) and opened a SSH session through it:</p>
@@ -202,7 +213,7 @@ $
 
 <p>&hellip; ok. So we get a session, and are told <em>Funds have been withdrawn</em>, and get the connection closed. Not exactly what I hoped for. Thinking what could cause this behavior, my mind went on to things like a custom shell, <code>.bashrc</code> files (assuming the user has bash a a shell) etc. So, I figured there may be more users on the system and I should try get those credentials too. After all, we have a working SQL injection point.</p>
 
-<h2 id="more-sql-injection:75e5a735a50eb678419419456b7154b6">more sql injection</h2>
+<h2 id="more-sql-injection">more sql injection</h2>
 
 <p>So back to the SQLi point it was. Taking a wild guess, I assumed there is a <code>users</code> table, and the table will have a primary key of <code>id</code>. So, <code>john</code> may have id 1, and a next user have id 2. So I modified the query slightly:</p>
 
@@ -227,7 +238,7 @@ There was an error running the query [Unknown column 'id1' in 'where clause']%
 
 <p>The users <code>john</code> &amp; <code>sara</code> both had the same behavior when attempting login via SSH, and the user <code>william</code> appears to have had an incorrect password. So, again the results were not exactly what I hoped for.</p>
 
-<h2 id="more-sql-enumeration:75e5a735a50eb678419419456b7154b6">more SQL enumeration</h2>
+<h2 id="more-sql-enumeration">more SQL enumeration</h2>
 
 <p>At this stage, I was thinking there must be more information in the database, and I should try and read some files from disk in order to gain a better understanding of what is going on here.</p>
 
@@ -284,7 +295,7 @@ There was an error running the query [Can't create/write to file '/var/www/shell
 <p>This obviously alludes to the fact that the user MySQL is running as des not have access to write to the web folder. It was time to rethink what was going on here&hellip;
 Oh yes, I obviously tried to just cat <code>/root/flag.txt</code>, but didn’t expect it to be <em>that</em> easy :D</p>
 
-<h2 id="gaining-further-access:75e5a735a50eb678419419456b7154b6">gaining further access</h2>
+<h2 id="gaining-further-access">gaining further access</h2>
 
 <p>After spending a really long time with the SQL injections, I decided to relook the SSH section. From the SQL injection that I learnt that there don&rsquo;t <em>appear</em> to be any custom shells in use, so the other thing this could be is a <code>.bashrc</code> with a <code>exit</code> command. I know its <code>.bashrc</code> because I saw the shell is <code>/bin/bash</code> from the <code>/etc/passwd</code>. I remember that I make heavy use of <code>ssh -t</code> to execute commands on the remove server, usually to setup multiple tunnels into a network, so I thought it will come in handy here.</p>
 
@@ -305,7 +316,7 @@ exit
 
 <p>&hellip; a exit. I simply removed the line. Now the almost obvious next step was to inspect and enumerate as much as possible. The most obvious thing that came to mind was privilege escalation as I was simply a normal user on the system at the moment.</p>
 
-<h2 id="enumeration-enumeration-enumeration:75e5a735a50eb678419419456b7154b6">enumeration enumeration enumeration</h2>
+<h2 id="enumeration-enumeration-enumeration">enumeration enumeration enumeration</h2>
 
 <p>I enumerated, everything&hellip; Referring to a excellent <a href="http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/">post by g0tm1lk</a> nothing aparent came up. The only semi strange thing was a empty <code>/accounts/</code> directory:</p>
 
@@ -327,7 +338,7 @@ User sara may run the following commands on this host:
 
 <p>This user may execute some commands as root using <code>sudo</code>. <code>sudo</code> allows you to specify what those commands are, if not all. There was one problem with this configuration though. <code>*</code> is a wildcard character, and as such, anything after <code>cat /accounts/</code> may also be run. This means that things like <code>sudo cat /accounts/../../etc/shadow</code> will work as the wildcard allows us to do a form of directory traversal.</p>
 
-<h2 id="pwnd:75e5a735a50eb678419419456b7154b6">pwnd</h2>
+<h2 id="pwnd">pwnd</h2>
 
 <p>So, to complete SkyTower:</p>
 
@@ -368,14 +379,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

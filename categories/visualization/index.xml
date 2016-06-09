@@ -17,7 +17,7 @@
       <guid>https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./</guid>
       <description>
 
-&lt;h3 id=&#34;stuff-to-what:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Stuff to what&amp;hellip;?&lt;/h3&gt;
+&lt;h3 id=&#34;stuff-to-what&#34;&gt;Stuff to what&amp;hellip;?&lt;/h3&gt;
 
 &lt;p&gt;Not too long ago, a colleague introduced me to Gource. In case you have not heard of &lt;a href=&#34;https://code.google.com/p/gource/&#34;&gt;Gource&lt;/a&gt; before, I highly suggest you take a few minutes and check out the project home page &lt;a href=&#34;https://code.google.com/p/gource/&#34;&gt;here&lt;/a&gt;. If you have been developing, or are part of a development project that has been around a while, then Gource should be able to tell you a tale in a strangely mesmerising way about its progression. Go ahead, download and install it. You are going to need it to try the rest of the stuff anyways.&lt;/p&gt;
 
@@ -38,7 +38,7 @@
 
 &lt;p&gt;Majong released a video of exactly this for the Minecraft dev tree. 800+ days worth of work, depicting the commit logs from a alpha 1.2 version through to the 1.5 release bought down 8 minutes. &lt;a href=&#34;http://www.youtube.com/watch?v=zRjTyRly5WA&#34;&gt;Direct Link&lt;/a&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;taking-it-one-step-further:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Taking it one step further.&lt;/h3&gt;
+&lt;h3 id=&#34;taking-it-one-step-further&#34;&gt;Taking it one step further.&lt;/h3&gt;
 
 &lt;p&gt;So all this is cool and stuff. Watching the stories of code get told in a uber cool fashion, causing a lot of productive time to be lost. However, browsing through the Gource Wiki Pages, revealed a rather interesting section. Gource accepts a argument called &lt;code&gt;--log-format custom&lt;/code&gt; that allows you to generate, well, custom logs.&lt;/p&gt;
 
@@ -53,13 +53,13 @@
 
 &lt;p&gt;So this is, nice. Gource &lt;em&gt;also&lt;/em&gt; accepts input from stdin, via &lt;code&gt;-&lt;/code&gt; as input obviously. To sum this up. Any, correctly formatted, pipe delimited input can be accepted as a &amp;lsquo;log&amp;rsquo; entry, that Gource should understand. Lets try it out.&lt;/p&gt;
 
-&lt;h3 id=&#34;introducing-py2gource-py:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Introducing py2gource.py&lt;/h3&gt;
+&lt;h3 id=&#34;introducing-py2gource-py&#34;&gt;Introducing py2gource.py&lt;/h3&gt;
 
 &lt;p&gt;My initial thought on this was that 90% if the custom log formats could be generated on the shell. Rightfully so. With tools like &lt;strong&gt;awk&lt;/strong&gt; and &lt;strong&gt;sed&lt;/strong&gt;, you can do some pretty neat stuff. However, as powerful as they may be, the approach of writing some middleware that would do all of the parsing and log generation &lt;em&gt;for&lt;/em&gt; me, seemed like a better idea. And so, &lt;code&gt;py2gource.py&lt;/code&gt; was born. Another terribly coded piece of python to do things I am too lazy to do in any other way.&lt;/p&gt;
 
 &lt;p&gt;So far based on what has been coded, the basic idea to use this middleware in a very simple form is: &lt;code&gt;cat something | python py2gource.py | gource&lt;/code&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;gource-for-nmap:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Gource for&amp;hellip; Nmap?&lt;/h3&gt;
+&lt;h3 id=&#34;gource-for-nmap&#34;&gt;Gource for&amp;hellip; Nmap?&lt;/h3&gt;
 
 &lt;p&gt;But, we don&amp;rsquo;t have to &lt;code&gt;cat&lt;/code&gt; something for output, right. Just do &lt;code&gt;nmap 127.0.0.1 -v | python py2gource.py | gource&lt;/code&gt;. &lt;code&gt;py2gource.py&lt;/code&gt; will happily read &lt;em&gt;stdin&lt;/em&gt; and parse the output for input formats it understands, specified by &lt;code&gt;-t&lt;/code&gt; as needed. For example:&lt;/p&gt;
 
@@ -99,7 +99,7 @@ $ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --l
 
 &lt;p&gt;Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!&lt;/p&gt;
 
-&lt;h3 id=&#34;visualising-a-network-telescope:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Visualising a Network Telescope&lt;/h3&gt;
+&lt;h3 id=&#34;visualising-a-network-telescope&#34;&gt;Visualising a Network Telescope&lt;/h3&gt;
 
 &lt;p&gt;Where I am currently employed, I am fortunate enough to have access to the data our blackhole provides to us. The setup is pretty simple. There are 13, random /24&amp;rsquo;s (IPV6 coming soon™), sink holed to a box running the &lt;a href=&#34;http://qosient.com/argus/&#34;&gt;Argus&lt;/a&gt; server software. Argus provides a set of client tools that you can use to connect to the server and &amp;lsquo;see&amp;rsquo; what is happening, live.&lt;/p&gt;
 
@@ -129,7 +129,7 @@ $ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --l
 
 &lt;p&gt;The above screenshots were taken by specifying the &lt;code&gt;--hide dirnames&lt;/code&gt; arguments, as we obviously want to try and keep the IP space of the blackhole classified.&lt;/p&gt;
 
-&lt;h3 id=&#34;ok-how-did-you-do-that:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Ok, how did you do THAT&lt;/h3&gt;
+&lt;h3 id=&#34;ok-how-did-you-do-that&#34;&gt;Ok, how did you do THAT&lt;/h3&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Visualising the Argus Darknet with Gource
 $ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title &amp;quot;Live Darknet Port Activity&amp;quot; -i 30 -f
@@ -141,7 +141,7 @@ $ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus 
 
 &lt;p&gt;The file &lt;em&gt;parsed&lt;/em&gt; can be seen as a &amp;lsquo;history&amp;rsquo; file that can be piped into Gource again at a later time to replay potentially interesting events, or, if you are not able to connect directly to argus, and need to grab and parse output on one machine, and then replay on another machine with Gource installed.&lt;/p&gt;
 
-&lt;h3 id=&#34;get-the-code-setup-your-own:5730425bc2060ed9870ccf2cfd790cac&#34;&gt;Get the code, setup your own.&lt;/h3&gt;
+&lt;h3 id=&#34;get-the-code-setup-your-own&#34;&gt;Get the code, setup your own.&lt;/h3&gt;
 
 &lt;p&gt;The parser&amp;rsquo;s code is hosted on Github &lt;a href=&#34;https://github.com/leonjza/py2gource&#34;&gt;here&lt;/a&gt;. Grab the code with &lt;code&gt;git clone https://github.com/leonjza/py2gource.git&lt;/code&gt;. Parsers live in &lt;code&gt;lib/Parsers&lt;/code&gt; if you are interested in parsing some other interesting information you may have.&lt;/p&gt;
 

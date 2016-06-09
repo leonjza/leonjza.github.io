@@ -17,7 +17,7 @@
       <guid>https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/</guid>
       <description>
 
-&lt;h2 id=&#34;introduction:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;introduction&lt;/h2&gt;
+&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;I will start by saying that I am by &lt;em&gt;no means&lt;/em&gt; a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&amp;rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.&lt;/p&gt;
 
@@ -32,13 +32,13 @@
 
 &lt;p&gt;Recently I had the opportunity to poke at an Android &lt;code&gt;.apk&lt;/code&gt;. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the &lt;code&gt;apk&lt;/code&gt;, I needed to get some tools setup and learn a few things about the Android environment &lt;em&gt;really&lt;/em&gt; fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the &lt;code&gt;apk&lt;/code&gt; had and let it continue normal operations.&lt;/p&gt;
 
-&lt;h2 id=&#34;so-what-about-jailbreaking:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;so what about jailbreaking&lt;/h2&gt;
+&lt;h2 id=&#34;so-what-about-jailbreaking&#34;&gt;so what about jailbreaking&lt;/h2&gt;
 
 &lt;p&gt;While I refer to jailbreaking, there are a number of terms used out there to describe the same thing. In the Android world, &lt;em&gt;rooting&lt;/em&gt; seems to be what is more commonly known. However, the premise remains the same. Rooting/Jailbreaking your device means that you escape the OS implemented sandboxing and gain full &lt;code&gt;root&lt;/code&gt; access to your device. Many mobile applications are against this as a compromised sandbox may have occurred unknowingly, effectively meaning that the device is compromised. So, as a safety measure, applications check for this and refuse to run because of it.&lt;/p&gt;
 
 &lt;p&gt;Jailbreak detection itself is a interesting field. From simple static file existence checks, to checking the exit codes of calls to &lt;code&gt;fork()&lt;/code&gt; and &lt;code&gt;su&lt;/code&gt; all the way to inspecting loaded &lt;code&gt;dynalibs&lt;/code&gt; (in the iOS world), everything is fair game. While a compromised device is a totally legit reason to not run any sensitive applications (think credential theft, traffic redirection etc), there are cases where a jailbroken device occurred on purpose. In these cases, power users may find application jailbreak detection very annoying :)&lt;/p&gt;
 
-&lt;h2 id=&#34;getting-started:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;getting started&lt;/h2&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
 
 &lt;p&gt;The very first thing one would obviously need is the application you want to modify. I already had the &lt;code&gt;apk&lt;/code&gt; I wanted to modify at hand. If you don’t have it then there are many ways to get an already installed &lt;code&gt;apk&lt;/code&gt; off a device. You just need to Google it :) Like, &lt;a href=&#34;http://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device&#34;&gt;this&lt;/a&gt;.&lt;/p&gt;
 
@@ -64,7 +64,7 @@
 &lt;/figure&gt;
 
 
-&lt;h2 id=&#34;preparing-an-actual-emulator:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;preparing an actual emulator&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-an-actual-emulator&#34;&gt;preparing an actual emulator&lt;/h2&gt;
 
 &lt;p&gt;With the software I needed for the emulator downloaded and ready, it was time to configure a &lt;code&gt;avd&lt;/code&gt; (Android Virtual Device). I fired up the command &lt;code&gt;~/Library/Android/sdk/tools/android avd&lt;/code&gt; and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:&lt;/p&gt;
 
@@ -104,9 +104,9 @@ Success
 
 &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; If you get a error such as &lt;em&gt;INSTALL_FAILED_DUPLICATE_PERMISSION&lt;/em&gt;, it usually meant that the application is already installed. Simply uninstall it from the emulator and retry the install. The storage on the emulator was persistent throughout reboots for me which was quite nice too.&lt;/p&gt;
 
-&lt;h2 id=&#34;looking-at-the-apk-getting-the-juicy-bits:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;looking at the apk, getting the juicy bits&lt;/h2&gt;
+&lt;h2 id=&#34;looking-at-the-apk-getting-the-juicy-bits&#34;&gt;looking at the apk, getting the juicy bits&lt;/h2&gt;
 
-&lt;p&gt;Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a &lt;code&gt;apk&lt;/code&gt; gets to be, and what it contains. Most importantly, the &lt;code&gt;apk&lt;/code&gt; can be unzipped and its contents further examined. &lt;a href=&#34;http://en.wikipedia.org/wiki/Android_application_package&#34;&gt;Wikipedia&lt;/a&gt; does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in &lt;code&gt;classes.dex&lt;/code&gt;. This is what looks like to be the compiled logic in the &lt;a href=&#34;http://en.wikipedia.org/wiki/Dalvik_(software&#34;&gt;dex file format&lt;/a&gt; understandable by the Dalvik virtual machine. Ok. But how do I make that into something &lt;strong&gt;I&lt;/strong&gt; can understand?&lt;/p&gt;
+&lt;p&gt;Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a &lt;code&gt;apk&lt;/code&gt; gets to be, and what it contains. Most importantly, the &lt;code&gt;apk&lt;/code&gt; can be unzipped and its contents further examined. &lt;a href=&#34;http://en.wikipedia.org/wiki/Android_application_package&#34;&gt;Wikipedia&lt;/a&gt; does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in &lt;code&gt;classes.dex&lt;/code&gt;. This is what looks like to be the compiled logic in the [dex file format](&lt;a href=&#34;http://en.wikipedia.org/wiki/Dalvik_(software&#34;&gt;http://en.wikipedia.org/wiki/Dalvik_(software&lt;/a&gt;) understandable by the Dalvik virtual machine. Ok. But how do I make that into something &lt;strong&gt;I&lt;/strong&gt; can understand?&lt;/p&gt;
 
 &lt;p&gt;In comes &lt;a href=&#34;https://code.google.com/p/dex2jar/&#34;&gt;dex2jar&lt;/a&gt;. A utility that will convert android dex files into Java source. :) I &lt;a href=&#34;https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip&#34;&gt;downloaded&lt;/a&gt; the latest archive and extracted it. I then extracted classes.dex from the &lt;code&gt;apk&lt;/code&gt; too:&lt;/p&gt;
 
@@ -139,7 +139,7 @@ Done.
 
 &lt;p&gt;This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called &lt;code&gt;isRooted&lt;/code&gt;. You will see in the next few paragraphs how trivial it is to bypass this.&lt;/p&gt;
 
-&lt;h2 id=&#34;decompiling-the-classes-dex:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;decompiling the classes.dex&lt;/h2&gt;
+&lt;h2 id=&#34;decompiling-the-classes-dex&#34;&gt;decompiling the classes.dex&lt;/h2&gt;
 
 &lt;p&gt;With some knowledge about the code, and knowing what I am after (the &lt;code&gt;RootDetection&lt;/code&gt; class, &lt;code&gt;isRooted&lt;/code&gt; method), it was time to move on to decompiling the dex to smali. This can be done easily using &lt;a href=&#34;https://code.google.com/p/smali/&#34;&gt;smali/baksmali&lt;/a&gt; which is an assembler/disassembler for Android&amp;rsquo;s dex format. I downloaded the latest versions of &lt;a href=&#34;https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar&#34;&gt;smali&lt;/a&gt; and &lt;a href=&#34;https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar&#34;&gt;baksmali&lt;/a&gt; and prepared to disassemble the &lt;code&gt;classes.dex&lt;/code&gt; file that we used earlier to get some Java sources out of.&lt;/p&gt;
 
@@ -175,7 +175,7 @@ out//com/MyApplication/utils/RootDetection.smali:.method public isRooted(Landroi
 
 &lt;p&gt;Awesome.&lt;/p&gt;
 
-&lt;h2 id=&#34;preparing-the-patch:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;preparing the patch&lt;/h2&gt;
+&lt;h2 id=&#34;preparing-the-patch&#34;&gt;preparing the patch&lt;/h2&gt;
 
 &lt;p&gt;As we can see, &lt;code&gt;isRooted&lt;/code&gt; has quite a bit of logic in it. Referring back to the &lt;code&gt;jar&lt;/code&gt; file I created with &lt;code&gt;dex2jar&lt;/code&gt;, we can deduce that we want &lt;code&gt;isRooted&lt;/code&gt; to return &lt;code&gt;false&lt;/code&gt;. Makes sense right? Now, I don’t write smali out of my head, but that did not stop me. How can I see what smali code would look like to just return &lt;code&gt;false&lt;/code&gt;? Well, I could just write my own &lt;code&gt;.java&lt;/code&gt; code, compile it, and check what the output is like once its disassembled right? Yep!&lt;/p&gt;
 
@@ -219,7 +219,7 @@ RootDetection.class: compiled Java class data, version 50.0 (Java 1.6)
 
 &lt;p&gt;With the &lt;code&gt;RootDetection&lt;/code&gt; class now patched, I re-assembled the &lt;code&gt;classes.dex&lt;/code&gt; file from the generated smali code with &lt;code&gt;java -jar smali-2.0.5.jar -o classes.dex out&lt;/code&gt;. The Reassembly generated no errors so I assumed it was successful.&lt;/p&gt;
 
-&lt;h2 id=&#34;repackaging-and-signing-the-apk:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;repackaging and signing the apk&lt;/h2&gt;
+&lt;h2 id=&#34;repackaging-and-signing-the-apk&#34;&gt;repackaging and signing the apk&lt;/h2&gt;
 
 &lt;p&gt;With the patch applied and the new &lt;code&gt;classes.dex&lt;/code&gt; generated, it was time to repackage the &lt;code&gt;apk&lt;/code&gt;. The first step was to add the new &lt;code&gt;classes.dex&lt;/code&gt; to the &lt;code&gt;apk&lt;/code&gt;:&lt;/p&gt;
 
@@ -231,7 +231,7 @@ updating: classes.dex (deflated 56%)
 
 &lt;p&gt;Excellent. The only thing left for me to do was to install the application using &lt;code&gt;adb&lt;/code&gt; and see if my patch worked, which it did! :D The usual error message about the jailbreak no longer displayed and I could continue with the rest of my testing.&lt;/p&gt;
 
-&lt;h2 id=&#34;notes-about-traffic-interception:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;notes about traffic interception&lt;/h2&gt;
+&lt;h2 id=&#34;notes-about-traffic-interception&#34;&gt;notes about traffic interception&lt;/h2&gt;
 
 &lt;p&gt;I have covered what I originally intended with the jailbreak detection patching, but want to add a few notes about traffic interception using the Emulator.&lt;/p&gt;
 
@@ -478,7 +478,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;p&gt;As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as &lt;code&gt;DNS: clients3.google.com -&amp;gt; 1.1.1.4&lt;/code&gt;. This is just the internal storage key and not the IP it resolved :D&lt;/p&gt;
 
-&lt;h2 id=&#34;summary:f0c467d8e3464f63b945a49a8c9a31f0&#34;&gt;summary&lt;/h2&gt;
+&lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
 &lt;p&gt;Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?&lt;/p&gt;
 </description>

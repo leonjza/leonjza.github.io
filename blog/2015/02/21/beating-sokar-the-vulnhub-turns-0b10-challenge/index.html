@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>beating sokar the vulnhub turns 0b10 challenge</h1>
+    <h1 class="post-title">beating sokar the vulnhub turns 0b10 challenge</h1>
     <span class="post-date">Feb 21, 2015 &middot; 31 minute read &middot; <a href="https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,7 +95,7 @@
     </span>
     
 
-<h2 id="introduction:6256545d38ed18a4e5f3162703192bb4">introduction</h2>
+<h2 id="introduction">introduction</h2>
 
 <p><a href="http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html">Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a>
  created <a href="https://www.vulnhub.com/entry/sokar-1,113/">Sokar</a>.</p>
@@ -106,7 +117,7 @@ Of course, modifying the VM in order to help you get the flag (things like singl
 
 <p>Here is my entry for the competition. Enjoy! :)</p>
 
-<h2 id="a-usual-start:6256545d38ed18a4e5f3162703192bb4">a usual start</h2>
+<h2 id="a-usual-start">a usual start</h2>
 
 <p>You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire <code>nmap</code> at it. I followed exactly these steps apart from using the usual <code>netdiscover</code> to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.</p>
 
@@ -138,7 +149,7 @@ Nmap done: 1 IP address (1 host up) scanned in 1133.72 seconds
 
 <p>One port open on tcp. <code>tcp/591</code>.</p>
 
-<h2 id="cgi-bin-cat:6256545d38ed18a4e5f3162703192bb4">/cgi-bin/cat</h2>
+<h2 id="cgi-bin-cat">/cgi-bin/cat</h2>
 
 <p>The service on <code>tcp/591</code> appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML <code>&lt;iframe&gt;</code> to <a href="http://192.168.217.163:591/cgi-bin/cat">http://192.168.217.163:591/cgi-bin/cat</a>. Requesting this page alone was the same stats, minus that creepy pink color ;)</p>
 
@@ -170,7 +181,7 @@ uid=48(apache) gid=48(apache) groups=48(apache)
 
 <p>Yay. I was now able to execute commands as <code>apache</code>. This allowed me to enumerate a great deal of the machine with relative ease.</p>
 
-<h2 id="making-life-easier:6256545d38ed18a4e5f3162703192bb4">making life easier</h2>
+<h2 id="making-life-easier">making life easier</h2>
 
 <p>Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called <code>shock.py</code>):</p>
 
@@ -278,7 +289,7 @@ if __name__ == &quot;__main__&quot;:
     print &quot; * Local '%s' transferred to remote '%s'&quot; % (source, destination)
 </code></pre>
 
-<h2 id="egress-firewalls-le-suck:6256545d38ed18a4e5f3162703192bb4">egress firewalls le-suck</h2>
+<h2 id="egress-firewalls-le-suck">egress firewalls le-suck</h2>
 
 <p>With the file transfer script done, I coded up a small &lsquo;port scanner&rsquo; (though all it really does is try to connect to a port and move on to the next within 0.1s):</p>
 
@@ -337,7 +348,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
 
 <p>I waited&hellip; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the <code>tcpdump</code> had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.</p>
 
-<h2 id="bynarr-the-fruit:6256545d38ed18a4e5f3162703192bb4">bynarr the fruit</h2>
+<h2 id="bynarr-the-fruit">bynarr the fruit</h2>
 
 <p>Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that <code>/home/bynarr</code> was readable to me. In there was what looked like a kernel module <code>lime.ko</code> and a script called <code>lime</code> to <code>insmod</code> it. Both were owned by root:</p>
 
@@ -465,7 +476,7 @@ Password:
 uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic)
 </code></pre>
 
-<h2 id="the-scary-linux-memory-extractor:6256545d38ed18a4e5f3162703192bb4">the scary linux memory extractor</h2>
+<h2 id="the-scary-linux-memory-extractor">the scary linux memory extractor</h2>
 
 <p>With command access as <code>bynarr</code> and remembering the mention of <code>tcp/51242</code> outbound connectivity, I once more try and run the port scanner that got copied to <code>/tmp</code>:</p>
 
@@ -562,7 +573,7 @@ Use the &quot;--show&quot; option to display all of the cracked passwords reliab
 
 <p><code>apophis:overdrive</code>.</p>
 
-<h2 id="build-the-clone-to-the-hook:6256545d38ed18a4e5f3162703192bb4">build the clone to the hook</h2>
+<h2 id="build-the-clone-to-the-hook">build the clone to the hook</h2>
 
 <p>To get command execution as <code>apophis.py</code> I copied the <code>bynarr.py</code> script to make <code>apophis.py</code>, changing the username and the password.</p>
 
@@ -618,7 +629,7 @@ Build? (Y/N)
 
 <p>The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to <code>/mnt/secret-project</code> from <code>sokar-dev</code> which does not resolve.</p>
 
-<h3 id="the-impossible-b0f:6256545d38ed18a4e5f3162703192bb4">the impossible b0f</h3>
+<h3 id="the-impossible-b0f">the impossible b0f</h3>
 
 <p>I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to <code>build.</code>:</p>
 
@@ -798,7 +809,7 @@ gdb-peda$
 
 <p>Right before this call though, there is a instruction to <code>call   0x5555555547a0 &lt;setreuid@plt&gt;</code> to set the UID to 0. So, this brought me to the conclusion that <code>build</code> is running <code>/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/</code> as <code>root</code>. But what is so special about this?</p>
 
-<h3 id="inspecting-git:6256545d38ed18a4e5f3162703192bb4">inspecting git</h3>
+<h3 id="inspecting-git">inspecting git</h3>
 
 <p>I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a <code>git clone</code> as root? One of my first theories was that if I could get <code>sokar-dev</code> to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions <code>git</code> will honor really is the symlink and executable bits :(</p>
 
@@ -846,7 +857,7 @@ git version 2.2.0
 
 <p>Great. <code>git</code> version 2.2.1 fixed this bug so we are in luck.</p>
 
-<h2 id="rooting-sokar:6256545d38ed18a4e5f3162703192bb4">rooting sokar</h2>
+<h2 id="rooting-sokar">rooting sokar</h2>
 
 <p>All of this information was great to have, but it still had one major problem. How can I clone a repository <strong>I</strong> own? I made <em>countless</em> attempts to try fool the environment into resolving <code>sokar-dev</code> to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process &lsquo;cleans up&rsquo; the environment, especially for reasons such as this one.</p>
 
@@ -861,7 +872,7 @@ Password:
 
 <p><code>/etc/resolv.conf</code> is <strong>world writable</strong>. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D</p>
 
-<h3 id="preparing-the-environment-and-exploit:6256545d38ed18a4e5f3162703192bb4">preparing the environment and exploit</h3>
+<h3 id="preparing-the-environment-and-exploit">preparing the environment and exploit</h3>
 
 <p>I decided to use <code>dnsmasq</code> for a quick to setup DNS server. I added a line to <code>/etc/dnsmasq.hosts</code> to answer a query for <code>sokar-dev</code>:</p>
 
@@ -1057,7 +1068,7 @@ cat /root/flag
 [root@sokar secret-project]#
 </code></pre>
 
-<h2 id="conclusion:6256545d38ed18a4e5f3162703192bb4">conclusion</h2>
+<h2 id="conclusion">conclusion</h2>
 
 <p>What a blast! Them feels of r00t are so <em>gooood</em>. For the curios, that firewall that was making life so difficult:</p>
 
@@ -1083,7 +1094,7 @@ cat /etc/sysconfig/iptables
 COMMIT
 </code></pre>
 
-<h2 id="edit:6256545d38ed18a4e5f3162703192bb4">edit</h2>
+<h2 id="edit">edit</h2>
 
 <p>I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the <code>lime</code> script run with <code>sudo</code> can be shocked too!</p>
 
@@ -1151,14 +1162,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

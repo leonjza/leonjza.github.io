@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>trying harder oscp and me</h1>
+    <h1 class="post-title">trying harder oscp and me</h1>
     <span class="post-date">Nov 22, 2014 &middot; 10 minute read &middot; <a href="https://leonjza.github.io/blog/2014/11/22/trying-harder-oscp-and-me/#disqus_thread">Comments</a>
     
     <br/>
@@ -101,7 +112,7 @@
 
 <p>Below is a summary of my experience obtaining OSCP.</p>
 
-<h2 id="preperation:6809ed4345dd0e9b990112bd7672048b">preperation</h2>
+<h2 id="preperation">preperation</h2>
 
 <p>Taking OSCP was something I wanted to do for quite some time. I have read a number of blogs and experiences from people that have done it, and the most important take from all of that was the amount of time it took. Considering I had a full time job, it was hard for me to gauge exactly how much lab time I would have needed. So, I decided on getting 3 months to start off with.</p>
 
@@ -109,7 +120,7 @@
 
 <p>With the payments and logistics out of the way, I was scheduled to start 8 Aug &lsquo;14.</p>
 
-<h2 id="first-impressions:6809ed4345dd0e9b990112bd7672048b">first impressions</h2>
+<h2 id="first-impressions">first impressions</h2>
 
 <p>On the morning of 8 Aug I receive a email with all of the course material and VPN details. I quickly sifted through the videos and pdf materials and decided to have a early look at the lab machines. My very first reaction was &ldquo;Where the heck do I start?&rdquo;. Everything was a little bit of a information overflow, and there is no clear &ldquo;do this, then this, then this.&rdquo;. One is given a overview of what is required from a documentation perspective, but that is about it.</p>
 
@@ -117,7 +128,7 @@
 
 <p>One of the more important points to make here was the fact that 2 reports are required in the end. The exam report is of course compulsory but the lab report is optional. However, should you struggle to meet the requirements for the exam challenge, it <em>may</em> be possible to gain some points from your lab report. Of course, if you did not provide one, that chance you have is out the door. With that in mind, I decided to leave the exercises to later when I start to compile the actual lab report and jump right into the labs. In retrospect, I wish I decided to do the exercises first as there were some key elements taught to gear you for the labs.</p>
 
-<h2 id="meeting-the-pwk-labs:6809ed4345dd0e9b990112bd7672048b">meeting the PWK labs</h2>
+<h2 id="meeting-the-pwk-labs">meeting the PWK labs</h2>
 
 <p>The machines in the lab were of varying difficulty for me. Some of them were almost a little too easy to pwn, while others were way more of a challenge. You are faced with a <em>public</em> network, and ultimately have to gain access to the <em>admin</em> network that is nested deeper in. Using some pivoting techniques, the <em>admin</em> network was definitely the most fun for me.</p>
 
@@ -136,23 +147,23 @@
 
 <p>Offensive Security have a <a href="http://www.offensive-security.com/when-things-get-tough/">mantra that many know</a>. <em>Try Harder</em>. This is the classic response a student gets when asking for hints/help. It is probably the worst answer you can get when you have been bashing away at something for such a long time, but also the most rewarding when you <em>finally</em> get it.</p>
 
-<h2 id="pwning-lab-machines-to-prepare-for-the-exam:6809ed4345dd0e9b990112bd7672048b">pwning lab machines to prepare for the exam</h2>
+<h2 id="pwning-lab-machines-to-prepare-for-the-exam">pwning lab machines to prepare for the exam</h2>
 
 <p>Many of the lab machines have vulnerabilities that have Metasploit modules. You can easily try the <em>push button, get bacon</em> technique on them. But, it is important to note that in the exam, you will be restricted to what you can use. In fact, there are very clear Metasploit restrictions. From not being allowed to use Metasploit at all, to only being allowed to use certain features of the meterpreter shell. With this in mind, I will always <strong>highly</strong> recommend you attempt to exploit as much as possible in the labs without the use of Metasploit.</p>
 
 <p>Not being allowed to use Metasploit for me personally was not really such a big deal. Having practiced quite a lot in the labs to <em>not</em> use Metasploit, it was easy to find PoC exploits and modify them as required. I did make a lot of use of <strong>msfpayload</strong> to generate shellcode, but other than that, plain bind/netcat shells were in the order of the day.</p>
 
-<h2 id="last-days-of-the-pwk-lab:6809ed4345dd0e9b990112bd7672048b">last days of the PWK lab</h2>
+<h2 id="last-days-of-the-pwk-lab">last days of the PWK lab</h2>
 
 <p>My Lab time was scheduled to end 8 nov 2014. I have spent easily about 4-6 hours a night (where possible) in the labs with even more time on the weekends. With about a week left, I turned my focus to the 3 harder machines in the labs, known as <em>pain</em>, <em>sufferance</em> and <em>humble</em>. These 3 machines definitely were the hardest of the bunch, but I managed to pwn them too. By 7 Nov, I had successfully managed to pwn all of the lab machines and had the first version of my Lab report done.</p>
 
 <p>It was time to book the exam.</p>
 
-<h2 id="oscp-exam:6809ed4345dd0e9b990112bd7672048b">OSCP Exam</h2>
+<h2 id="oscp-exam">OSCP Exam</h2>
 
 <p>I managed to secure 19 November @11am as the date I was going to attempt the OSCP Certification Challenge. This actually worked out great for me, as it gave me enough time to catch up on some lost sleep, as well as polish the lab report I was going to send in with my Exam report.</p>
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Yeah, I am probably going to need this later tomorrow morning. <a href="http://t.co/8rcQ7YNwIS">pic.twitter.com/8rcQ7YNwIS</a></p>&mdash; _leon_jacobs (@leonjza) <a href="https://twitter.com/leonjza/status/534967808619470849">November 19, 2014</a></blockquote>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Yeah, I am probably going to need this later tomorrow morning. <a href="http://t.co/8rcQ7YNwIS">pic.twitter.com/8rcQ7YNwIS</a></p>&mdash; _leon_jacobs() (@leonjza) <a href="https://twitter.com/leonjza/status/534967808619470849">November 19, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <p>The day before the exam, I stocked up on some <a href="https://twitter.com/leonjza/status/534967808619470849">energy drinks</a> and made sure I get a good nights sleep while trying to keep my mind off the exam until it was time.</p>
@@ -165,13 +176,13 @@
 
 <p>At about 6am that morning, I was up to 80 points. This is technically already enough to pass (assuming I did not make a mistake and break a rule), but I wanted to try get all of the points I could possibly get. Fast forward to about 9am that morning, I decided to call it and start getting a rough draft of the exam report ready. I wanted to make sure I had all of the screenshots and console output I needed before the VPN expired.</p>
 
-<h2 id="the-reports:6809ed4345dd0e9b990112bd7672048b">the reports</h2>
+<h2 id="the-reports">the reports</h2>
 
 <p>At exactly 1045 that morning, the VPN dropped and the challenge was over. I now had 24 hours to submit the report. Considering I have been up for about 28 hours now (with a 1hour power nap), I thought it best to actually get some sleep and finish the report off afterwards.</p>
 
 <p>After about 6 hours of ZZZ&rsquo;s, I had a proper dinner and sat down to complete the exam report. The Lab report took me almost 2 weeks to complete, but the exam is nowhere near as much work and was definitely doable in 24hours. 10pm that evening I submitted both of my reports and went straight to bed :D</p>
 
-<h2 id="certification:6809ed4345dd0e9b990112bd7672048b">certification</h2>
+<h2 id="certification">certification</h2>
 
 <p>Almost exactly 24 hours later, I get the confirmation email that I have passed:</p>
 
@@ -186,7 +197,7 @@
 
 <p>Dem feels were good :D</p>
 
-<h2 id="oscp-faq:6809ed4345dd0e9b990112bd7672048b">oscp faq</h2>
+<h2 id="oscp-faq">oscp faq</h2>
 
 <p>I had quite a number of questions before I started the PWK training. So, let me try and answer a few for others that may have similar questions:</p>
 
@@ -241,14 +252,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

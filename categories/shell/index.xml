@@ -17,7 +17,7 @@
       <guid>https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/</guid>
       <description>
 
-&lt;h2 id=&#34;background:81933f3676c079333a579b7c058765d8&#34;&gt;background&lt;/h2&gt;
+&lt;h2 id=&#34;background&#34;&gt;background&lt;/h2&gt;
 
 
 &lt;figure &gt;
@@ -36,12 +36,12 @@ Callbacks are normally triggered just before or after certain events.&lt;/p&gt;
 &lt;p&gt;It is possible to provide shell commands to the &lt;code&gt;scripts&lt;/code&gt; property in the required &lt;code&gt;composer.json&lt;/code&gt; file (with a few restrictions), but this method echoes the command that it executes.
 A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.&lt;/p&gt;
 
-&lt;h2 id=&#34;why:81933f3676c079333a579b7c058765d8&#34;&gt;why?&lt;/h2&gt;
+&lt;h2 id=&#34;why&#34;&gt;why?&lt;/h2&gt;
 
 &lt;p&gt;I thought a little about which scenarios this may actually be useful in and figured maybe only really strange edge cases where you can only run composer (as root lol?).
 I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/community/metasploit/blog/2015/01/01/12-days-of-haxmas-exploiting-cve-2014-9390-in-git-and-mercurial&#34;&gt;git&lt;/a&gt; (CVE-2014-9390) that allowed for code execution via &amp;lsquo;poisoned&amp;rsquo; repositories. Well, I guess depending on your perspective, this may be a very similar.&lt;/p&gt;
 
-&lt;h2 id=&#34;poc:81933f3676c079333a579b7c058765d8&#34;&gt;PoC&lt;/h2&gt;
+&lt;h2 id=&#34;poc&#34;&gt;PoC&lt;/h2&gt;
 
 &lt;p&gt;As part of a PoC, I just used the popular &lt;a href=&#34;http://pentestmonkey.net/tools/web-shells/php-reverse-shell&#34;&gt;pentest-monkey PHP reverse shell&lt;/a&gt;, but really, anything is possible that is possible with PHP at this point.&lt;/p&gt;
 
@@ -57,15 +57,15 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
       <guid>https://leonjza.github.io/blog/2013/06/23/quick-win-quickly-execute-last-shell-command/</guid>
       <description>
 
-&lt;h3 id=&#34;work-clever-not-hard:191b7b3d1ffb3e6f6d2e0558cbd749f9&#34;&gt;Work clever, not hard&lt;/h3&gt;
+&lt;h3 id=&#34;work-clever-not-hard&#34;&gt;Work clever, not hard&lt;/h3&gt;
 
 &lt;p&gt;This will be the first post of a series of quick shell tips for getting things done, fast. Infact, it will probably just serve as a notepad for me on the topic ;)&lt;/p&gt;
 
-&lt;h3 id=&#34;last-shell-command:191b7b3d1ffb3e6f6d2e0558cbd749f9&#34;&gt;Last shell command&lt;/h3&gt;
+&lt;h3 id=&#34;last-shell-command&#34;&gt;Last shell command&lt;/h3&gt;
 
 &lt;p&gt;If you are using a shell, such as &lt;a href=&#34;http://www.gnu.org/software/bash/bash.html&#34;&gt;Bash&lt;/a&gt;, which is pretty much the default on most Linux distributions, then you probably know that you can just use the &lt;strong&gt;up&lt;/strong&gt; arrow to get the last command. But, if you are using a shell such as &lt;a href=&#34;http://www.zsh.org/&#34;&gt;Zsh&lt;/a&gt; like me, you&amp;rsquo;d quickly come to realise that the global &lt;code&gt;~/.histfile&lt;/code&gt; can be a tad frustrating if you are expecting the last command you typed in &lt;strong&gt;that&lt;/strong&gt; terminal window to appear when you press &lt;strong&gt;up&lt;/strong&gt;. Only to realise, its literally the last command you typed in &lt;em&gt;another&lt;/em&gt; shell.&lt;/p&gt;
 
-&lt;h3 id=&#34;bang-bang-to-the-rescue:191b7b3d1ffb3e6f6d2e0558cbd749f9&#34;&gt;Bang Bang to the rescue!&lt;/h3&gt;
+&lt;h3 id=&#34;bang-bang-to-the-rescue&#34;&gt;Bang Bang to the rescue!&lt;/h3&gt;
 
 &lt;p&gt;Simply type &lt;code&gt;!!&lt;/code&gt; and &lt;em&gt;enter&lt;/em&gt; and the last command that was run in &lt;strong&gt;that&lt;/strong&gt; terminal will be either echoed or executed, depending on how your shell is configured to handle the command.&lt;/p&gt;
 </description>

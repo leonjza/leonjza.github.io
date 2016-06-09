@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Beating Xerxes2</h1>
+    <h1 class="post-title">Beating Xerxes2</h1>
     <span class="post-date">Aug 9, 2014 &middot; 28 minute read &middot; <a href="https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,13 +95,13 @@
     </span>
     
 
-<h2 id="foreword:adb08c94956871dc40f41c5d3096b5f7">foreword</h2>
+<h2 id="foreword">foreword</h2>
 
 <p>Xerxes2 is a successor in a boot2root series by <a href="https://twitter.com/barrebas">@barrebas</a> hosted by <a href="https://twitter.com/vulnhub">@VulnHub</a>. If you haven&rsquo;t done it yet, close this article <em>now</em> and go learn by doing it!</p>
 
 <p>Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to learn a whole lot more than I thought possible. In total it took me about 3 or 4 days on and off to complete. The goal was as usual, read <code>/root/flag.txt</code>. This is the path I took to read the flag and gain root command execution. Enjoy!</p>
 
-<h2 id="getting-started:adb08c94956871dc40f41c5d3096b5f7">getting started</h2>
+<h2 id="getting-started">getting started</h2>
 
 <p>The tool of choice for Xerxes2 was again Kali Linux. I started up the VM and got the IP Address 192.158.56.102 assigned to it. So, to officially kick off the challenge, I started a NMAP scan:</p>
 
@@ -141,7 +152,7 @@ nc-data: MPEG ADTS, layer III, v2,  64 kbps, 22.05 kHz, Monaural
 
 <p>Sadly, this file kept me busy for quite some time, trying to find a hidden message. In the end, I gave up and moved on to the other ports open the VM. Maybe I had to come back to this later, but the little progress I had made had me hope I didn&rsquo;t have to.</p>
 
-<h2 id="first-shell-access:adb08c94956871dc40f41c5d3096b5f7">first shell access</h2>
+<h2 id="first-shell-access">first shell access</h2>
 
 <p>Moving on to tcp/80, a standard website with not much interesting apart from a cool looking Xerxes2 logo was found:</p>
 
@@ -190,7 +201,7 @@ _d_  _)MM_ YMMMM9 _MM_    _d_  _)MM_ YMMMM9  MYMMMM9  MMMMMMMM
 delacroix@xerxes2:~$
 </code></pre>
 
-<h2 id="becoming-polito-the-why:adb08c94956871dc40f41c5d3096b5f7">becoming polito - the why</h2>
+<h2 id="becoming-polito-the-why">becoming polito - the why</h2>
 
 <p>Once I had the first SSH access, life was a little less complicated. I could enumerate easier and learn the details about what I was facing. Things that stood out was a binary <code>/opt/bf</code>, owned by <code>polito</code> and had the SUID bit set for him. There was also a folder <code>/opt/backup</code>, with a file <code>korenchkin.tar.enc</code>. There was also mail in <code>/var/mail</code> for the user <code>korenchkin</code> which I am not able to read yet.</p>
 
@@ -217,7 +228,7 @@ LOOK DEEPERdelacroix@xerxes2:~$
 
 <p>As you can see above, running it just prints <strong>LOOK DEEPER</strong>. I recognized the syntax as <a href="http://en.wikipedia.org/wiki/Brainfuck">brainfk</a> and figured that <code>/opt/bf</code> was simply a brainfk interpreter. But wait, lets inspect <code>bf.c</code>!</p>
 
-<h3 id="inspecting-bf-c:adb08c94956871dc40f41c5d3096b5f7">inspecting bf.c</h3>
+<h3 id="inspecting-bf-c">inspecting bf.c</h3>
 
 <p>A quick read of <code>bf.c</code> confirmed the suspicions that <code>/opt/bf</code> was simply a brainfk interpreter. A buffer was set for the input program, then a function called <code>bf()</code> was called to process the brainfk program. Each instruction in the brainfk was handled with a case statement:</p>
 
@@ -245,7 +256,7 @@ case '-':
 
 <p>That was our brainfk class for the day.</p>
 
-<h3 id="finding-the-bf-vuln:adb08c94956871dc40f41c5d3096b5f7">finding the bf vuln</h3>
+<h3 id="finding-the-bf-vuln">finding the bf vuln</h3>
 
 <p>With all that brainfk, I was still not closer to actually finding the stepping stone to the next part of Xerxes2. That was until I re-read <code>bf.c</code>, and realized that one of the case statements was for <code>#</code>, and that when a hash is present it will run:</p>
 
@@ -259,7 +270,7 @@ case '-':
 
 <p>As exciting as this may seem, it was not really for me. I had already previously struggled with a format string vulnerability, and this case it was present so early in the CTF that I feared I would not be able to complete this one. However, the goal was now clear. I need to <em>somehow</em> exploit this format string vuln, as brainfk, and get that to run my own code, potentially gaining me a shell as <code>polito</code>.</p>
 
-<h2 id="becoming-polito-the-how:adb08c94956871dc40f41c5d3096b5f7">becoming polito - the how</h2>
+<h2 id="becoming-polito-the-how">becoming polito - the how</h2>
 
 <p>Doing research about format string vulnerabilities, you will see that generally the flow goes something along the lines of:</p>
 
@@ -277,7 +288,7 @@ case '-':
 
 <p>So, let me take this step by step on how <code>/opt/bf</code> can be exploited using a format string vulnerability, encoded in brainfk, with the NX bit set and ASLR enabled.</p>
 
-<h3 id="opt-bf-part1:adb08c94956871dc40f41c5d3096b5f7">/opt/bf - part1</h3>
+<h3 id="opt-bf-part1">/opt/bf - part1</h3>
 
 <p>To start, I had to recap in the sadly limited knowledge I already have of format string vulnerabilities. Some resources I found useful were:</p>
 
@@ -315,7 +326,7 @@ aa
 
 <p>Anyways, that settled the brainfk problem.</p>
 
-<h3 id="opt-bf-part2:adb08c94956871dc40f41c5d3096b5f7">/opt/bf - part2</h3>
+<h3 id="opt-bf-part2">/opt/bf - part2</h3>
 
 <p>Now that we can easily provide input to <code>/opt/bf</code> to print using the vulnerable <code>printf()</code> function, it was time to test the actual format string vulnerability. Just like the above mentioned resources (and many many others on the internet) have shown, we provide some <code>AAAA</code> and search for them:</p>
 
@@ -335,7 +346,7 @@ AAAA.41414141
 
 <p>For the sake of time, I am not going to document the 412643932471236 attempts that were made at getting this to work. Instead, here is the path that did eventually work. This is the part of Xerxes2 that undoubtedly took me the longest to get right.</p>
 
-<h3 id="opt-bf-part3:adb08c94956871dc40f41c5d3096b5f7">/opt/bf - part3</h3>
+<h3 id="opt-bf-part3">/opt/bf - part3</h3>
 
 <p>Now that we know where we can start manipulating pointers, we need to find out <em>what</em> we should manipulate. There are many options here, however your decision on which path to take is influenced by many vectors.</p>
 
@@ -419,7 +430,7 @@ $1 = {&lt;text variable, no debug info&gt;} 0x40062000 &lt;system&gt;
 
 <p>Soooo, 0x40062000. We have the point in memory where <code>system()</code> lives, and we know where the program is going to go to lookup the <code>printf</code> function. All that is left now is to exploit the format string vulnerability, override the location of <code>printf</code> with <code>system</code>, and provide a new argument for the now fooled <code>printf</code> to run. A new argument can be given by simply providing another <code>#</code> (remember we have the source so that was easy to figure out).</p>
 
-<h3 id="opt-bf-part4:adb08c94956871dc40f41c5d3096b5f7">/opt/bf - part4</h3>
+<h3 id="opt-bf-part4">/opt/bf - part4</h3>
 
 <p>We have all the information we need, lets get to work.</p>
 
@@ -527,7 +538,7 @@ Breakpoint 1, 0x080486eb in main ()
 
 <p>w00t. We have rewritten the GOT for <code>printf</code> to the location of the libc <code>system</code> call using the format string vulnerability. Phew.</p>
 
-<h3 id="opt-bf-part5:adb08c94956871dc40f41c5d3096b5f7">/opt/bf - part5</h3>
+<h3 id="opt-bf-part5">/opt/bf - part5</h3>
 
 <p>Now, all that is left is to get the <code>printf</code> to rerun (using the <code>#</code>) with a payload such as <code>/bin/sh</code>. We will append the <code>/bin/sh</code> to the end and just add another <code>#</code> to call <code>printf</code> (which is now overridden):</p>
 
@@ -542,7 +553,7 @@ $
 
 <p>We have just exploited a format string vulnerability on a binary that has the NX bit set, encoded with brainfk using ret2libc.</p>
 
-<h2 id="becoming-korenchkin:adb08c94956871dc40f41c5d3096b5f7">becoming korenchkin</h2>
+<h2 id="becoming-korenchkin">becoming korenchkin</h2>
 
 <p>We just got a shell with a euid for <code>polito</code>. To make life easier, I copied the public key I generated earlier for the first shell into <code>polito</code>&rsquo;s home, and SSH&rsquo;d in as that user.</p>
 
@@ -699,7 +710,7 @@ korenchkin@xerxes2:~$
 
 <p><em>You have new mail.</em></p>
 
-<h2 id="becoming-root:adb08c94956871dc40f41c5d3096b5f7">becoming root</h2>
+<h2 id="becoming-root">becoming root</h2>
 
 <p>Again, enumeration is key. As <code>korenchkin</code>, you will see that you may run.</p>
 
@@ -883,7 +894,7 @@ _d_  _)MM_ YMMMM9 _MM_    _d_  _)MM_ YMMMM9  MYMMMM9  MMMMMMMM
 root@xerxes2:~#
 </code></pre>
 
-<h2 id="conclusion:adb08c94956871dc40f41c5d3096b5f7">conclusion</h2>
+<h2 id="conclusion">conclusion</h2>
 
 <p>Xerxes2 really challenged me into learning a ton of new things so this Vulnerable VM was a total win for me! Thanks <a href="https://twitter.com/barrebas">@barrebas</a> and <a href="https://twitter.com/VulnHub">@VulnHub</a> for another great learning opportunity.</p>
 
@@ -919,14 +930,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

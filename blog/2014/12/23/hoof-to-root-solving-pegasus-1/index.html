@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>hoof to root solving pegasus 1</h1>
+    <h1 class="post-title">hoof to root solving pegasus 1</h1>
     <span class="post-date">Dec 23, 2014 &middot; 21 minute read &middot; <a href="https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,7 +95,7 @@
     </span>
     
 
-<h2 id="introduction:2909c52a557f765558fa015a0dc1703a">introduction</h2>
+<h2 id="introduction">introduction</h2>
 
 <p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
 
@@ -103,7 +114,7 @@
 
 <p>Lets begin.</p>
 
-<h2 id="nmap-again:2909c52a557f765558fa015a0dc1703a">nmap, again</h2>
+<h2 id="nmap-again">nmap, again</h2>
 
 <p>Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&hellip; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:</p>
 
@@ -128,7 +139,7 @@ Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
 
 <p><code>tcp/22</code>, <code>tcp/111</code>, <code>tcp/8088</code> and <code>tcp/55625</code>. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on <code>tcp/8088</code>.</p>
 
-<h2 id="stomping-some-hoofs-with-pegasus:2909c52a557f765558fa015a0dc1703a">stomping some hoofs with pegasus</h2>
+<h2 id="stomping-some-hoofs-with-pegasus">stomping some hoofs with pegasus</h2>
 
 <p>Browsing to <a href="http://192.168.56.101:8088/">http://192.168.56.101:8088/</a>, we are presented with a picture of Pegasus:</p>
 
@@ -195,7 +206,7 @@ ID  Response   Lines      Word         Chars          Request
 </figure>
 
 
-<h2 id="pwning-mike:2909c52a557f765558fa015a0dc1703a">pwning mike</h2>
+<h2 id="pwning-mike">pwning mike</h2>
 
 <p>So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data <code>code</code> to the previously found <code>submit.php</code>.</p>
 
@@ -384,7 +395,7 @@ Last login: Tue Dec 16 19:27:53 2014 from 172.16.246.129
 mike@pegasus:~$
 </code></pre>
 
-<h2 id="my-first-your-first-we-all-first:2909c52a557f765558fa015a0dc1703a">my_first, your_first, we_all_first</h2>
+<h2 id="my-first-your-first-we-all-first">my_first, your_first, we_all_first</h2>
 
 <p>With my initial shell I was able to start enumerating Pegasus a little more. The most obvious next step was the SUID binary in <code>mike</code>&rsquo;s home (we will get to it shortly):</p>
 
@@ -408,7 +419,7 @@ drwxr-xr-x 2 root root 4.0K Nov 18 14:43 nfs
 
 <p>The <code>/opt/git/</code> folder had what looked like remnants of the typical <code>.git/</code> folders when you checkout code from a repo, but not the actual files itself. I poked around a bit, and was able to re-assemble the <code>main.c</code> file from the git history.</p>
 
-<h3 id="rebuilding-main-c:2909c52a557f765558fa015a0dc1703a">rebuilding main.c</h3>
+<h3 id="rebuilding-main-c">rebuilding main.c</h3>
 
 <p><em>This step is not essential in progressing with Pegasus, but I figured it would be an interesting approach nonetheless</em></p>
 
@@ -495,7 +506,7 @@ index 39c0182..b6b2ed4 100644
 
 <p><code>printf(err_check);</code> is the potentially vulnerable call&hellip; I think.</p>
 
-<h3 id="the-calculator-with-a-hole:2909c52a557f765558fa015a0dc1703a">the calculator with a hole</h3>
+<h3 id="the-calculator-with-a-hole">the calculator with a hole</h3>
 
 <p>After toying with the git repository, my attention turned back to the SUID binary. When I run <code>my_first</code>, I am actually running it as <code>john</code>. This means, should I be able to exploit it and do things other than what its intended for, I may affectively gain <code>john</code>&rsquo;s privileges! Sounds easy right. :P</p>
 
@@ -529,13 +540,13 @@ Selection:
 
 <p><strong>EDIT</strong> I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. <script type="text/javascript" src="https://asciinema.org/a/14960.js" id="asciicast-14960" async data-theme="solarized-dark"></script></p>
 
-<h3 id="punching-more-than-numbers:2909c52a557f765558fa015a0dc1703a">punching more than numbers</h3>
+<h3 id="punching-more-than-numbers">punching more than numbers</h3>
 
 <p><em>So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to <code>my_first</code>&rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to <a href="https://twitter.com/barrebas">@barrebas</a> for subtly pointing the fail out ;p</em></p>
 
 <p>As I had seen the source code, it was easy to formulate a plan for the exploit. I would make use of a ret2libc attack by overriding the GOT entry for <code>printf()</code> using the format string to <code>system()</code> instead. This means, the next time <code>printf()</code> is called, it would actually execute <code>system()</code> with the adjacent argument on the stack. Lets see how this was done.</p>
 
-<h4 id="compiling-the-format-string:2909c52a557f765558fa015a0dc1703a">compiling the format string</h4>
+<h4 id="compiling-the-format-string">compiling the format string</h4>
 
 <p>We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the <code>./my_first</code> binary to sample a successful run:</p>
 
@@ -749,7 +760,7 @@ $1 = {&lt;text variable, no debug info&gt;} 0x40069060 &lt;system&gt;
 
 <p>The binary crashes with <code>sh: 1: Selection:: not found</code>, meaning that it is now trying to run <code>system(&quot;Selection:&quot;)</code> instead of <code>printf(&quot;Selection:&quot;)</code> due to the GOT override.</p>
 
-<h4 id="finishing-the-exploit:2909c52a557f765558fa015a0dc1703a">finishing the exploit</h4>
+<h4 id="finishing-the-exploit">finishing the exploit</h4>
 
 <p>From here the exploit is pretty easy. We can use some $PATH trickery in our current shell to get <code>Selection:</code> to actually mean something, like prepare a small SUID C shell perhaps? :)</p>
 
@@ -799,7 +810,7 @@ $ id
 uid=1001(mike) gid=1001(mike) euid=1000(john) groups=1000(john),1001(mike)
 </code></pre>
 
-<h2 id="hoofing-rooting-pegasus:2909c52a557f765558fa015a0dc1703a">hoofing (rooting) Pegasus</h2>
+<h2 id="hoofing-rooting-pegasus">hoofing (rooting) Pegasus</h2>
 
 <p>I added the public key of the keypair I generated for Pegasus to <code>john</code>&rsquo;s authorized_keys file and proceeded to SSH in as him.</p>
 
@@ -855,7 +866,7 @@ drwxr-xr-x 3 root root 4.0K Dec 23 14:32 ..
 uid=0(root) gid=0(root) groups=0(root),1000(john)
 </code></pre>
 
-<h2 id="flag:2909c52a557f765558fa015a0dc1703a">flag :)</h2>
+<h2 id="flag">flag :)</h2>
 
 <pre><code class="language-text"># cat /root/flag
                ,
@@ -932,14 +943,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

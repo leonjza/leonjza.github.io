@@ -17,11 +17,11 @@
       <guid>https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/</guid>
       <description>
 
-&lt;h3 id=&#34;introduction:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Introduction&lt;/h3&gt;
+&lt;h3 id=&#34;introduction&#34;&gt;Introduction&lt;/h3&gt;
 
 &lt;p&gt;Lets start by saying that I am by &lt;em&gt;no&lt;/em&gt; means an expert at any of what I am about to write. Primarily this post is purely for research purposes. Think of it as one of those &lt;em&gt;something to do&lt;/em&gt; scenarios. I&amp;rsquo;d like to cover some basics around HTTP Authentication, and then show a PoC of how this can be abused in a real world scenario. Hopefully this will help educate people to use more secure authentication mechanisms! :)&lt;/p&gt;
 
-&lt;h3 id=&#34;authentication-at-a-http-level:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Authentication at a HTTP Level&lt;/h3&gt;
+&lt;h3 id=&#34;authentication-at-a-http-level&#34;&gt;Authentication at a HTTP Level&lt;/h3&gt;
 
 &lt;p&gt;HTTP Level authentication, for the most part, rely on a set of headers to authenticate the user. Generally speaking, the server will present the expected authentication mechanism via a &lt;code&gt;WWW-Authenticate&lt;/code&gt; header, and expect the client to prepare the correct response back. Each request the user makes after a successful authentication attempt, has to contain the correct headers for the applicable authentication scheme, else the server would normally respond with a &lt;code&gt;401 - Not Authorised&lt;/code&gt;, and the client has to re-authenticate. It is up to the server/application to validate the headers on each request.
 HTTP level authentication mechanisms include &lt;a href=&#34;http://tools.ietf.org/html/rfc2617#section-2&#34;&gt;Basic&lt;/a&gt;, &lt;a href=&#34;http://tools.ietf.org/html/rfc2617#section-3&#34;&gt;Digest&lt;/a&gt; as well as more complex schemes such as &lt;a href=&#34;http://tools.ietf.org/html/rfc4559&#34;&gt;Kerberos&lt;/a&gt;, &lt;a href=&#34;http://davenport.sourceforge.net/ntlm.html#ntlmHttpAuthentication&#34;&gt;NTLM&lt;/a&gt; and &lt;a href=&#34;http://oauth.net/core/1.0/#auth_header&#34;&gt;OAuth&lt;/a&gt;&lt;/p&gt;
@@ -30,7 +30,7 @@ HTTP level authentication mechanisms include &lt;a href=&#34;http://tools.ietf.o
 
 &lt;p&gt;For the purpose of this article, I will focus a little on the arguably less complex mechanisms, Basic and Digest.&lt;/p&gt;
 
-&lt;h3 id=&#34;http-basic-authentication:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;HTTP Basic Authentication&lt;/h3&gt;
+&lt;h3 id=&#34;http-basic-authentication&#34;&gt;HTTP Basic Authentication&lt;/h3&gt;
 
 &lt;p&gt;Basic authentication is considered the &lt;em&gt;least secure&lt;/em&gt; method of HTTP authentication. Why is this exactly? Well, the credentials used to authenticate you as a user is sent over the wire in a Base64 encoded string. Base64 is a &lt;strong&gt;encoding&lt;/strong&gt; scheme, and &lt;strong&gt;not&lt;/strong&gt; an encryption scheme [&lt;a href=&#34;http://en.wikipedia.org/wiki/Base64&#34;&gt;1&lt;/a&gt;].&lt;/p&gt;
 
@@ -79,7 +79,7 @@ Accept-Language: en-US,en;q=0.8,af;q=0.6
 &lt;p&gt;Because my credentials are correct, the server will respond now with a &lt;code&gt;200&lt;/code&gt; and serve the content. But, lets take a quick step back and check out what is actually in this header. More specifically, check out the &lt;code&gt;Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&lt;/code&gt; part.
 This header now needs to be present in every request that is made to the website. If for whatever reason the credentials are no longer valid, the server/application will usually respond with a &lt;code&gt;401&lt;/code&gt; again, and the authentication will re-occur. The user normally does not have to do anything, as the browser will automatically include the Authorization header in every request.&lt;/p&gt;
 
-&lt;h4 id=&#34;ok-so-what:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Ok, so what?&lt;/h4&gt;
+&lt;h4 id=&#34;ok-so-what&#34;&gt;Ok, so what?&lt;/h4&gt;
 
 &lt;p&gt;So lets take a moment and relook at the &lt;code&gt;Authorisation&lt;/code&gt; header. &lt;code&gt;Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&lt;/code&gt;
 Lets strip the &lt;em&gt;Authorisation: Basic&lt;/em&gt; section and just work with the &lt;code&gt;dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&lt;/code&gt;. We will echo this, and pipe it through a base64 decoder in a shell session:&lt;/p&gt;
@@ -94,7 +94,7 @@ $
 &lt;p&gt;It is now clear to see that for HTTP Basic authentication, the browser will take the credentials that the user has provided, and create the header in the format:
 &lt;code&gt;Authorisation: Basic&lt;/code&gt; + &lt;strong&gt;base64(username:password)&lt;/strong&gt;. If you are protecting a non-SSL web resource with this authentication mechanism, you are essentially asking your users to send their credentials unencrypted over the wire to you for every requset.&lt;/p&gt;
 
-&lt;h3 id=&#34;http-digest-authentication:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;HTTP Digest Authentication&lt;/h3&gt;
+&lt;h3 id=&#34;http-digest-authentication&#34;&gt;HTTP Digest Authentication&lt;/h3&gt;
 
 &lt;p&gt;Digest authentication is considered to be &lt;em&gt;more&lt;/em&gt; secure, as it actually applies a hash function to the credentials, before passing the header on to the server. For the sake of brevity, lets assume the server will act in a similar fashion to the Basic Authentication example above, except, the &lt;code&gt;WWW-Authenticate&lt;/code&gt; and &lt;code&gt;Authorisation&lt;/code&gt; headers are completely different. You are of course welcome to check it out yourself, and I would encourage you do so!&lt;/p&gt;
 
@@ -173,21 +173,21 @@ $ print $response
 
 &lt;p&gt;It is also clear that this can not be easily reversed. Even though some attributes that make up the hash function are known, the username and password are at least hashed and factored into the response attribute. It is not impossible, though not as easy as Basic authentication.&lt;/p&gt;
 
-&lt;h3 id=&#34;o-k-so-i-now-get-how-the-basic-vs-digest-stuff-works-whats-next:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;O..K.. so I now get how the Basic vs Digest stuff works, whats next?&lt;/h3&gt;
+&lt;h3 id=&#34;o-k-so-i-now-get-how-the-basic-vs-digest-stuff-works-whats-next&#34;&gt;O..K.. so I now get how the Basic vs Digest stuff works, whats next?&lt;/h3&gt;
 
 &lt;p&gt;What if we could make the browser think that the server wants basic authentication, and then capture the encdoded credentials? That would mean we dont need any l33t cracking skeelz or anything. Just a &lt;code&gt;base64 -d&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&#34;downgrade-all-the-auth:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Downgrade all the auth!&lt;/h3&gt;
+&lt;h3 id=&#34;downgrade-all-the-auth&#34;&gt;Downgrade all the auth!&lt;/h3&gt;
 
 &lt;p&gt;Assuming you are able to get some form of MiTM between the client and the server, by whichever means you use, we can intercept the headers and change them to tell the browser that we actually want basic authentication. Remember, the browser responds based on what the server asks, so if the server only asks for Basic authentication&amp;hellip; :D&lt;/p&gt;
 
 &lt;p&gt;&amp;ldquo;Downgrade&amp;rdquo; attacks are a known flaw in Digest authentication. Where Digest authentication is not necessarily vulnerable to MiTM attacks in the sense that the hash still needs to be cracked, Basic authentication is and therefore such an attack can prove to be valuable to an attacker.&lt;/p&gt;
 
-&lt;h3 id=&#34;enough-talk-poc:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;Enough talk, PoC!&lt;/h3&gt;
+&lt;h3 id=&#34;enough-talk-poc&#34;&gt;Enough talk, PoC!&lt;/h3&gt;
 
 &lt;p&gt;Using &lt;a href=&#34;https://code.google.com/p/proxpy/&#34;&gt;proxpy&lt;/a&gt;, which is a pluggable python proxy server, I wrote a PoC demoing this exact attack. There are a lot of scenarios where this doesn&amp;rsquo;t work very well, but this is only meant to demonstrate the problem.&lt;/p&gt;
 
-&lt;h4 id=&#34;the-plugin:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;The plugin&lt;/h4&gt;
+&lt;h4 id=&#34;the-plugin&#34;&gt;The plugin&lt;/h4&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;# dtob.py
 # Digest to Basic downgrade attack PoC plugin for proxpy (https://code.google.com/p/proxpy/)
@@ -265,7 +265,7 @@ A sample command to get this running would be: &lt;code&gt;python proxpy.py -p 8
 &lt;/figure&gt;
 
 
-&lt;h3 id=&#34;what-is-the-user-experience-with-this:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;What is the user experience with this?&lt;/h3&gt;
+&lt;h3 id=&#34;what-is-the-user-experience-with-this&#34;&gt;What is the user experience with this?&lt;/h3&gt;
 
 &lt;p&gt;That is a good question. The actual dialog that the user sees, again, is up to the browser to render. Depending on &lt;strong&gt;which&lt;/strong&gt; browser you use on &lt;strong&gt;which&lt;/strong&gt; OS, this may look different. In the back, the client &lt;em&gt;should&lt;/em&gt; function normally, blissfully unaware that the headers for stronger authentication were swapped out.&lt;/p&gt;
 
@@ -282,7 +282,7 @@ A sample command to get this running would be: &lt;code&gt;python proxpy.py -p 8
 
 &lt;p&gt;Notice the &amp;ldquo;Server Says:&amp;rdquo; Section. This is typically the &lt;code&gt;realm&lt;/code&gt; part of the authentication request. When using the &lt;code&gt;dtob.py&lt;/code&gt; plugin, it is changed to &lt;code&gt;pwnd&lt;/code&gt;. This dialog looks no different when using any form of HTTP based authentication. Hence, when the downgrade attack occurs, the user is unaware that anything different is happening in the background.&lt;/p&gt;
 
-&lt;h3 id=&#34;to-wrap-it-up:3a8a7cfcb004211ced9b129bed192f64&#34;&gt;To wrap it up&lt;/h3&gt;
+&lt;h3 id=&#34;to-wrap-it-up&#34;&gt;To wrap it up&lt;/h3&gt;
 
 &lt;p&gt;A few things to note here. Regardless of the HTTP Authentication method used, the client will not know &lt;em&gt;which&lt;/em&gt; authentication method is actually being used without inspecting the headers etc. The plugin can technically be written to keep track of which URL&amp;rsquo;s require Digest auth, and prepare valid responses ( like the one we did in the shell ) and present that back to the server. This will make the process completely smooth and the client unaware that something is going on. In the plugins current state, it will just continuously prompt the user for authentication as the proper request with the correct &lt;code&gt;Authorisation&lt;/code&gt; header is never sent to the server.&lt;/p&gt;
 

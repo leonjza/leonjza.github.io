@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Jabber to Email using SleekXMPP</h1>
+    <h1 class="post-title">Jabber to Email using SleekXMPP</h1>
     <span class="post-date">Jun 7, 2013 &middot; 6 minute read &middot; <a href="https://leonjza.github.io/blog/2013/06/07/jabber-to-email-using-sleekxmpp/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,15 +95,15 @@
     </span>
     
 
-<h3 id="so-why-would-you-even-want-this:21a2ba69985e2ed9ad7c50c0ea2ca302">So, why would you even want this..?</h3>
+<h3 id="so-why-would-you-even-want-this">So, why would you even want this..?</h3>
 
 <p>Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::</p>
 
-<h3 id="introducing-sleekxmpp:21a2ba69985e2ed9ad7c50c0ea2ca302">Introducing SleekXMPP</h3>
+<h3 id="introducing-sleekxmpp">Introducing SleekXMPP</h3>
 
 <p><a href="http://sleekxmpp.com/">SleekXMPP</a> is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like <code>pip install mailer sleekxmpp</code> or for the older school, <code>easy_install sleekxmpp mailer</code> should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too.</p>
 
-<h3 id="configuration-and-testing-time:21a2ba69985e2ed9ad7c50c0ea2ca302">Configuration and testing time</h3>
+<h3 id="configuration-and-testing-time">Configuration and testing time</h3>
 
 <p>Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.</p>
 
@@ -107,7 +118,7 @@ Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;licen
 
 <p>Next, you need a <em>bot</em> account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.</p>
 
-<h3 id="ok-code:21a2ba69985e2ed9ad7c50c0ea2ca302">Ok, code</h3>
+<h3 id="ok-code">Ok, code</h3>
 
 <p>Next, we take the <a href="http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot">sample</a> echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.</p>
 
@@ -306,7 +317,7 @@ if __name__ == '__main__':
         print(&quot;Unable to connect.&quot;)
 </code></pre>
 
-<h3 id="so-how-do-i-actually-use-this-thing-i-just-saw:21a2ba69985e2ed9ad7c50c0ea2ca302">So how do I actually use this thing I just saw?</h3>
+<h3 id="so-how-do-i-actually-use-this-thing-i-just-saw">So how do I actually use this thing I just saw?</h3>
 
 <p>Take the complete example and save it to a file like <code>bot.py</code>. Then, run it!
 The complete example will echo the message just before it attempts to mail it. You can comment out line <strong>86</strong> to stop this from happening and run the script with the <code>-q</code> argument once you are happy all is working.</p>
@@ -321,14 +332,14 @@ Received Message:
 This is a test message that will be mailed :D
 </code></pre>
 
-<h3 id="things-to-note:21a2ba69985e2ed9ad7c50c0ea2ca302">Things to note.</h3>
+<h3 id="things-to-note">Things to note.</h3>
 
 <ul>
 <li>Even though the script allows you to specify a <code>-p</code> argument, I would highly discourage the usage of this. Any person that has access to your machine, be it legitimate or not, would then see your bot&rsquo;s process, with the password in the <code>ps</code> output!</li>
 <li>Ensure the SMTP server specified in line <strong>96</strong> of the complete example allows yo to relay! Change it if needed.</li>
 </ul>
 
-<h3 id="test-d:21a2ba69985e2ed9ad7c50c0ea2ca302">Test! :D</h3>
+<h3 id="test-d">Test! :D</h3>
 
 <p>Send your bot a message and see if your mail arrives ^^</p>
 
@@ -364,14 +375,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

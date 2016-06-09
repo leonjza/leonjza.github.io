@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>&#39;stuff&#39; to Gource.</h1>
+    <h1 class="post-title">&#39;stuff&#39; to Gource.</h1>
     <span class="post-date">Jul 27, 2013 &middot; 7 minute read &middot; <a href="https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./#disqus_thread">Comments</a>
     
     <br/>
@@ -84,7 +95,7 @@
     </span>
     
 
-<h3 id="stuff-to-what:5730425bc2060ed9870ccf2cfd790cac">Stuff to what&hellip;?</h3>
+<h3 id="stuff-to-what">Stuff to what&hellip;?</h3>
 
 <p>Not too long ago, a colleague introduced me to Gource. In case you have not heard of <a href="https://code.google.com/p/gource/">Gource</a> before, I highly suggest you take a few minutes and check out the project home page <a href="https://code.google.com/p/gource/">here</a>. If you have been developing, or are part of a development project that has been around a while, then Gource should be able to tell you a tale in a strangely mesmerising way about its progression. Go ahead, download and install it. You are going to need it to try the rest of the stuff anyways.</p>
 
@@ -105,7 +116,7 @@
 
 <p>Majong released a video of exactly this for the Minecraft dev tree. 800+ days worth of work, depicting the commit logs from a alpha 1.2 version through to the 1.5 release bought down 8 minutes. <a href="http://www.youtube.com/watch?v=zRjTyRly5WA">Direct Link</a></p>
 
-<h3 id="taking-it-one-step-further:5730425bc2060ed9870ccf2cfd790cac">Taking it one step further.</h3>
+<h3 id="taking-it-one-step-further">Taking it one step further.</h3>
 
 <p>So all this is cool and stuff. Watching the stories of code get told in a uber cool fashion, causing a lot of productive time to be lost. However, browsing through the Gource Wiki Pages, revealed a rather interesting section. Gource accepts a argument called <code>--log-format custom</code> that allows you to generate, well, custom logs.</p>
 
@@ -120,13 +131,13 @@
 
 <p>So this is, nice. Gource <em>also</em> accepts input from stdin, via <code>-</code> as input obviously. To sum this up. Any, correctly formatted, pipe delimited input can be accepted as a &lsquo;log&rsquo; entry, that Gource should understand. Lets try it out.</p>
 
-<h3 id="introducing-py2gource-py:5730425bc2060ed9870ccf2cfd790cac">Introducing py2gource.py</h3>
+<h3 id="introducing-py2gource-py">Introducing py2gource.py</h3>
 
 <p>My initial thought on this was that 90% if the custom log formats could be generated on the shell. Rightfully so. With tools like <strong>awk</strong> and <strong>sed</strong>, you can do some pretty neat stuff. However, as powerful as they may be, the approach of writing some middleware that would do all of the parsing and log generation <em>for</em> me, seemed like a better idea. And so, <code>py2gource.py</code> was born. Another terribly coded piece of python to do things I am too lazy to do in any other way.</p>
 
 <p>So far based on what has been coded, the basic idea to use this middleware in a very simple form is: <code>cat something | python py2gource.py | gource</code></p>
 
-<h3 id="gource-for-nmap:5730425bc2060ed9870ccf2cfd790cac">Gource for&hellip; Nmap?</h3>
+<h3 id="gource-for-nmap">Gource for&hellip; Nmap?</h3>
 
 <p>But, we don&rsquo;t have to <code>cat</code> something for output, right. Just do <code>nmap 127.0.0.1 -v | python py2gource.py | gource</code>. <code>py2gource.py</code> will happily read <em>stdin</em> and parse the output for input formats it understands, specified by <code>-t</code> as needed. For example:</p>
 
@@ -166,7 +177,7 @@ $ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --l
 
 <p>Seeing the Nmap scan come alive is pretty cool. It almost convinces one to scan all the things, just to watch the pretty pictures!</p>
 
-<h3 id="visualising-a-network-telescope:5730425bc2060ed9870ccf2cfd790cac">Visualising a Network Telescope</h3>
+<h3 id="visualising-a-network-telescope">Visualising a Network Telescope</h3>
 
 <p>Where I am currently employed, I am fortunate enough to have access to the data our blackhole provides to us. The setup is pretty simple. There are 13, random /24&rsquo;s (IPV6 coming soon™), sink holed to a box running the <a href="http://qosient.com/argus/">Argus</a> server software. Argus provides a set of client tools that you can use to connect to the server and &lsquo;see&rsquo; what is happening, live.</p>
 
@@ -196,7 +207,7 @@ $ nmap -v 192.168.137.0/24 | python py2gource.py -t nmap | gource --realtime --l
 
 <p>The above screenshots were taken by specifying the <code>--hide dirnames</code> arguments, as we obviously want to try and keep the IP space of the blackhole classified.</p>
 
-<h3 id="ok-how-did-you-do-that:5730425bc2060ed9870ccf2cfd790cac">Ok, how did you do THAT</h3>
+<h3 id="ok-how-did-you-do-that">Ok, how did you do THAT</h3>
 
 <pre><code class="language-bash"># Visualising the Argus Darknet with Gource
 $ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus | tee parsed | gource --realtime --log-format custom - -1440x900 --bloom-intensity 0.3 --title &quot;Live Darknet Port Activity&quot; -i 30 -f
@@ -208,7 +219,7 @@ $ ra -S [argus_server]:[argus_port] -n | tee raw | python py2gource.py -t argus 
 
 <p>The file <em>parsed</em> can be seen as a &lsquo;history&rsquo; file that can be piped into Gource again at a later time to replay potentially interesting events, or, if you are not able to connect directly to argus, and need to grab and parse output on one machine, and then replay on another machine with Gource installed.</p>
 
-<h3 id="get-the-code-setup-your-own:5730425bc2060ed9870ccf2cfd790cac">Get the code, setup your own.</h3>
+<h3 id="get-the-code-setup-your-own">Get the code, setup your own.</h3>
 
 <p>The parser&rsquo;s code is hosted on Github <a href="https://github.com/leonjza/py2gource">here</a>. Grab the code with <code>git clone https://github.com/leonjza/py2gource.git</code>. Parsers live in <code>lib/Parsers</code> if you are interested in parsing some other interesting information you may have.</p>
 
@@ -244,14 +255,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

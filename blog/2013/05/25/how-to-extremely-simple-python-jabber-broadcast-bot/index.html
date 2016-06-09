@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>How To: Extremely simple python Jabber Broadcast Bot</h1>
+    <h1 class="post-title">How To: Extremely simple python Jabber Broadcast Bot</h1>
     <span class="post-date">May 25, 2013 &middot; 4 minute read &middot; <a href="https://leonjza.github.io/blog/2013/05/25/how-to-extremely-simple-python-jabber-broadcast-bot/#disqus_thread">Comments</a>
     
     <br/>
@@ -84,13 +95,13 @@
     </span>
     
 
-<h3 id="bots-bots-bots:6ad72ee237fe0bdb4213bb80c2b4b174">Bots! Bots! Bots!</h3>
+<h3 id="bots-bots-bots">Bots! Bots! Bots!</h3>
 
 <p>Generally speaking, a &ldquo;bot&rdquo; is something that like <em>does work for you</em>. But, for this purpose, the need for a jabber bot came from the fact that I had to deal with a lot of email on a daily basis. This large amount of mail sometimes would cause me to completely miss critical mail alerts. Realising later that I could have prevented a catastrophe if I didn&rsquo;t miss that <strong>one</strong> email was just not on anymore. So, I started investigating ways to get the <em>important</em> stuff delivered faster.</p>
 
 <p>As a team at work, we have long gone dropped the whole Skype group chat thing for our own Jabber server. My privacy related concerns back then was recently heightened <a href="http://lists.randombit.net/pipermail/cryptography/2013-May/004224.html">here</a> when a trap URL received a HEAD request from <strong>65.52.100.214</strong>. The user that received the URL in a chat was under strict instructions not to actually click it&hellip;</p>
 
-<h3 id="so-how-do-we-do-this:6ad72ee237fe0bdb4213bb80c2b4b174">So, how do we do this?</h3>
+<h3 id="so-how-do-we-do-this">So, how do we do this?</h3>
 
 <p>We implemented a <a href="http://www.igniterealtime.org/projects/openfire/">Openfire Server</a> that was really easy to setup and get going. Whats really nice about this Jabber server is that it supports plugins, some of which you can simply install via the web interface.</p>
 
@@ -122,7 +133,7 @@
 
 <p>With everything configured, you should now be able to send a message to something like <em>all@broadcast.jabber.server</em>. In my configuration, <em>plugin.broadcast.all2offline</em> is set to <strong>true</strong>. So, when a message is broadcasted and I was offline, I&rsquo;ll receive the broadcast as soon as I&rsquo;m back :)</p>
 
-<h3 id="introducing-jabbersend-py:6ad72ee237fe0bdb4213bb80c2b4b174">Introducing jabbersend.py</h3>
+<h3 id="introducing-jabbersend-py">Introducing jabbersend.py</h3>
 
 <p>With our jabber server now configured and working, we are ready to start automating things. From here we need two things. Something that will broadcast for us, and something <em>to</em> broadcast. The <em>what to broadcast</em> is entirely up to you, as the script will accept a text file to broadcast.</p>
 
@@ -178,7 +189,7 @@ id=cl.send(xmpp.protocol.Message(tojid, msg))
 time.sleep(1)
 </code></pre>
 
-<h3 id="we-have-the-code-now-use-it:6ad72ee237fe0bdb4213bb80c2b4b174">We have the code, now use it!</h3>
+<h3 id="we-have-the-code-now-use-it">We have the code, now use it!</h3>
 
 <p>Save this code to something like <code>jabbersend.py</code> and execute it like this:
 <code>python jabbersend.py all@broadcast.jabber.server message_file.txt</code></p>
@@ -218,14 +229,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 

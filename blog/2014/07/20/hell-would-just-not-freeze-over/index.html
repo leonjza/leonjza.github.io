@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
 
   
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
@@ -30,6 +31,16 @@
 
   <meta name="description" content="">
   <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
   
 </head>
 <body class="theme-base-0d">
@@ -76,7 +87,7 @@
 
 <div class="content container">
   <div class="post">
-    <h1>Hell would just not freeze over!</h1>
+    <h1 class="post-title">Hell would just not freeze over!</h1>
     <span class="post-date">Jul 20, 2014 &middot; 30 minute read &middot; <a href="https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/#disqus_thread">Comments</a>
     
     <br/>
@@ -87,11 +98,11 @@
 <p>##foreword
 Lets start by saying that this is probably one of the toughest boot2root&rsquo;s I have tried thus far. Even though I have managed to get <code>/root/flag.txt</code>, I am yet to actually <em>root</em> this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a <strong>TON</strong> of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get <strong>root</strong>, I&rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)</p>
 
-<h2 id="welcome-to-hell:b2f2177e9b11b0fc1c7ac5c94bf719fa">welcome to hell</h2>
+<h2 id="welcome-to-hell">welcome to hell</h2>
 
 <p><a href="http://vulnhub.com/entry/hell-1,95/">Hell</a> is another vulnerable VM hosted at <a href="https://twitter.com/vulnhub">@VulnHub</a>. After recently completing the <a href="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/">SkyTower</a> Vulnerable VM, I was feeling up to the challenge of a potentially more challenging VM. And boy, was it challenging&hellip; The wife was away on a <em>girls weekend out</em>, so I had plenty of time to sit and really think about things without distractions.</p>
 
-<h2 id="the-usual-first-steps:b2f2177e9b11b0fc1c7ac5c94bf719fa">the usual first steps</h2>
+<h2 id="the-usual-first-steps">the usual first steps</h2>
 
 <p>So, like most other CTF type VM&rsquo;s, the natural first approach is to get the VM up and running, get the network connected and fire off a NMAP port scan to see what we got. I decided to use a Kali Linux VM to attack this vulnerableVM. The IP for the Hell VM was 192.168.56.102:</p>
 
@@ -113,7 +124,7 @@ Nmap done: 1 IP address (1 host up) scanned in 4.38 seconds
 
 <p>So tcp/22, tcp/80 (kinda expected that), tcp/111 and then the first <em>whaaat</em> moment, tcp/666.</p>
 
-<h2 id="poking-around:b2f2177e9b11b0fc1c7ac5c94bf719fa">poking around</h2>
+<h2 id="poking-around">poking around</h2>
 
 <p>The tcp/666 was the first unusual thing so I decided to check this out first. A telnet to 192.168.56.102 on port 666 resulted in:</p>
 
@@ -137,7 +148,7 @@ Connection closed.
 
 <p>The line <em>&lsquo;Archiving latest version on webserver (echoserver.bak)&hellip;&rsquo;</em> hints towards the fact that we may be able to get this server software via the webserver. Other than that, the session appears to simply echo whatever I input. I toyed around with random inputs but the echoserver did not appear to be too upset about.</p>
 
-<h2 id="the-echo-server:b2f2177e9b11b0fc1c7ac5c94bf719fa">the echo server</h2>
+<h2 id="the-echo-server">the echo server</h2>
 
 <p>From the banner received with the service running on tcp/666, I browsed to the webserver root and made a request to <code>echoserver.bak</code>:</p>
 
@@ -167,7 +178,7 @@ write(4, &quot;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&
 
 <p>Eventually I decided to leave the echoserver alone and move on to the web server.</p>
 
-<h2 id="the-web-server:b2f2177e9b11b0fc1c7ac5c94bf719fa">the web server</h2>
+<h2 id="the-web-server">the web server</h2>
 
 <p>Web hacking is generally more familiar for me. Initially the web server did not reveal anything interesting. That is until you view the <code>robots.txt</code>:</p>
 
@@ -231,7 +242,7 @@ ID Response   Lines      Word         Chars          Request
 
 <p>From the .php file side of things, it was slightly more interesting.</p>
 
-<h2 id="302-content-anyone:b2f2177e9b11b0fc1c7ac5c94bf719fa">302 content anyone?</h2>
+<h2 id="302-content-anyone">302 content anyone?</h2>
 
 <p>I was already aware of <code>index.php</code> as well as <code>login.php</code> due to the root of the login directory revealing this. The rest of the items I browsed using the Iceweasal browser in Kali Linux. The results were:</p>
 
@@ -383,7 +394,7 @@ ID Response   Lines      Word         Chars          Request
 
 <p>Here we have another script, <code>notes.php</code> revealed. Browsing to <code>notes.php</code>, we are presented with a input field with a <em>Write Note</em> button, and a message stating: <em>&ldquo;note.txt stored to temporary storage upon submission&rdquo;</em>. I guessed this temporary storage is most probably /tmp. Posting to notes.php did not yield any input and I figured this was part of something to come later.</p>
 
-<h2 id="finding-the-web-vuln:b2f2177e9b11b0fc1c7ac5c94bf719fa">finding the web vuln</h2>
+<h2 id="finding-the-web-vuln">finding the web vuln</h2>
 
 <p>Ok we have come this far and you still reading? :O Just a little more and all will be revealed I promise.</p>
 
@@ -483,7 +494,7 @@ root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.p
 }
 </code></pre>
 
-<p>&hellip;with some kind of filtering preventing reading the <code>/etc/passwd</code>. While I was still pretty excited about finding this vuln, I soon came across <a href="https://www.owasp.org/index.php/Testing_for_Path_Traversal_(OWASP-AZ-001">this</a>#Gray_Box_testing_and_example) article detailing potential ways of bypassing directory traversal vulnerabilities. After reading this I promptly changed the <code>intruder</code> cookie to <code>....//....//....//....//....//etc/passwd</code> and viola! :)</p>
+<p>&hellip;with some kind of filtering preventing reading the <code>/etc/passwd</code>. While I was still pretty excited about finding this vuln, I soon came across <a href="https://www.owasp.org/index.php/Testing_for_Path_Traversal_(OWASP-AZ-001)#Gray_Box_testing_and_example">this</a> article detailing potential ways of bypassing directory traversal vulnerabilities. After reading this I promptly changed the <code>intruder</code> cookie to <code>....//....//....//....//....//etc/passwd</code> and viola! :)</p>
 
 <pre><code class="language-bash">root@kali:~# cat cookies
 # Netscape HTTP Cookie File
@@ -597,7 +608,7 @@ root@kali:~#
 <p>And bingo. <em>Technically</em> we finished what the original goal was, though, re-reading the original entry on Vulnhub, I was almost certain this was not the only way to get to this. Maybe a bug on the original release of the VM? I don&rsquo;t know.
 From here on onwards, the goal was no longer to read <code>/root/flag.txt</code>. No, we now have to root this VM :)</p>
 
-<h2 id="gaining-shell:b2f2177e9b11b0fc1c7ac5c94bf719fa">gaining shell</h2>
+<h2 id="gaining-shell">gaining shell</h2>
 
 <p>With the focus slightly shifting, and our ability to read files off the file system, the next natural step was to attempt to get command execution on the VM. Remembering the <code>notes.php</code> file, I decided to try include <code>/tmp/note.txt</code>. This worked just fine and echoed my testing attempts from earlier. So with this information, I simply went back to <code>notes.php</code>, entered: <code>&lt;?php print_r(shell_exec($_GET['c'])); ?&gt;</code>, and submitted the form. Next I edited the cookiejar to include <code>/tmp/notes.txt</code>, and proceeded to test my command execution:</p>
 
@@ -614,7 +625,7 @@ root@kali:~#
 <pre><code class="language-bash">curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c=$(echo -n “ls -lah” | python -c &quot;import urllib, sys; print urllib.quote(''.join(sys.stdin));&quot;) -c cookies -b cookies
 </code></pre>
 
-<h2 id="becoming-jack:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming jack</h2>
+<h2 id="becoming-jack">becoming jack</h2>
 
 <p>With command execution, it was easy to start enumerating as much as possible about the VM. At least as much as the <code>www-data</code> user has access to, which is generally quite a lot.</p>
 
@@ -693,7 +704,7 @@ mysql&gt;
 
 <p>Alrighty. I made a note about the credentials we have associated with &lsquo;Jack&rsquo; so far. I also tested these credentials on the website, just to get a feel of what the site was actually supposed to do :P</p>
 
-<h2 id="becoming-milk-4-life:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming milk_4_life</h2>
+<h2 id="becoming-milk-4-life">becoming milk_4_life</h2>
 
 <p>Jack had a <code>.pgp</code> folder with a private key stored in hes home directory.</p>
 
@@ -831,7 +842,7 @@ uid=1002(milk_4_life) gid=1002(milk_4_life) groups=1002(milk_4_life)
 
 <p>Easy :D</p>
 
-<h2 id="becoming-george:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming george</h2>
+<h2 id="becoming-george">becoming george</h2>
 
 <p>The user <code>milk_4_life</code> has a <code>game</code> in hes home folder.</p>
 
@@ -998,7 +1009,7 @@ Last login: Sat Jul  5 19:26:25 2014
 george@hell:~$
 </code></pre>
 
-<h2 id="becoming-bazza:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming bazza</h2>
+<h2 id="becoming-bazza">becoming bazza</h2>
 
 <p>George&rsquo;s home directory had what looked like a TrueCrypt container <code>4.0M Jun 19 21:09 container.tc</code> in hes home directory. TrueCrypt appeared to be installed on the VM, and attempting to mount the container failed due to an invalid keyfile and or password.</p>
 
@@ -1016,7 +1027,7 @@ george@hell:~$
 
 <p>There is a mention of <em>rockyou</em> in the From address. There is a famous rockyou wordlist used for password cracking out in the wild. With that in mind, and the fact that it was 0430 already, I decided to copy the <code>container.tc</code> to my Kali Linux install, and have <code>truecrack</code> have a go at it while I catch up on some much deserved sleep.</p>
 
-<h3 id="fast-forward-a-few-hours:b2f2177e9b11b0fc1c7ac5c94bf719fa">fast forward a few hours</h3>
+<h3 id="fast-forward-a-few-hours">fast forward a few hours</h3>
 
 <p>A few hours passed, with 0 luck on cracking the password for the container. I started to realize that this <em>may</em> not be the correct path in getting the container open, assuming that is the next step. However, as a last resort, I opted to copy the files onto my Windows gaming PC and run it via a GPU cracker, <a href="http://hashcat.net/oclhashcat/">oclHashcat</a>.</p>
 
@@ -1111,7 +1122,7 @@ uid=1004(bazza) gid=1004(bazza) groups=1004(bazza)
 $
 </code></pre>
 
-<h2 id="becoming-oj:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming oj</h2>
+<h2 id="becoming-oj">becoming oj</h2>
 
 <p><code>bazza</code> had 2 interesting files in hes home directory:</p>
 
@@ -1239,7 +1250,7 @@ $
 
 <p>And there we are! Group membership for <code>oj</code>, and access to <code>/home/oj</code></p>
 
-<h2 id="becoming-root:b2f2177e9b11b0fc1c7ac5c94bf719fa">becoming root</h2>
+<h2 id="becoming-root">becoming root</h2>
 
 <p>As with all of the other users, I added myself a ssh key for easy access.</p>
 
@@ -1261,7 +1272,7 @@ oj@hell:~$
 
 <p><strong>Edit:</strong> One way to root the machine is to make use of the fact that you can run <code>truecrypt</code> as <code>root</code>, and provide a evil container, spawning you a <code>root</code> shell. An example of this can be seen <a href="http://vinicius777.github.io/blog/2014/07/14/truecrypt-privilege-escalation/">here</a> (and actually references this VM)</p>
 
-<h2 id="summary:b2f2177e9b11b0fc1c7ac5c94bf719fa">summary</h2>
+<h2 id="summary">summary</h2>
 
 <p>Hell sure as heck taught me a lot and was one fun experience! Shoutout to <a href="https://twitter.com/@0x42424242">@0x42424242</a> for the time taken to make this VM available.</p>
 
@@ -1295,14 +1306,6 @@ var disqus_shortname = "slashnote";
 
 <script src="https://leonjza.github.io/js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script>
-  var _gaq=[['_setAccount','UA-44457032-2'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-
 </body>
 </html>
 
