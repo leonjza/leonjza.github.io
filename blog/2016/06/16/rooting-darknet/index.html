@@ -180,7 +180,7 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 &lt;/VirtualHost&gt;
 </code></pre>
 
-<p>I immediately took this as a hint that I would have to hack an entry into my local <code>/etc/hosts</code> to resolve <em>888.darknet.com</em> to <em>192.168.252.140</em>. After having done that, we are presented with yet another page with a login.</p>
+<p>I took this as a hint that I would have to hack an entry into my local <code>/etc/hosts</code> to resolve <em>888.darknet.com</em> to <em>192.168.252.140</em>. After having done that, we are presented with yet another page with a login.</p>
 
 
 <figure >
@@ -195,7 +195,7 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 
 <p>Natural instinct has it that when you see login pages like these, you just throw some single quotes at the fields to see what happens. I did exactly this and was pleasantly met with an error response along the lines of <code>unrecognized token: &quot;3590cb8af0bbb9e78c343b52b93773c9&quot;</code>. This just <strong>screamed</strong> SQL injection! I figured since it seems to be reflecting errors back at the page, <code>sqlmap</code> might just quickly sort out this stage for us without much effort. <strong>Nope!</strong> After quite a bit of time, I learnt that the SQL injection only appears to be in the <code>username</code> field, but no matter how I tried to get <code>sqlmap</code> to play along, I was inevitably met with <code>[WARNING] POST parameter 'username' is not injectable</code> every time.</p>
 
-<p>Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned <code>unrecognized token</code> hinted towards the fact that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value <code>'&quot;1</code> as a username and any text as a password.</p>
+<p>Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned <code>unrecognized token</code> hinted towards the idea that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value <code>'&quot;1</code> as a username and any text as a password.</p>
 
 
 <figure >
@@ -230,15 +230,15 @@ sqlite&gt;
 
 <p>In other words, if the injection point is in the <code>user</code> section, the payload we need to execute may be derived as follows:</p>
 
-<p><code>SELECT * FROM users WHERE user='</code> <strong>a user&rsquo; or &lsquo;1</strong> <code>' and pass='&lt;MD5 OF PASS'&gt;</code></p>
+<p><code>SELECT * FROM users WHERE user='</code> <strong>a user&rsquo; or &lsquo;1</strong> <code>' and pass='&lt;MD5 OF PASS&gt;'</code></p>
 
-<p>This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is <code>devnull@darknet.com</code>. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of <code>devnull</code> will complete the requirements we have to bypass the auth requirement for this page.</p>
+<p>This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is <code>devnull@darknet.com</code>. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of <code>devnull</code> will complete the requirements we have to bypass the authentication needed for this page.</p>
 
 <p>Considering the injection point and theorized query, we can use a username of <code>devnull' or 1'</code> and any password to login.</p>
 
 <h2 id="administrator-sql-shell">administrator sql shell</h2>
 
-<p>After login bypass I was presented with page titled <strong>Administrador SQL</strong>.</p>
+<p>After the login bypass, I was presented with a page titled <strong>Administrador SQL</strong>.</p>
 
 
 <figure >
@@ -253,7 +253,7 @@ sqlite&gt;
 
 <p>While researching some of the possibilities with SQLite injection, I came across <a href="http://gwae.trollab.org/sqlite-injection.html">this</a> blogpost that details a method of writing arbitrary code to a file of our choosing (obviously assuming we have write access there). Considering I had a fictitious <em>SQL shell</em> now, I jumped right into trying this.</p>
 
-<p>My first target was finding a writable directory. The blogpost mentions that <code>uploads/</code> and <code>cache/</code> are usually good candidates (and rightfully so), but it did not seem like the paths existed at <a href="http://888.darknet.com/uploads/">http://888.darknet.com/uploads/</a> and <a href="http://888.darknet.com/cache/">http://888.darknet.com/cache/</a>. So I pulled up <code>gobuster</code> again to see if there are any other directories I could potentially use for this.</p>
+<p>The first thing I needed to do though was to find a writable directory. The blogpost mentions that <code>uploads/</code> and <code>cache/</code> are usually good candidates (and rightfully so), but it did not seem like the paths existed at <a href="http://888.darknet.com/uploads/">http://888.darknet.com/uploads/</a> and <a href="http://888.darknet.com/cache/">http://888.darknet.com/cache/</a>. So I pulled up <code>gobuster</code> again to see if there are any other directories I could potentially use for this.</p>
 
 <pre><code>root@kali:~/data/VulnHub/Darknet# gobuster -u http://888.darknet.com/ -w /usr/share/wordlists/wfuzz/general/common.txt
 
@@ -346,9 +346,9 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 
 <p><em>fast forward many many hours</em></p>
 
-<p>Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however explain the general strategy.</p>
+<p>Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however detail the path that lead to success.</p>
 
-<p>I fired up BurpSuite, captured the request to <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> and sent it to Intruder.</p>
+<p>To fuzz all of the input fields, I fired up BurpSuite, captured the request to <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> and sent it to Intruder.</p>
 
 
 <figure >
@@ -359,7 +359,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 </figure>
 
 
-<p>Intruder was configured to use a simple fuzzing wordlist sourced from <code>/usr/share/wordlists/wfuzz/Injections/All_attack.txt</code>. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see those that returned an email address in the body and those that didn&rsquo;t based purely on the size. Using this list, I was able to filter out and realize that the payload of <code>count(/child::node())</code> managed to return a valid result.</p>
+<p>Intruder was configured to use a simple fuzzing wordlist sourced from <code>/usr/share/wordlists/wfuzz/Injections/All_attack.txt</code> on Kali Linux from the <code>wordlists</code> package. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see in this case that those that returned an email address in the body and those that didn&rsquo;t based purely on the size. Using this list, I was able to filter out and realize that the payload of <code>count(/child::node())</code> managed to return a valid result for the <code>id</code> parameter.</p>
 
 
 <figure >
@@ -427,7 +427,7 @@ print 'Raw:' . PHP_EOL;
 print_r($result);
 </code></pre>
 
-<p>I studied some XPath functions available on <a href="http://devdocs.io/xslt_xpath-xpath-functions/">devdocs.io</a>. This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the <a href="http://devdocs.io/xslt_xpath/xpath/functions/starts-with">starts-with()</a> XPath function. This proved to work in my little test environment.</p>
+<p>I studied some XPath functions available on <a href="http://devdocs.io/xslt_xpath-xpath-functions/">devdocs.io</a>. This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the <a href="http://devdocs.io/xslt_xpath/xpath/functions/starts-with">starts-with()</a> XPath function to to test for true/false scenarios. This proved to work in my little test environment.</p>
 
 <pre><code>root@kali:~/data/VulnHub/Darknet# php readxml.php &quot;1 and starts-with(name(*[1]),'F')=1&quot;
 Injection    : 1 and starts-with(name(*[1]),'F')=1
