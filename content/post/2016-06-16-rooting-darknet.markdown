@@ -69,7 +69,7 @@ root@kali:~/data/VulnHub/Darknet# cat 888.darknet.com.backup
 </VirtualHost>
 ```
 
-I immediately took this as a hint that I would have to hack an entry into my local `/etc/hosts` to resolve *888.darknet.com* to *192.168.252.140*. After having done that, we are presented with yet another page with a login.
+I took this as a hint that I would have to hack an entry into my local `/etc/hosts` to resolve *888.darknet.com* to *192.168.252.140*. After having done that, we are presented with yet another page with a login.
 
 
 {{< figure src="/images/darknet_888_login.png" >}}
@@ -77,7 +77,7 @@ I immediately took this as a hint that I would have to hack an entry into my loc
 ## 888 authentication bypass
 Natural instinct has it that when you see login pages like these, you just throw some single quotes at the fields to see what happens. I did exactly this and was pleasantly met with an error response along the lines of `unrecognized token: "3590cb8af0bbb9e78c343b52b93773c9"`. This just **screamed** SQL injection! I figured since it seems to be reflecting errors back at the page, `sqlmap` might just quickly sort out this stage for us without much effort. **Nope!** After quite a bit of time, I learnt that the SQL injection only appears to be in the `username` field, but no matter how I tried to get `sqlmap` to play along, I was inevitably met with `[WARNING] POST parameter 'username' is not injectable` every time.
 
-Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned `unrecognized token` hinted towards the fact that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value `'"1` as a username and any text as a password.
+Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned `unrecognized token` hinted towards the idea that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value `'"1` as a username and any text as a password.
 
 {{< figure src="/images/darknet_888_login_error.png" >}}
 
@@ -108,14 +108,14 @@ SELECT * FROM users WHERE user='a user' or '1' and pass='<MD5 OF PASS>'
 
 In other words, if the injection point is in the `user` section, the payload we need to execute may be derived as follows:
 
-`SELECT * FROM users WHERE user='` **a user' or '1** `' and pass='<MD5 OF PASS'>`
+`SELECT * FROM users WHERE user='` **a user' or '1** `' and pass='<MD5 OF PASS>'`
 
-This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is `devnull@darknet.com`. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of `devnull` will complete the requirements we have to bypass the auth requirement for this page.
+This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is `devnull@darknet.com`. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of `devnull` will complete the requirements we have to bypass the authentication needed for this page.
 
 Considering the injection point and theorized query, we can use a username of `devnull' or 1'` and any password to login.
 
 ## administrator sql shell
-After login bypass I was presented with page titled **Administrador SQL**.
+After the login bypass, I was presented with a page titled **Administrador SQL**.
 
 {{< figure src="/images/darknet_888_administrator_sql.png" >}}
 
@@ -123,7 +123,7 @@ I tried a few queries but quickly realized that no output was returned no matter
 
 While researching some of the possibilities with SQLite injection, I came across [this](http://gwae.trollab.org/sqlite-injection.html) blogpost that details a method of writing arbitrary code to a file of our choosing (obviously assuming we have write access there). Considering I had a fictitious *SQL shell* now, I jumped right into trying this.
 
-My first target was finding a writable directory. The blogpost mentions that `uploads/` and `cache/` are usually good candidates (and rightfully so), but it did not seem like the paths existed at http://888.darknet.com/uploads/ and http://888.darknet.com/cache/. So I pulled up `gobuster` again to see if there are any other directories I could potentially use for this.
+The first thing I needed to do though was to find a writable directory. The blogpost mentions that `uploads/` and `cache/` are usually good candidates (and rightfully so), but it did not seem like the paths existed at http://888.darknet.com/uploads/ and http://888.darknet.com/cache/. So I pulled up `gobuster` again to see if there are any other directories I could potentially use for this.
 
 ```
 root@kali:~/data/VulnHub/Darknet# gobuster -u http://888.darknet.com/ -w /usr/share/wordlists/wfuzz/general/common.txt
@@ -183,13 +183,13 @@ The login page too did not seem to have any obvious bugs. Some quick scans with 
 
 *fast forward many many hours*
 
-Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however explain the general strategy.
+Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however detail the path that lead to success.
 
-I fired up BurpSuite, captured the request to http://signal8.darknet.com/contact.php?id=1 and sent it to Intruder.
+To fuzz all of the input fields, I fired up BurpSuite, captured the request to http://signal8.darknet.com/contact.php?id=1 and sent it to Intruder.
 
 {{< figure src="/images/darknet_signal8_fuzzing.png" >}}
 
-Intruder was configured to use a simple fuzzing wordlist sourced from `/usr/share/wordlists/wfuzz/Injections/All_attack.txt`. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see those that returned an email address in the body and those that didn't based purely on the size. Using this list, I was able to filter out and realize that the payload of `count(/child::node())` managed to return a valid result.
+Intruder was configured to use a simple fuzzing wordlist sourced from `/usr/share/wordlists/wfuzz/Injections/All_attack.txt` on Kali Linux from the `wordlists` package. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see in this case that those that returned an email address in the body and those that didn't based purely on the size. Using this list, I was able to filter out and realize that the payload of `count(/child::node())` managed to return a valid result for the `id` parameter.
 
 {{< figure src="/images/darknet_signal8_xpath_discovery.png" >}}
 
@@ -251,7 +251,7 @@ print 'Raw:' . PHP_EOL;
 print_r($result);
 ```
 
-I studied some XPath functions available on [devdocs.io](http://devdocs.io/xslt_xpath-xpath-functions/). This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the [starts-with()](http://devdocs.io/xslt_xpath/xpath/functions/starts-with) XPath function. This proved to work in my little test environment.
+I studied some XPath functions available on [devdocs.io](http://devdocs.io/xslt_xpath-xpath-functions/). This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the [starts-with()](http://devdocs.io/xslt_xpath/xpath/functions/starts-with) XPath function to to test for true/false scenarios. This proved to work in my little test environment.
 
 ```
 root@kali:~/data/VulnHub/Darknet# php readxml.php "1 and starts-with(name(*[1]),'F')=1"
