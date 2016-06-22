@@ -251,7 +251,7 @@ print 'Raw:' . PHP_EOL;
 print_r($result);
 ```
 
-I studied some XPath functions available on [devdocs.io](http://devdocs.io/xslt_xpath-xpath-functions/). This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the [starts-with()](http://devdocs.io/xslt_xpath/xpath/functions/starts-with) XPath function to to test for true/false scenarios. This proved to work in my little test environment.
+I studied some XPath functions available on [devdocs.io](http://devdocs.io/xslt_xpath-xpath-functions/). This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the [starts-with()](http://devdocs.io/xslt_xpath/xpath/functions/starts-with) XPath function to test for true/false scenarios. This proved to work in my little test environment.
 
 ```
 root@kali:~/data/VulnHub/Darknet# php readxml.php "1 and starts-with(name(*[1]),'F')=1"
