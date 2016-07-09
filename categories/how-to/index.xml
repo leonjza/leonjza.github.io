@@ -6,8 +6,111 @@
     <description>Recent content in How To on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Aug 2014 15:46:49 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 09 Jul 2016 15:55:48 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/categories/how-to/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>awesome nmap grep</title>
+      <link>https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/</link>
+      <pubDate>Sat, 09 Jul 2016 15:55:48 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/</guid>
+      <description>
+
+&lt;p&gt;Nmap&amp;rsquo;s greppable output is really handy. Saving greppable output from a scan means the output is delimited in a way that can be easily processed using tools such as &lt;code&gt;grep&lt;/code&gt;, &lt;code&gt;sed&lt;/code&gt;, &lt;code&gt;cut&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/nmap-project-logo.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This post shows a few examples of post scan processing of the greppable output produced with the &lt;code&gt;-oG&lt;/code&gt; flag. A more up to date repository with examples and command explanations can be found in my &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;keep-in-mind&#34;&gt;keep in mind&lt;/h2&gt;
+
+&lt;p&gt;All of the below commands assume an environment variable &lt;code&gt;NMAP_FILE&lt;/code&gt; is set. This is simply the location of the output from nmaps &lt;code&gt;-oG&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;count-number-of-open-ports&#34;&gt;Count Number of Open Ports&lt;/h3&gt;
+
+&lt;h4 id=&#34;command&#34;&gt;command&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
+
+egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f2 -f4- | \
+sed -n -e &#39;s/Ignored.*//p&#39; | \
+awk -F, &#39;{split($0,a,&amp;quot; &amp;quot;); printf &amp;quot;Host: %-20s Ports Open: %d\n&amp;quot; , a[1], NF}&#39; \
+| sort -k 5 -g
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;output&#34;&gt;output&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Host: 127.0.0.1            Ports Open: 16
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;top-10-open-ports&#34;&gt;Top 10 Open Ports&lt;/h3&gt;
+
+&lt;h4 id=&#34;command-1&#34;&gt;command&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
+
+egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f4- | \
+sed -n -e &#39;s/Ignored.*//p&#39; | tr &#39;,&#39; &#39;\n&#39; | sed -e &#39;s/^[ \t]*//&#39; | \
+sort -n | uniq -c | sort -k 1 -r | head -n 10
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;output-1&#34;&gt;output&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;1 9001/open/tcp//tor-orport?///
+1 9000/open/tcp//cslistener?///
+1 8080/open/tcp//http-proxy///
+1 80/open/tcp//http//Caddy/
+1 6379/open/tcp//redis//Redis key-value store/
+1 631/open/tcp//ipp//CUPS 2.1/
+1 6234/open/tcp/////
+1 58377/filtered/tcp/////
+1 53/open/tcp//domain//dnsmasq 2.76/
+1 49153/open/tcp//mountd//1-3/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;hosts-and-open-ports&#34;&gt;Hosts and Open Ports&lt;/h3&gt;
+
+&lt;h4 id=&#34;command-2&#34;&gt;command&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
+
+egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f2 -f4- | \
+sed -n -e &#39;s/Ignored.*//p&#39;  | \
+awk &#39;{print &amp;quot;Host: &amp;quot; $1 &amp;quot; Ports: &amp;quot; NF-1; $1=&amp;quot;&amp;quot;; for(i=2; i&amp;lt;=NF; i++) { a=a&amp;quot; &amp;quot;$i; }; split(a,s,&amp;quot;,&amp;quot;); for(e in s) { split(s[e],v,&amp;quot;/&amp;quot;); printf &amp;quot;%-8s %s/%-7s %s\n&amp;quot; , v[2], v[3], v[1], v[5]}; a=&amp;quot;&amp;quot; }&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;output-2&#34;&gt;output&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Host: 127.0.0.1 Ports: 16
+open     tcp/22    ssh
+open     tcp/53    domain
+open     tcp/80    http
+open     tcp/443   https
+open     tcp/631   ipp
+open     tcp/3306  mysql
+open     tcp/4767  unknown
+open     tcp/6379
+open     tcp/8080  http-proxy
+open     tcp/8081  blackice-icecap
+open     tcp/9000  cslistener
+open     tcp/9001  tor-orport
+open     tcp/49152 unknown
+open     tcp/49153 unknown
+filtered tcp/54695
+filtered tcp/58369
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As mentioned in the beginning, more up to date examples are available in the &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Kali Linux Oracle Support</title>
