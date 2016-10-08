@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sdr on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/sdr/</link>
-    <description>Recent content in Sdr on #!/slash/note</description>
+    <title>#!/slash/note</title>
+    <link>https://leonjza.github.io/categories/sdr/index.xml</link>
+    <description>Recent content on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Oct 2016 16:05:22 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/categories/sdr/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,7 @@
       <pubDate>Sun, 02 Oct 2016 16:05:22 +0200</pubDate>
       
       <guid>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</guid>
-      <description>
-
-&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
+      <description>&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
 
 &lt;p&gt;My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I &lt;em&gt;totally&lt;/em&gt;  know nothing about really did make for this bit of research to be pretty daunting at first.&lt;/p&gt;
 
@@ -30,7 +27,8 @@
 &lt;/figure&gt;
 
 
-&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.&lt;/p&gt;
+&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;the-terminology&#34;&gt;the terminology&lt;/h2&gt;
 
@@ -319,7 +317,7 @@ d.setModeIDLE()
 
 &lt;p&gt;I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;blog post&lt;/a&gt; where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a &lt;code&gt;1&lt;/code&gt; for a high amplitude and a &lt;code&gt;0&lt;/code&gt; for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.&lt;/p&gt;
 
-&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.&lt;/p&gt;
+&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:&lt;/p&gt;
 
 
 &lt;figure &gt;
@@ -341,20 +339,25 @@ d.setModeIDLE()
 &lt;/figure&gt;
 
 
-&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;. The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x&lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;100100100110110100100110100100110100
+&lt;p&gt;The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# PWM Key version of 111001101101
+100100100110110100100110100100110100
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and &lt;code&gt;0&lt;/code&gt;&amp;rsquo;s are represented as &lt;code&gt;100&lt;/code&gt; for a &lt;code&gt;1&lt;/code&gt; and &lt;code&gt;110&lt;/code&gt; for a &lt;code&gt;0&lt;/code&gt; to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
+&lt;pre&gt;&lt;code&gt;# PWM to Bitstring comparison
+100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
  1     1     1     0     0     1     1     0     1     1     0     1
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This matches our initial bit string of &lt;code&gt;111001101101&lt;/code&gt;, and helps us conclude that for a full PWM key (with the leading bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s) the resultant key would be:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;111111111111111111111111111111111110100100100110110100100110100100110100
+&lt;pre&gt;&lt;code&gt;# Full PWM Key
+111111111111111111111111111111111110100100100110110100100110100100110100
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;baud-rate-hate&#34;&gt;baud rate hate&lt;/h2&gt;
@@ -491,8 +494,7 @@ d.setModeIDLE()
 &lt;/figure&gt;
 
 
-&lt;p&gt;Happy hacking!&lt;/p&gt;
-</description>
+&lt;p&gt;Happy hacking!&lt;/p&gt;</description>
     </item>
     
   </channel>

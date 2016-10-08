@@ -97,9 +97,7 @@
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/ios">ios</a><a class="label" href="https://leonjza.github.io/categories/jailbreak">jailbreak</a><a class="label" href="https://leonjza.github.io/categories/hex">hex</a><a class="label" href="https://leonjza.github.io/categories/bypass">bypass</a>
     </span>
-    
-
-<h2 id="introduction">introduction</h2>
+    <h2 id="introduction">introduction</h2>
 
 <p>Not too long ago, I toyed with a <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/">Android root detection bypass</a>. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I <em>actually</em> wanted to do impossible as I&rsquo;d very much like to dig under the hood :)</p>
 
@@ -114,6 +112,8 @@
 
 <p>So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a <code>.ipa</code>. Similar to the android <code>.apk</code> file, the <code>.ipa</code> is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications <code>.ipa</code> archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.</p>
+
+<p></p>
 
 <h2 id="understanding-the-behavior">understanding the behavior</h2>
 
@@ -195,7 +195,6 @@ myApplication: Mach-O executable arm
 <h2 id="summary">summary</h2>
 
 <p>In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)</p>
-
   </div>
   <div id="disqus_thread"></div>
 </div>

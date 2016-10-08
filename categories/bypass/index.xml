@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Bypass on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/bypass/</link>
-    <description>Recent content in Bypass on #!/slash/note</description>
+    <title>#!/slash/note</title>
+    <link>https://leonjza.github.io/categories/bypass/index.xml</link>
+    <description>Recent content on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 20 Feb 2015 21:09:21 +0000</lastBuildDate>
     <atom:link href="https://leonjza.github.io/categories/bypass/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
@@ -15,9 +14,7 @@
       <pubDate>Fri, 20 Feb 2015 21:09:21 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Not too long ago, I toyed with a &lt;a href=&#34;https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/&#34;&gt;Android root detection bypass&lt;/a&gt;. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I &lt;em&gt;actually&lt;/em&gt; wanted to do impossible as I&amp;rsquo;d very much like to dig under the hood :)&lt;/p&gt;
 
@@ -32,6 +29,8 @@
 
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;understanding-the-behavior&#34;&gt;understanding the behavior&lt;/h2&gt;
 
@@ -112,8 +111,7 @@ myApplication: Mach-O executable arm
 
 &lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
-&lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;
-</description>
+&lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;</description>
     </item>
     
   </channel>

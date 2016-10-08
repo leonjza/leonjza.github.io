@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>#!/slash/note</title>
-    <link>https://leonjza.github.io/</link>
+    <link>https://leonjza.github.io/index.xml</link>
     <description>Recent content on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
@@ -15,9 +15,7 @@
       <pubDate>Sun, 02 Oct 2016 16:05:22 +0200</pubDate>
       
       <guid>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</guid>
-      <description>
-
-&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
+      <description>&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
 
 &lt;p&gt;My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I &lt;em&gt;totally&lt;/em&gt;  know nothing about really did make for this bit of research to be pretty daunting at first.&lt;/p&gt;
 
@@ -30,7 +28,8 @@
 &lt;/figure&gt;
 
 
-&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.&lt;/p&gt;
+&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;the-terminology&#34;&gt;the terminology&lt;/h2&gt;
 
@@ -319,7 +318,7 @@ d.setModeIDLE()
 
 &lt;p&gt;I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;blog post&lt;/a&gt; where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a &lt;code&gt;1&lt;/code&gt; for a high amplitude and a &lt;code&gt;0&lt;/code&gt; for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.&lt;/p&gt;
 
-&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.&lt;/p&gt;
+&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:&lt;/p&gt;
 
 
 &lt;figure &gt;
@@ -341,20 +340,25 @@ d.setModeIDLE()
 &lt;/figure&gt;
 
 
-&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;. The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x&lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;100100100110110100100110100100110100
+&lt;p&gt;The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# PWM Key version of 111001101101
+100100100110110100100110100100110100
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and &lt;code&gt;0&lt;/code&gt;&amp;rsquo;s are represented as &lt;code&gt;100&lt;/code&gt; for a &lt;code&gt;1&lt;/code&gt; and &lt;code&gt;110&lt;/code&gt; for a &lt;code&gt;0&lt;/code&gt; to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
+&lt;pre&gt;&lt;code&gt;# PWM to Bitstring comparison
+100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
  1     1     1     0     0     1     1     0     1     1     0     1
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;This matches our initial bit string of &lt;code&gt;111001101101&lt;/code&gt;, and helps us conclude that for a full PWM key (with the leading bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s) the resultant key would be:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;111111111111111111111111111111111110100100100110110100100110100100110100
+&lt;pre&gt;&lt;code&gt;# Full PWM Key
+111111111111111111111111111111111110100100100110110100100110100100110100
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;baud-rate-hate&#34;&gt;baud rate hate&lt;/h2&gt;
@@ -491,8 +495,7 @@ d.setModeIDLE()
 &lt;/figure&gt;
 
 
-&lt;p&gt;Happy hacking!&lt;/p&gt;
-</description>
+&lt;p&gt;Happy hacking!&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -501,9 +504,7 @@ d.setModeIDLE()
       <pubDate>Sat, 09 Jul 2016 15:55:48 +0200</pubDate>
       
       <guid>https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/</guid>
-      <description>
-
-&lt;p&gt;Nmap&amp;rsquo;s greppable output is really handy. Saving greppable output from a scan means the output is delimited in a way that can be easily processed using tools such as &lt;code&gt;grep&lt;/code&gt;, &lt;code&gt;sed&lt;/code&gt;, &lt;code&gt;cut&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt;.&lt;/p&gt;
+      <description>&lt;p&gt;Nmap&amp;rsquo;s greppable output is really handy. Saving greppable output from a scan means the output is delimited in a way that can be easily processed using tools such as &lt;code&gt;grep&lt;/code&gt;, &lt;code&gt;sed&lt;/code&gt;, &lt;code&gt;cut&lt;/code&gt; and &lt;code&gt;awk&lt;/code&gt;.&lt;/p&gt;
 
 
 &lt;figure &gt;
@@ -514,7 +515,8 @@ d.setModeIDLE()
 &lt;/figure&gt;
 
 
-&lt;p&gt;This post shows a few examples of post scan processing of the greppable output produced with the &lt;code&gt;-oG&lt;/code&gt; flag. A more up to date repository with examples and command explanations can be found in my &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;
+&lt;p&gt;This post shows a few examples of post scan processing of the greppable output produced with the &lt;code&gt;-oG&lt;/code&gt; flag. A more up to date repository with examples and command explanations can be found in my &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;keep-in-mind&#34;&gt;keep in mind&lt;/h2&gt;
 
@@ -594,8 +596,7 @@ filtered tcp/54695
 filtered tcp/58369
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;As mentioned in the beginning, more up to date examples are available in the &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;
-</description>
+&lt;p&gt;As mentioned in the beginning, more up to date examples are available in the &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -604,9 +605,7 @@ filtered tcp/58369
       <pubDate>Thu, 16 Jun 2016 21:54:55 +0200</pubDate>
       
       <guid>https://leonjza.github.io/blog/2016/06/16/rooting-darknet/</guid>
-      <description>
-
-&lt;p&gt;Its been a while since I have done a vulnerable boot2root from &lt;a href=&#34;https://twitter.com/vulnhub&#34;&gt;@VulnHub&lt;/a&gt;. So, I decided to pick up where I last left. After paging back from the latest VM&amp;rsquo;s to where I roughly stopped last year, my attention was drawn to &lt;a href=&#34;https://www.vulnhub.com/entry/darknet-10,120/&#34;&gt;Darknet&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;.&lt;/p&gt;
+      <description>&lt;p&gt;Its been a while since I have done a vulnerable boot2root from &lt;a href=&#34;https://twitter.com/vulnhub&#34;&gt;@VulnHub&lt;/a&gt;. So, I decided to pick up where I last left. After paging back from the latest VM&amp;rsquo;s to where I roughly stopped last year, my attention was drawn to &lt;a href=&#34;https://www.vulnhub.com/entry/darknet-10,120/&#34;&gt;Darknet&lt;/a&gt; by &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;.&lt;/p&gt;
 
 
 &lt;figure &gt;
@@ -617,7 +616,8 @@ filtered tcp/58369
 &lt;/figure&gt;
 
 
-&lt;p&gt;This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.&lt;/p&gt;
+&lt;p&gt;This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
 
@@ -1506,8 +1506,7 @@ a:2:{i:0;O:4:&amp;quot;Test&amp;quot;:3:{s:3:&amp;quot;url&amp;quot;;s:35:&amp;q
     exit();
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;In the end, I learnt a lot! Thanks &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;In the end, I learnt a lot! Thanks &lt;a href=&#34;https://twitter.com/Q3rv0&#34;&gt;@Q3rv0&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -1516,10 +1515,7 @@ a:2:{i:0;O:4:&amp;quot;Test&amp;quot;:3:{s:3:&amp;quot;url&amp;quot;;s:35:&amp;q
       <pubDate>Sat, 09 Jan 2016 10:12:09 +0200</pubDate>
       
       <guid>https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/</guid>
-      <description>
-
-
-&lt;figure &gt;
+      <description>&lt;figure &gt;
     
         &lt;img src=&#34;https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png&#34; /&gt;
     
@@ -1531,7 +1527,8 @@ a:2:{i:0;O:4:&amp;quot;Test&amp;quot;:3:{s:3:&amp;quot;url&amp;quot;;s:35:&amp;q
 
 &lt;p&gt;The reality is, &lt;em&gt;many&lt;/em&gt; times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of &lt;code&gt;lsass&lt;/code&gt; and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to &lt;a href=&#34;https://github.com/sensepost/autoDANE&#34;&gt;automate&lt;/a&gt; this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!&lt;/p&gt;
 
-&lt;p&gt;This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!&lt;/p&gt;
+&lt;p&gt;This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!
+&lt;/p&gt;
 
 &lt;h2 id=&#34;lets-set-the-scene&#34;&gt;lets set the scene&lt;/h2&gt;
 
@@ -2010,8 +2007,7 @@ Ticket(s) purge for current session is OK
 
 &lt;p&gt;Then, we explored how it is possible to extract Domain Account hashes using the mimikatz &lt;em&gt;DCSync&lt;/em&gt; feature and generate a Kerberos Golden Ticket with high access levels in the domain.&lt;/p&gt;
 
-&lt;p&gt;I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&amp;hellip; Until they &amp;lsquo;fix&amp;rsquo; this stuff, things should remain interesting for quite some time to come.&lt;/p&gt;
-</description>
+&lt;p&gt;I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&amp;hellip; Until they &amp;lsquo;fix&amp;rsquo; this stuff, things should remain interesting for quite some time to come.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2085,9 +2081,7 @@ limitations under the License.
       <pubDate>Wed, 30 Sep 2015 19:39:55 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/</guid>
-      <description>
-
-&lt;h2 id=&#34;background&#34;&gt;background&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;background&#34;&gt;background&lt;/h2&gt;
 
 
 &lt;figure &gt;
@@ -2104,7 +2098,8 @@ limitations under the License.
 Callbacks are normally triggered just before or after certain events.&lt;/p&gt;
 
 &lt;p&gt;It is possible to provide shell commands to the &lt;code&gt;scripts&lt;/code&gt; property in the required &lt;code&gt;composer.json&lt;/code&gt; file (with a few restrictions), but this method echoes the command that it executes.
-A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.&lt;/p&gt;
+A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;why&#34;&gt;why?&lt;/h2&gt;
 
@@ -2115,8 +2110,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;As part of a PoC, I just used the popular &lt;a href=&#34;http://pentestmonkey.net/tools/web-shells/php-reverse-shell&#34;&gt;pentest-monkey PHP reverse shell&lt;/a&gt;, but really, anything is possible that is possible with PHP at this point.&lt;/p&gt;
 
-&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/b64qlhadvl7zn1912ihwi09wt.js&#34; id=&#34;asciicast-b64qlhadvl7zn1912ihwi09wt&#34; data-size=&#34;medium&#34; async&gt;&lt;/script&gt;
-</description>
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/b64qlhadvl7zn1912ihwi09wt.js&#34; id=&#34;asciicast-b64qlhadvl7zn1912ihwi09wt&#34; data-size=&#34;medium&#34; async&gt;&lt;/script&gt;</description>
     </item>
     
     <item>
@@ -2125,9 +2119,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
       <pubDate>Thu, 10 Sep 2015 22:32:25 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/09/10/canarytokens---the-maybe-not-so-obvious/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 
 &lt;figure &gt;
@@ -2140,7 +2132,8 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;Recently I became aware of the &lt;a href=&#34;http://canarytokens.org&#34;&gt;canarytokens&lt;/a&gt; project by the guys over at &lt;a href=&#34;http://thinkst.com/&#34;&gt;Thinkst&lt;/a&gt;. The basic idea is to manipulate things like documents / services in such a way that usage thereof will trigger an alert via some form of &amp;lsquo;phone home&amp;rsquo; feature. The is most probably better known as &amp;lsquo;honeydocs&amp;rsquo;. In the case of &lt;a href=&#34;http://canarytokens.org&#34;&gt;canarytokens&lt;/a&gt;, the phone home features can be either via a DNS or HTTP request coupled with a unique token. As paraphrased from the projects website, this is no new groundbreaking idea but just another usable one.&lt;/p&gt;
 
-&lt;p&gt;In this post, I just want to take a few moments and jot down my findings when investigating the documents generated by this project.&lt;/p&gt;
+&lt;p&gt;In this post, I just want to take a few moments and jot down my findings when investigating the documents generated by this project.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;read-the-source-luke&#34;&gt;read the source luke&lt;/h2&gt;
 
@@ -2261,8 +2254,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 
 &lt;p&gt;I think there is a lot of merit in this project. The methods used are obviously not fool proof, and if you are a really careful advesary and aware of these things then you will most probably not open docs from internet connected machines or ones without proper egress firewalling.&lt;/p&gt;
 
-&lt;p&gt;In my case, Little Snitch alerted me of the attempts to make the outgoing connections, so obviously that is a big give away for an attacker that was not previously aware of what was going on.&lt;/p&gt;
-</description>
+&lt;p&gt;In my case, Little Snitch alerted me of the attempts to make the outgoing connections, so obviously that is a big give away for an attacker that was not previously aware of what was going on.&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -2308,10 +2300,7 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
       <pubDate>Wed, 27 May 2015 20:40:40 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/05/27/jenkins-to-meterpreter---toying-with-powersploit/</guid>
-      <description>
-
-
-&lt;figure &gt;
+      <description>&lt;figure &gt;
     
         &lt;img src=&#34;https://leonjza.github.io/images/jenkins_logo.png&#34; /&gt;
     
@@ -2319,7 +2308,8 @@ I also remembered a bug in &lt;a href=&#34;https://community.rapid7.com/communit
 &lt;/figure&gt;
 
 
-&lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.&lt;/p&gt;
+&lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;groooooooovy&#34;&gt;groooooooovy&lt;/h2&gt;
 
@@ -2460,8 +2450,7 @@ echo $command
 echo
 echo &amp;quot; * Starting HTTP Server to serve payload&amp;quot;
 python -m SimpleHTTPServer
-&lt;/code&gt;&lt;/pre&gt;
-</description>
+&lt;/code&gt;&lt;/pre&gt;</description>
     </item>
     
     <item>
@@ -2470,9 +2459,7 @@ python -m SimpleHTTPServer
       <pubDate>Fri, 08 May 2015 07:18:31 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises---nebula/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Recently I decided I wanted to have a look at what &lt;a href=&#34;https://exploit-exercises.com/&#34;&gt;Exploit Exercises&lt;/a&gt; had to offer. I was after the memory corruption related exploitation stuff to play with, until I saw the details for &lt;a href=&#34;https://exploit-exercises.com/nebula/&#34;&gt;Nebula&lt;/a&gt;. &lt;em&gt;Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.&lt;/em&gt;&lt;/p&gt;
 
@@ -2487,7 +2474,8 @@ python -m SimpleHTTPServer
 
 &lt;p&gt;I did not really have a lot of time on my hands and figured I should start with the &amp;ldquo;easy&amp;rdquo; stuff. Many of the levels Nebula presented were in fact very, very easy. However, towards final levels my knowledge was definitely being tested. Levels started taking much longer to complete as I was yet again realizing that the more you learn, the more you realize you you still have to learn. :)&lt;/p&gt;
 
-&lt;p&gt;This is the path I took to solve the 20 challenges.&lt;/p&gt;
+&lt;p&gt;This is the path I took to solve the 20 challenges.
+&lt;/p&gt;
 
 &lt;h2 id=&#34;setup&#34;&gt;setup&lt;/h2&gt;
 
@@ -4431,9 +4419,7 @@ You have successfully executed getflag on a target account
         &lt;img src=&#34;https://leonjza.github.io/images/nebula_done.png&#34; /&gt;
     
     
-&lt;/figure&gt;
-
-</description>
+&lt;/figure&gt;</description>
     </item>
     
     <item>
@@ -4442,9 +4428,7 @@ You have successfully executed getflag on a target account
       <pubDate>Sat, 21 Feb 2015 15:55:03 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html&#34;&gt;Vulnhub is 0b10&lt;/a&gt; years old. That is binary for 2 :) In order to celebrate this, &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt;
  created &lt;a href=&#34;https://www.vulnhub.com/entry/sokar-1,113/&#34;&gt;Sokar&lt;/a&gt;.&lt;/p&gt;
@@ -4464,7 +4448,8 @@ Of course, modifying the VM in order to help you get the flag (things like singl
 
 &lt;p&gt;Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!&lt;/p&gt;
 
-&lt;p&gt;Here is my entry for the competition. Enjoy! :)&lt;/p&gt;
+&lt;p&gt;Here is my entry for the competition. Enjoy! :)
+&lt;/p&gt;
 
 &lt;h2 id=&#34;a-usual-start&#34;&gt;a usual start&lt;/h2&gt;
 
@@ -5479,8 +5464,7 @@ print requests.get(&amp;quot;http://192.168.217.163:591/cgi-bin/cat&amp;quot;, h
 
 &lt;p&gt;Run with &lt;code&gt;python root.py &amp;quot;/bin/cat /root/flag&amp;quot;&lt;/code&gt; :D&lt;/p&gt;
 
-&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; for the VM, and as always, &lt;a href=&#34;https://twitter.com/VulnHub&#34;&gt;@VulnHub&lt;/a&gt; for the hosting and great community!&lt;/p&gt;
-</description>
+&lt;p&gt;Thanks to &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; for the VM, and as always, &lt;a href=&#34;https://twitter.com/VulnHub&#34;&gt;@VulnHub&lt;/a&gt; for the hosting and great community!&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -5489,9 +5473,7 @@ print requests.get(&amp;quot;http://192.168.217.163:591/cgi-bin/cat&amp;quot;, h
       <pubDate>Fri, 20 Feb 2015 21:09:21 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;Not too long ago, I toyed with a &lt;a href=&#34;https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/&#34;&gt;Android root detection bypass&lt;/a&gt;. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I &lt;em&gt;actually&lt;/em&gt; wanted to do impossible as I&amp;rsquo;d very much like to dig under the hood :)&lt;/p&gt;
 
@@ -5506,6 +5488,8 @@ print requests.get(&amp;quot;http://192.168.217.163:591/cgi-bin/cat&amp;quot;, h
 
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;understanding-the-behavior&#34;&gt;understanding the behavior&lt;/h2&gt;
 
@@ -5586,8 +5570,7 @@ myApplication: Mach-O executable arm
 
 &lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
-&lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;
-</description>
+&lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -5596,9 +5579,7 @@ myApplication: Mach-O executable arm
       <pubDate>Mon, 09 Feb 2015 19:10:23 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;I will start by saying that I am by &lt;em&gt;no means&lt;/em&gt; a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&amp;rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.&lt;/p&gt;
 
@@ -5612,6 +5593,8 @@ myApplication: Mach-O executable arm
 
 
 &lt;p&gt;Recently I had the opportunity to poke at an Android &lt;code&gt;.apk&lt;/code&gt;. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the &lt;code&gt;apk&lt;/code&gt;, I needed to get some tools setup and learn a few things about the Android environment &lt;em&gt;really&lt;/em&gt; fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the &lt;code&gt;apk&lt;/code&gt; had and let it continue normal operations.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;so-what-about-jailbreaking&#34;&gt;so what about jailbreaking&lt;/h2&gt;
 
@@ -6061,8 +6044,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 
 &lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
-&lt;p&gt;Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?&lt;/p&gt;
-</description>
+&lt;p&gt;Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -6071,9 +6053,7 @@ if __name__ == &amp;quot;__main__&amp;quot;:
       <pubDate>Tue, 23 Dec 2014 08:29:49 +0000</pubDate>
       
       <guid>https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&#34;https://www.vulnhub.com/entry/pegasus-1,109/&#34;&gt;Pegasus 1&lt;/a&gt; is a boot2root hosted on &lt;a href=&#34;https://www.vulnhub.com/&#34;&gt;VulnHub&lt;/a&gt; built by &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;. He wrote a &lt;a href=&#34;http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/&#34;&gt;blogpost&lt;/a&gt; about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).&lt;/p&gt;
 
@@ -6091,6 +6071,8 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 &lt;p&gt;Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!&lt;/p&gt;
 
 &lt;p&gt;Lets begin.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;nmap-again&#34;&gt;nmap, again&lt;/h2&gt;
 
@@ -6889,8 +6871,7 @@ Also, make sure to follow @VulnHub on Twitter and keep checking vulnhub.com for
 more awesome boot2root VMs!
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Thanks for the fun &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;&lt;/p&gt;
-</description>
+&lt;p&gt;Thanks for the fun &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

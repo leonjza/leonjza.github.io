@@ -97,9 +97,7 @@
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/sdr">sdr</a><a class="label" href="https://leonjza.github.io/categories/hacking">hacking</a><a class="label" href="https://leonjza.github.io/categories/gnuradio">gnuradio</a><a class="label" href="https://leonjza.github.io/categories/rfcat">rfcat</a>
     </span>
-    
-
-<p>At <a href="https://www.defcon.org/html/defcon-24/dc-24-index.html">defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href="https://greatscottgadgets.com/yardstickone/">YARD Stick One</a> and a <a href="https://greatscottgadgets.com/ubertoothone/">Ubertooth One</a>. I already owned a DVB-T dongle much like <a href="https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W">this one</a> that I bought at defcon23 the previous year.</p>
+    <p>At <a href="https://www.defcon.org/html/defcon-24/dc-24-index.html">defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href="https://greatscottgadgets.com/yardstickone/">YARD Stick One</a> and a <a href="https://greatscottgadgets.com/ubertoothone/">Ubertooth One</a>. I already owned a DVB-T dongle much like <a href="https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W">this one</a> that I bought at defcon23 the previous year.</p>
 
 <p>My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I <em>totally</em>  know nothing about really did make for this bit of research to be pretty daunting at first.</p>
 
@@ -112,7 +110,8 @@
 </figure>
 
 
-<p>Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.</p>
+<p>Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.
+</p>
 
 <h2 id="the-terminology">the terminology</h2>
 
@@ -401,7 +400,7 @@ d.setModeIDLE()
 
 <p>I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this <a href="http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html">blog post</a> where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a <code>1</code> for a high amplitude and a <code>0</code> for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.</p>
 
-<p>So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.</p>
+<p>So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:</p>
 
 
 <figure >
@@ -423,20 +422,25 @@ d.setModeIDLE()
 </figure>
 
 
-<p>If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the <a href="https://en.wikipedia.org/wiki/Clock_signal">clock signal</a>. The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as <a href="https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications">Pulse-width Modulation</a>. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x<code>1</code>&rsquo;s and the <code>0</code>) is:</p>
+<p>If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the <a href="https://en.wikipedia.org/wiki/Clock_signal">clock signal</a>.</p>
 
-<pre><code>100100100110110100100110100100110100
+<p>The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as <a href="https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications">Pulse-width Modulation</a>. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 <code>1</code>&rsquo;s and the <code>0</code>) is:</p>
+
+<pre><code># PWM Key version of 111001101101
+100100100110110100100110100100110100
 </code></pre>
 
 <p>If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings <code>1</code>&rsquo;s and <code>0</code>&rsquo;s are represented as <code>100</code> for a <code>1</code> and <code>110</code> for a <code>0</code> to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:</p>
 
-<pre><code>100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
+<pre><code># PWM to Bitstring comparison
+100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
  1     1     1     0     0     1     1     0     1     1     0     1
 </code></pre>
 
 <p>This matches our initial bit string of <code>111001101101</code>, and helps us conclude that for a full PWM key (with the leading bunch of <code>1</code>&rsquo;s) the resultant key would be:</p>
 
-<pre><code>111111111111111111111111111111111110100100100110110100100110100100110100
+<pre><code># Full PWM Key
+111111111111111111111111111111111110100100100110110100100110100100110100
 </code></pre>
 
 <h2 id="baud-rate-hate">baud rate hate</h2>
@@ -574,7 +578,6 @@ d.setModeIDLE()
 
 
 <p>Happy hacking!</p>
-
   </div>
   <div id="disqus_thread"></div>
 </div>
