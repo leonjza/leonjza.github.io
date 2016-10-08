@@ -210,7 +210,7 @@ This was not exactly the same as the signal that I originally captured using the
 ## getting the on-off keying right
 I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this [blog post](http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html) where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a `1` for a high amplitude and a `0` for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.
 
-So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.
+So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:
 
 {{< figure src="/images/re_static_key_audacity_full_zoom.png" >}}
 
@@ -218,15 +218,19 @@ One important difference that I noticed with my remote compared to many similar 
 
 {{< figure src="/images/re_static_key_audacity_full_zoom_pwm.png" >}}
 
-If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the [clock signal](https://en.wikipedia.org/wiki/Clock_signal). The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as [Pulse-width Modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications). Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x`1`'s and the `0`) is:
+If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the [clock signal](https://en.wikipedia.org/wiki/Clock_signal).
+
+The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as [Pulse-width Modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications). Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 `1`'s and the `0`) is:
 
 ```
+# PWM Key version of 111001101101
 100100100110110100100110100100110100
 ```
 
 If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings `1`'s and `0`'s are represented as `100` for a `1` and `110` for a `0` to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:
 
 ```
+# PWM to Bitstring comparison
 100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
  1     1     1     0     0     1     1     0     1     1     0     1
 ```
@@ -234,6 +238,7 @@ If we take an even closer look at the above PWM key, one might even notice that 
 This matches our initial bit string of `111001101101`, and helps us conclude that for a full PWM key (with the leading bunch of `1`'s) the resultant key would be:
 
 ```
+# Full PWM Key
 111111111111111111111111111111111110100100100110110100100110100100110100
 ```
 
