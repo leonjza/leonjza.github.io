@@ -50,7 +50,7 @@ Capturing the remotes signal turned out to be a little easier than I initially e
 
 {{< figure src="/images/re_static_key_fm_radio.png" >}}
 
-Anyways. I got stuck trying to decode the key from the remote using GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn't set it to record AM? Who knows. Anyways.
+Anyways. I got stuck trying to decode the key from the remote using a GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn't set it to record AM? Who knows. Anyways.
 
 ## the gnuradio reveal
 Speaking to [@elasticninja](https://twitter.com/elasticninja) (*thanks for your epic patience dude!*), I got tipped off to an absolutely **great** video by [Michael Ossmann](https://twitter.com/michaelossmann) in he's *Software Defined Radio with HackRF* series [here](https://greatscottgadgets.com/sdr/). More specifically, [lesson 8](https://greatscottgadgets.com/sdr/8/) deals with on-off keying and was excellent in getting me started with gnuradio.
@@ -220,7 +220,7 @@ One important difference that I noticed with my remote compared to many similar 
 
 If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the [clock signal](https://en.wikipedia.org/wiki/Clock_signal).
 
-The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as [Pulse-width Modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications). Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 `1`'s and the `0`) is:
+The distance of a high pulse followed by a low pulse (relative to the clock signal) signifies the bits that is being transferred. This is actually also known as [Pulse-width Modulation](https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications). Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 `1`'s and the `0`) is:
 
 ```
 # PWM Key version of 111001101101
@@ -268,7 +268,7 @@ Practically, you can determine the values needed for the formula by opening a wa
 Here you can see my sample range for the shortest high peak is **740** samples, and on the far left you can see the sample rate of **2000000**. That means that my baud rate will be `1.0/(740/2000000)`, which is ~**2702** baud. Not 100% accurate, but accurate enough to work.
 
 ## let there be light
-One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the [bitstring](https://pypi.python.org/pypi/bitstring/3.1.3) module to handle the conversion to bytes. What a fantastic library :P.
+One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the [bitstring](https://pypi.python.org/pypi/bitstring/3.1.3) module to handle the conversion to bytes. What a fantastic library :P
 
 The final, updated script follows:
 
