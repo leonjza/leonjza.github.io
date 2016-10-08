@@ -87,7 +87,7 @@ On-off keying is a form of &lt;a href=&#34;https://en.wikipedia.org/wiki/Amplitu
 &lt;/figure&gt;
 
 
-&lt;p&gt;Anyways. I got stuck trying to decode the key from the remote using GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn&amp;rsquo;t set it to record AM? Who knows. Anyways.&lt;/p&gt;
+&lt;p&gt;Anyways. I got stuck trying to decode the key from the remote using a GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn&amp;rsquo;t set it to record AM? Who knows. Anyways.&lt;/p&gt;
 
 &lt;h2 id=&#34;the-gnuradio-reveal&#34;&gt;the gnuradio reveal&lt;/h2&gt;
 
@@ -342,7 +342,7 @@ d.setModeIDLE()
 
 &lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+&lt;p&gt;The distance of a high pulse followed by a low pulse (relative to the clock signal) signifies the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;# PWM Key version of 111001101101
 100100100110110100100110100100110100
@@ -404,7 +404,7 @@ d.setModeIDLE()
 
 &lt;h2 id=&#34;let-there-be-light&#34;&gt;let there be light&lt;/h2&gt;
 
-&lt;p&gt;One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the &lt;a href=&#34;https://pypi.python.org/pypi/bitstring/3.1.3&#34;&gt;bitstring&lt;/a&gt; module to handle the conversion to bytes. What a fantastic library :P.&lt;/p&gt;
+&lt;p&gt;One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the &lt;a href=&#34;https://pypi.python.org/pypi/bitstring/3.1.3&#34;&gt;bitstring&lt;/a&gt; module to handle the conversion to bytes. What a fantastic library :P&lt;/p&gt;
 
 &lt;p&gt;The final, updated script follows:&lt;/p&gt;
 
