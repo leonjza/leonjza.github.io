@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rfcat on #!/slash/note</title>
+    <link>https://leonjza.github.io/categories/rfcat/</link>
+    <description>Recent content in Rfcat on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 02 Oct 2016 16:05:22 +0200</lastBuildDate>
+    <atom:link href="https://leonjza.github.io/categories/rfcat/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>reverse engineering static key remotes with gnuradio and rfcat</title>
+      <link>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</link>
+      <pubDate>Sun, 02 Oct 2016 16:05:22 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/</guid>
+      <description>
+
+&lt;p&gt;At &lt;a href=&#34;https://www.defcon.org/html/defcon-24/dc-24-index.html&#34;&gt;defcon24&lt;/a&gt; this year, I impulsively bought myself some new toys. Amongst what I got included a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;YARD Stick One&lt;/a&gt; and a &lt;a href=&#34;https://greatscottgadgets.com/ubertoothone/&#34;&gt;Ubertooth One&lt;/a&gt;. I already owned a DVB-T dongle much like &lt;a href=&#34;https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W&#34;&gt;this one&lt;/a&gt; that I bought at defcon23 the previous year.&lt;/p&gt;
+
+&lt;p&gt;My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I &lt;em&gt;totally&lt;/em&gt;  know nothing about really did make for this bit of research to be pretty daunting at first.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_banner.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-terminology&#34;&gt;the terminology&lt;/h2&gt;
+
+&lt;p&gt;Where to start? In hindsight, I guess a sane point of departure would have been to first figure out what all of these new acronyms mean. OOK, PWM, AM, FSK etc were all things I have only seen but never actually knew what they meant. I read a whole bunch of blog posts and other RTL-SDR related stuff, thinking I could just dive right in. It was not long before I realized that its pretty important when someone talks about Pulse Width Modulation(PWM) that I &lt;strong&gt;actually&lt;/strong&gt; know that this means!&lt;/p&gt;
+
+&lt;p&gt;So, as I progressed through the resources I found online, I made a note of looking up the acronyms and what the general idea behind them were. The most important of the acronyms you should know is listed below. You should seriously take some time to look into these in more detail and not just rely on my silly descriptions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;AM&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/Amplitude_modulation&#34;&gt;Amplitude Modulation&lt;/a&gt;&lt;br /&gt;
+When talking &lt;strong&gt;AM&lt;/strong&gt;, we are referring to the fact that the signal strength (or amplitude) is varied according to the waveform that is being transmitted. &lt;a href=&#34;https://upload.wikimedia.org/wikipedia/commons/a/a4/Amfm3-en-de.gif&#34;&gt;This gif&lt;/a&gt; shows a comparison between &lt;strong&gt;AM&lt;/strong&gt; and &lt;strong&gt;FM&lt;/strong&gt; (Frequency Modulation) for the same signal. It should be clear that for the same signal, &lt;strong&gt;AM&lt;/strong&gt; increases the amplitude of the waveform, and &lt;strong&gt;FM&lt;/strong&gt; increases the frequency of the waveform&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;PWM&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation&#34;&gt;Pulse Width Modulation&lt;/a&gt;&lt;br /&gt;
+In addition to &lt;strong&gt;AM&lt;/strong&gt;, in the case of these static key remotes, they make use of &lt;strong&gt;PWM&lt;/strong&gt;. Basically, the duration of a pulse determines the bit that is being send. A long pulse is a zero, and a short pulse is a one.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;OOK&lt;/strong&gt; - &lt;a href=&#34;https://en.wikipedia.org/wiki/On-off_keying&#34;&gt;On-off keying&lt;/a&gt;&lt;br /&gt;
+On-off keying is a form of &lt;a href=&#34;https://en.wikipedia.org/wiki/Amplitude-shift_keying&#34;&gt;Amplitude-shift keying&lt;/a&gt; where a binary value is represented based on the duration of the presence of a carrier signal (or a just a high amplitude signal).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;the-gear&#34;&gt;the gear&lt;/h2&gt;
+
+&lt;p&gt;Once I had a good idea of what all of this stuff means, it was time to get some gear to play with. I went to a local &lt;a href=&#34;http://www.communica.co.za/&#34;&gt;electronics store&lt;/a&gt; to pick up a few things. The most important being a static key remote. I also needed something that will &lt;em&gt;switch on&lt;/em&gt; when the remote is pressed. For this, I settled on a small LED light, just to give an indication of life. All in all I must have spent close to R600 (~40USD) for everything. The list of lab toys included:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P3842375875&#34;&gt;Basic 433Mhz Binary Code Transmitter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P4011845900&#34;&gt;12V Power Supply&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P3225790564&#34;&gt;Generic, Static Key Receiver&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P2952215568&#34;&gt;10W LED Light&lt;/a&gt; &lt;strong&gt;(wow this thing is bright!)&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;1 x &lt;a href=&#34;http://www.communica.co.za/Catalog/Details/P2750472738&#34;&gt;Enclosure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Some wiring etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I setup, wired together and tested everything. The LED light was wired up to the normally open contact so that when the remote button is pressed, the light will go on for a brief period of time and then switch off.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_lab_gear.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I paired my remote with a random position of the 12 dip switches on it to the receiver and tested that the light actually goes on under normal conditions. Sweet.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-signal-capture&#34;&gt;the signal capture&lt;/h2&gt;
+
+&lt;p&gt;Capturing the remotes signal turned out to be a little easier than I initially expected. I found &lt;strong&gt;plenty&lt;/strong&gt; of resources online that helped me get familiar with ways to do it. The most common capture method I could see was to use a tool called &lt;a href=&#34;http://gqrx.dk/&#34;&gt;GXRQ&lt;/a&gt;. GQRX allows you to tune into the frequency and make a raw recording of the signal to file. This is probably the fastest way to get the recordings to file. The recorded file can then be opened up in &lt;a href=&#34;http://gnuradio.org/&#34;&gt;gnuradio&lt;/a&gt; or &lt;a href=&#34;https://github.com/miek/inspectrum&#34;&gt;inspectrum&lt;/a&gt;. You can do a number of fun things with GQRX, like listening to radio! (I had to enable Hardware AGC in GQRX for this to work) :)&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_fm_radio.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Anyways. I got stuck trying to decode the key from the remote using GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn&amp;rsquo;t set it to record AM? Who knows. Anyways.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-gnuradio-reveal&#34;&gt;the gnuradio reveal&lt;/h2&gt;
+
+&lt;p&gt;Speaking to &lt;a href=&#34;https://twitter.com/elasticninja&#34;&gt;@elasticninja&lt;/a&gt; (&lt;em&gt;thanks for your epic patience dude!&lt;/em&gt;), I got tipped off to an absolutely &lt;strong&gt;great&lt;/strong&gt; video by &lt;a href=&#34;https://twitter.com/michaelossmann&#34;&gt;Michael Ossmann&lt;/a&gt; in he&amp;rsquo;s &lt;em&gt;Software Defined Radio with HackRF&lt;/em&gt; series &lt;a href=&#34;https://greatscottgadgets.com/sdr/&#34;&gt;here&lt;/a&gt;. More specifically, &lt;a href=&#34;https://greatscottgadgets.com/sdr/8/&#34;&gt;lesson 8&lt;/a&gt; deals with on-off keying and was excellent in getting me started with gnuradio.&lt;/p&gt;
+
+&lt;p&gt;This lesson does a great job of showing you how to find out more details about a specific remote that you are interested in by looking up its hardware specs, test results and any other pieces of information. It then goes on to explain how to get your first flow graph up and running in gnuradio in no time.&lt;/p&gt;
+
+&lt;h2 id=&#34;preparing-gnuradio&#34;&gt;preparing gnuradio&lt;/h2&gt;
+
+&lt;p&gt;Before building gnuradio flow graphs, a little bit of preparation was needed. I was using a Kali Virtual Machine in VMWare for testing and had to install a few extra packages on top of the base installation. While we on the topic of dependencies, I am just going to list everything needed to replicate that which you will find in this post:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt install gnu-radio rfcat gr-osmosdr audacity
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you want audio to work, I had to enable pulseaudio with these commands followed by a reboot:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;systemctl --user enable pulseaudio &amp;amp;&amp;amp; systemctl --user start pulseaudio
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that out of the way, I was ready to replicate that flow graph from the lesson.&lt;/p&gt;
+
+&lt;h2 id=&#34;building-the-flow-graph&#34;&gt;building the flow graph&lt;/h2&gt;
+
+&lt;p&gt;Just like the session explained, I launched &lt;code&gt;gnuradio-companion&lt;/code&gt; and built the flow graph the same way:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Launch GNU radio (and start a new WX GUI Graph). I noticed it defaults to the QT GUI in the options block, so just right-click edit that and flip it over to WX GUI.&lt;/li&gt;
+&lt;li&gt;Add a new &lt;em&gt;osmocom Source&lt;/em&gt; block to receive data from your RTL-SDR. If you cant find the block, click on any item on the list on the right and hit &lt;em&gt;ctrl-f&lt;/em&gt; to filter.&lt;/li&gt;
+&lt;li&gt;Add a new &lt;em&gt;WX GUI FFT Sink&lt;/em&gt; and connect the &lt;em&gt;osmocon Source&lt;/em&gt; and new FFT sink by clicking on the output and input of each.&lt;/li&gt;
+&lt;li&gt;Set a higher sample rate of 2000000 in the &lt;code&gt;samp_rate&lt;/code&gt; variable by editing the &lt;em&gt;Variable&lt;/em&gt; block.&lt;/li&gt;
+&lt;li&gt;Edit the &lt;em&gt;osmocon Source&lt;/em&gt; block and set the RF Gain to 0 and the frequency to the one you are hoping to listen in on. In my case this is 4339e5, or 4339200000.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Once this is done, save the flow graph and run it (with your RTL-SDR plugged in) to visualize the signal when you press your remote!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_gnu_radio1.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Fast forward a bit through the lesson, and we finally get to part where we can visualize the key on the remote as a demodulated waveform with the addition of the second scope sink (around 30mins in). To get a nice and clear picture of the on-off keying, we want to measure the magnitude over time of a sample. This can be done by adding a type converter to the flow graph. The &lt;em&gt;Complex to Mag&lt;/em&gt; type converter will do the job just fine. To add this:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Find the type converter block called &lt;em&gt;Complex to Mag&lt;/em&gt; and drag it onto the flow graph.&lt;/li&gt;
+&lt;li&gt;Connect the output from the &lt;em&gt;osmocon Source&lt;/em&gt; to the &lt;em&gt;Complex to Mag&lt;/em&gt; input.&lt;/li&gt;
+&lt;li&gt;Connect the output of the &lt;em&gt;Complex to Mag&lt;/em&gt; converter to the Scope sink input.&lt;/li&gt;
+&lt;li&gt;Change the input expected by the scope sink from &lt;em&gt;complex&lt;/em&gt; to &lt;em&gt;float&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With this done, run the graph again. You will need to fiddle a little with the seconds per division and counts per division values to get the visualization just right. Unticking the &lt;em&gt;Autorange&lt;/em&gt; box will also greatly help you narrow down the signal. As a last tip, if you experience the graph jumping around too much (from left to right), you can toggle a &amp;lsquo;center&amp;rsquo; by focussing the &lt;em&gt;Trig&lt;/em&gt; tab and setting the lines that appear with the level toggles.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_demodulated_scope.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As you can see in this screenshot, the keying seems to represent the values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[short, short, short, long, long, short, short, long, short, short, long, short]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This indeed matches the switch positions on my remote. Yay!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_real_remote.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;storing-the-recordings&#34;&gt;storing the recordings&lt;/h2&gt;
+
+&lt;p&gt;Looking at those waveforms is cool and all, but it isn&amp;rsquo;t always practical to keep your finger on a button. Instead, we can record the output to a file for later use. You may choose to record the raw, unprocessed signal from the radio (in cases where you may need to still do some processing on the file maybe?) or save the demodulated waveform. To do this, simply add a new &lt;em&gt;Wave File Sink&lt;/em&gt; block after the &lt;em&gt;Complex to Mag&lt;/em&gt; block and specify a destination filename.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_wave_file_sink.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Now, just launch the graph and press down on the remote for a while. When done, stop the graph and check if your file has been written in the location you specified:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;~ # ls -lah remote.wav
+-rw-r--r-- 1 root root 7.2M Oct  3 22:07 remote.wav
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Great. If you need to re-use this file at a later stage in gnuradio, simply add a &lt;em&gt;File Source&lt;/em&gt; / &lt;em&gt;Wave File Source&lt;/em&gt; block as needed and reconnect the other blocks where appropriate.&lt;/p&gt;
+
+&lt;h2 id=&#34;viewing-in-audacity&#34;&gt;viewing in audacity&lt;/h2&gt;
+
+&lt;p&gt;If you saved the demodulated wave file, then you can open this file in &lt;a href=&#34;http://www.audacityteam.org/&#34;&gt;Audacity&lt;/a&gt;. Simply launch audacity (we already installed it) and open the recorded wave file. Viewing the recording at first may look something like this:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;However, when you zoom in a little, you may start seeing the on-off keying becoming obvious:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_zoomed.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Admittedly, getting this far was relatively easy thanks to the ton of research out there already!&lt;/p&gt;
+
+&lt;h2 id=&#34;introducing-rfcat&#34;&gt;introducing rfcat&lt;/h2&gt;
+
+&lt;p&gt;I guess the main reason why I decided on the YARD Stick One was because of the fact that it comes pre-flashed with the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RFcat&lt;/a&gt; firmware. It was only after the fact that I realized its actually a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;pretty good RF device in general&lt;/a&gt;. There are some other radios (maybe cheaper?) that you can flash to work with RFCat such as the &lt;a href=&#34;http://www.ti.com/tool/cc1111emk868-915&#34;&gt;CC1111emk&lt;/a&gt; dongle or the dongle that comes with the &lt;a href=&#34;http://www.ti.com/tool/ez430-chronos&#34;&gt;Chronos watch development kit&lt;/a&gt;. The &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat/wiki/SupportedDongles&#34;&gt;RFCat wiki&lt;/a&gt; also has a list of compatible dongles.&lt;/p&gt;
+
+&lt;p&gt;As for RFcat itself, I guess the most important thing to realize is that you effectively have a python interface to the underlying radio when using it. Admittedly, there isn&amp;rsquo;t a lot of documentation for RFCat and you may very quickly come to realize that you will have to make use of the &lt;code&gt;help()&lt;/code&gt; strings and the source code of &lt;code&gt;rflib&lt;/code&gt; to learn the necessary. This coupled with existing projects and work online doesn&amp;rsquo;t make it &lt;em&gt;too hard&lt;/em&gt; to get going.&lt;/p&gt;
+
+&lt;p&gt;To give you an idea, below is a sample snippet of starting &lt;code&gt;rfcat&lt;/code&gt; in &lt;em&gt;&amp;lsquo;research&amp;rsquo; (-r)&lt;/em&gt; mode and sending a string as a &amp;lsquo;ping&amp;rsquo; packet. Using RFcat this way, the object &lt;code&gt;d&lt;/code&gt; is used to call methods for the radio:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_rfcat_ping.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;As you can see in the screenshot, there is a banner message giving you some useful hints on how you can interact with the dongle. Methods such as &lt;code&gt;setFreq()&lt;/code&gt;, &lt;code&gt;setMdmModulation()&lt;/code&gt; etc is all things we will be needing soon™ when we want to start replaying the signal of this remote (and switch on that very bright LED!).&lt;/p&gt;
+
+&lt;h2 id=&#34;sending-the-signal-with-rfcat&#34;&gt;sending the signal with RFcat&lt;/h2&gt;
+
+&lt;p&gt;As you may have noticed by now, sending signals with RFCat is as simple as &lt;code&gt;d.RFxmit(data=&#39;DEADBEEF&#39;)&lt;/code&gt;. To get the receiver to understand my replay, I didn&amp;rsquo;t think it would be as easy just playing the raw binary string of &lt;code&gt;111001101101&lt;/code&gt; back. I tested anyways by writing a small script to start sending signals and then captured them using my SDR and gnuradio. The values for the frequency and baud rate is something that you &lt;em&gt;should&lt;/em&gt; be able to get from the data sheets of the remote you are attempting to replay. (I will show you how to calculate the baud rate later though). The original script I used was:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+import rflib
+
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+d.makePktFLEN(12)    # Set the RFData packet length
+d.setMdmDRate(3800)  # Set the Baud Rate
+d.setMdmSyncMode(0)  # Disable preamble
+d.setFreq(433920000) # Set the frequency
+
+d.RFxmit(&#39;111001101101&#39;)
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I ran this script together with a gnuradio flow graph that was set up to dump the signal to a file. I then used this signal as a source to a &lt;em&gt;Scope Sink&lt;/em&gt; that was prefixed with a &lt;em&gt;Complex to Mag&lt;/em&gt; block. As expected, with this initial attempt I could not find anything in my graphs that even remotely looked like on-off keying!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_raw_binary_xmit.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;No easy win here was ok as it forced me to dive a little into the RFCat source code in an attempt to figure out how exactly the data should be sent. I also searched online for examples of how to send data correctly and came across a number of examples to help me.&lt;/p&gt;
+
+&lt;p&gt;Turns out, I need to get my data into bytes to send with &lt;code&gt;RFxmit()&lt;/code&gt;. No big deal, lets do just that!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+import rflib
+
+data = &#39;111001101101&#39;
+
+# Convert the data to hex
+rf_data = hex(int(data, 2))
+
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+d.makePktFLEN(len(rf_data)) # Set the RFData packet length
+d.setMdmDRate(3800)         # Set the Baud Rate
+d.setMdmSyncMode(0)         # Disable preamble
+d.setFreq(433920000)        # Set the frequency
+
+# Send the data string a few times
+d.RFxmit(rf_data, repeat=500)
+
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I now added the hex conversation of the original binary string and added the &lt;code&gt;repeat=500&lt;/code&gt; value to &lt;code&gt;RFxmit()&lt;/code&gt; to help me find the signal with gnuradio. This was finally what I needed to be able to send data that appeared to look like on-off keying!&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_non_pwm_gnuradio.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This was not exactly the same as the signal that I originally captured using the actual remote, but, it was progress, and I believed it to be &lt;strong&gt;good&lt;/strong&gt; progress.&lt;/p&gt;
+
+&lt;h2 id=&#34;getting-the-on-off-keying-right&#34;&gt;getting the on-off keying right&lt;/h2&gt;
+
+&lt;p&gt;I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;blog post&lt;/a&gt; where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a &lt;code&gt;1&lt;/code&gt; for a high amplitude and a &lt;code&gt;0&lt;/code&gt; for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.&lt;/p&gt;
+
+&lt;p&gt;So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full_zoom.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;One important difference that I noticed with my remote compared to many similar posts I saw online was that I had this long starting high amplitude before the actual on-off keying signal started. It looked like about half of a pulse was this high amplitude, and the other half signal. I assumed these will all just be handled by adding a bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s in front of my final key as it may have served as some form of preamble or something. ¯\_(ツ)_/¯&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_full_zoom_pwm.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the &lt;a href=&#34;https://en.wikipedia.org/wiki/Clock_signal&#34;&gt;clock signal&lt;/a&gt;. The distance of a high pulse followed by a low pulse (relative to the clock signal) signify the bits that is being transferred. This is actually also known as &lt;a href=&#34;https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications&#34;&gt;Pulse-width Modulation&lt;/a&gt;. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35x&lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and the &lt;code&gt;0&lt;/code&gt;) is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;100100100110110100100110100100110100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s and &lt;code&gt;0&lt;/code&gt;&amp;rsquo;s are represented as &lt;code&gt;100&lt;/code&gt; for a &lt;code&gt;1&lt;/code&gt; and &lt;code&gt;110&lt;/code&gt; for a &lt;code&gt;0&lt;/code&gt; to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
+ 1     1     1     0     0     1     1     0     1     1     0     1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This matches our initial bit string of &lt;code&gt;111001101101&lt;/code&gt;, and helps us conclude that for a full PWM key (with the leading bunch of &lt;code&gt;1&lt;/code&gt;&amp;rsquo;s) the resultant key would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;111111111111111111111111111111111110100100100110110100100110100100110100
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;baud-rate-hate&#34;&gt;baud rate hate&lt;/h2&gt;
+
+&lt;p&gt;Before I get to the rest of the newly updated script, lets talk about &lt;a href=&#34;https://en.wikipedia.org/wiki/Baud&#34;&gt;baud rate&lt;/a&gt; quickly. This is something that caused me &lt;strong&gt;a lot&lt;/strong&gt; of pain. I managed to get the original waveform from my remote and my generated waveform using scripts to look similar, but there was a serious issue with getting the length of the pulses to match. &lt;em&gt;If you look closely at the below screenshot you will notice there is actually a problem with the key too (missing a bit), but heh, the clock signal is whats important here:&lt;/em&gt;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_baud_rate_miss.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This problem existed until I finally managed to figure out what the math for the baud rate calculation was. I noticed that this value is not an exact science though. You can be off by &lt;em&gt;quite a lot&lt;/em&gt;, and yet the signal will still have a high change of succeeding. YMMV.&lt;/p&gt;
+
+&lt;p&gt;Unfortunately I can not remember the post / code that lead me to this, but the basic idea for calculating baud rate is as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The source wave file would have been recorded at a certain &lt;em&gt;Sample Rate&lt;/em&gt;. We recorded at a sample rate of 2M from gnuradio.&lt;/li&gt;
+&lt;li&gt;We want to figure out how many samples makes up the distance of the shortest high aptitude in the pulse (much like we needed for the PWM key calculation)&lt;/li&gt;
+&lt;li&gt;The number of samples in the shortest high amplitude bit, divided by the sample rate over 1 should give you the baud rate.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In other words:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;baud = (1.0 / (length of shortest high peak / sample rate))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Practically, you can determine the values needed for the formula by opening a wave file you recorded using gnuradio, zooming and selecting one of the short pulses and changing the selection at the bottom dropdown to &lt;em&gt;length and samples&lt;/em&gt;.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_audacity_baud_rate.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Here you can see my sample range for the shortest high peak is &lt;strong&gt;740&lt;/strong&gt; samples, and on the far left you can see the sample rate of &lt;strong&gt;2000000&lt;/strong&gt;. That means that my baud rate will be &lt;code&gt;1.0/(740/2000000)&lt;/code&gt;, which is ~&lt;strong&gt;2702&lt;/strong&gt; baud. Not 100% accurate, but accurate enough to work.&lt;/p&gt;
+
+&lt;h2 id=&#34;let-there-be-light&#34;&gt;let there be light&lt;/h2&gt;
+
+&lt;p&gt;One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the &lt;a href=&#34;https://pypi.python.org/pypi/bitstring/3.1.3&#34;&gt;bitstring&lt;/a&gt; module to handle the conversion to bytes. What a fantastic library :P.&lt;/p&gt;
+
+&lt;p&gt;The final, updated script follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/usr/bin/python
+
+# Send a PWM String using RfCat
+
+import rflib
+import bitstring
+
+# That prefix string. This was determined by literally
+# just looking at the waveform, and calculating it relative
+# to the clock signal value.
+# Your remote may not need this.
+prefix = &#39;111111111111111111111111111111111110&#39;
+
+# The key from our static key remote.
+key = &#39;111001101101&#39;
+
+# Convert the data to a PWM key by looping over the
+# data string and replacing a 1 with 100 and a 0
+# with 110
+pwm_key = &#39;&#39;.join([&#39;100&#39; if b == &#39;1&#39; else &#39;110&#39; for b in key])
+
+# Join the prefix and the data for the full pwm key
+full_pwm = &#39;{}{}&#39;.format(prefix, pwm_key)
+print(&#39;Sending full PWM key: {}&#39;.format(full_pwm))
+
+# Convert the data to hex
+rf_data = bitstring.BitArray(bin=full_pwm).tobytes()
+
+# Start up RfCat
+d = rflib.RfCat()
+
+# Set Modulation. We using On-Off Keying here
+d.setMdmModulation(rflib.MOD_ASK_OOK)
+
+# Configure the radio
+d.makePktFLEN(len(rf_data)) # Set the RFData packet length
+d.setMdmDRate(2702)         # Set the Baud Rate
+d.setMdmSyncMode(0)         # Disable preamble
+d.setFreq(433920000)        # Set the frequency
+
+# Send the data string a few times
+d.RFxmit(rf_data, repeat=25)
+d.setModeIDLE()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I ran this newly updated script and &lt;strong&gt;BAM&lt;/strong&gt;, my labs LED light illuminates! \o/&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_light_on.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;resources&#34;&gt;resources&lt;/h2&gt;
+
+&lt;p&gt;Below is basically a link dump of stuff that was super helpful in getting as far as I did with this. These posts may help clear things up that made no sense in this post!&lt;/p&gt;
+
+&lt;p&gt;General On-off keying stuff:&lt;br /&gt;
+- &lt;a href=&#34;http://andrewmohawk.com/2012/09/06/hacking-fixed-key-remotes/&#34;&gt;http://andrewmohawk.com/2012/09/06/hacking-fixed-key-remotes/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://zeta-two.com/radio/2015/06/23/ook-ask-sdr.html&#34;&gt;https://zeta-two.com/radio/2015/06/23/ook-ask-sdr.html&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://www.rtl-sdr.com/using-a-yardstick-one-hackrf-and-inspectrum-to-decode-and-duplicate-an-ook-signal/&#34;&gt;http://www.rtl-sdr.com/using-a-yardstick-one-hackrf-and-inspectrum-to-decode-and-duplicate-an-ook-signal/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://blog.compass-security.com/2016/09/software-defied-radio-sdr-and-decoding-on-off-keying-ook/&#34;&gt;https://blog.compass-security.com/2016/09/software-defied-radio-sdr-and-decoding-on-off-keying-ook/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://leetupload.com/blagosphere/index.php/2014/02/24/non-return-to-zero-askook-signal-replay/&#34;&gt;http://leetupload.com/blagosphere/index.php/2014/02/24/non-return-to-zero-askook-signal-replay/&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&#34;&gt;http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;http://dani.foroselectronica.es/rfcat-ti-chronos-and-replaying-rf-signals-337/&#34;&gt;http://dani.foroselectronica.es/rfcat-ti-chronos-and-replaying-rf-signals-337/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Sample code:&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/AndrewMohawk/RfCatHelpers&#34;&gt;https://github.com/AndrewMohawk/RfCatHelpers&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py&#34;&gt;https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py&lt;/a&gt;&lt;br /&gt;
+- &lt;a href=&#34;https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py&#34;&gt;https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;further-work&#34;&gt;further work&lt;/h2&gt;
+
+&lt;p&gt;With that done, I set off to write a toolkit that allows you to work with rfcat and On-off keying data sources such as wave files, or just simple recordings from rfcat itself. After finishing the polishing, I&amp;rsquo;ll release it along with a post detailing its internals and usage! In the meantime, keep an eye on this repository &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;https://github.com/leonjza/ooktools&lt;/a&gt;&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/re_static_key_ooktools.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Happy hacking!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
