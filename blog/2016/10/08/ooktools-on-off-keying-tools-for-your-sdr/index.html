@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>ooktools: on-off keying tools for your sdr &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="sdr,hacking,gnuradio,rfcat">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+        <img src="https://www.gravatar.com/avatar/28d2f6c24dad39f38af0272dfc0da953?s=200"
+             alt="gravatar" title="">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2016</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a></p>
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">ooktools: on-off keying tools for your sdr</h1>
+    <span class="post-date">Oct 8, 2016 &middot; 5 minute read &middot; <a href="https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/sdr">sdr</a><a class="label" href="https://leonjza.github.io/categories/rfcat">rfcat</a><a class="label" href="https://leonjza.github.io/categories/gnuradio">gnuradio</a><a class="label" href="https://leonjza.github.io/categories/remote">remote</a>
+    </span>
+    <p>In a <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">previous post</a>, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/banner.png" />
+    
+    
+</figure>
+
+
+<p>Lets take a look at <code>ooktools</code>, how to use it and the internals there of. For those in a rush, the repository can be found here: <a href="https://github.com/leonjza/ooktools">https://github.com/leonjza/ooktools</a>.
+</p>
+
+<h2 id="major-features">major features</h2>
+
+<p>Some of the major features in <code>ooktools</code> include:</p>
+
+<ul>
+<li>Binary string extraction from wave file recordings.</li>
+<li>Wave file cleanups to remove noise in On-off keying recordings.</li>
+<li>Graphing capabilities for wave files.</li>
+<li>General information extraction of wave files.</li>
+<li>Signal recording and playback using <code>json</code> definition files that can be shared.</li>
+<li>Plotting of data from the previously mentioned <code>json</code> recordings.</li>
+<li>Signal searching for On-off keying type data.</li>
+<li>Sending signals in both binary, complete PWM formatted or hex strings using an RfCat dongle.</li>
+<li>Gnuradio <code>.grc</code> template file generation.</li>
+</ul>
+
+<p>Of course, as I get to spend more time on this, this list may grow and most of the functionality may actually be tested / perfected in environments outside of my lab. There are many cases where stuff breaks too. Checkout the <em>Known Issues</em> section in the source repository.</p>
+
+<h2 id="installation">installation</h2>
+
+<p>Installing <code>ooktools</code> <em>should</em> be as simple as <code>pip install ooktools</code>. This should take care of all of the dependencies except for <a href="https://bitbucket.org/atlas0fd00m/rfcat">RfCat</a>. For this you can either <code>apt install rfcat</code> in Kali, or install from source from the <a href="https://bitbucket.org/atlas0fd00m/rfcat">RfCat</a> repository.</p>
+
+<h2 id="usage">usage</h2>
+
+<p>Using <code>ooktools</code> should be as simple as just running it with the required arguments. Based on how you chose to install it you can either use the <code>ooktools</code> command directly, or invoke the module from a cloned repository with <code>python -m ooktools.console</code>:</p>
+
+<pre><code>$ ooktools --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | '_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  gnuradio  GNU Radio Commands.
+  signal    Signal Commands.
+  wave      Wave File Commands.
+</code></pre>
+
+<p>A number of <em>sub commands</em> exist and are categorized according to their main functions. You can get help at any time by supplying the <code>--help</code> argument. The below example shows help for the <code>signal</code> sub command:</p>
+
+<pre><code>$ ooktools signal --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | '_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools signal [OPTIONS] COMMAND [ARGS]...
+
+  Signal Commands.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  play    Play frames from a source file.
+  plot    Plot frames from a recorded signal.
+  record  Record frames to a file.
+  search  Search for signals.
+  send    Send signals using a RFCat dongle.
+</code></pre>
+
+<h2 id="examples">examples</h2>
+
+<p>For the rest of the post, I am going to cover some examples to showcase what is possible with <code>ooktools</code>. Like I have previously mentioned, a lot of the functionality and testing was done in my isolated lab environment, and may actually not work at all for you. Keep this in mind! ;)</p>
+
+<h3 id="wave-binary">wave binary</h3>
+
+<p>The <code>ooktools wave binary</code> command can be used to attempt to extract the binary string from a wave file recording. Lets take a sample recording where I extracted a single pulse:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/audacity_single_pulse.png" />
+    
+    
+</figure>
+
+
+<p>Spotting the key with your eye may be easy in this case, but its a lot harder with longer waves. Anyways, running <code>ooktools wave binary</code> for this recording should output the binary sequence.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png" />
+    
+    
+</figure>
+
+
+<h3 id="wave-clean">wave clean</h3>
+
+<p>The <code>ooktools wave clean</code> command takes a source wave file and tries to <em>&lsquo;square out&rsquo;</em> the signal, removing any jumps in the waveform.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/wave_clean.png" />
+    
+    
+</figure>
+
+
+<p>The source and destinations files compared after this command can be seen in this screenshot:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/audacity_clean.png" />
+    
+    
+</figure>
+
+
+<h3 id="wave-graph">wave graph</h3>
+
+<p>The <code>ooktools wave graph</code> command plots the values read from a wave file source. You can interactively pan and zoom the graph to focus on specific areas as needed.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/wave_graph.png" />
+    
+    
+</figure>
+
+
+<h3 id="signal-search">signal search</h3>
+
+<p>The <code>ooktools signal search</code> commands attempts to find valid on-off keying packets while iterating over a frequency range that is specified. The definition of a <em>valid packet</em> is currently still a little strange though. :|</p>
+
+<p>To best show this feature, the following asciinema recording attempts to show the <code>signal search</code> in action while I hold down the button on my remote:</p>
+
+<script type="text/javascript" src="https://asciinema.org/a/88503.js" id="asciicast-88503" async></script>
+
+<h2 id="signal-record">signal record</h2>
+
+<p>The <code>ooktools signal record</code> command allows you to record a number of frames to a file as you press down on a remote repeatedly. This can then be plotted or simply played back at a later stage.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/signal_record.png" />
+    
+    
+</figure>
+
+
+<h2 id="signal-play">signal play</h2>
+
+<p>The <code>ooktools signal play</code> command allows you to replay frames recorded using <code>ooktools signal record</code>. It literally just plays the frames back.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/signal_play.png" />
+    
+    
+</figure>
+
+
+<h2 id="signal-plot">signal plot</h2>
+
+<p>The <code>ooktools signal plot</code> command allows you to create plots of the frames that were recorded using <code>ooktools signal record</code>. This could be used to very quickly get an idea of the on-off key that may be present on a remote.</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/signal_plot.png" />
+    
+    
+</figure>
+
+
+<h2 id="signal-send">signal send</h2>
+
+<p>The <code>ooktools signal send</code> sub command helps with sending signals either as binary codes, full PWM codes or hex strings. Example usage of the binary string method is:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/send_binary_data.png" />
+    
+    
+</figure>
+
+
+<p>The same code as a hex string would be:</p>
+
+
+<figure >
+    
+        <img src="https://leonjza.github.io/images/ooktools/send_hex_data.png" />
+    
+    
+</figure>
+
+
+<h2 id="internals-and-development">internals and development</h2>
+
+<p>I am sure as more time is spent on the toolkit it will evolve and become a little refined. However, if you wish to hack away at it, hopefully the following bit will help in getting you to understand how its put together.</p>
+
+<p><code>ooktools</code> is build around the excellent python <a href="http://click.pocoo.org/6/">Click</a> cli framework. The applications entry point as defined in <code>setup.py</code> as the <code>cli()</code> method in <code>ooktools.console</code>. This is standard bootstrapping to reach the <code>cli()</code> method. Commands themselves are decorated using the <code>@group.command()</code> decorator and is grouped according to primary function.</p>
+
+<p>Once you checked out the <code>console.py</code> source, you may notice that this file only really handles the commands and arguments to other functions that are defined in <code>ooktools.commands</code>. It is also responsible for calling the correct validation methods as defined in <code>ooktools.validators</code>.</p>
+
+<p>Once a command is happy with its arguments, the <strong>actual</strong> work is then in the <code>ooktools.commands.category</code> scripts.</p>
+
+<p>As far as dependencies go, at the time of writing <code>ooktools</code> depends on <em>bitstring</em>, <em>click</em>, <em>matplotlib</em>, <em>numpy</em> and <em>peakutils</em>. There is also a requirement for <code>rflib</code> which comes from the <a href="https://bitbucket.org/atlas0fd00m/rfcat">RfCat</a> repository.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
