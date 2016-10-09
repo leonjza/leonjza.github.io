@@ -6,8 +6,247 @@
     <description>Recent content in Post-rsses on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Oct 2016 16:05:22 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 08 Oct 2016 11:15:00 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>introducing ooktools. on-off keying tools for your sdr</title>
+      <link>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</link>
+      <pubDate>Sat, 08 Oct 2016 11:15:00 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</guid>
+      <description>&lt;p&gt;In a &lt;a href=&#34;https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/&#34;&gt;previous post&lt;/a&gt;, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/banner.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Lets take a look at &lt;code&gt;ooktools&lt;/code&gt;, how to use it and the internals there of. For those in a rush, the repository can be found here: &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;https://github.com/leonjza/ooktools&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;h2 id=&#34;major-features&#34;&gt;major features&lt;/h2&gt;
+
+&lt;p&gt;Some of the major features in &lt;code&gt;ooktools&lt;/code&gt; include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Binary string extraction from wave file recordings.&lt;/li&gt;
+&lt;li&gt;Wave file cleanups to remove noise in On-off keying recordings.&lt;/li&gt;
+&lt;li&gt;Graphing capabilities for wave files.&lt;/li&gt;
+&lt;li&gt;General information extraction of wave files.&lt;/li&gt;
+&lt;li&gt;Signal recording and playback using &lt;code&gt;json&lt;/code&gt; definition files that can be shared.&lt;/li&gt;
+&lt;li&gt;Plotting of data from the previously mentioned &lt;code&gt;json&lt;/code&gt; recordings.&lt;/li&gt;
+&lt;li&gt;Signal searching for On-off keying type data.&lt;/li&gt;
+&lt;li&gt;Sending signals in both binary, complete PWM formatted or hex strings using an RfCat dongle.&lt;/li&gt;
+&lt;li&gt;Gnuradio &lt;code&gt;.grc&lt;/code&gt; template file generation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Of course, as I get to spend more time on this, this list may grow and most of the functionality may actually be tested / perfected in environments outside of my lab. There are many cases where stuff breaks too. Checkout the &lt;em&gt;Known Issues&lt;/em&gt; section in the source repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;installation&#34;&gt;installation&lt;/h2&gt;
+
+&lt;p&gt;Installing &lt;code&gt;ooktools&lt;/code&gt; &lt;em&gt;should&lt;/em&gt; be as simple as &lt;code&gt;pip install ooktools&lt;/code&gt;. This should take care of all of the dependencies except for &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt;. For this you can either &lt;code&gt;apt install rfcat&lt;/code&gt; in Kali, or install from source from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;usage&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;code&gt;ooktools&lt;/code&gt; should be as simple as just running it with the required arguments. Based on how you chose to install it you can either use the &lt;code&gt;ooktools&lt;/code&gt; command directly, or invoke the module from a cloned repository with &lt;code&gt;python -m ooktools.console&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  gnuradio  GNU Radio Commands.
+  signal    Signal Commands.
+  wave      Wave File Commands.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A number of &lt;em&gt;sub commands&lt;/em&gt; exist and are categorized according to their main functions. You can get help at any time by supplying the &lt;code&gt;--help&lt;/code&gt; argument. The below example shows help for the &lt;code&gt;signal&lt;/code&gt; sub command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools signal --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools signal [OPTIONS] COMMAND [ARGS]...
+
+  Signal Commands.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  play    Play frames from a source file.
+  plot    Plot frames from a recorded signal.
+  record  Record frames to a file.
+  search  Search for signals.
+  send    Send signals using a RFCat dongle.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;examples&#34;&gt;examples&lt;/h2&gt;
+
+&lt;p&gt;For the rest of the post, I am going to cover some examples to showcase what is possible with &lt;code&gt;ooktools&lt;/code&gt;. Like I have previously mentioned, a lot of the functionality and testing was done in my isolated lab environment, and may actually not work at all for you. Keep this in mind! ;)&lt;/p&gt;
+
+&lt;h3 id=&#34;wave-binary&#34;&gt;wave binary&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave binary&lt;/code&gt; command can be used to attempt to extract the binary string from a wave file recording. Lets take a sample recording where I extracted a single pulse:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_single_pulse.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Spotting the key with your eye may be easy in this case, but its a lot harder with longer waves. Anyways, running &lt;code&gt;ooktools wave binary&lt;/code&gt; for this recording should output the binary sequence.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-clean&#34;&gt;wave clean&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave clean&lt;/code&gt; command takes a source wave file and tries to &lt;em&gt;&amp;lsquo;square out&amp;rsquo;&lt;/em&gt; the signal, removing any jumps in the waveform.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The source and destinations files compared after this command can be seen in this screenshot:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-graph&#34;&gt;wave graph&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave graph&lt;/code&gt; command plots the values read from a wave file source. You can interactively pan and zoom the graph to focus on specific areas as needed.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_graph.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;signal-search&#34;&gt;signal search&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal search&lt;/code&gt; commands attempts to find valid on-off keying packets while iterating over a frequency range that is specified. The definition of a &lt;em&gt;valid packet&lt;/em&gt; is currently still a little strange though. :|&lt;/p&gt;
+
+&lt;p&gt;To best show this feature, the following asciinema recording attempts to show the &lt;code&gt;signal search&lt;/code&gt; in action while I hold down the button on my remote:&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/88503.js&#34; id=&#34;asciicast-88503&#34; async&gt;&lt;/script&gt;
+
+&lt;h2 id=&#34;signal-record&#34;&gt;signal record&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal record&lt;/code&gt; command allows you to record a number of frames to a file as you press down on a remote repeatedly. This can then be plotted or simply played back at a later stage.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_record.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-play&#34;&gt;signal play&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal play&lt;/code&gt; command allows you to replay frames recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. It literally just plays the frames back.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_play.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-plot&#34;&gt;signal plot&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal plot&lt;/code&gt; command allows you to create plots of the frames that were recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. This could be used to very quickly get an idea of the on-off key that may be present on a remote.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_plot.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-send&#34;&gt;signal send&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal send&lt;/code&gt; sub command helps with sending signals either as binary codes, full PWM codes or hex strings. Example usage of the binary string method is:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_binary_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The same code as a hex string would be:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_hex_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;internals-and-development&#34;&gt;internals and development&lt;/h2&gt;
+
+&lt;p&gt;I am sure as more time is spent on the toolkit it will evolve and become a little refined. However, if you wish to hack away at it, hopefully the following bit will help in getting you to understand how its put together.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ooktools&lt;/code&gt; is build around the excellent python &lt;a href=&#34;http://click.pocoo.org/6/&#34;&gt;Click&lt;/a&gt; cli framework. The applications entry point as defined in &lt;code&gt;setup.py&lt;/code&gt; as the &lt;code&gt;cli()&lt;/code&gt; method in &lt;code&gt;ooktools.console&lt;/code&gt;. This is standard bootstrapping to reach the &lt;code&gt;cli()&lt;/code&gt; method. Commands themselves are decorated using the &lt;code&gt;@group.command()&lt;/code&gt; decorator and is grouped according to primary function.&lt;/p&gt;
+
+&lt;p&gt;Once you checked out the &lt;code&gt;console.py&lt;/code&gt; source, you may notice that this file only really handles the commands and arguments to other functions that are defined in &lt;code&gt;ooktools.commands&lt;/code&gt;. It is also responsible for calling the correct validation methods as defined in &lt;code&gt;ooktools.validators&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once a command is happy with its arguments, the &lt;strong&gt;actual&lt;/strong&gt; work is then in the &lt;code&gt;ooktools.commands.category&lt;/code&gt; scripts.&lt;/p&gt;
+
+&lt;p&gt;As far as dependencies go, at the time of writing &lt;code&gt;ooktools&lt;/code&gt; depends on &lt;em&gt;bitstring&lt;/em&gt;, &lt;em&gt;click&lt;/em&gt;, &lt;em&gt;matplotlib&lt;/em&gt;, &lt;em&gt;numpy&lt;/em&gt; and &lt;em&gt;peakutils&lt;/em&gt;. There is also a requirement for &lt;code&gt;rflib&lt;/code&gt; which comes from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>reverse engineering static key remotes with gnuradio and rfcat</title>
@@ -6857,141 +7096,6 @@ more awesome boot2root VMs!
 &lt;p&gt;As for me, I have not completed The Playground. In fact, I will most definitely make a plan to get more lab time once its available! Most importantly though, thanks to &lt;a href=&#34;https://twitter.com/g0tmi1k&#34;&gt;@g0tmi1k&lt;/a&gt; for the opportunity as well as the offsec team for their role putting the whole thing together!&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;hack2learn!&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>trying harder oscp and me</title>
-      <link>https://leonjza.github.io/blog/2014/11/22/trying-harder-oscp-and-me/</link>
-      <pubDate>Sat, 22 Nov 2014 06:33:34 +0000</pubDate>
-      
-      <guid>https://leonjza.github.io/blog/2014/11/22/trying-harder-oscp-and-me/</guid>
-      <description>&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/oscp_logo.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;As I am writing this post, it&amp;rsquo;s the &amp;ldquo;morning after&amp;rdquo; I have received the much awaited email confirming that I have successfully completed the OSCP Certification requirements!&lt;/p&gt;
-
-&lt;p&gt;In order to obtain OSCP Certification, one must complete some time in the Penetration Testing with Kali Linux labs followed by a grueling 24 hour exam challenge.&lt;/p&gt;
-
-&lt;p&gt;One really big realization that I came to was the fact that one should not attempt to do this if your goal is simply to get the OSCP Certification. Doing PWK is a excellent opportunity to learn and rushing it may cause you to not make it in the exam.&lt;/p&gt;
-
-&lt;p&gt;Below is a summary of my experience obtaining OSCP.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;preperation&#34;&gt;preperation&lt;/h2&gt;
-
-&lt;p&gt;Taking OSCP was something I wanted to do for quite some time. I have read a number of blogs and experiences from people that have done it, and the most important take from all of that was the amount of time it took. Considering I had a full time job, it was hard for me to gauge exactly how much lab time I would have needed. So, I decided on getting 3 months to start off with.&lt;/p&gt;
-
-&lt;p&gt;I also found a &lt;a href=&#34;http://www.offensive-security.com/documentation/penetration-testing-with-kali.pdf&#34;&gt;syllabus&lt;/a&gt; online to get an idea about what is covered in the training and prepared myself mentally for what lies ahead.&lt;/p&gt;
-
-&lt;p&gt;With the payments and logistics out of the way, I was scheduled to start 8 Aug &amp;lsquo;14.&lt;/p&gt;
-
-&lt;h2 id=&#34;first-impressions&#34;&gt;first impressions&lt;/h2&gt;
-
-&lt;p&gt;On the morning of 8 Aug I receive a email with all of the course material and VPN details. I quickly sifted through the videos and pdf materials and decided to have a early look at the lab machines. My very first reaction was &amp;ldquo;Where the heck do I start?&amp;rdquo;. Everything was a little bit of a information overflow, and there is no clear &amp;ldquo;do this, then this, then this.&amp;rdquo;. One is given a overview of what is required from a documentation perspective, but that is about it.&lt;/p&gt;
-
-&lt;p&gt;It was clear that I needed a plan of action. After some time, I decided to watch the videos thoroughly and after that, work through the PDF. The PDF detailed a whole bunch of exercises that had to be completed and documented too.&lt;/p&gt;
-
-&lt;p&gt;One of the more important points to make here was the fact that 2 reports are required in the end. The exam report is of course compulsory but the lab report is optional. However, should you struggle to meet the requirements for the exam challenge, it &lt;em&gt;may&lt;/em&gt; be possible to gain some points from your lab report. Of course, if you did not provide one, that chance you have is out the door. With that in mind, I decided to leave the exercises to later when I start to compile the actual lab report and jump right into the labs. In retrospect, I wish I decided to do the exercises first as there were some key elements taught to gear you for the labs.&lt;/p&gt;
-
-&lt;h2 id=&#34;meeting-the-pwk-labs&#34;&gt;meeting the PWK labs&lt;/h2&gt;
-
-&lt;p&gt;The machines in the lab were of varying difficulty for me. Some of them were almost a little too easy to pwn, while others were way more of a challenge. You are faced with a &lt;em&gt;public&lt;/em&gt; network, and ultimately have to gain access to the &lt;em&gt;admin&lt;/em&gt; network that is nested deeper in. Using some pivoting techniques, the &lt;em&gt;admin&lt;/em&gt; network was definitely the most fun for me.&lt;/p&gt;
-
-&lt;p&gt;I learnt a few hard lessons here though. My initial approach was to start at one IP, and work my way through trying to pwn them. Once I reached a machine I could not crack, I decided to move on. This worked ok for a while, until I came to a point where I was not able to progress any further. I had to go back and loot the machines I had already pwnd, and that lead to learning more about the surrounding networks and their vulnerabilities.&lt;/p&gt;
-
-&lt;p&gt;Almost all of the lab machines are vulnerable to &amp;ldquo;known&amp;rdquo; vulnerabilities. This is not 0day training. However. What I really appreciated about the PWK labs was the fact that even though the vulnerabilities are known, in many cases you have to take proof of concept exploits, and modify them to actually fit your current environment and situation. There are not a lot of &lt;em&gt;push button, get bacon&lt;/em&gt; scenarios, and quite a few exploits require you to actually understand the vulnerability and be able to bend it to suit your needs. This is where the requirement to be able to script/code a little comes from.&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/oscp_try_harder.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Offensive Security have a &lt;a href=&#34;http://www.offensive-security.com/when-things-get-tough/&#34;&gt;mantra that many know&lt;/a&gt;. &lt;em&gt;Try Harder&lt;/em&gt;. This is the classic response a student gets when asking for hints/help. It is probably the worst answer you can get when you have been bashing away at something for such a long time, but also the most rewarding when you &lt;em&gt;finally&lt;/em&gt; get it.&lt;/p&gt;
-
-&lt;h2 id=&#34;pwning-lab-machines-to-prepare-for-the-exam&#34;&gt;pwning lab machines to prepare for the exam&lt;/h2&gt;
-
-&lt;p&gt;Many of the lab machines have vulnerabilities that have Metasploit modules. You can easily try the &lt;em&gt;push button, get bacon&lt;/em&gt; technique on them. But, it is important to note that in the exam, you will be restricted to what you can use. In fact, there are very clear Metasploit restrictions. From not being allowed to use Metasploit at all, to only being allowed to use certain features of the meterpreter shell. With this in mind, I will always &lt;strong&gt;highly&lt;/strong&gt; recommend you attempt to exploit as much as possible in the labs without the use of Metasploit.&lt;/p&gt;
-
-&lt;p&gt;Not being allowed to use Metasploit for me personally was not really such a big deal. Having practiced quite a lot in the labs to &lt;em&gt;not&lt;/em&gt; use Metasploit, it was easy to find PoC exploits and modify them as required. I did make a lot of use of &lt;strong&gt;msfpayload&lt;/strong&gt; to generate shellcode, but other than that, plain bind/netcat shells were in the order of the day.&lt;/p&gt;
-
-&lt;h2 id=&#34;last-days-of-the-pwk-lab&#34;&gt;last days of the PWK lab&lt;/h2&gt;
-
-&lt;p&gt;My Lab time was scheduled to end 8 nov 2014. I have spent easily about 4-6 hours a night (where possible) in the labs with even more time on the weekends. With about a week left, I turned my focus to the 3 harder machines in the labs, known as &lt;em&gt;pain&lt;/em&gt;, &lt;em&gt;sufferance&lt;/em&gt; and &lt;em&gt;humble&lt;/em&gt;. These 3 machines definitely were the hardest of the bunch, but I managed to pwn them too. By 7 Nov, I had successfully managed to pwn all of the lab machines and had the first version of my Lab report done.&lt;/p&gt;
-
-&lt;p&gt;It was time to book the exam.&lt;/p&gt;
-
-&lt;h2 id=&#34;oscp-exam&#34;&gt;OSCP Exam&lt;/h2&gt;
-
-&lt;p&gt;I managed to secure 19 November @11am as the date I was going to attempt the OSCP Certification Challenge. This actually worked out great for me, as it gave me enough time to catch up on some lost sleep, as well as polish the lab report I was going to send in with my Exam report.&lt;/p&gt;
-
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Yeah, I am probably going to need this later tomorrow morning. &lt;a href=&#34;http://t.co/8rcQ7YNwIS&#34;&gt;pic.twitter.com/8rcQ7YNwIS&lt;/a&gt;&lt;/p&gt;&amp;mdash; _leon_jacobs() (@leonjza) &lt;a href=&#34;https://twitter.com/leonjza/status/534967808619470849&#34;&gt;November 19, 2014&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
-
-&lt;p&gt;The day before the exam, I stocked up on some &lt;a href=&#34;https://twitter.com/leonjza/status/534967808619470849&#34;&gt;energy drinks&lt;/a&gt; and made sure I get a good nights sleep while trying to keep my mind off the exam until it was time.&lt;/p&gt;
-
-&lt;p&gt;The morning of the exam I was not able to keep the excitement in any longer, and I was up at 8am already getting ready for the challenge. My playlist was ready to jam, distractions such as Skype, Steam, Twitter and IRC were all closed, when finally my email with Exam instructions arrived.&lt;/p&gt;
-
-&lt;p&gt;The exam instructions outlined exactly how much points each machine you have to pwn is worth, as well as all the restrictions that apply to each machine. You also have 23hours 45minutes before your exam VPN will expire, whereafter you have another 24hours to submit your documentation. There are 100 points obtainable in the exam, of which you have to get 70 to pass.&lt;/p&gt;
-
-&lt;p&gt;Within about 5hours, I had secured roughly 50 points. From there, things were going a lot slower. 10 hours in, I went up to 60 points. At about 2am the next morning, the fatigue was playing a massive role and I decided to go take a power nap. I set the alarm for 3am. Of course, I didn&amp;rsquo;t actually sleep, but just letting your body lie down and rest while you ponder about what your next move will be proved to help a lot.&lt;/p&gt;
-
-&lt;p&gt;At about 6am that morning, I was up to 80 points. This is technically already enough to pass (assuming I did not make a mistake and break a rule), but I wanted to try get all of the points I could possibly get. Fast forward to about 9am that morning, I decided to call it and start getting a rough draft of the exam report ready. I wanted to make sure I had all of the screenshots and console output I needed before the VPN expired.&lt;/p&gt;
-
-&lt;h2 id=&#34;the-reports&#34;&gt;the reports&lt;/h2&gt;
-
-&lt;p&gt;At exactly 1045 that morning, the VPN dropped and the challenge was over. I now had 24 hours to submit the report. Considering I have been up for about 28 hours now (with a 1hour power nap), I thought it best to actually get some sleep and finish the report off afterwards.&lt;/p&gt;
-
-&lt;p&gt;After about 6 hours of ZZZ&amp;rsquo;s, I had a proper dinner and sat down to complete the exam report. The Lab report took me almost 2 weeks to complete, but the exam is nowhere near as much work and was definitely doable in 24hours. 10pm that evening I submitted both of my reports and went straight to bed :D&lt;/p&gt;
-
-&lt;h2 id=&#34;certification&#34;&gt;certification&lt;/h2&gt;
-
-&lt;p&gt;Almost exactly 24 hours later, I get the confirmation email that I have passed:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/oscp_complete.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Dem feels were good :D&lt;/p&gt;
-
-&lt;h2 id=&#34;oscp-faq&#34;&gt;oscp faq&lt;/h2&gt;
-
-&lt;p&gt;I had quite a number of questions before I started the PWK training. So, let me try and answer a few for others that may have similar questions:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: I am not really in a Security Role now, will this be helpful?&lt;/strong&gt;
-a: Yes! I am convinced you will learn about things you maybe never even realized was possible. In fact. Not will you learn about common security flaws, you will have the expertise to identify and exploit them as well.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: Is scripting/development experience really required?&lt;/strong&gt;
-a: I&amp;rsquo;d definitely say yes. To narrow it down, I would say that you don&amp;rsquo;t necessarily have to have some mad ninja l33t dev skillz, but hacking away and debugging existing code (be it C/C++, Python or Perl) to make it work &lt;strong&gt;your&lt;/strong&gt; way is definitely a need.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: How much time would I need to set aside for this?&lt;/strong&gt;
-a: Lots! PWK almost literally ate me up. I was not doing anything else apart from this. I had the odd break for a evening or two, but every chance I had I spent on the labs. Considering I had a full time day job, 3 months was perfect, but I think it may totally be possible to nail it in 1 month assuming you have the free time.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: Ok, I got the material, where the heck do I start?&lt;/strong&gt;
-a: Now that I have completed the training, I would suggest you watch the videos. Then, work through the PDF documentation (actually doing the exercises) while you prepare your report. Finally start hacking away in the labs.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: How hard were the Lab machines?&lt;/strong&gt;
-a: That is a really hard question to answer. If you have never ever seen any of this stuff before, you may be in for a lot of learning and may have quite a rough time in the beginning. The &lt;em&gt;toughness&lt;/em&gt; I&amp;rsquo;d say is almost entirely relative to your existing experience. But, its not impossible to learn learn learn! :)&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: Seriously now, how hard was the exam?&lt;/strong&gt;
-a: For me? It was hard. Not necessarily just from a technical perspective, but also the time limitation, the rules, the fatigue, the everything! However, I feel the PWK labs are sufficient in gearing you towards it. You won&amp;rsquo;t see the same exploits in the exam as you saw in the lab. So, make sure you understand the fundamental concepts in the labs and you will be fine in the exam!&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;q: Anything else?&lt;/strong&gt;
-a: TRY HARDER.&lt;/p&gt;</description>
     </item>
     
   </channel>

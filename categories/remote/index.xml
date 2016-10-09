@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>#!/slash/note</title>
+    <link>https://leonjza.github.io/categories/remote/index.xml</link>
+    <description>Recent content on #!/slash/note</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://leonjza.github.io/categories/remote/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>introducing ooktools. on-off keying tools for your sdr</title>
+      <link>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</link>
+      <pubDate>Sat, 08 Oct 2016 11:15:00 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</guid>
+      <description>&lt;p&gt;In a &lt;a href=&#34;https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/&#34;&gt;previous post&lt;/a&gt;, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/banner.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Lets take a look at &lt;code&gt;ooktools&lt;/code&gt;, how to use it and the internals there of. For those in a rush, the repository can be found here: &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;https://github.com/leonjza/ooktools&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;h2 id=&#34;major-features&#34;&gt;major features&lt;/h2&gt;
+
+&lt;p&gt;Some of the major features in &lt;code&gt;ooktools&lt;/code&gt; include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Binary string extraction from wave file recordings.&lt;/li&gt;
+&lt;li&gt;Wave file cleanups to remove noise in On-off keying recordings.&lt;/li&gt;
+&lt;li&gt;Graphing capabilities for wave files.&lt;/li&gt;
+&lt;li&gt;General information extraction of wave files.&lt;/li&gt;
+&lt;li&gt;Signal recording and playback using &lt;code&gt;json&lt;/code&gt; definition files that can be shared.&lt;/li&gt;
+&lt;li&gt;Plotting of data from the previously mentioned &lt;code&gt;json&lt;/code&gt; recordings.&lt;/li&gt;
+&lt;li&gt;Signal searching for On-off keying type data.&lt;/li&gt;
+&lt;li&gt;Sending signals in both binary, complete PWM formatted or hex strings using an RfCat dongle.&lt;/li&gt;
+&lt;li&gt;Gnuradio &lt;code&gt;.grc&lt;/code&gt; template file generation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Of course, as I get to spend more time on this, this list may grow and most of the functionality may actually be tested / perfected in environments outside of my lab. There are many cases where stuff breaks too. Checkout the &lt;em&gt;Known Issues&lt;/em&gt; section in the source repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;installation&#34;&gt;installation&lt;/h2&gt;
+
+&lt;p&gt;Installing &lt;code&gt;ooktools&lt;/code&gt; &lt;em&gt;should&lt;/em&gt; be as simple as &lt;code&gt;pip install ooktools&lt;/code&gt;. This should take care of all of the dependencies except for &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt;. For this you can either &lt;code&gt;apt install rfcat&lt;/code&gt; in Kali, or install from source from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;usage&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;code&gt;ooktools&lt;/code&gt; should be as simple as just running it with the required arguments. Based on how you chose to install it you can either use the &lt;code&gt;ooktools&lt;/code&gt; command directly, or invoke the module from a cloned repository with &lt;code&gt;python -m ooktools.console&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  gnuradio  GNU Radio Commands.
+  signal    Signal Commands.
+  wave      Wave File Commands.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A number of &lt;em&gt;sub commands&lt;/em&gt; exist and are categorized according to their main functions. You can get help at any time by supplying the &lt;code&gt;--help&lt;/code&gt; argument. The below example shows help for the &lt;code&gt;signal&lt;/code&gt; sub command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools signal --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools signal [OPTIONS] COMMAND [ARGS]...
+
+  Signal Commands.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  play    Play frames from a source file.
+  plot    Plot frames from a recorded signal.
+  record  Record frames to a file.
+  search  Search for signals.
+  send    Send signals using a RFCat dongle.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;examples&#34;&gt;examples&lt;/h2&gt;
+
+&lt;p&gt;For the rest of the post, I am going to cover some examples to showcase what is possible with &lt;code&gt;ooktools&lt;/code&gt;. Like I have previously mentioned, a lot of the functionality and testing was done in my isolated lab environment, and may actually not work at all for you. Keep this in mind! ;)&lt;/p&gt;
+
+&lt;h3 id=&#34;wave-binary&#34;&gt;wave binary&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave binary&lt;/code&gt; command can be used to attempt to extract the binary string from a wave file recording. Lets take a sample recording where I extracted a single pulse:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_single_pulse.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Spotting the key with your eye may be easy in this case, but its a lot harder with longer waves. Anyways, running &lt;code&gt;ooktools wave binary&lt;/code&gt; for this recording should output the binary sequence.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-clean&#34;&gt;wave clean&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave clean&lt;/code&gt; command takes a source wave file and tries to &lt;em&gt;&amp;lsquo;square out&amp;rsquo;&lt;/em&gt; the signal, removing any jumps in the waveform.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The source and destinations files compared after this command can be seen in this screenshot:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-graph&#34;&gt;wave graph&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave graph&lt;/code&gt; command plots the values read from a wave file source. You can interactively pan and zoom the graph to focus on specific areas as needed.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_graph.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;signal-search&#34;&gt;signal search&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal search&lt;/code&gt; commands attempts to find valid on-off keying packets while iterating over a frequency range that is specified. The definition of a &lt;em&gt;valid packet&lt;/em&gt; is currently still a little strange though. :|&lt;/p&gt;
+
+&lt;p&gt;To best show this feature, the following asciinema recording attempts to show the &lt;code&gt;signal search&lt;/code&gt; in action while I hold down the button on my remote:&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/88503.js&#34; id=&#34;asciicast-88503&#34; async&gt;&lt;/script&gt;
+
+&lt;h2 id=&#34;signal-record&#34;&gt;signal record&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal record&lt;/code&gt; command allows you to record a number of frames to a file as you press down on a remote repeatedly. This can then be plotted or simply played back at a later stage.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_record.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-play&#34;&gt;signal play&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal play&lt;/code&gt; command allows you to replay frames recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. It literally just plays the frames back.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_play.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-plot&#34;&gt;signal plot&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal plot&lt;/code&gt; command allows you to create plots of the frames that were recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. This could be used to very quickly get an idea of the on-off key that may be present on a remote.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_plot.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-send&#34;&gt;signal send&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal send&lt;/code&gt; sub command helps with sending signals either as binary codes, full PWM codes or hex strings. Example usage of the binary string method is:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_binary_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The same code as a hex string would be:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_hex_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;internals-and-development&#34;&gt;internals and development&lt;/h2&gt;
+
+&lt;p&gt;I am sure as more time is spent on the toolkit it will evolve and become a little refined. However, if you wish to hack away at it, hopefully the following bit will help in getting you to understand how its put together.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ooktools&lt;/code&gt; is build around the excellent python &lt;a href=&#34;http://click.pocoo.org/6/&#34;&gt;Click&lt;/a&gt; cli framework. The applications entry point as defined in &lt;code&gt;setup.py&lt;/code&gt; as the &lt;code&gt;cli()&lt;/code&gt; method in &lt;code&gt;ooktools.console&lt;/code&gt;. This is standard bootstrapping to reach the &lt;code&gt;cli()&lt;/code&gt; method. Commands themselves are decorated using the &lt;code&gt;@group.command()&lt;/code&gt; decorator and is grouped according to primary function.&lt;/p&gt;
+
+&lt;p&gt;Once you checked out the &lt;code&gt;console.py&lt;/code&gt; source, you may notice that this file only really handles the commands and arguments to other functions that are defined in &lt;code&gt;ooktools.commands&lt;/code&gt;. It is also responsible for calling the correct validation methods as defined in &lt;code&gt;ooktools.validators&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once a command is happy with its arguments, the &lt;strong&gt;actual&lt;/strong&gt; work is then in the &lt;code&gt;ooktools.commands.category&lt;/code&gt; scripts.&lt;/p&gt;
+
+&lt;p&gt;As far as dependencies go, at the time of writing &lt;code&gt;ooktools&lt;/code&gt; depends on &lt;em&gt;bitstring&lt;/em&gt;, &lt;em&gt;click&lt;/em&gt;, &lt;em&gt;matplotlib&lt;/em&gt;, &lt;em&gt;numpy&lt;/em&gt; and &lt;em&gt;peakutils&lt;/em&gt;. There is also a requirement for &lt;code&gt;rflib&lt;/code&gt; which comes from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

