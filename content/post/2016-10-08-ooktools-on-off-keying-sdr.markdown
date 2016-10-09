@@ -7,7 +7,7 @@ categories = [
 'sdr', 'rfcat', 'gnuradio', 'remote'
 ]
 date = "2016-10-08T11:15:00+02:00"
-title = "introducing ooktools on-off keying tools for your sdr"
+title = "ooktools: on-off keying tools for your sdr"
 +++
 
 In a [previous post](https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/), I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.
