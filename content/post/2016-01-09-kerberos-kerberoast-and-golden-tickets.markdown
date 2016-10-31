@@ -18,8 +18,8 @@ This post however tries to look at it from a little fresher perspective. There a
 ## lets set the scene
 Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into Active Directory. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:
 
-- [https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_(protocol\))
-- [https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815(v=ws.10\).aspx)
+- [https://en.wikipedia.org/wiki/Kerberos_(protocol)](https://en.wikipedia.org/wiki/Kerberos_%28protocol%29)
+- [https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx](https://technet.microsoft.com/en-us/library/cc772815%28v%3Dws.10%29.aspx)
 - [http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/](http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/)
 - [https://adsecurity.org/?p=2362](https://adsecurity.org/?p=2362)
 
