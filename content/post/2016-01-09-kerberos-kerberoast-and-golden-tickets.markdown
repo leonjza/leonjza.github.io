@@ -32,7 +32,7 @@ One key piece of the puzzle I am leaving out is how the initial shell was obtain
 One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.
 
 # spn scanning - the setup
-One of the avenues we can pursue now is to query Active Directory for objects that have a [Service Principal Name](https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949(v=vs.85\).aspx) set.
+One of the avenues we can pursue now is to query Active Directory for objects that have a [Service Principal Name](https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949%28v%3Dvs.85%29.aspx) set.
 
 > A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.
 
