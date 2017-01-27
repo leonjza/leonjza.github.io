@@ -6,7 +6,7 @@ categories:
 - command execution
 comments: true
 date: 2015-05-27T20:40:40Z
-title: jenkins to meterpreter - toying with powersploit
+title: jenkins to meterpreter toying with powersploit
 ---
 
 {{< figure src="/images/jenkins_logo.png" >}}
