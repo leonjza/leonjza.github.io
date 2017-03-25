@@ -7,10 +7,10 @@ keywords = [
     'sdr', 'hacking', 'metasploit', 'rfcat'
 ]
 description = ""
-title = "sending am-ook using metasploit and rfstransciever"
+title = "sending am-ook using metasploit and rfstransceiver"
 +++
 
-Towards the end of last year, I found myself [playing around](https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/) with some basic AM/OOK SDR stuff™. That resulted in [ooktools](https://github.com/leonjza/ooktools) being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new ['rftransciever' capabalities](https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities) that were added to the framework with a similar goal of making this research easier.
+Towards the end of last year, I found myself [playing around](https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/) with some basic AM/OOK SDR stuff™. That resulted in [ooktools](https://github.com/leonjza/ooktools) being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new ['rftransceiver' capabilities](https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities) that were added to the framework with a similar goal of making this research easier.
 
 {{< figure src="/images/sendingookmetasploit/metasploit.jpg" >}}
 
