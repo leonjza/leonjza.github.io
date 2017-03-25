@@ -9,6 +9,152 @@
     <atom:link href="https://leonjza.github.io/categories/rfcat/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>sending am-ook using metasploit and rfstransciever</title>
+      <link>https://leonjza.github.io/blog/2017/03/24/sending-am-ook-using-metasploit-and-rfstransciever/</link>
+      <pubDate>Fri, 24 Mar 2017 17:55:38 +0200</pubDate>
+      
+      <guid>https://leonjza.github.io/blog/2017/03/24/sending-am-ook-using-metasploit-and-rfstransciever/</guid>
+      <description>&lt;p&gt;Towards the end of last year, I found myself &lt;a href=&#34;https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/&#34;&gt;playing around&lt;/a&gt; with some basic AM/OOK SDR stuff™. That resulted in &lt;a href=&#34;https://github.com/leonjza/ooktools&#34;&gt;ooktools&lt;/a&gt; being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new &lt;a href=&#34;https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities&#34;&gt;&amp;lsquo;rftransciever&amp;rsquo; capabalities&lt;/a&gt; that were added to the framework with a similar goal of making this research easier.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/metasploit.jpg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;This post is about me playing with these new toys, and as well as releasing a few small modules I wrote.
+&lt;/p&gt;
+
+&lt;h2 id=&#34;how-things-fit-together&#34;&gt;how things fit together&lt;/h2&gt;
+
+&lt;p&gt;First things first. I had to try and understand how this new stuff actually works. From the blog post, it is possible to see that the additions allow you to communicate with a RFCat capable device from metasploit and run modules over a session. A session is started by connecting to a small Json API (with a python helper) that bridges HTTP requests to &lt;code&gt;rflib&lt;/code&gt; methods. All of this stuff is still pretty new/experimental. In fact, not everything seems to be &lt;a href=&#34;https://github.com/rapid7/metasploit-framework/pull/8143&#34;&gt;working 100%&lt;/a&gt;, yet. Regardless, I set out to port some of the signaling features I have in ooktools to pure metasploit modules.&lt;/p&gt;
+
+&lt;p&gt;Basically, the setup is:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;metasploit HWBride Module ---&amp;gt; HTTP API from rfcat_msfrelay ---&amp;gt; rflib methods (and dongle)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;the-testing-setup&#34;&gt;the testing setup&lt;/h2&gt;
+
+&lt;p&gt;For testing the new goodies, I have a &lt;a href=&#34;https://greatscottgadgets.com/yardstickone/&#34;&gt;yardstickone&lt;/a&gt; (which comes with the &lt;code&gt;rfcat&lt;/code&gt; firmware out the box). The updated modules were not part of metasploit bundled with Kali yet, so I quickly built a &lt;a href=&#34;https://github.com/leonjza/dockerfiles/tree/master/metasploit&#34;&gt;docker container&lt;/a&gt; with the latest metasploit cloned and setup in it. To get the api bridge I mentioned earlier, I cloned the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat&#34;&gt;RFCat repository&lt;/a&gt; and ran the &lt;a href=&#34;https://bitbucket.org/atlas0fd00m/rfcat/src/d96f232f6b262d6a281a32109c33ef072c20e929/rfcat_msfrelay?at=default&amp;amp;fileviewer=file-view-default&#34;&gt;rfcat_msfrelay&lt;/a&gt; script on my laptop (outside of the docker container) as metasploit and the relay script talk using tcp/ip (duhr). This script will also work outside of the repository on its own if you have already installed the rfcat python module. It must just be able to import &lt;code&gt;rflib&lt;/code&gt;. YMMV.&lt;/p&gt;
+
+&lt;h2 id=&#34;rfcat-msfrelay&#34;&gt;rfcat_msfrelay&lt;/h2&gt;
+
+&lt;p&gt;To start, the relay needs to be up first. You can give it the &lt;code&gt;--noauth&lt;/code&gt; flag to not ask for credentials. Without it, the defaults are &lt;code&gt;msf_relay:rfcat_relaypass&lt;/code&gt; (which you can change ofc).&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/rfcat_msfrelay.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;The output is not very exciting, but alas, port 8080 opens up and we can connect a session from metasploit. Over time, you should see the HTTP requests metasploit makes to the bridge appear much like a web servers access log.&lt;/p&gt;
+
+&lt;h2 id=&#34;connecting-the-hwbridge-session&#34;&gt;connecting the hwbridge session&lt;/h2&gt;
+
+&lt;p&gt;Next, we connect the HWBridge session from metasploit. If you have ever used metasploit, this will feel very familiar. Just &lt;code&gt;use auxiliary/client/hwbridge/connect&lt;/code&gt;, set the IP where the &lt;code&gt;rfcat_relay&lt;/code&gt; is running with &lt;code&gt;set RHOST &amp;lt;ip_address&amp;gt;&lt;/code&gt; and &lt;code&gt;run&lt;/code&gt; the module.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/hwbridge.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Running &lt;code&gt;sessions -l&lt;/code&gt; will show you have a new session to your radio. It is possible to interact with the session and send some basic commands. In reality, these are just translated to API calls to the bridge, and the rflib methods called.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/hwbridge_session.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;sending-signals&#34;&gt;sending signals&lt;/h2&gt;
+
+&lt;p&gt;“Out of the box” metasploit released two modules that were supposed to allow for &lt;a href=&#34;https://github.com/rapid7/metasploit-framework/blob/master/modules/post/hardware/rftransceiver/transmitter.rb&#34;&gt;transmitting&lt;/a&gt; signals and allow for some &lt;a href=&#34;https://github.com/rapid7/metasploit-framework/blob/master/modules/post/hardware/rftransceiver/rfpwnon.rb&#34;&gt;brute forcing&lt;/a&gt; to happen. I tested out the brute forcing module first just to get a feel for how things work.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/bruteforce.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Hah! Brute forcing from metasploit. Never did I think I would see this day. The &lt;code&gt;rfcat_relay&lt;/code&gt; output started filling up with the API requests that were made from metasploit to the bride and I could see the signals from the brute force run using gnuradio too.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/gnuradioplot.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Nice! This was enough to convince me to write some modules! Considering there already was a brute force tool, I chose port the following remaining features from ooktools; sending an AM/OOK signal, searching for PWM encoded keys and a frequency jamming module.&lt;/p&gt;
+
+&lt;h2 id=&#34;sendook-module&#34;&gt;sendook module&lt;/h2&gt;
+
+&lt;p&gt;Most of the hard work for this was already done in ooktools and I just had to translate them really. The sending of signals module was the first to be built and works quite flawlessly with my lab light I have at home.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/sendook.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;My remote sends a long flat line at the start, so I had to set the start padding. If you don&amp;rsquo;t set &lt;code&gt;RAW&lt;/code&gt; to true, the module will automatically PWM encode the binary you give it.&lt;/p&gt;
+
+&lt;h2 id=&#34;searchsignal-module&#34;&gt;searchsignal module&lt;/h2&gt;
+
+&lt;p&gt;The next was the signal searcher. This one proved to be a bigger pain as it seems like the receiver code has not really been tested yet both in the relay script as well as in metasploit itself. I made a &lt;a href=&#34;https://github.com/rapid7/metasploit-framework/pull/8143&#34;&gt;PR upstream&lt;/a&gt; to fix up the bugs I encountered in metasploit itself, and had to implement a new metasploit method call and bridge method to &lt;code&gt;lowball()&lt;/code&gt; to allow for some noise to come through when scanning. Nonetheless, the scanning seems to have worked reasonably ok-ish.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/searchsignal.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;jamsignal-module&#34;&gt;jamsignal module&lt;/h2&gt;
+
+&lt;p&gt;Lastly, and arguably the easiest module of them all was the signal jammer. All I did here was send crap until the user cancels the module running. With my testing, this makes a valid 433mhz remote on the right frequency (and a little bit off too) useless until the jam is stopped. Obviously range is also a thing.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://leonjza.github.io/images/sendingookmetasploit/jamsignal.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h2 id=&#34;woohoo&#34;&gt;woohoo!&lt;/h2&gt;
+
+&lt;p&gt;I am very excited to see what else these new possibilities will bring to metasploit. If you want to play with the modules, I have them on github here: &lt;a href=&#34;https://github.com/leonjza/metasploit-modules&#34;&gt;https://github.com/leonjza/metasploit-modules&lt;/a&gt;. I&amp;rsquo;ll probably create a PR to see if these can be added to mtasploit itself too later.&lt;/p&gt;
+
+&lt;p&gt;I don&amp;rsquo;t know much ruby, but there is a lot of power in my ^C ^V.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>ooktools: on-off keying tools for your sdr</title>
       <link>https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/</link>
       <pubDate>Sat, 08 Oct 2016 11:15:00 +0200</pubDate>
