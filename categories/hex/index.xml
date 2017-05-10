@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hex on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/hex/index.xml</link>
+    <link>https://leonjza.github.io/categories/hex/</link>
     <description>Recent content in Hex on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://leonjza.github.io/categories/hex/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Feb 2015 21:09:21 +0000</lastBuildDate>
+    
+	<atom:link href="https://leonjza.github.io/categories/hex/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>a trivial iOS jailbreak detection bypass</title>
@@ -30,88 +33,7 @@
 &lt;p&gt;So, its was time to try and bypass the jailbreak detection of the application.
 All I had to work with was a &lt;code&gt;.ipa&lt;/code&gt;. Similar to the android &lt;code&gt;.apk&lt;/code&gt; file, the &lt;code&gt;.ipa&lt;/code&gt; is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications &lt;code&gt;.ipa&lt;/code&gt; archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;understanding-the-behavior&#34;&gt;understanding the behavior&lt;/h2&gt;
-
-&lt;p&gt;I installed the app onto my iPad, and started to inspect its behavior. When the application starts, it would immediately throw a security related error, notifying the user that it has detected the environment as one that is jailbroken. This happens pretty fast too. Once the jailbreak detection error shows, the application refuses to continue to run. Restarting the application simply continues this loop.&lt;/p&gt;
-
-&lt;p&gt;I studied some iOS jailbreak detection methods online which revealed many of them as being pretty obvious. From detecting the presence of &lt;code&gt;/bin/bash&lt;/code&gt; or &lt;code&gt;Cydia.app&lt;/code&gt;, to examining the exit status if &lt;code&gt;fork()&lt;/code&gt;. There are some more advanced methods as well such as checking the existence of certain known &lt;a href=&#34;https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/DynamicLibraries/100-Articles/DynamicLibraryUsageGuidelines.html&#34;&gt;dylib&lt;/a&gt;&amp;rsquo;s too (which apparently is the hardest to circumvent). For the purpose of this post, the jailbreak detection was pretty weak and did not have any of the more advanced methods implemented. In fact, I am pretty sure there won’t be that many apps out there that will be this easy to bypass.&lt;/p&gt;
-
-&lt;h2 id=&#34;discovering-the-implementation&#34;&gt;discovering the implementation&lt;/h2&gt;
-
-&lt;p&gt;Armed with some knowledge of how its typically done in the iOS world, I proceeded to take a look at the actual application binary:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;leonjza@laptop » file myApplication
-myApplication: Mach-O executable arm
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Compiled as a &lt;em&gt;Mach-O executable&lt;/em&gt; from Objective-C, I loaded up the binary from the extracted &lt;code&gt;.ipa&lt;/code&gt; into the Hopper disassembler to help me get an idea of what is happening. Hopper has some nice features such as generating pseudo code etc, so I quite like using it for these types of excursions. To start off, I searched around for strings that were related to the word &lt;strong&gt;jailbreak&lt;/strong&gt; within the app. Class definitions, methods or any strings related to the term jailbreak was ok. I just wanted to get something to start off with. I found nothing.&lt;/p&gt;
-
-&lt;p&gt;Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term &lt;code&gt;/bin/bash&lt;/code&gt; in the &lt;em&gt;string&lt;/em&gt; section:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. &lt;em&gt;-[MobileDisplay isRetinaDisplay]:&lt;/em&gt;. Very sneaky :) So we are working with the &lt;code&gt;isRetinaDisplay&lt;/code&gt; method which is the one doing the jailbreak detection:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hopper2.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;As can be seen in the above screenshot, the &lt;code&gt;fileExistsAtPath&lt;/code&gt; for &lt;code&gt;/Applications/Cydia.app&lt;/code&gt; is hardly something I would have expected in a &lt;code&gt;isRetinaDisplay&lt;/code&gt; implementation :P&lt;/p&gt;
-
-&lt;h2 id=&#34;planning-an-attack&#34;&gt;planning an attack&lt;/h2&gt;
-
-&lt;p&gt;At this stage, I was fairly certain that I had found the code I was looking for. From the method name &lt;em&gt;isRetinaDisplay&lt;/em&gt;, I reasoned a little and guessed that this was actually supposed to say &lt;code&gt;isJailBroken&lt;/code&gt;. I want this method to return false. My mind went straight to getting &lt;a href=&#34;http://www.cycript.org/&#34;&gt;cycript&lt;/a&gt; ready for some &lt;a href=&#34;http://iphonedevwiki.net/index.php/Cycript_Tricks&#34;&gt;method swizzling&lt;/a&gt;. I started to set things up and played around a little, when I realized that I don&amp;rsquo;t think I will be able to manipulate the runtime fast enough for this to work. Remember, the first thing the app does is check the jailbreak status.&lt;/p&gt;
-
-&lt;p&gt;A bit of thinking, a few coffees, special alone time with Google and lots of reading, I come to realize that even if I &lt;em&gt;was&lt;/em&gt; able to get this method swizzling to work, I&amp;rsquo;d have to do this every time the application starts up. This was not going to work for me. It was time to rethink my strategy.&lt;/p&gt;
-
-&lt;p&gt;Considering &lt;em&gt;how&lt;/em&gt; the jailbreak detection works, most of the ways that I saw in the application were related to file existence checks. There was also an attempt to write to &lt;code&gt;/private/jailbreak.txt&lt;/code&gt;, as well as open a &lt;code&gt;cydia://&lt;/code&gt; url. I realized that I could probably just change these strings to things that will inherently fail and cause the method to not return true for any of the checks.&lt;/p&gt;
-
-&lt;h2 id=&#34;in-1992-we-had-hex-editors-too&#34;&gt;in 1992 we had hex editors too&lt;/h2&gt;
-
-&lt;p&gt;I ssh&amp;rsquo;d into my iPad and located the applications installed directory. Once I had found this, I &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the compiled binary to my kali linux install, and opened it in a hex editor. I realized later I could have probably just used the binary I already had locally :P&lt;/p&gt;
-
-&lt;p&gt;Referencing the disassembly of &lt;code&gt;isRetinaDisplay&lt;/code&gt;, I searched for the strings it used using a Hex editor. Each string I would replace a few characters with &lt;code&gt;0&lt;/code&gt; ensuring that I keep the original string length intact. For eg: &lt;code&gt;/bin/bash&lt;/code&gt; was replaced with &lt;code&gt;/bin/ba00&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I ended up editing the following strings using the hex editor:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;/Applications/Cydia.app -&amp;gt; /Applications/Cyd00.app&lt;/li&gt;
-&lt;li&gt;/Library/MobileSubstrate/MobileSubstrate.dylib -&amp;gt; /Library/MobileSubstrate/MobileSubstra00.dylib&lt;/li&gt;
-&lt;li&gt;/bin/bash -&amp;gt; /bin/ba00&lt;/li&gt;
-&lt;li&gt;/usr/sbin/sshd -&amp;gt; /usr/sbin/ss00&lt;/li&gt;
-&lt;li&gt;/etc/apt -&amp;gt; /etc/a00&lt;/li&gt;
-&lt;li&gt;/private/jailbreak.txt -&amp;gt; /0000000/0000000000000&lt;/li&gt;
-&lt;li&gt;cydia://package/com.example.package -&amp;gt; cyd00://package/com.example.package&lt;/li&gt;
-&lt;/ul&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/ios_jailbreak_hex_editor.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;I saved the modifications that I had done, and &lt;code&gt;scp&lt;/code&gt;&amp;rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P&lt;/p&gt;
-
-&lt;h2 id=&#34;summary&#34;&gt;summary&lt;/h2&gt;
-
-&lt;p&gt;In the end, it was pretty easy to find the jailbreak detection code. Deducing a few things based on the disassembly made it easy to find the method responsible for the checks, regardless of the attempt to hide it via a name change. Furthermore, using something as simple as a hex editor, a trivial implementation such as this was very easily bypassed :)&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

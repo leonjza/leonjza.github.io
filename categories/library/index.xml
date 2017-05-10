@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Library on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/library/index.xml</link>
+    <link>https://leonjza.github.io/categories/library/</link>
     <description>Recent content in Library on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://leonjza.github.io/categories/library/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 17 Aug 2014 15:46:49 +0000</lastBuildDate>
+    
+	<atom:link href="https://leonjza.github.io/categories/library/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Kali Linux Oracle Support</title>
@@ -29,84 +32,7 @@ msf auxiliary(oracle_login) &amp;gt; run
 
 &lt;p&gt;The link provided seems a little out of date, so here is an updated guide.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
-
-&lt;p&gt;First, if you dont have an account at oracle.com, you will &lt;em&gt;unfortunately&lt;/em&gt; need one here. If you don&amp;rsquo;t want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.&lt;/p&gt;
-
-&lt;h2 id=&#34;sorting-oracle-first&#34;&gt;sorting oracle first&lt;/h2&gt;
-
-&lt;p&gt;Anyways. Create yourself a directory &lt;code&gt;/opt/oracle&lt;/code&gt; and &lt;code&gt;cd&lt;/code&gt; there. In a browser, navigate to the &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;instant client downloads&lt;/a&gt; url and choose your architecture. If you hate 32bit Kali, choose &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;Linux x86&lt;/a&gt;, and 64bit Kali choose &lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Linux x86-64&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Next, download the following packages and save them to &lt;code&gt;/opt/oracle&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;instantclient-basic-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;li&gt;instantclient-sqlplus-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;li&gt;instantclient-sdk-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;With those downloaded, extract the archives with the &lt;code&gt;unzip&lt;/code&gt; command. This should leave you with a directory &lt;code&gt;/opt/oracle/instantclient_12_1/&lt;/code&gt;. This is all the files needed to at least get the &lt;code&gt;sqlplus&lt;/code&gt; client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
-
-root@kali:/opt/oracle/instantclient_12_1# ls -lh libclntsh.so
-lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&amp;gt; libclntsh.so.12.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last step is to configure the environment so that your shell is&amp;hellip; &lt;em&gt;oracle aware&lt;/em&gt;. We do this by setting a few environment variables. I have chosen to just append the lines to the end of my &lt;code&gt;.bashrc&lt;/code&gt; file&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc
-
-# ORACLE
-export PATH=$PATH:/opt/oracle/instantclient_12_1
-export SQLPATH=/opt/oracle/instantclient_12_1
-export TNS_ADMIN=/opt/oracle/instantclient_12_1
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
-export ORACLE_HOME=/opt/oracle/instantclient_12_1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Done! Log out and back and check that these are present in the output of &lt;code&gt;env&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;sorting-out-metasploit&#34;&gt;sorting out metasploit&lt;/h2&gt;
-
-&lt;p&gt;The last thing we need to do is setup the metasploit part. For this we need to download &lt;a href=&#34;https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip&#34;&gt;ruby-oci8&lt;/a&gt;. In &lt;code&gt;/opt/oracle&lt;/code&gt;, download it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
-[...]
-2014-08-17 16:11:31 (42.8 KB/s) - `ruby-oci8-2.1.7.zip&#39; saved [278270]
-
-root@kali:/opt/oracle# unzip ruby-oci8-2.1.7.zip
-Archive:  ruby-oci8-2.1.7.zip
-fb913e32d8a09bd46e5bf549bd8e554f0870d384
-   creating: ruby-oci8-ruby-oci8-2.1.7/
-  inflating: ruby-oci8-ruby-oci8-2.1.7/.gitignore
-  inflating: ruby-oci8-ruby-oci8-2.1.7/.yardopts
-[...]
-  inflating: ruby-oci8-ruby-oci8-2.1.7/test/test_rowid.rb
-root@kali:/opt/oracle#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, move to the extracted directory and install the &lt;code&gt;ruby-dev&lt;/code&gt; and &lt;code&gt;libgmp-dev&lt;/code&gt; packages if you have not already done so:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/
-
-root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, ensure that the &lt;code&gt;ruby&lt;/code&gt; interpreter that you will be use is the same as that of Metasploit with&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;export PATH=/opt/metasploit/ruby/bin:$PATH
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ensure that you are using the correct version of ruby&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# ruby -v
-ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lastly, we will &lt;code&gt;make&lt;/code&gt; &amp;amp;&amp;amp; &lt;code&gt;make install&lt;/code&gt;. Logout and back in and test that the oracle tools in metasploit are functional :)&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

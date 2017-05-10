@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>How To on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/how-to/index.xml</link>
+    <link>https://leonjza.github.io/categories/how-to/</link>
     <description>Recent content in How To on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://leonjza.github.io/categories/how-to/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 09 Jul 2016 15:55:48 +0200</lastBuildDate>
+    
+	<atom:link href="https://leonjza.github.io/categories/how-to/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>awesome nmap grep</title>
@@ -26,87 +29,7 @@
 
 
 &lt;p&gt;This post shows a few examples of post scan processing of the greppable output produced with the &lt;code&gt;-oG&lt;/code&gt; flag. A more up to date repository with examples and command explanations can be found in my &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.
-&lt;/p&gt;
-
-&lt;h2 id=&#34;keep-in-mind&#34;&gt;keep in mind&lt;/h2&gt;
-
-&lt;p&gt;All of the below commands assume an environment variable &lt;code&gt;NMAP_FILE&lt;/code&gt; is set. This is simply the location of the output from nmaps &lt;code&gt;-oG&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;count-number-of-open-ports&#34;&gt;Count Number of Open Ports&lt;/h3&gt;
-
-&lt;h4 id=&#34;command&#34;&gt;command&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
-
-egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f2 -f4- | \
-sed -n -e &#39;s/Ignored.*//p&#39; | \
-awk -F, &#39;{split($0,a,&amp;quot; &amp;quot;); printf &amp;quot;Host: %-20s Ports Open: %d\n&amp;quot; , a[1], NF}&#39; \
-| sort -k 5 -g
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;output&#34;&gt;output&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Host: 127.0.0.1            Ports Open: 16
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;top-10-open-ports&#34;&gt;Top 10 Open Ports&lt;/h3&gt;
-
-&lt;h4 id=&#34;command-1&#34;&gt;command&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
-
-egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f4- | \
-sed -n -e &#39;s/Ignored.*//p&#39; | tr &#39;,&#39; &#39;\n&#39; | sed -e &#39;s/^[ \t]*//&#39; | \
-sort -n | uniq -c | sort -k 1 -r | head -n 10
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;output-1&#34;&gt;output&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;1 9001/open/tcp//tor-orport?///
-1 9000/open/tcp//cslistener?///
-1 8080/open/tcp//http-proxy///
-1 80/open/tcp//http//Caddy/
-1 6379/open/tcp//redis//Redis key-value store/
-1 631/open/tcp//ipp//CUPS 2.1/
-1 6234/open/tcp/////
-1 58377/filtered/tcp/////
-1 53/open/tcp//domain//dnsmasq 2.76/
-1 49153/open/tcp//mountd//1-3/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;hosts-and-open-ports&#34;&gt;Hosts and Open Ports&lt;/h3&gt;
-
-&lt;h4 id=&#34;command-2&#34;&gt;command&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;NMAP_FILE=output.grep
-
-egrep -v &amp;quot;^#|Status: Up&amp;quot; $NMAP_FILE | cut -d&#39; &#39; -f2 -f4- | \
-sed -n -e &#39;s/Ignored.*//p&#39;  | \
-awk &#39;{print &amp;quot;Host: &amp;quot; $1 &amp;quot; Ports: &amp;quot; NF-1; $1=&amp;quot;&amp;quot;; for(i=2; i&amp;lt;=NF; i++) { a=a&amp;quot; &amp;quot;$i; }; split(a,s,&amp;quot;,&amp;quot;); for(e in s) { split(s[e],v,&amp;quot;/&amp;quot;); printf &amp;quot;%-8s %s/%-7s %s\n&amp;quot; , v[2], v[3], v[1], v[5]}; a=&amp;quot;&amp;quot; }&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;output-2&#34;&gt;output&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Host: 127.0.0.1 Ports: 16
-open     tcp/22    ssh
-open     tcp/53    domain
-open     tcp/80    http
-open     tcp/443   https
-open     tcp/631   ipp
-open     tcp/3306  mysql
-open     tcp/4767  unknown
-open     tcp/6379
-open     tcp/8080  http-proxy
-open     tcp/8081  blackice-icecap
-open     tcp/9000  cslistener
-open     tcp/9001  tor-orport
-open     tcp/49152 unknown
-open     tcp/49153 unknown
-filtered tcp/54695
-filtered tcp/58369
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As mentioned in the beginning, more up to date examples are available in the &lt;a href=&#34;https://github.com/leonjza/awesome-nmap-grep&#34;&gt;awesome-nmap-grep&lt;/a&gt; github repository.&lt;/p&gt;</description>
+&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -130,84 +53,7 @@ msf auxiliary(oracle_login) &amp;gt; run
 
 &lt;p&gt;The link provided seems a little out of date, so here is an updated guide.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;getting-started&#34;&gt;getting started&lt;/h2&gt;
-
-&lt;p&gt;First, if you dont have an account at oracle.com, you will &lt;em&gt;unfortunately&lt;/em&gt; need one here. If you don&amp;rsquo;t want to create one, don’t worry, a temp email works as well as you luckily don’t have to confirm ownership of it before you can download.&lt;/p&gt;
-
-&lt;h2 id=&#34;sorting-oracle-first&#34;&gt;sorting oracle first&lt;/h2&gt;
-
-&lt;p&gt;Anyways. Create yourself a directory &lt;code&gt;/opt/oracle&lt;/code&gt; and &lt;code&gt;cd&lt;/code&gt; there. In a browser, navigate to the &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;instant client downloads&lt;/a&gt; url and choose your architecture. If you hate 32bit Kali, choose &lt;a href=&#34;http://www.oracle.com/technetwork/database/features/instant-client/index-097480.html&#34;&gt;Linux x86&lt;/a&gt;, and 64bit Kali choose &lt;a href=&#34;http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html&#34;&gt;Linux x86-64&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Next, download the following packages and save them to &lt;code&gt;/opt/oracle&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;instantclient-basic-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;li&gt;instantclient-sqlplus-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;li&gt;instantclient-sdk-linux-12.1.0.1.0.zip&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;With those downloaded, extract the archives with the &lt;code&gt;unzip&lt;/code&gt; command. This should leave you with a directory &lt;code&gt;/opt/oracle/instantclient_12_1/&lt;/code&gt;. This is all the files needed to at least get the &lt;code&gt;sqlplus&lt;/code&gt; client going. However, when we build the ruby stuff needed for Metasploit, we will need to hax a .so. Do this with:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# ln libclntsh.so.12.1 libclntsh.so
-
-root@kali:/opt/oracle/instantclient_12_1# ls -lh libclntsh.so
-lrwxrwxrwx 1 root root 17 Aug 17 15:37 libclntsh.so -&amp;gt; libclntsh.so.12.1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The last step is to configure the environment so that your shell is&amp;hellip; &lt;em&gt;oracle aware&lt;/em&gt;. We do this by setting a few environment variables. I have chosen to just append the lines to the end of my &lt;code&gt;.bashrc&lt;/code&gt; file&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle/instantclient_12_1# tail ~/.bashrc
-
-# ORACLE
-export PATH=$PATH:/opt/oracle/instantclient_12_1
-export SQLPATH=/opt/oracle/instantclient_12_1
-export TNS_ADMIN=/opt/oracle/instantclient_12_1
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1
-export ORACLE_HOME=/opt/oracle/instantclient_12_1
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Done! Log out and back and check that these are present in the output of &lt;code&gt;env&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;sorting-out-metasploit&#34;&gt;sorting out metasploit&lt;/h2&gt;
-
-&lt;p&gt;The last thing we need to do is setup the metasploit part. For this we need to download &lt;a href=&#34;https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip&#34;&gt;ruby-oci8&lt;/a&gt;. In &lt;code&gt;/opt/oracle&lt;/code&gt;, download it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# wget https://github.com/kubo/ruby-oci8/archive/ruby-oci8-2.1.7.zip
-[...]
-2014-08-17 16:11:31 (42.8 KB/s) - `ruby-oci8-2.1.7.zip&#39; saved [278270]
-
-root@kali:/opt/oracle# unzip ruby-oci8-2.1.7.zip
-Archive:  ruby-oci8-2.1.7.zip
-fb913e32d8a09bd46e5bf549bd8e554f0870d384
-   creating: ruby-oci8-ruby-oci8-2.1.7/
-  inflating: ruby-oci8-ruby-oci8-2.1.7/.gitignore
-  inflating: ruby-oci8-ruby-oci8-2.1.7/.yardopts
-[...]
-  inflating: ruby-oci8-ruby-oci8-2.1.7/test/test_rowid.rb
-root@kali:/opt/oracle#
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, move to the extracted directory and install the &lt;code&gt;ruby-dev&lt;/code&gt; and &lt;code&gt;libgmp-dev&lt;/code&gt; packages if you have not already done so:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;root@kali:/opt/oracle# cd ruby-oci8-ruby-oci8-2.1.7/
-
-root@kali:/opt/oracle/ruby-oci8-ruby-oci8-2.1.7# apt-get install ruby-dev libgmp-dev
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Next, ensure that the &lt;code&gt;ruby&lt;/code&gt; interpreter that you will be use is the same as that of Metasploit with&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;export PATH=/opt/metasploit/ruby/bin:$PATH
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Ensure that you are using the correct version of ruby&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# ruby -v
-ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lastly, we will &lt;code&gt;make&lt;/code&gt; &amp;amp;&amp;amp; &lt;code&gt;make install&lt;/code&gt;. Logout and back in and test that the oracle tools in metasploit are functional :)&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -220,77 +66,7 @@ ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-linux-gnu]
 
 &lt;p&gt;First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;example-virsh-console-access&#34;&gt;Example virsh console access&lt;/h3&gt;
-
-&lt;p&gt;Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# a primitive virsh console access example
-$ virsh --connect qemu:///system
-Welcome to virsh, the virtualization interactive terminal.
-
-Type:  &#39;help&#39; for help with commands
-       &#39;quit&#39; to quit
-
- Id    Name                           State
-----------------------------------------------------
- 6     console-test                   running
-
-virsh # console console-test
-Connected to domain console-test
-Escape character is ^]
-
-CentOS release 6.4 (Final)
-Kernel 2.6.32-358.el6.x86_64 on an x86_64
-
-localhost.localdomain login: root
-Password:
-Last login: Sat Aug  3 08:31:13 on ttyS0
-[root@localhost ~]$
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;You can escape the console by pressing &lt;code&gt;^]&lt;/code&gt;, which will drop you back into the virsh shell.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# virsh guest console escape
-[root@localhost ~]$ echo &amp;quot;testing123&amp;quot;
-testing123
-[root@localhost ~]$                       # I pressed ^] here
-virsh #
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;ok-gimme-ze-commands-already&#34;&gt;Ok, gimme ze commands already&amp;hellip;&lt;/h3&gt;
-
-&lt;p&gt;This I have tested on CentOS 6.4. The 2 commands to get it setup would be:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Enabling KVM Console access
-$ cat &amp;gt; /etc/init/ttyS0.conf &amp;lt;&amp;lt; EOL
-# ttyS0 - agetty
-#
-# This service maintains a agetty on ttyS0.
-
-stop on runlevel [S016]
-start on runlevel [23]
-
-respawn
-exec agetty -h -L -w /dev/ttyS0 115200 vt102
-EOL
-$ grubby --update-kernel=ALL --args=&#39;console=ttyS0,115200n8 console=tty0&#39;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Now, you can reboot the server and connect to the domains console via virsh. If all went well, you &lt;em&gt;should&lt;/em&gt; be seeing kernel messages and eventually service starts up&amp;rsquo;s, followed by a login prompt in the console.&lt;/p&gt;
-
-&lt;p&gt;If rebooting is not a option, you can enable it on the fly, after saving &lt;code&gt;ttyS0.conf&lt;/code&gt; with &lt;code&gt;$ initctl start ttyS0&lt;/code&gt; as root.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;grubby&lt;/code&gt; command is not mandatory, however this is what allows you to see the kernel messages as the guest boots. I &lt;strong&gt;highly&lt;/strong&gt; recommend it.&lt;/p&gt;
-
-&lt;h3 id=&#34;i-have-console-but-can-t-log-in-as-root&#34;&gt;I have console, but can&amp;rsquo;t log in as root&lt;/h3&gt;
-
-&lt;p&gt;If you followed this guide, then that would in fact be the case. Logging in directly as root is not something I would recommend. Rather log in as a unprivileged user, and su/sudo up to root. In some cases however it is actually necessary. So, to fix this problem, simply add &lt;code&gt;ttyS0&lt;/code&gt; as a &amp;ldquo;securetty&amp;rdquo; in &lt;code&gt;/etc/securetty&lt;/code&gt; by running: &lt;code&gt;$ echo &amp;quot;ttyS0&amp;quot; &amp;gt;&amp;gt; /etc/securetty&lt;/code&gt;. This will allow root logins via the virsh console.&lt;/p&gt;
-
-&lt;h3 id=&#34;serial-conf-has-the-answers&#34;&gt;serial.conf has the answers&lt;/h3&gt;
-
-&lt;p&gt;If you are looking for more in-depth explanations as to how this works, I suggest you take a look at &lt;code&gt;/etc/init/serial.conf&lt;/code&gt; (again on CentOS 6.4). You&amp;rsquo;ll notice the configuration for &lt;code&gt;ttyS0.conf&lt;/code&gt; also comes from here :)&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

