@@ -74,6 +74,6 @@ Lastly, and arguably the easiest module of them all was the signal jammer. All I
 {{< figure src="/images/sendingookmetasploit/jamsignal.png" >}}
 
 ## woohoo!
-I am very excited to see what else these new possibilities will bring to metasploit. If you want to play with the modules, I have them on github here: [https://github.com/leonjza/metasploit-modules](https://github.com/leonjza/metasploit-modules). I'll probably create a PR to see if these can be added to mtasploit itself too later.
+I am very excited to see what else these new possibilities will bring to metasploit. If you want to play with the modules, I have them on github here: [https://github.com/leonjza/metasploit-modules](https://github.com/leonjza/metasploit-modules). I'll probably create a PR to see if these can be added to metasploit itself too later.
 
 I don't know much ruby, but there is a lot of power in my ^C ^V.
