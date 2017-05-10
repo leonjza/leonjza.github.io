@@ -54,7 +54,7 @@ Hah! Brute forcing from metasploit. Never did I think I would see this day. The 
 
 {{< figure src="/images/sendingookmetasploit/gnuradioplot.png" >}}
 
-Nice! This was enough to convince me to write some modules! Considering there already was a brute force tool, I chose port the following remaining features from ooktools; sending an AM/OOK signal, searching for PWM encoded keys and a frequency jamming module.
+Nice! This was enough to convince me to write some modules! Considering there already was a brute force tool, I chose to port the following remaining features from ooktools; sending an AM/OOK signal, searching for PWM encoded keys and a frequency jamming module.
 
 ## sendook module
 Most of the hard work for this was already done in ooktools and I just had to translate them really. The sending of signals module was the first to be built and works quite flawlessly with my lab light I have at home.
