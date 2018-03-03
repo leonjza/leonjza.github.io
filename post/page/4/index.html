@@ -1,554 +1,461 @@
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta name="generator" content="Hugo 0.37" />
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts | #!/slash/note</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="active directory, android, api, basic authentication, beta, bot, bypass, canary, canary tokens, centos, certification, challenge, command execution, composer, ctf, digest authentication, dns, exercises, exploit, file transfer, flick, gnuradio, golden ticket, gource, hacking, hex, honeydoc, honeypot, how to, infosec, ios, jabber, jailbreak, java, jenkins, kali linux, kerberos, kvm, lab, library, linux, metasploit, meterpreter, mitm, nessus, nmap, notes, oci, offensive security, offsec, oracle, oscp, penetration testing, php, powershell, proxy, python, quick win, remote, reverse, reverse engineer, review, rfcat, root, sandbox, sdr, security, shell, sleekxmpp, smali, solution, test, tip, tools, try harder, url expansion, visualization, vulnerable vm, vulnhub, zacon, zeus, ">
-    
-    
-    
-    
-      <meta name="robots" content="noindex">
-    
-    
+<!doctype html>
+<html>
+<head>
+    <base href="https://leonjza.github.io/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="">
 
-  <meta name="author" content="">
+<meta name="description" content="">
 
+<title>Posts</title>
+<meta name="generator" content="Hugo 0.37" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
-    <meta property="og:title" content="Posts" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://leonjza.github.io/post/" />
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://leonjza.github.io/css/theme.min.css" rel="stylesheet" type="text/css">
 
-
-
-<meta property="og:updated_time" content="2013-08-03T00:00:00&#43;00:00"/>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    <meta name="theme-color" content="#000">
-
-    
-    
-    
-      <link href="https://leonjza.github.io/post/index.xml" rel="alternate" type="application/rss+xml" title="#!/slash/note" />
-    
-    <link rel="canonical" href="https://leonjza.github.io/post/">
-    
-    
-    <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
-
-    <style>
-  html{font-size:12px}*{box-sizing:border-box;text-rendering:geometricPrecision}body{font-size:1rem;line-height:1.5rem;margin:0;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;word-wrap:break-word}h1,h2,h3,h4,h5,h6{line-height:1.3em}fieldset{border:none;padding:0;margin:0}pre{padding:2rem;margin:1.75rem 0;background-color:#fff;border:1px solid #ccc;overflow:auto}code[class*=language-],pre[class*=language-],pre code{font-weight:100;text-shadow:none;margin:1.75rem 0}a{cursor:pointer;color:#ff2e88;text-decoration:none;border-bottom:1px solid #ff2e88}a:hover{background-color:#ff2e88;color:#fff}.grid{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}.grid.\-top{-ms-flex-align:start;-ms-grid-row-align:flex-start;align-items:flex-start}.grid.\-middle{-ms-flex-align:center;-ms-grid-row-align:center;align-items:center}.grid.\-bottom{-ms-flex-align:end;-ms-grid-row-align:flex-end;align-items:flex-end}.grid.\-stretch{-ms-flex-align:stretch;-ms-grid-row-align:stretch;align-items:stretch}.grid.\-baseline{-ms-flex-align:baseline;-ms-grid-row-align:baseline;align-items:baseline}.grid.\-left{-ms-flex-pack:start;justify-content:flex-start}.grid.\-center{-ms-flex-pack:center;justify-content:center}.grid.\-right{-ms-flex-pack:end;justify-content:flex-end}.grid.\-between{-ms-flex-pack:justify;justify-content:space-between}.grid.\-around{-ms-flex-pack:distribute;justify-content:space-around}.cell{-ms-flex:1;flex:1;box-sizing:border-box}@media screen and (min-width:768px){.cell.\-1of12{-ms-flex:0 0 8.33333%;flex:0 0 8.33333%}.cell.\-2of12{-ms-flex:0 0 16.66667%;flex:0 0 16.66667%}.cell.\-3of12{-ms-flex:0 0 25%;flex:0 0 25%}.cell.\-4of12{-ms-flex:0 0 33.33333%;flex:0 0 33.33333%}.cell.\-5of12{-ms-flex:0 0 41.66667%;flex:0 0 41.66667%}.cell.\-6of12{-ms-flex:0 0 50%;flex:0 0 50%}.cell.\-7of12{-ms-flex:0 0 58.33333%;flex:0 0 58.33333%}.cell.\-8of12{-ms-flex:0 0 66.66667%;flex:0 0 66.66667%}.cell.\-9of12{-ms-flex:0 0 75%;flex:0 0 75%}.cell.\-10of12{-ms-flex:0 0 83.33333%;flex:0 0 83.33333%}.cell.\-11of12{-ms-flex:0 0 91.66667%;flex:0 0 91.66667%}}@media screen and (max-width:768px){.grid{-ms-flex-direction:column;flex-direction:column}.cell{-ms-flex:0 0 auto;flex:0 0 auto}}.hack,.hack blockquote,.hack code,.hack em,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack strong{font-size:1rem;font-style:normal;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif}.hack blockquote,.hack code,.hack em,.hack strong{line-height:20px}.hack blockquote,.hack code,.hack footer,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack header,.hack li,.hack ol,.hack p,.hack section,.hack ul{float:none;margin:0;padding:0}.hack blockquote,.hack h1,.hack ol,.hack p,.hack ul{margin-top:20px;margin-bottom:20px}.hack h1{position:relative;display:inline-block;display:table-cell;padding:20px 0 30px;margin:0;overflow:hidden}.hack h1:after{content:"====================================================================================================";position:absolute;bottom:10px;left:0}.hack h1+*{margin-top:0}.hack h2,.hack h3,.hack h4,.hack h5,.hack h6{position:relative;margin-bottom:1.75rem}.hack h2:before,.hack h3:before,.hack h4:before,.hack h5:before,.hack h6:before{display:inline}.hack h2:before{content:"## "}.hack h3:before{content:"### "}.hack h4:before{content:"#### "}.hack h5:before{content:"##### "}.hack h6:before{content:"###### "}.hack li{position:relative;display:block;padding-left:20px}.hack li:after{position:absolute;top:0;left:0}.hack ul>li:after{content:"-"}.hack ol{counter-reset:a}.hack ol>li:after{content:counter(a) ".";counter-increment:a}.hack blockquote{position:relative;padding-left:17px;padding-left:2ch;overflow:hidden}.hack blockquote:after{content:">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";white-space:pre;position:absolute;top:0;left:0;line-height:20px}.hack em:after,.hack em:before{content:"*";display:inline}.hack pre code:after,.hack pre code:before{content:''}.hack code{font-weight:700}.hack code:after,.hack code:before{content:"`";display:inline}.hack hr{position:relative;height:20px;overflow:hidden;border:0;margin:20px 0}.hack hr:after{content:"----------------------------------------------------------------------------------------------------";position:absolute;top:0;left:0;line-height:20px;width:100%;word-wrap:break-word}@-moz-document url-prefix(){.hack h1{display:block}}.hack-ones ol>li:after{content:"1."}p{margin:0 0 1.75rem}.container{max-width:70rem}.container,.container-fluid{margin:0 auto;padding:0 1rem}.inner{padding:1rem}.inner2x{padding:2rem}.pull-left{float:left}.pull-right{float:right}.progress-bar{height:8px;opacity:.8;background-color:#ccc;margin-top:12px}.progress-bar.progress-bar-show-percent{margin-top:38px}.progress-bar-filled{background-color:gray;height:100%;transition:width .3s ease;position:relative;width:0}.progress-bar-filled:before{content:'';border:6px solid transparent;border-top-color:gray;position:absolute;top:-12px;right:-6px}.progress-bar-filled:after{color:gray;content:attr(data-filled);display:block;font-size:12px;white-space:nowrap;position:absolute;border:6px solid transparent;top:-38px;right:0;-ms-transform:translateX(50%);transform:translateX(50%)}table{width:100%;border-collapse:collapse;margin:1.75rem 0;color:#778087}table td,table th{vertical-align:top;border:1px solid #ccc;line-height:15px;padding:10px}table thead th{font-size:10px}table tbody td:first-child{font-weight:700;color:#333}.form{width:30rem}.form-group{margin-bottom:1.75rem;overflow:auto}.form-group label{border-bottom:2px solid #ccc;color:#333;width:10rem;display:inline-block;height:38px;line-height:38px;padding:0;float:left;position:relative}.form-group.form-success label{color:#4caf50!important;border-color:#4caf50!important}.form-group.form-warning label{color:#ff9800!important;border-color:#ff9800!important}.form-group.form-error label{color:#f44336!important;border-color:#f44336!important}.form-control{outline:none;border:none;border-bottom:2px solid #ccc;padding:.5rem 0;width:20rem;height:38px;background-color:transparent}.form-control:focus{border-color:#555}.form-group.form-textarea label:after{position:absolute;content:'';width:2px;background-color:#fff;right:-2px;top:0;bottom:0}textarea.form-control{height:auto;resize:none;padding:1rem 0;border-bottom:2px solid #ccc;border-left:2px solid #ccc;padding:.5rem}select.form-control{border-radius:0;background-color:transparent;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none}.help-block{color:#999;margin-top:.5rem}.form-actions{margin-bottom:1.75rem}.btn{display:-ms-inline-flexbox;display:inline-flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;outline:none;padding:.65rem 2rem;font-size:1rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;z-index:1}.btn:active{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}.btn.btn-ghost{border-color:#757575;color:#757575;background-color:transparent}.btn.btn-ghost:focus,.btn.btn-ghost:hover{border-color:#424242;color:#424242;z-index:2}.btn.btn-ghost:hover{background-color:transparent}.btn-block{width:100%;display:-ms-flexbox;display:flex}.btn-default{color:#fff;background-color:#e0e0e0;border:1px solid #e0e0e0;color:#333}.btn-default:focus:not(.btn-ghost),.btn-default:hover{background-color:#dcdcdc;border-color:#dcdcdc}.btn-success{color:#fff;background-color:#4caf50;border:1px solid #4caf50}.btn-success:focus:not(.btn-ghost),.btn-success:hover{background-color:#43a047;border-color:#43a047}.btn-success.btn-ghost{border-color:#4caf50;color:#4caf50}.btn-success.btn-ghost:focus,.btn-success.btn-ghost:hover{border-color:#388e3c;color:#388e3c;z-index:2}.btn-error{color:#fff;background-color:#f44336;border:1px solid #f44336}.btn-error:focus:not(.btn-ghost),.btn-error:hover{background-color:#e53935;border-color:#e53935}.btn-error.btn-ghost{border-color:#f44336;color:#f44336}.btn-error.btn-ghost:focus,.btn-error.btn-ghost:hover{border-color:#d32f2f;color:#d32f2f;z-index:2}.btn-warning{color:#fff;background-color:#ff9800;border:1px solid #ff9800}.btn-warning:focus:not(.btn-ghost),.btn-warning:hover{background-color:#fb8c00;border-color:#fb8c00}.btn-warning.btn-ghost{border-color:#ff9800;color:#ff9800}.btn-warning.btn-ghost:focus,.btn-warning.btn-ghost:hover{border-color:#f57c00;color:#f57c00;z-index:2}.btn-info{color:#fff;background-color:#00bcd4;border:1px solid #00bcd4}.btn-info:focus:not(.btn-ghost),.btn-info:hover{background-color:#00acc1;border-color:#00acc1}.btn-info.btn-ghost{border-color:#00bcd4;color:#00bcd4}.btn-info.btn-ghost:focus,.btn-info.btn-ghost:hover{border-color:#0097a7;color:#0097a7;z-index:2}.btn-primary{color:#fff;background-color:#2196f3;border:1px solid #2196f3}.btn-primary:focus:not(.btn-ghost),.btn-primary:hover{background-color:#1e88e5;border-color:#1e88e5}.btn-primary.btn-ghost{border-color:#2196f3;color:#2196f3}.btn-primary.btn-ghost:focus,.btn-primary.btn-ghost:hover{border-color:#1976d2;color:#1976d2;z-index:2}.btn-group{overflow:auto}.btn-group .btn{float:left}.btn-group .btn-ghost:not(:first-child){margin-left:-1px}.card{border:1px solid #ccc}.card .card-header{color:#333;text-align:center;background-color:#ddd;padding:.5rem 0}.alert{color:#ccc;padding:1rem;border:1px solid #ccc;margin-bottom:1.75rem}.alert-success{color:#4caf50;border-color:#4caf50}.alert-error{color:#f44336;border-color:#f44336}.alert-info{color:#00bcd4;border-color:#00bcd4}.alert-warning{color:#ff9800;border-color:#ff9800}.media:not(:last-child){margin-bottom:1.25rem}.media-left{padding-right:1rem}.media-left,.media-right{display:table-cell;vertical-align:top}.media-right{padding-left:1rem}.media-body{display:table-cell;vertical-align:top}.media-heading{font-size:1.16667rem;font-weight:700}.media-content{margin-top:.3rem}.avatarholder,.placeholder{background-color:#f0f0f0;text-align:center;color:#b9b9b9;font-size:1rem;border:1px solid #f0f0f0}.avatarholder{width:48px;height:48px;line-height:46px;font-size:2rem;background-size:cover;background-position:50%;background-repeat:no-repeat}.avatarholder.rounded{border-radius:33px}.loading{display:inline-block;content:'&nbsp;';height:20px;width:20px;margin:0 .5rem;animation:a .6s infinite linear;border:2px solid #e91e63;border-right-color:transparent;border-radius:50%}.btn .loading{margin-bottom:0;width:14px;height:14px}.btn div.loading{float:left}.alert .loading{margin-bottom:-5px}@keyframes a{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}.menu{width:100%}.menu .menu-item{display:block;color:#616161;border-color:#616161}.menu .menu-item.active,.menu .menu-item:hover{color:#000;border-color:#000;background-color:transparent}@media screen and (max-width:768px){.form-group label{display:block;border-bottom:none;width:100%}.form-group.form-textarea label:after{display:none}.form-control{width:100%}textarea.form-control{border-left:none;padding:.5rem 0}pre::-webkit-scrollbar{height:3px}}@media screen and (max-width:480px){.form{width:100%}}.dark{color:#ccc}.dark,.dark pre{background-color:#000}.dark pre{padding:0;border:none}.dark pre code{color:#00bcd4}.dark h1 a,.dark h2 a,.dark h3 a,.dark h4 a,.dark h5 a{color:#ccc}.dark code,.dark strong{color:#fff}.dark code{font-weight:100}.dark table{color:#ccc}.dark table td,.dark table th{border-color:#444}.dark table tbody td:first-child{color:#fff}.dark .form-group label{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-group.form-textarea label:after{background-color:#000}.dark .form-control{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-control:focus{border-color:#ccc;color:#ccc}.dark textarea.form-control{color:#ccc}.dark .card{border-color:rgba(95,95,95,.78)}.dark .card .card-header{background-color:transparent;color:#ccc;border-bottom:1px solid rgba(95,95,95,.78)}.dark .btn.btn-ghost.btn-default{border-color:#ababab;color:#ababab}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#9c9c9c;color:#9c9c9c;z-index:1}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#e0e0e0;color:#e0e0e0}.dark .btn.btn-ghost.btn-primary:focus,.dark .btn.btn-ghost.btn-primary:hover{border-color:#64b5f6;color:#64b5f6}.dark .btn.btn-ghost.btn-success:focus,.dark .btn.btn-ghost.btn-success:hover{border-color:#81c784;color:#81c784}.dark .btn.btn-ghost.btn-info:focus,.dark .btn.btn-ghost.btn-info:hover{border-color:#4dd0e1;color:#4dd0e1}.dark .btn.btn-ghost.btn-error:focus,.dark .btn.btn-ghost.btn-error:hover{border-color:#e57373;color:#e57373}.dark .btn.btn-ghost.btn-warning:focus,.dark .btn.btn-ghost.btn-warning:hover{border-color:#ffb74d;color:#ffb74d}.dark .avatarholder,.dark .placeholder{background-color:transparent;border-color:#333}.dark .menu .menu-item{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .menu .menu-item.active,.dark .menu .menu-item:hover{color:#fff;border-color:#ccc}
-  :root {
-  --screen-size-small: 30em; /* breakpoint reference only */
-}
-@keyframes intro {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-.muted {
-  color: rgba(255, 255, 255, 0.5);
-}
-.readmore {
-  margin-bottom: 2.2em;
-}
-.responsive-iframe {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 */
-  padding-top: 25px;
-  height: 0;
-}
-.responsive-iframe iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-iframe {
-  border: 0;
-}
-main, footer {
-  animation: intro 0.3s both;
-  animation-delay: 0.15s;
-}
-footer time[datetime$="M"]:before {
-  content: "\2013\0020";
-}
-@media only screen
-  and ( max-width: 30em ) {
-  footer time[datetime$="M"] {
-    display: none;
-  }
-}
-blockquote cite {
-  display: block;
-}
-blockquote cite::before {
-   content: "\2014";
-}
-:target {
-  color: #fff;
-}
-/* hack.css overrides and enhancements */
-.hack li ul {
-  margin: 0;
-}
-.main {
-  padding: 20px 10px;
-}
-nav a.active {
-  background-color: #ff2e88;
-  color: #fff;
-}
-a[itemprop="url"] {
-  color: #ff9800;
-}
-a[itemprop="url"]:hover {
-  color: #fff;
-}
-a[href*="://"]::after,
-a[rel*="external"] {
-  content: " " url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20class='i-external'%20viewBox='0%200%2032%2032'%20width='14'%20height='14'%20fill='none'%20stroke='%23ff9800'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='9.38%'%3E%3Cpath%20d='M14%209%20L3%209%203%2029%2023%2029%2023%2018%20M18%204%20L28%204%2028%2014%20M28%204%20L14%2018'/%3E%3C/svg%3E");
-}
-figure a[href*="://"]::after,
-figure a[rel*="external"] {
-  content: "";
-}
-html {
-  font-size: 13px;
-}
-.hack pre {
-  font-size: 17px;
-}
-article [itemprop="description"] {
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-@media screen and (min-width: 768px) {
-  html {
-    font-size: 1em;
-  }
-  .container {
-    max-width: 50rem;
-  }
-}
-
-  
-
-</style>
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    <h3 class="home-link"><a href="https://leonjza.github.io">Root</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">#!/slash/note - Most recent posts</h3>
+        <ul>
+            
+            <li><a href="https://leonjza.github.io/blog/2017/03/24/sending-am-ook-using-metasploit-and-rfstransceiver/">sending am-ook using metasploit and rfstransceiver</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/">ooktools: on-off keying tools for your sdr</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">reverse engineering static key remotes with gnuradio and rfcat</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/">awesome nmap grep</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/">rooting darknet</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/">kerberos, kerberoast and golden tickets</a></li>
+            
+            <li><a href="https://leonjza.github.io/license/">license</a></li>
+            
+            <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/">a totally unnecessary composer shell</a></li>
+            
+            <li><a href="https://leonjza.github.io/blog/2015/09/10/canarytokens---the-maybe-not-so-obvious/">canarytokens - the maybe not so obvious</a></li>
+            
+        </ul>
+    </div>
 
     
+
     
+    <div id="categories" class="open">
+        <h3 data-open="categories">Categories</h3>
+        <ul class="categories">
+            
+            <li><a href="https://leonjza.github.io/categories/active-directory">active-directory</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/android">android</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/api">api</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/basic-authentication">basic-authentication</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/beta">beta</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/bot">bot</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/bypass">bypass</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/canary">canary</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/canary-tokens">canary-tokens</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/centos">centos</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/certification">certification</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/challenge">challenge</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/command-execution">command-execution</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/composer">composer</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/ctf">ctf</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/digest-authentication">digest-authentication</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/dns">dns</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/exercises">exercises</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/exploit">exploit</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/file-transfer">file-transfer</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/flick">flick</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/gnuradio">gnuradio</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/golden-ticket">golden-ticket</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/gource">gource</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/hacking">hacking</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/hex">hex</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/honeydoc">honeydoc</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/honeypot">honeypot</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/how-to">how-to</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/infosec">infosec</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/ios">ios</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/jabber">jabber</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/jailbreak">jailbreak</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/java">java</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/jenkins">jenkins</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/kali-linux">kali-linux</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/kerberos">kerberos</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/kvm">kvm</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/lab">lab</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/library">library</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/linux">linux</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/metasploit">metasploit</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/meterpreter">meterpreter</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/mitm">mitm</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/nessus">nessus</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/nmap">nmap</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/notes">notes</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/oci">oci</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/offensive-security">offensive-security</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/offsec">offsec</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/oracle">oracle</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/oscp">oscp</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/penetration-testing">penetration-testing</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/php">php</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/powershell">powershell</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/proxy">proxy</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/python">python</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/quick-win">quick-win</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/remote">remote</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/reverse">reverse</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/reverse-engineer">reverse-engineer</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/review">review</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/rfcat">rfcat</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/root">root</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/sandbox">sandbox</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/sdr">sdr</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/security">security</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/shell">shell</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/sleekxmpp">sleekxmpp</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/smali">smali</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/solution">solution</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/test">test</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/tip">tip</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/tools">tools</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/try-harder">try-harder</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/url-expansion">url-expansion</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/visualization">visualization</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/vulnerable-vm">vulnerable-vm</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/vulnhub">vulnhub</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/zacon">zacon</a></li>
+            
+            <li><a href="https://leonjza.github.io/categories/zeus">zeus</a></li>
+            
+        </ul>
+    </div>
     
-      <script async src="https://leonjza.github.io/js/bpgdec8a.js"></script>
-      <script async src="https://leonjza.github.io/js/bpgdec8.js"></script>
-      <script async src="https://leonjza.github.io/js/bpgdec.js"></script>
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+
+<div class="articles-list">
     
-  </head>
-  
-  <body class="hack dark main container">
-    <header>
-  
-  <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
-    
-    
-      <a itemprop="url" class="" href="https://leonjza.github.io/"><span itemprop="name">Home</span></a>
-    
-      <a itemprop="url" class="" href="https://leonjza.github.io/about/"><span itemprop="name">About Me</span></a>
-    
-  </nav>
-
-
-</header>
-    <main>
-  <header>
-    <h1>Posts</h1>
-  </header>
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/">KVM Redirecting CentOS Kernel and tty output to a virtual serial console</a>
-    </h2>
-    
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>3 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
-
-  Published: <time datetime="2013-08-03T00:00:00&#43;00:00">3 Aug, 2013</time>
-
-</p>
-    
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="console-all-the-things">Console all the things!</h3>
-
-<p>First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.</p>
-
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-08-03T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-08-03T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/07/31/url-expansion---im-paranoid-like-that/">URL Expansion - I&#39;m paranoid like that</a>
-    </h2>
-    
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>3 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
-
-  Published: <time datetime="2013-07-31T00:00:00&#43;00:00">31 Jul, 2013</time>
-
-</p>
-    
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="so-there-is-a-good-use">So there is a good use</h3>
-
-<p>URL Shorteners, as they are most commonly known, are pretty useful in places where you are limited to the amount of characters you are allowed to type. Twitter being the prime example. However, it is not only because of services like that that these URL shortening services exist. Sometimes, URL&rsquo;s are are just plain crazy long, and very error prone when you have to copy and paste/link them someone. I guess we can call this a useful feature?</p>
-
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/07/31/url-expansion---im-paranoid-like-that/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-07-31T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-07-31T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./">&#39;stuff&#39; to Gource.</a>
-    </h2>
-    
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>8 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
-
-  Published: <time datetime="2013-07-27T00:00:00&#43;00:00">27 Jul, 2013</time>
-
-</p>
-    
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="stuff-to-what">Stuff to what&hellip;?</h3>
-
-<p>Not too long ago, a colleague introduced me to Gource. In case you have not heard of <a href="https://code.google.com/p/gource/">Gource</a> before, I highly suggest you take a few minutes and check out the project home page <a href="https://code.google.com/p/gource/">here</a>. If you have been developing, or are part of a development project that has been around a while, then Gource should be able to tell you a tale in a strangely mesmerising way about its progression. Go ahead, download and install it. You are going to need it to try the rest of the stuff anyways.</p>
-
-<p>*Be warned though, watching the output is highly addictive and strangely entertaining, so if you value your productivity, <strong>don&rsquo;t</strong> continue reading this post.*</p>
-
-
-
-
-
-
-
-
-
-
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2015/09/10/canarytokens---the-maybe-not-so-obvious/">canarytokens - the maybe not so obvious</a> - 2015-09-10 22:32:25</h3>
+        <h2 id="introduction">introduction</h2>
 
 
 <figure>
-  
     
-      <img class="lazyload" data-src="/images/gourcelogo.png"  />
+        <img src="https://leonjza.github.io/images/canary_logo.png" />
     
-  
-  
+    
 </figure>
-<style media="screen">
-  .blur-up {
-    -webkit-filter: blur(5px);
-    filter: blur(5px);
-    transition: filter 400ms, -webkit-filter 400ms;
-  }
-  .blur-up.lazyloaded {
-    -webkit-filter: blur(0);
-    filter: blur(0);
-  }
-</style>
 
 
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-07-27T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-07-27T00:00:00&#43;00:00">
-  
-</article>
+<p>Recently I became aware of the <a href="http://canarytokens.org">canarytokens</a> project by the guys over at <a href="http://thinkst.com/">Thinkst</a>. The basic idea is to manipulate things like documents / services in such a way that usage thereof will trigger an alert via some form of &lsquo;phone home&rsquo; feature. The is most probably better known as &lsquo;honeydocs&rsquo;. In the case of <a href="http://canarytokens.org">canarytokens</a>, the phone home features can be either via a DNS or HTTP request coupled with a unique token. As paraphrased from the projects website, this is no new groundbreaking idea but just another usable one.</p>
 
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/">dtob.py: Digest to Basic authentication; A simple example of a authentication &#39;downgrade&#39; attack</a>
-    </h2>
-    
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>11 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
-
-  Published: <time datetime="2013-06-25T00:00:00&#43;00:00">25 Jun, 2013</time>
-
+<p>In this post, I just want to take a few moments and jot down my findings when investigating the documents generated by this project.
 </p>
+    </article>
     
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="introduction">Introduction</h3>
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/">a totally unnecessary composer shell</a> - 2015-09-30 19:39:55</h3>
+        <h2 id="background">background</h2>
 
-<p>Lets start by saying that I am by <em>no</em> means an expert at any of what I am about to write. Primarily this post is purely for research purposes. Think of it as one of those <em>something to do</em> scenarios. I&rsquo;d like to cover some basics around HTTP Authentication, and then show a PoC of how this can be abused in a real world scenario. Hopefully this will help educate people to use more secure authentication mechanisms! :)</p>
 
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-06-25T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-06-25T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/06/23/quick-win-quickly-execute-last-shell-command/">Quick Win: Quickly Execute Last Shell Command</a>
-    </h2>
+<figure>
     
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>1 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
+        <img src="https://leonjza.github.io/images/composer_shell_logo.png" />
+    
+    
+</figure>
 
-  Published: <time datetime="2013-06-23T00:00:00&#43;00:00">23 Jun, 2013</time>
 
+<p>A silly reverse shell invoked via the Composer Dependency Manager. <a href="https://github.com/leonjza/composer-shell">Source here</a></p>
+
+<p><a href="https://getcomposer.org/">Composer</a>, which is most probably <em>the</em> most popular PHP dependency manager allows for <a href="https://getcomposer.org/doc/articles/scripts.md">scripts</a> to run as callbacks on based an event.
+Callbacks are normally triggered just before or after certain events.</p>
+
+<p>It is possible to provide shell commands to the <code>scripts</code> property in the required <code>composer.json</code> file (with a few restrictions), but this method echoes the command that it executes.
+A slightly more covert approach would be to execute a cleverly named static function in a class included in the codebase. It has to be one that can be autoloaded by composer.
 </p>
+    </article>
     
-  </header>
-  
-  <div itemprop="description">
-    Work clever, not hard This will be the first post of a series of quick shell tips for getting things done, fast. Infact, it will probably just serve as a notepad for me on the topic ;)
-Last shell command If you are using a shell, such as Bash, which is pretty much the default on most Linux distributions, then you probably know that you can just use the up arrow to get the last command.
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/06/23/quick-win-quickly-execute-last-shell-command/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-06-23T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-06-23T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/06/07/jabber-to-email-using-sleekxmpp/">Jabber to Email using SleekXMPP</a>
-    </h2>
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/">kerberos, kerberoast and golden tickets</a> - 2016-01-09 10:12:09</h3>
+        <figure>
     
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>6 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
+        <img src="https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png" />
+    
+    
+</figure>
 
-  Published: <time datetime="2013-06-07T00:00:00&#43;00:00">7 Jun, 2013</time>
 
+<p>Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?</p>
+
+<p>The reality is, <em>many</em> times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of <code>lsass</code> and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to <a href="https://github.com/sensepost/autoDANE">automate</a> this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!</p>
+
+<p>This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!
 </p>
+    </article>
     
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="so-why-would-you-even-want-this">So, why would you even want this..?</h3>
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/">rooting darknet</a> - 2016-06-16 21:54:55</h3>
+        <p>Its been a while since I have done a vulnerable boot2root from <a href="https://twitter.com/vulnhub">@VulnHub</a>. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to <a href="https://www.vulnhub.com/entry/darknet-10,120/">Darknet</a> by <a href="https://twitter.com/Q3rv0">@Q3rv0</a>.</p>
 
-<p>Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::</p>
 
-<h3 id="introducing-sleekxmpp">Introducing SleekXMPP</h3>
-
-<p><a href="http://sleekxmpp.com/">SleekXMPP</a> is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like <code>pip install mailer sleekxmpp</code> or for the older school, <code>easy_install sleekxmpp mailer</code> should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too.</p>
-
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/06/07/jabber-to-email-using-sleekxmpp/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-06-07T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-06-07T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/05/25/how-to-extremely-simple-python-jabber-broadcast-bot/">How To: Extremely simple python Jabber Broadcast Bot</a>
-    </h2>
+<figure>
     
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>4 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
+        <img src="https://leonjza.github.io/images/darknet_logo.png" />
+    
+    
+</figure>
 
-  Published: <time datetime="2013-05-25T00:00:00&#43;00:00">25 May, 2013</time>
 
+<p>This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.
 </p>
+    </article>
     
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="bots-bots-bots">Bots! Bots! Bots!</h3>
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/">awesome nmap grep</a> - 2016-07-09 15:55:48</h3>
+        <p>Nmap&rsquo;s greppable output is really handy. Saving greppable output from a scan means the output is delimited in a way that can be easily processed using tools such as <code>grep</code>, <code>sed</code>, <code>cut</code> and <code>awk</code>.</p>
 
-<p>Generally speaking, a &ldquo;bot&rdquo; is something that like <em>does work for you</em>. But, for this purpose, the need for a jabber bot came from the fact that I had to deal with a lot of email on a daily basis. This large amount of mail sometimes would cause me to completely miss critical mail alerts. Realising later that I could have prevented a catastrophe if I didn&rsquo;t miss that <strong>one</strong> email was just not on anymore. So, I started investigating ways to get the <em>important</em> stuff delivered faster.</p>
 
-<p>As a team at work, we have long gone dropped the whole Skype group chat thing for our own Jabber server. My privacy related concerns back then was recently heightened <a href="http://lists.randombit.net/pipermail/cryptography/2013-May/004224.html">here</a> when a trap URL received a HEAD request from <strong>65.52.100.214</strong>. The user that received the URL in a chat was under strict instructions not to actually click it&hellip;</p>
-
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/05/25/how-to-extremely-simple-python-jabber-broadcast-bot/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-05-25T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-05-25T00:00:00&#43;00:00">
-  
-</article>
-
-  
-    <article itemscope itemtype="http://schema.org/CreativeWork">
-  <header>
-    <h2 itemprop="name">
-      <a href="https://leonjza.github.io/blog/2013/05/24/hello-world-oh-and-heres-some-code/">Hello World! Oh and here&#39;s some code!</a>
-    </h2>
+<figure>
     
-      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <circle cx="16" cy="16" r="14" />
-  <path d="M16 8 L16 16 20 20" />
-</svg>
-<span>3 minute read</span>
-<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
-  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
-</svg>
+        <img src="https://leonjza.github.io/images/nmap-project-logo.png" />
+    
+    
+</figure>
 
-  Published: <time datetime="2013-05-24T00:00:00&#43;00:00">24 May, 2013</time>
 
+<p>This post shows a few examples of post scan processing of the greppable output produced with the <code>-oG</code> flag. A more up to date repository with examples and command explanations can be found in my <a href="https://github.com/leonjza/awesome-nmap-grep">awesome-nmap-grep</a> github repository.
 </p>
+    </article>
     
-  </header>
-  
-  <div itemprop="description">
-    <h3 id="introduction">Introduction</h3>
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">reverse engineering static key remotes with gnuradio and rfcat</a> - 2016-10-02 16:05:22</h3>
+        <p>At <a href="https://www.defcon.org/html/defcon-24/dc-24-index.html">defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href="https://greatscottgadgets.com/yardstickone/">YARD Stick One</a> and a <a href="https://greatscottgadgets.com/ubertoothone/">Ubertooth One</a>. I already owned a DVB-T dongle much like <a href="https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W">this one</a> that I bought at defcon23 the previous year.</p>
 
-<p>Finally! A blog engine I like! :) No exceptionally bloated backend database with plugins that just get hacked. Yup, slim and sleek. <em>And</em>, I get to make posts using Vi :D
-Want in on this love? Have a look at <a href="http://octopress.org">Octopress</a> . Yes, it was a real ball ache to get setup thanks to the ruby dependencies, but now that were rollin&rsquo; this should be good :D</p>
+<p>My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I <em>totally</em>  know nothing about really did make for this bit of research to be pretty daunting at first.</p>
 
-<p></p>
-  </div>
-  
-    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2013/05/24/hello-world-oh-and-heres-some-code/">Read More&nbsp;&raquo;</a></nav>
-  
-  <meta itemprop="inLanguage" content="en-us">
-  <meta itemprop="datePublished" content="2013-05-24T00:00:00&#43;00:00">
-  <meta itemprop="dateModified" content="2013-05-24T00:00:00&#43;00:00">
-  
-</article>
 
-  
-</main>
-    <footer>
-  <nav>
-  <p>
+<figure>
     
-      <a href="https://leonjza.github.io/post/page/3/">&laquo; Previous</a> |
+        <img src="https://leonjza.github.io/images/re_static_key_banner.png" />
     
-    <span>Page 4 of 4</span>
     
-  </p>
-</nav>
-
-  
-  <p class="muted">
-    This page was generated using
-    <a target="_blank" rel="noopener" href="https://comfusion.github.io/after-dark/">After Dark</a>
-    for
-    <a target="_blank" rel="noopener" href="https://gohugo.io/">Hugo</a>.
-  </p>
+</figure>
 
 
-</footer>
-  </body>
+<p>Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.
+</p>
+    </article>
+    
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/">ooktools: on-off keying tools for your sdr</a> - 2016-10-08 11:15:00</h3>
+        <p>In a <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">previous post</a>, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/ooktools/banner.png" />
+    
+    
+</figure>
+
+
+<p>Lets take a look at <code>ooktools</code>, how to use it and the internals there of. For those in a rush, the repository can be found here: <a href="https://github.com/leonjza/ooktools">https://github.com/leonjza/ooktools</a>.
+</p>
+    </article>
+    
+    <article>
+        <h3><a href="https://leonjza.github.io/blog/2017/03/24/sending-am-ook-using-metasploit-and-rfstransceiver/">sending am-ook using metasploit and rfstransceiver</a> - 2017-03-24 17:55:38</h3>
+        <p>Towards the end of last year, I found myself <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">playing around</a> with some basic AM/OOK SDR stuff™. That resulted in <a href="https://github.com/leonjza/ooktools">ooktools</a> being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new <a href="https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities">&lsquo;rftransceiver&rsquo; capabilities</a> that were added to the framework with a similar goal of making this research easier.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/sendingookmetasploit/metasploit.jpg" />
+    
+    
+</figure>
+
+
+<p>This post is about me playing with these new toys, and as well as releasing a few small modules I wrote.
+</p>
+    </article>
+    
+</div>
+
+
+<ul class="pagination">
+    
+    <li>
+        <a href="https://leonjza.github.io/post/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+    </li>
+    
+    <li
+    >
+    <a href="https://leonjza.github.io/post/page/3/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+    </li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li
+    ><a href="https://leonjza.github.io/post/">1</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li
+    ><a href="https://leonjza.github.io/post/page/2/">2</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li
+    ><a href="https://leonjza.github.io/post/page/3/">3</a></li>
+    
+    
+    
+    
+    
+    
+        
+        
+    
+    
+    <li
+    class="active"><a href="https://leonjza.github.io/post/page/4/">4</a></li>
+    
+    
+    <li
+    class="disabled">
+    <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+    </li>
+    
+    <li>
+        <a href="https://leonjza.github.io/post/page/4/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+    </li>
+    
+</ul>
+
+</div>
+</div>
+<script src="https://leonjza.github.io/js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
 </html>
+
