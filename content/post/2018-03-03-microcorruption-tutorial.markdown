@@ -45,4 +45,4 @@ Enter any 8 character string, such as `password`.
 
 ## next challenge
 
-[New Orleans](https://leonjza.github.io/blog/2018/03/03/microcorruption-new-orleans/)
+[New Orleans](https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/)
