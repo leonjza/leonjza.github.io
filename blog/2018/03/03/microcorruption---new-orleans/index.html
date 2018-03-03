@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - new orleans",
+    "headline" : "microcorruption - new orleans",
+    "description" : "<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>The next post in the series of solving the <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges continues from the <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---tutorial/">previous small tutorial challenge</a> post. This challenge is titled <em>New Orleans</em>.
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-03 22:21:36 &#43;0200 SAST",
+    "dateModified" : "2018-03-03 22:21:36 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/",
+    "wordCount" : "742",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","new orleans","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - new orleans &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - new orleans</h1>
+    <span class="post-date">Mar 3, 2018 &middot; 4 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/new-orleans">new orleans</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>The next post in the series of solving the <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges continues from the <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---tutorial/">previous small tutorial challenge</a> post. This challenge is titled <em>New Orleans</em>.
+</p>
+
+<h2 id="new-orleans">new orleans</h2>
+
+<p>This challenge no longer holds your hand in terms of a nice and easy to follow tutorial. Instead, you are presented with the machine code and the debugger. Lets get to it!</p>
+
+<p>You will immediately notice that there are a lot of functions in the beginning of the code section that do some setup work. Although important, they are not always that interesting. Instead, we are almost always only really interested in what happens once we hit the <code>main</code> function.</p>
+
+<pre><code class="language-asm">4438 &lt;main&gt;
+4438:  3150 9cff      add   #0xff9c, sp
+443c:  b012 7e44      call  #0x447e &lt;create_password&gt;
+4440:  3f40 e444      mov   #0x44e4 &quot;Enter the password to continue&quot;, r15
+4444:  b012 9445      call  #0x4594 &lt;puts&gt;
+4448:  0f41           mov   sp, r15
+444a:  b012 b244      call  #0x44b2 &lt;get_password&gt;
+444e:  0f41           mov   sp, r15
+4450:  b012 bc44      call  #0x44bc &lt;check_password&gt;
+4454:  0f93           tst   r15
+4456:  0520           jnz   #0x4462 &lt;main+0x2a&gt;
+4458:  3f40 0345      mov   #0x4503 &quot;Invalid password; try again.&quot;, r15
+445c:  b012 9445      call  #0x4594 &lt;puts&gt;
+4460:  063c           jmp   #0x446e &lt;main+0x36&gt;
+4462:  3f40 2045      mov   #0x4520 &quot;Access Granted!&quot;, r15
+4466:  b012 9445      call  #0x4594 &lt;puts&gt;
+446a:  b012 d644      call  #0x44d6 &lt;unlock_door&gt;
+446e:  0f43           clr   r15
+4470:  3150 6400      add   #0x64, sp
+</code></pre>
+
+<p>A quick look at the <code>call</code>&rsquo;s that get made, we can see the flow is pretty simple. First we run a <code>create_password</code> routine, then <code>get_password</code>, then do a <code>check_password</code>. Depending on the contents of <code>r15</code> once we have done that, we will jump to unlock the lock or not.</p>
+
+<p>Lets take a closer look at <code>create_password</code>. This seems like an odd method to have.</p>
+
+<pre><code class="language-asm">447e &lt;create_password&gt;
+447e:  3f40 0024      mov   #0x2400, r15
+4482:  ff40 2e00 0000 mov.b #0x2e, 0x0(r15)
+4488:  ff40 6700 0100 mov.b #0x67, 0x1(r15)
+448e:  ff40 3700 0200 mov.b #0x37, 0x2(r15)
+4494:  ff40 4d00 0300 mov.b #0x4d, 0x3(r15)
+449a:  ff40 4700 0400 mov.b #0x47, 0x4(r15)
+44a0:  ff40 4800 0500 mov.b #0x48, 0x5(r15)
+44a6:  ff40 2f00 0600 mov.b #0x2f, 0x6(r15)
+44ac:  cf43 0700      mov.b #0x0, 0x7(r15)
+44b0:  3041           ret
+</code></pre>
+
+<p>The <code>create_password</code> routine seems to be moving some bytes (using <code>mov.b</code>) at incrementing offsets relative to <code>0x2400</code>. The final <code>mov.b</code> instruction at <code>0x44ac</code> moves a null byte into the last memory location before returning the method call. I guess its obvious what is going on here already.</p>
+
+<p>Lets take a look at <code>check_password</code> too:</p>
+
+<pre><code class="language-asm">44bc &lt;check_password&gt;
+44bc:  0e43           clr   r14
+44be:  0d4f           mov   r15, r13
+44c0:  0d5e           add   r14, r13
+44c2:  ee9d 0024      cmp.b @r13, 0x2400(r14)
+44c6:  0520           jne   #0x44d2 &lt;check_password+0x16&gt;
+44c8:  1e53           inc   r14
+44ca:  3e92           cmp   #0x8, r14
+44cc:  f823           jne   #0x44be &lt;check_password+0x2&gt;
+44ce:  1f43           mov   #0x1, r15
+44d0:  3041           ret
+44d2:  0f43           clr   r15
+44d4:  3041           ret
+</code></pre>
+
+<p>A quick read seems like 8 <code>cmp.b</code> operations are performed from the same offset we have had when <code>create_password</code> started writing those bytes. So, <code>create_password</code> writes the password to memory, <code>check_password</code> just compares those bytes to the ones entered by the user.</p>
+
+<p>Lets debug this application and see what it looks like. First, set a breakpoint just after <code>create_password</code> is done at <code>0x4440</code> with <code>break 4440</code>. This will let us have a peek at <code>0x2400</code> to see what that the memory looks like there. The next break point that might be interesting would be where the character comparisons are occurring in <code>check_password</code> at <code>0x44c2</code>, so add another break point with <code>break 44c2</code>. Finally, hit <code>c</code> to continue the CPU.</p>
+
+<p>Right after we hit our first breakpoint, we can see that the bytes <code>2e67 374d 4748 2f00</code> were written from <code>0x2400</code> onwards.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/new_orleans_create_password.png" />
+    
+    
+</figure>
+
+
+<p>Using a small one-liner, we can convert the bytes that were written to ASCII and confirm it matches the section in memory:</p>
+
+<pre><code class="language-bash">~ » python -c &quot;print '2e67374d47482f00'.decode('hex')&quot;
+.g7MGH/
+</code></pre>
+
+<p>I am pretty sure this is the password, so continue the CPU and enter <code>.g7MGH/</code> when the interrupt prompts you for a password. Continue the CPU again until we hit our next breakpoint to see the byte comparisons occur. The CPU should step all the way though the loop for the password and finally hit the <code>mov</code> instruction at <code>0x44ce</code> which sets <code>r15</code> to <code>0x1</code> for that <code>tst</code> instruction in <code>main</code> later.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/new_orleans_win_state.png" />
+    
+    
+</figure>
+
+
+<p>The <code>tst</code> instruction on register <code>r15</code> should have a non-zero return in the state register <code>sr</code>, resulting in a win condition. This means the password is <code>.g7MGH/</code>!</p>
+
+<h2 id="solution">solution</h2>
+
+<p>Enter a password of <code>.g7MGH/</code> in ASCII or <code>2e67374d47482f00</code> as hex.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
