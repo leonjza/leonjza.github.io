@@ -42,3 +42,7 @@ If `r12` ends up being `0x0009` (indicating that out passwords was 8 characters 
 ## solution
 
 Enter any 8 character string, such as `password`.
+
+## next challenge
+
+[New Orleans](https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/)
