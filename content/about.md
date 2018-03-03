@@ -13,7 +13,7 @@ menu = "main"
 - [https://twitter.com/leonjza](https://twitter.com/leonjza)
 - [https://github.com/leonjza](https://github.com/leonjza)
 
-- Alternatively, theninjabag at gmail dot com ([PGP](/key.asc))
+- Alternatively, leonja511 at gmail dot com ([PGP](/key.asc))
 
 ### Certs I have managed to obtain:
 {{< figure src="/images/certs/oscp.png" link="http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/" >}}
