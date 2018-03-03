@@ -6,6 +6,7 @@ categories:
 - exploit
 - assembly
 - microcorruption
+- tutorial
 ---
 
 {{< figure src="/images/microcorruption/microcorruption.png" >}}
