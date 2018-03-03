@@ -14,8 +14,8 @@ All non-code blog content is licensed under [Creative Commons BY-NC-SA](http://c
 
 All source code files and snippets found on this blog, unless otherwise explicitly noted, are licensed under the terms below.
 
-``` html 
-Copyright 2016 Leon Jacobs
+```html
+Copyright 2018 Leon Jacobs
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
