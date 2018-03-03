@@ -10,10 +10,6 @@
     </div>
 
     <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="{{ "/post" | absURL }}">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
       <li class="sidebar-nav-item"><a href="{{ "/" | absURL }}">{{ if isset .Site.Params "home"}}{{ .Site.Params.home }}{{ else }}Blog{{ end }}</a></li>
       {{ range .Site.Menus.main }}
       <li class="sidebar-nav-item">{{ .Pre }}<a href="{{ .URL | absURL }}">{{ .Name }}</a></li>
@@ -49,7 +45,6 @@
     </script></p>
     {{ end }}
 
-    <p>Copyright &copy; {{ .Now.Format "2006" }}</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    {{ partial "sidebar/footer.html" . }}
   </div>
 </div>
