@@ -1,0 +1,26 @@
+<script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "{{ .Site.BaseURL }}"
+    },
+    "articleSection" : "{{ .Section }}",
+    "name" : "{{ .Title }}",
+    "headline" : "{{ .Title }}",
+    "description" : "{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ end }}{{ end }}",
+    "inLanguage" : "en-US",
+    "author" : "{{ .Site.Params.AuthorName }}",
+    "creator" : "{{ .Site.Params.AuthorName }}",
+    "publisher": "{{ .Site.Params.AuthorName }}",
+    "accountablePerson" : "{{ .Site.Params.AuthorName }}",
+    "copyrightHolder" : "{{ .Site.Params.AuthorName }}",
+    "copyrightYear" : "{{ .Date.Format "2006" }}",
+    "datePublished": "{{ .Date }}",
+    "dateModified" : "{{ .Date }}",
+    "url" : "{{ .Permalink }}",
+    "wordCount" : "{{ .WordCount }}",
+    "keywords" : [ {{ if isset .Params "categories" }}{{ range .Params.categories }}"{{ . }}",{{ end }}{{ end }}"Blog" ]
+}
+</script>
