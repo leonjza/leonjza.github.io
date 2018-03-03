@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "building the bsidescpt17 rf challenge",
+    "headline" : "building the bsidescpt17 rf challenge",
+    "description" : "<p>In this post I want to talk a little about the BSides Cape Town 2017 RFCat challenge and how I went about trying to build a challenge for it. Unfortunately I was not able to able to attend the conference itself, but still had the privilege to contribute in some way!
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-12-13 15:26:28 &#43;0200 SAST",
+    "dateModified" : "2017-12-13 15:26:28 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2017/12/13/building-the-bsidescpt17-rf-challenge/",
+    "wordCount" : "3617",
+    "keywords" : [ "hardware","hacking","rfcat","cc1111","bsides","Blog" ]
+}
+</script>
+
+
+  <title>building the bsidescpt17 rf challenge &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">building the bsidescpt17 rf challenge</h1>
+    <span class="post-date">Dec 13, 2017 &middot; 17 minute read &middot; <a href="https://leonjza.github.io/blog/2017/12/13/building-the-bsidescpt17-rf-challenge/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/hardware">hardware</a><a class="label" href="https://leonjza.github.io/categories/hacking">hacking</a><a class="label" href="https://leonjza.github.io/categories/rfcat">rfcat</a><a class="label" href="https://leonjza.github.io/categories/cc1111">cc1111</a><a class="label" href="https://leonjza.github.io/categories/bsides">bsides</a>
+    </span>
+    <p>In this post I want to talk a little about the BSides Cape Town 2017 RFCat challenge and how I went about trying to build a challenge for it. Unfortunately I was not able to able to attend the conference itself, but still had the privilege to contribute in some way!
+</p>
+
+<p>The first question you may have could be: &ldquo;But why RFCat?&rdquo;. Truthfully, some people that are way better at this hacking thing than me (and that were also primarily responsible for this years BSides badge hardware) came up with this idea: &ldquo;Wouldn&rsquo;t it be cool to have a cc1111 chip on the badges?&rdquo;. The cc1111 chip is <a href="https://github.com/atlas0fd00m/rfcat">RFCat</a> compatible, so naturally this would be the goto firmware to use for the chip. With this in mind, I got invited by <a href="https://twitter.com/elasticninja">@elasticninja</a> to see if I would be interested in building an RFCat based challenge and without hesitation agreed! So there we were.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/cc1111.jpg" />
+    
+    
+</figure>
+
+
+<h1 id="the-hardware">the hardware</h1>
+
+<p>Taking a quick look at the actual hardware used, the badge itself was composed of two separate physical badges which included a black &ldquo;flux capacitor&rdquo; badge and a red &ldquo;rf badge&rdquo;. The flux capacitor badge sported an 2AL3B ESP chip that gave the badge wifi capabilities amongst others cool things.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-front.jpg" />
+    
+    
+</figure>
+
+
+<p>The power bank used was estimated to give at least a full days power to the badge allowing for people to play with and hack away without needing a recharge too often.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-back.jpg" />
+    
+    
+</figure>
+
+
+<p>The power bank itself was wired to a USB cable, letting you unplug it and charge the power bank easily. There were also two buttons soldered on to the back of the badge.</p>
+
+<p>For the purposes of this post though, we will only focus on the red RF badge with the cc1111 chip soldered on.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/rfbadge-front.jpg" />
+    
+    
+</figure>
+
+
+<p>The RF badge (as already mentioned previously) had a cc1111, RFCat compatible chip, a USB port and a button (no idea what that did haha).</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/rfbadge-back.jpg" />
+    
+    
+</figure>
+
+
+<p>The back of the badge was not that interesting.</p>
+
+<p>Now, unfortunately due to time constraints I was not able to get my hands on one of these badges before the conference and as such had to make another plan to get an environment up and running that would mimic the badge hardware as close as possible. Thankfully, sourcing some <a href="https://greatscottgadgets.com/yardstickone/">Yardstick One&rsquo;s</a> was relatively easy due to awesome hacker friends ;)</p>
+
+<h1 id="challenge-ideas">challenge ideas</h1>
+
+<p>Getting to the point where you want to build a challenge, in my limited experience anyways, I believe that it is important for oneself to set out some high level goals to help you first of all, actually achieve your goals and secondly, keep you focussed in a direction without falling victim to the squirrel effect. In my case, I settled on the following goals:</p>
+
+<ul>
+<li>Low barrier of entry. Not knowing everything there is to know about RF should not hinder your ability to play (and win) the challenge.</li>
+<li>When you get a badge, you must have something working already. Even if crippled in its &ldquo;factory default&rdquo; state, it should be enough to at least have some fun.</li>
+<li>It should be possible to replicate, adapt and hack at later even after the con is over.</li>
+</ul>
+
+<p>As you can see, these are very high level goals without much details, but it was enough for me to get started and reflect on should I lose track of what I am trying to do. When talking to Mike about what he had in mind in terms of the challenge and the logistics thereof, it was explained that a hardware box would be used as the goal to unlock using the RFCat based challenge. In essence, once a player &ldquo;wins&rdquo;, a small bit of python code would be used to unlock a magnetic lock or something similar, thereby allowing you to retrieve the prize. At the conference, this box also included a lock picking challenge!</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/plutonium.jpg" />
+    
+    
+</figure>
+
+
+<p>After some time pondering ideas, I figured that for the challenge itself, it may be necessary for clients to talk to a &ldquo;server&rdquo;. The server needs the ability to receive messages from clients, process them and be authoritative in terms of who has progressed to which state of the game. At the same time I realised that it might be cool for the badges to be able to talk to each other using a similar medium. An idea that has been discussed at the office a few times now (albeit in a slightly different form).</p>
+
+<p>So, I settled on the idea of having a broadcast-like chat system for the RF badges, and a server using a similar communications medium to be used for challenges. In order to &ldquo;reveal&rdquo; this challenge though, I figured it might be cool to have a working implementation of this broadcast-like chat system, whereby badge owners could partake in this RF based chat network by simply starting the client and being in range. The implementation given with the badge would say use a different modulation/syncword to the challenge server, there in lies some exploratory/clue finding to finally &ldquo;connect&rdquo; to the challenge server.</p>
+
+<h1 id="building-blocks-for-the-broadcast-like-chat-system">building blocks for the broadcast-like chat system</h1>
+
+<p>Before I could do anything interesting with the broadcast idea though, I had to step back a few steps and get the two Yardstick One&rsquo;s I had to &ldquo;talk to each other&rdquo;. Something that sounds super simple in theory (and it actually is), but when trying it gave me a few hours of grey hairs. Previously I have only been able to send messages and receive/replay other messages.</p>
+
+<p>Using my host workstation, I had a Yardstick One &amp; RFCat fired up in research mode, and another similar setup in a VMWare based virtual machine with another Yardstick One connected using USB passthrough mode to the VM. This setup allowed me to easily play with the send/receive ideas between the Yardsticks and test various things.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/yardsticks.jpg" />
+    
+    
+</figure>
+
+
+<p>I tried quite a few things to be honest. Making sure I use the same frequency, modulation and baud rate on both ends of the transmission seemed obvious but just didn&rsquo;t get me a way to reliably transfer data between the two Yardsticks. I would prepare hex encoded bytes to send with <code>RFsend()</code> on the one end, and try and receive them again using <code>RFRecv()</code> on the other end but just couldn&rsquo;t reliably get transmissions to flow. In fact, all I got was noise. Using the <code>discover()</code> method, one could remove some of the noise filtering automatically applied by RFCat (lowball mode) to try and discover more signals, but this too failed me. Eventually I toggled the <a href="https://github.com/atlas0fd00m/rfcat/blob/19bc9b057390a5c8a101395a0874fd728e30b63b/rflib/chipcon_nic.py#L1426">IdentSyncWord</a> flag in the discover() method and realised that I never set a sync word to begin with. Well&hellip; one call to <code>setMdmSyncWord()</code> later and could finally reliably transfer frames between the two Yardstick Ones!</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/rf-researchmode-edit.png" />
+    
+    
+</figure>
+
+
+<p>With the ability to transfer frames reliably, it was time to write some scripts to make this easier. A simple <code>send.py</code> and <code>receive.py</code> would suffice. All they need to do is setup the radios by configuring the frequency, sync word, baud rate and modulation in use. Then, simply encode and send / decode on receive.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/bsides17badge/send-receive.png" />
+    
+    
+</figure>
+
+
+<p>Those scripts looked as follows:</p>
+
+<pre><code class="language-python"># send.py
+
+import binascii
+import sys
+import rflib
+
+# get the message from the command line
+message = ' '.join(sys.argv[1:])
+print('Sending: {0}'.format(message))
+message = binascii.hexlify(message)
+print('Message hex encoded: {0}'.format(message))
+
+# setup the radio
+d = rflib.RfCat()
+d.setFreq(868000000)
+d.setMdmSyncWord(0x1985)
+d.setMdmModulation(rflib.MOD_2FSK)
+d.setMdmDRate(9600)
+
+print('Sending...')
+d.RFxmit(data=message, repeat=50)
+print('Done!')
+</code></pre>
+
+<pre><code class="language-python"># receive.py
+
+import binascii
+import sys
+import rflib
+
+# setup the radio
+d = rflib.RfCat()
+d.setFreq(868000000)
+d.setMdmSyncWord(0x1985)
+d.setMdmModulation(rflib.MOD_2FSK)
+d.setMdmDRate(9600)
+
+print('Waiting for new messages...')
+
+while not rflib.keystop():
+    try:
+        pkt, _ = d.RFrecv(timeout=1000)
+        decoded_pkt = binascii.unhexlify(pkt)
+
+        print(decoded_pkt)
+
+    except (rflib.ChipconUsbTimeoutException, TypeError):
+        pass
+</code></pre>
+
+<h1 id="transitioning-to-a-working-chat-system">transitioning to a working chat system</h1>
+
+<p>The next challenge was to translate this into something that could be used as a chat client. I would like to start a script, and have the script accept input to send using RFCat. The chat client must be able to send and receive from the same script, using a single cc1111. A key thing to remember is that the cc1111 only works in half-duplex mode. That means that you can either be transmitting or receiving, not both at the same time. Before building something, I considered that the chat client would have a few interesting problems to solve:</p>
+
+<ul>
+<li>As we know, a client can&rsquo;t send and receive at the same time so the default should be to always be in a receiving mode and only change when something should be sent.</li>
+<li>It is possible for frames to go missing or be incomplete so a retransmission strategy should be implemented.</li>
+<li>Anyone that uses the same frequency, syncword and modulation would be able to &lsquo;tune&rsquo; into the chat, so no privacy should be expected :P</li>
+</ul>
+
+<p>With these challenges in mind, the first thing I tried to solve was the fact that the radios were half-duplex and required a way to change state when messages were to be sent. After some testing, I settled on having a singleton class instance that would be shared between two threads. One thread responsible for sending data and another responsible for receiving, both monitoring the state of the radio. The state class (aptly called <code>RadioState</code>) would have a state property indicating the radios current state which could either be &ldquo;send&rdquo; or &ldquo;receive&rdquo;. From a threading perspective, the logic flowed something like this:</p>
+
+<ul>
+<li>Both threads would have an infinite loop checking the current state of the radio.</li>
+<li>Both threads would only continue with their respective logic (send/receive) if the radio was in the state required for that specific thread.</li>
+<li>The receiving thread would basically have a blocking call to <code>RFrecv()</code> that would wait for 1 second for a frame.</li>
+<li>Once the timeout is reached (or a valid frame is received) a check is done using the <code>RadioState</code> class to see if a state change is required.</li>
+<li>If a state change is required, change the actual state and return to the start of the infinite loop within the thread.</li>
+<li>The sending thread should now detect that the state has changed and proceed to transmit frames. Once done, return the state to &ldquo;receive&rdquo; causing the listening thread to resume frame captures.</li>
+<li>Rinse and repeat.</li>
+</ul>
+
+<p>Implementing this was relatively easy given the time I spent considering ways to handle the half-duplex problem. In the end, an abstract of the chat client logic based on the class methods was as follows:</p>
+
+<pre><code class="language-python">class RadioState(object):
+    def __init__(self)
+    def get_state(self)
+    def set_receive_state(self)
+    def is_receive_state(self)
+    def set_send_state(self)
+    def is_send_state(self)
+    def want_state_change(self)
+    def change_state_to(self, new_state)
+    def change_state(self)
+    def set_message_to_send(self, message_data)
+    def get_message_to_send(self)
+
+
+class ListenThread(threading.Thread):
+    def __init__(self, radio_state, *args, **kwargs)
+    def run(self)
+    def should_stop(self)
+    def listen_for_packet(self)
+    def check_for_state_change(self)
+
+
+class SendThread(threading.Thread):
+    def __init__(self, radio_state, *args, **kwargs)
+    def run(self)
+    def should_stop(self)
+    def reverse_state_to_receive(self)
+
+
+if __name__ == '__main__':
+
+    state = RadioState()
+
+    # prep and start 2 threads. one to listen, and one to send
+    listen_thread = ListenThread(radio_state=state)
+    send_thread = SendThread(radio_state=state)
+    listen_thread.start()
+    send_thread.start()
+
+    while True:
+        message = raw_input('[{}] message&gt; '.format(handle))
+        message = message.strip()
+
+        # queue a new message send!
+        state.set_message_to_send(message_data=message)
+
+    # stop the threads
+    listen_thread.stop = True
+    send_thread.stop = True
+</code></pre>
+
+<p>With the basic logic in place and working, I realised while testing that I would be sending messages (by simply typing them and hitting ENTER) much faster than the send, state-change, receive, state-change, send logic could complete. On top of that, the problem where messages would not necessarily reach the other end (or be incomplete) occurred much more than I had initially expected. So, a few more tweaks were needed.</p>
+
+<h1 id="improving-the-chat-experience">improving the chat experience</h1>
+
+<p>The fact that I was sending messages too fast for the client to process was something not too hard to solve. My original implementation could only set one message that should be sent, so to improve this, I changed the logic a little to instead populate a &ldquo;message queue&rdquo; (basically a python list) in the <code>RadioState</code> class. Now, when messages are being sent, they would be popped off the queue one after the other until the queue was empty. Only then would the state change back to receive be issued. What was nice about this change was that I could pop on more message into the queue as the sending thread was processing messages, only popping off the last one that was just sent. Great!</p>
+
+<pre><code class="language-python">def queue_new_message(self, message_data):
+    parts = [message_data[i:i + 50] \
+        for i in range(0, len(message_data), 50)]
+
+    for part in parts:
+        self.message_queue.append(
+            binascii.hexlify(self.name + ': ' + part) \
+            .ljust(MAX_PACKET_LEN, '0'))
+
+def get_messages_from_queue(self):
+    message_count = len(self.message_queue)
+
+    if message_count &gt; 0:
+        return [self.message_queue.pop(0) for _ in xrange(message_count)]
+
+    return None
+</code></pre>
+
+<p>This considerably improved the overall experience of the chat client. Messages would now flow a lot more fluently and be sent as expected. However, there was still one big issue. Message frames would not reliably end up on the other end. Blame interference, magic or someones mood on the other side of the globe, it was a problem that had to be dealt with.</p>
+
+<p>To tackle the transmission reliability problem and given that I was playing against a bit of time, I decided to simply add some retransmission logic to the client. A simple loop to send the same frame three times seemed to <em>drastically</em> improve things. On top of that, I also noticed that the <code>makePktFLEN()</code> method could be used to specify the expected amount of bytes in a frame allowing the receiving end to be more clever about the frames it would receive. Tweaking the packet length number landed me on a scientifically and statistically proven™ number of 150 that was the sweet spot to reliably send / receive frames (not really I sucked the number out of my thumb). If you looked closely at the last code snippet, you may have noticed that I ended up actually padding hex encoded data frames with 0&rsquo;s up to the size of  <code>MAX_PACKET_LEN</code> which is the 150 I just mentioned.</p>
+
+<p>So, two new bits of logic was added. The frame retransmission in the sending thread and a simple duplication check in the receiving thread (as there may be 3 duplicate frames ending up in chat clients). The gist of these changes were implemented as follows:</p>
+
+<pre><code class="language-python"># receiving thread
+
+def listen_for_packet(self):
+
+    try:
+        pkt, _ = d.RFrecv(timeout=1000)
+        decoded_pkt = binascii.unhexlify(pkt).strip()
+
+        # skip if we have already received this message
+        if decoded_pkt in self.received_messages:
+            return
+
+        # print the message we got!
+        print('{}'.format(decoded_pkt))
+
+    except (rflib.ChipconUsbTimeoutException, TypeError):
+        pass
+</code></pre>
+
+<pre><code class="language-python"># sending thread
+
+def run(self):
+
+    while True:
+
+        # get the pending messages to send
+        messages_to_send = self.state.get_messages_from_queue()
+
+        # send the messages
+        for message_data in messages_to_send:
+            for _ in range(3):
+                d.RFxmit(data=message_data, repeat=1)
+
+        # change back to the receiving state
+        self.reverse_state_to_receive()
+</code></pre>
+
+<p>These optimisations greatly improved the overall speed and reliability of the chat clients. Although not perfect, it was good enough for now. An example run of the chat client can be seen here:</p>
+
+<p><a href="https://asciinema.org/a/152403" target="_blank" rel="noopener"><img src="https://asciinema.org/a/152403.png" /></a></p>
+
+<p>Writing this was a lot of fun, but now it was time to take a look at the challenge server it self.</p>
+
+<h1 id="the-challenge-server">the challenge server</h1>
+
+<p>For the challenge server I was going to use the same &ldquo;transport&rdquo; that was just built for the chat clients. The difference though was that the modulation and sync word was different for it, so you have to figure that out. The challenge server would broadcast messages every 30 seconds that would both serve as a hint as well as help those searching for signal to find it. If you did not have kit for sniffing, some clues were also <a href="https://twitter.com/elasticninja/status/936952633125953537">tweeted</a> to get you going. Anyways, the challenge server was in fact just a modified chat client that would respond to specific messages. Changing the syncword, baud rate and modulation would have &ldquo;connected&rdquo; you to the challenge server network.</p>
+
+<p>Given that there was more than one puzzle to solve on the challenge server network, I needed to write a little bit of game logic to keep track of who was at what stage of the game, as well as to know what the next hint/step should be. I have never done something like this, so practically everything I tried felt dirty or just failed.</p>
+
+<p>Ultimately, I ended up with two new classes for the game. One for controlling and remembering the state of players that have connected and or interacted with the game server, and another for the actual game logic. The player state class called <code>ChallengePlayers</code> had a thread that would periodically serialise and save the object to disk in case the challenge server crashed and needed to be restored. The game logic itself was part of the <code>GameLogic</code> class. Messages received in the listening thread would be parsed and sent off to a new instance of <code>GameLogic</code>, whereby the return of the <code>process_move()</code> method would be used to update the current progress of the player.</p>
+
+<p>Well, &ldquo;How were players identified?&rdquo;, you may ask. Honestly, by whatever identifier they wanted to use. The original idea was to have the badges provide their WIFI MAC addresses to be used for identification, but time never really allowed for that. So it resulted in the player identification (and obvious spoofing capability) being player controlled. No biggie.</p>
+
+<p>From a challenge server perspective though, messages (aka: decoded frames) that were sent were parsed as follows:</p>
+
+<ul>
+<li>Hex decode a frame and validate that it is in fact a valid frame.</li>
+<li>With the decoded string value, attempt to split the string by <code>:</code>&rsquo;s so that the user identifier is stripped and the rest of the message is separate. Yes, if your &lsquo;name&rsquo; had a <code>:</code> you would break it.</li>
+<li>The user identifier from the previous method was used to determine the current state of the player, as well as have a timestamp with the last time a valid command was sent to the challenge server.</li>
+<li>The players current state as well as message payload parsed in a previous step is then sent to a new instance of the <code>GameLogic.process_move()</code> method for further processing.</li>
+<li>Depending on the return value of <code>process_move()</code>, update the player&rsquo;s state and send any responses if needed.</li>
+</ul>
+
+<p>A sample of what <code>process_move()</code> looked like within the <code>GameLogic</code> class:</p>
+
+<pre><code class="language-python">def process_move(self):
+    # first, newly connected players simply get a entry
+    # in the games state. They should not have an existing
+    # state and therefore are just recorded.
+    if not self.player_state:
+        return self._new_player_connected()
+
+    if 'status' in self.message.lower():
+        return self._get_player_status()
+
+    if any(x in self.message.lower() for x in ['88 miles an hour', 'eighty-eight miles an hour']):
+        return self._update_stage_one()
+
+    if 'unlock' in self.message.lower():
+        return self._update_stage_two()
+
+    # if we had no idea what to do, default to nothing
+    print('GameLogic can\'t do anything with this message: {0}'.format(self.message))
+
+    return False, None, None
+</code></pre>
+
+<p>The only part that was missing from my perspective now was to add the necessary code to finally unlock the challenge box once you have trigged the unlock method within the <code>GameLogic</code> class.</p>
+
+<h1 id="progressing-through-the-challenge">progressing through the challenge</h1>
+
+<p>So assuming you managed to connect to the challenge server, progressing through the challenge to finally unlock the challenge box would have flowed as follows:</p>
+
+<ul>
+<li>Connect to the challenge server after modifying the provided chat clients RFCat configuration parameters such as the syncword, buad rate and modulation.</li>
+<li>Once connected, a message would be sent which looked like this: <code>&quot;Welcome &lt;your user_name&gt;! The temporal displacement occurred at exactly 1:20 AM and zero seconds! I just cant remember how fast we went...&quot;</code>.</li>
+<li>Solving the riddle in the broadcasted hint meant that you had to send the words &ldquo;88 miles an hour&rdquo; or &ldquo;eighty-eight miles an hour&rdquo;. This would have progressed you to stage 2.</li>
+<li>The challenge server would periodically broadcast a hint for the next stage, which would have showed up as follows: <code>&quot;hint:LwlVBRFIQwscAQFOAAYCCwkDG1cPSE8dEwYGRRcaTREGGhpPAggLBA1PDwESSVQLSAUHAwACUwAbTggCGBYBEgcQUjIEVRxJLgQeEgoGGg4eQFlIEk8fBwccAAkACg0aUx4AHApC&quot;</code>. The fact that the hint starts with&hellip; <code>'hint'</code> should have been a&hellip; hint ;)</li>
+<li>Attempting to base64 decode the string should result in unreadable gook being spewed out. A hint as to the fact that it may be encrypted was supposed to be shared, so during the challenge a simple XOR function was <a href="https://twitter.com/elasticninja/status/936933352690606080">tweeted</a> which revealed the method as well as the key used. The key was <code>&quot;fourth dimensionally!&quot;</code>.</li>
+<li>Downloading the sample XOR code, a small modification was needed to decrypt the hint, which was as simple as modifying the decrypt method to take the argument passed onto the command line as the string to decrypt. Successful decryption should have given you the string: <code>&quot;If we could somehow... harness this lightning; channel it into the Flux Capacitor, it just might work.&quot;</code>.</li>
+<li>This string was yet another riddle, but also required another hint to understand the format the challenge server was expecting. Unfortunately, I am unsure how this was shared at the con, but the hint should have revealed that the final payload needed to be in the format of <code>unlock:&lt;xor'd &amp; base64encoded string &quot;&lt;your_user&gt;:1.21 gigawatts&quot;&gt;</code>. So in other words, <code>unlock:ExwQAEVSEUpbXEUJGg4OGQAYGAo=</code> if your username was <code>user1</code>.</li>
+<li>Sending this final payload would have moved you to the final stage, and finally unlock the the challenge box! A confirmation message would have been sent such as: &ldquo;user1 has progressed to stage 2. The box should unlock!&rdquo;</li>
+</ul>
+
+<p>Solving the challenge itself, from both a client and the servers perspective would have looked something like this:</p>
+
+<p><a href="https://asciinema.org/a/152417" target="_blank" rel="noopener"><img src="https://asciinema.org/a/152417.png" /></a></p>
+
+<h1 id="20-20-hindsight"><sup>20</sup>&frasl;<sub>20</sub> hindsight</h1>
+
+<p>I learned a lot while building this. Not just technically but also time management and all of those little &ldquo;soft skills&rdquo; needed to pull something like this off. If I had to do this again, I would probably try and make the actual challenges a little smoother (and maybe make more sense). I would also freaking google my idea first, so that I don&rsquo;t come across similar ideas that have already be implemented! Finally, I would have loved to spend more time on improving the communications protocol used by the chat clients to make it faster and more reliable.</p>
+
+<h1 id="the-code">the code</h1>
+
+<p>If you want to play with the code, its all available in a simple Github gist here: <a href="https://gist.github.com/leonjza/341b850f131e7078508ce2cb7ec23cdc">https://gist.github.com/leonjza/341b850f131e7078508ce2cb7ec23cdc</a>.</p>
+
+<p>Have fun!</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
