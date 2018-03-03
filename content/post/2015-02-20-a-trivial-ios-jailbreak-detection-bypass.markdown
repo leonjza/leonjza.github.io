@@ -10,7 +10,7 @@ title: a trivial iOS jailbreak detection bypass
 ---
 
 ## introduction
-Not too long ago, I toyed with a [Android root detection bypass](https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/). In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I *actually* wanted to do impossible as I'd very much like to dig under the hood :)
+Not too long ago, I toyed with a [Android root detection bypass](https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/). In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I *actually* wanted to do impossible as I'd very much like to dig under the hood :)
 
 {{< figure src="/images/ios_jailbreak_logo.png" >}}
 

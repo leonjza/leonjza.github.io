@@ -21,5 +21,5 @@ title=$path$date"-"${name// /-}
 
 # Update local source with remote
 echo -e "\033[0;32mGenerating new post with title: $title...\033[0m"
-hugo new "$title"
+hugo new "$title.markdown"
 
