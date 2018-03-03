@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -99,7 +98,7 @@
 <p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_logo.png" />
     
@@ -145,7 +144,7 @@ Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
 <p>Browsing to <a href="http://192.168.56.101:8088/">http://192.168.56.101:8088/</a>, we are presented with a picture of Pegasus:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_web.png" />
     
@@ -156,7 +155,7 @@ Nmap done: 1 IP address (1 host up) scanned in 16.37 seconds
 <p>I manually tried to browse to things like <code>robots.txt</code> etc, but everything responded with the same image. This was until I decided to browse to <code>index.php</code>, in an attempt to check that the web server is configured to serve PHP content:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_nginx_index.png" />
     
@@ -186,7 +185,7 @@ ID  Response   Lines      Word         Chars          Request
 <p>And we have a HTTP 200 response for <code>submit.php</code>. So, I browsed to <a href="http://192.168.56.101:8088/submit.php:">http://192.168.56.101:8088/submit.php:</a></p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_submit.png" />
     
@@ -199,7 +198,7 @@ ID  Response   Lines      Word         Chars          Request
 <p>Admittedly, this was my first hurdle. I was thinking if there is a <code>submit.php</code>, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I&rsquo;ll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. <code>wfuzz</code> was working with <code>/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>, when finally I get a HTTP 200 for <code>codereview.php</code>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_code_review.png" />
     
@@ -218,7 +217,7 @@ ID  Response   Lines      Word         Chars          Request
 <p>Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to <code>system()</code> in it:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/pegasus_code_review_security.png" />
     

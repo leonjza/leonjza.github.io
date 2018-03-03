@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -97,7 +96,7 @@
     <h2 id="introduction">introduction</h2>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_logo.png" />
     
@@ -115,7 +114,7 @@
 <p>Most of the functionality that the canarytokens project provides for services make perfect sense. Things like the <em>Web Bugs</em>, <em>DNS Tokens</em> and <em>SQL Triggers</em> are not hard concepts to grasp. In fact, they mostly use the actual protocols used for the triggers. The odd one out in that list I guess is the <em>SQL Triggers</em>. From the code snippet for the trigger that is provided, one can see that it leverages <code>xp_fileexist</code> and <code>xp_dirtree</code>. Searching <a href="https://social.msdn.microsoft.com/Search/en-US?query=xp_fileexist&amp;emptyWatermark=true&amp;ac=4#refinementChanges=49&amp;pageNumber=1&amp;showMore=false">MSDN</a> for this <code>xp_fileexist</code> function quickly reveals that its actually considered an <a href="https://social.msdn.microsoft.com/Forums/sqlserver/en-US/ca770449-2ed0-4e5e-9644-994968b45764/xpcmdshell-dir-command-to-check-if-file-exists?forum=transactsql#0f6db936-5c32-403c-b073-d5c7e76ad212">&ldquo;undocumented feature&rdquo;</a> (though I did not really bother trying to confirm this statement) that checks for the existence of a file. Besides the point, all this trigger does is compile a UNC path and executes the file existence check. This results in the DNS lookup happening to the canarytoken provided host once the SQL trigger files and tries to check if the file exists.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_web_interface.png" />
     
@@ -132,7 +131,7 @@
 <p>My first target was the generated PDF. I used the <a href="http://canarytokens.org">website</a> to generate myself a token and downloaded the PDF. I decided to fire up <code>peepdf</code> to analyze the internals.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_peedf.png" />
     
@@ -143,7 +142,7 @@
 <p>As can be seen in the above screenshot, the PDF version is 1.6. PeePDF has detected a suspicious element <code>/AA</code> so that will definitely be the first object we want to investigate. Admittedly I had to brush up a little on my PDF internals knowledge, and actually had to resort to the <a href="http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/pdf/pdfs/pdf_reference_archives/PDFReference16.pdf">V1.6 PDF Specification</a> to see what the <code>/AA</code> (and many other elements) denote.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_pdf_spec.png" />
     
@@ -154,7 +153,7 @@
 <p>An <em>additional-actions field defining actions to be taken in response to various trigger events</em>. Interesting. Lets take a closer look at the object.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_additional_actions.png" />
     
@@ -165,7 +164,7 @@
 <p>Here we can see a line <code>/AA &lt;&lt; /O 16 0 R &gt;&gt;</code> which I assumed is referring to object 16. Lets see what that has for us.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_pdf_object_16.png" />
     
@@ -178,7 +177,7 @@
 <p>That is all good and well, but it did not really tell me how this is actually executed. So I tried to dig a little deeper and came up with a theory.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_pdf_action_analysis.png" />
     
@@ -189,7 +188,7 @@
 <p>From the above screenshot, I theorized that when the PDF is opened and parsed it will start with Object 1. Object 1 has a <code>/First 14</code> element which should be the byte offset to the first compressed object. Object 14 is a an Object Stream with another instance of the canarytoken URL as a URI object. From the specification doc, we can read that <em>A URI action causes a URI to be resolved</em></p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_pdf_uri_action.png" />
     
@@ -204,7 +203,7 @@
 <p>The word doc on the other hand is a lot easier to understand. Downloading the generated honeydoc from canarytokens.org revealed to be a standard docx file.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_docx.png" />
     
@@ -215,7 +214,7 @@
 <p>This can be extracted and the inner workings of the document can be inspected. I have played with this type of phone home in a word doc, so, I was kinda expecting where this was going. I took the really easy route and just grepped the files from the docx archive for the word canary.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/canary_docx_unzip.png" />
     

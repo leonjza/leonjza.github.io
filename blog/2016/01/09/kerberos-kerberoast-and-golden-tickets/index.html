@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -94,7 +93,7 @@
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/active-directory">active directory</a><a class="label" href="https://leonjza.github.io/categories/kerberos">kerberos</a><a class="label" href="https://leonjza.github.io/categories/golden-ticket">golden ticket</a>
     </span>
-    <figure >
+    <figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png" />
     
@@ -125,7 +124,7 @@
 <p>One key piece of the puzzle I am leaving out is how the initial shell was obtained. This could have happened a variety of ways and will probably always be different with every engagement. Lets just assume that I have a meterpreter shell as a non privileged domain user on the Windows 10 client PC.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png" />
     
@@ -194,7 +193,7 @@ Payload size: 1727 bytes
 <p>Now, back at your metasploit session, background the meterpreter session and setup a new <code>exploit/multi/handler</code> for the <code>windows/powershell_reverse_tcp</code> payload. When you issue the <code>exploit</code> command, add <code>-j</code> so that the job will run in the background as we have one more thing to do before it will connect back.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png" />
     
@@ -205,7 +204,7 @@ Payload size: 1727 bytes
 <p>Fantastic. We are ready to accept the powershell connection! The last thing left to do is to execute the script we generated earlier with <code>msfvenom</code>! Use the <code>exec_powershell</code> post module and configure it to pickup the script where ever you placed it on disk:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png" />
     
@@ -216,7 +215,7 @@ Payload size: 1727 bytes
 <p>With the module configured to use the meterpreter session we originally got, as well as our exploit handler waiting in the background for the powershell connection, we issue the <code>run</code> command and hope it works!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png" />
     
@@ -238,7 +237,7 @@ Payload size: 1727 bytes
 <p>Thats it. We can now just run the method!!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png" />
     
@@ -348,7 +347,7 @@ PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System
 <p>Now, if we recheck the tickets we have for this session, we can see that we have one for <code>svcSQLServ</code>:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_spn.png" />
     
@@ -361,7 +360,7 @@ PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System
 <p>Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again. The mimikatz command we will use for this is <code>kerberos::list /export</code>:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png" />
     
@@ -449,7 +448,7 @@ Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 <p>With output&hellip;</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png" />
     
@@ -507,7 +506,7 @@ svcSQLServ
 <p>Let me try explain what is going on here. I am saying, <code>Invoke-Command</code> on the computer <code>dc1</code> as <code>svcSQLServ</code> (stored in the <code>$creds</code> variable) using PowerShell Remoting. The command to run is defined in the <code>ScriptBlock {}</code> which is i) download mimikatz ii) run <code>Invoke-Mimikatz</code> with the <code>lsadump::dcsync /user:krbtgt</code> command.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png" />
     
@@ -536,7 +535,7 @@ svcSQLServ
 <p>Running this mimikatz command with <code>Invoke-Mimikatz</code> gets us our Golden Ticket:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_created.png" />
     
@@ -561,7 +560,7 @@ Ticket(s) purge for current session is OK
 <p>Next, we inject the golden ticket we created using the mimikatz <code>kerberos::ptt</code> command to <em>&lsquo;Pass The Ticket&rsquo;</em>:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png" />
     
@@ -572,7 +571,7 @@ Ticket(s) purge for current session is OK
 <p>After the ticket is injected into memory, we can verify its existence with the mimikaz <code>kerberos::list</code> command, or just using <code>klist</code>. Once it is injected, we <code>dir</code> the Domain Controllers <code>c$</code> share&hellip; an <em>smile</em>. The password for <code>scvSQLServ</code> can now change, it will no longer bother us!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kerberos_golden_ticket_admin.png" />
     

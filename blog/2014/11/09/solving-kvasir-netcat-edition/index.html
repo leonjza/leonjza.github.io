@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -99,7 +98,7 @@
 <p><a href="http://vulnhub.com/entry/kvasir-i,106/">Kvasir</a>, a boot2root by <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/netcat.png" />
     
@@ -121,7 +120,7 @@
 Almost all of the boot2roots have a discovery phase. After downloading the archive from <a href="http://vulnhub.com">vulnhub.com</a>, I ran a ping scan in the subnet that my host-only network lives in. It returned with no results, and I realized there may already be more to this than anticipated. I engaged *lazy mode*™ and checked what the VirtualBox session showed the IP was:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_ip.png" />
     
@@ -149,7 +148,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 <p>Browsing to the IP using Iceweasel, we see a login portal presented to us:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_web.png" />
     
@@ -160,7 +159,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 <p>I made a few attempts at guessing a login, and eventually just threw a <code>'</code> at the username field:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_web_sqli.png" />
     
@@ -171,7 +170,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 <p>I had a instant troll alert and figured it can&rsquo;t be <em>that</em> easy!? Changing the username payload from <code>'</code> to <code>' OR 1=1 LIMIT 1--</code> with a random word as a password, resulted in the application returning a <code>403</code> type response. I figured that something strange was going on here, and fired up <a href="http://portswigger.net/burp/">Burp Suite</a> to have a look under the hood at what is happening. As seen in the web browser, the web server really does respond with a HTTP 403:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_login_403.png" />
     
@@ -182,7 +181,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 <p>Moving on to the register page. Registration required a username and password, as well as a date of birth. I registered <code>bob:bob</code> with a DoB of <code>09/09/09</code>, and attempted to login with the credentials:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_member.png" />
     
@@ -193,7 +192,7 @@ Nmap done: 1 IP address (1 host up) scanned in 0.20 seconds
 <p>Not a very useful web application so far, but nonetheless, I figured there is something I am not seeing yet. I went back to the registration page and attempted some SQLi payloads there. The form definitely seemed vulnerable to SQLi, and I managed to uncover a part of the backend query as <code>'a', 'a', 0, NULL)</code>. Considering this was a new account registration page, my guess was that this was part of a <code>INSERT</code> query:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_submit_sqli.png" />
     
@@ -242,7 +241,7 @@ ID  Response   Lines      Word         Chars          Request
 <p>Of everything <code>wfuzz</code> revealed to us, <code>admin.php</code> was the most interesting one. Watching Burp as the requests went up and down, I noticed that <code>admin.php</code> would return a HTTP 302 code with a location, along with an actual body:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_admin_php.png" />
     
@@ -253,7 +252,7 @@ ID  Response   Lines      Word         Chars          Request
 <p>Sweet! I modified the response in Burp to return <code>200</code> instead, and removed the <code>Location:</code> header. We now had a new page to work with :)</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_admin_bypass.png" />
     
@@ -361,7 +360,7 @@ uid=33(www-data) gid=33(www-data) groups=33(www-data)
 <p>So, in order to make sure we don&rsquo;t lose our place, consider the following simple diagram showing the network paths for gaining first shell access to the host <code>web</code>:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_1.png" />
     
@@ -533,7 +532,7 @@ OPTIONS
 <p><em>&ldquo;use with caution&rdquo;</em>. I like it already. Ok so I can open a netcat listener, which will open another one on connect listening on a new port. We can then connect to this listener, opening another connection to the ssh server we want to connect to, effectively forwarding the port. Clear as mud!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_clear_as_mud.png" />
     
@@ -567,7 +566,7 @@ listening on [any] 222 ...
 <p>Lets take a look at a updated network diagram, detailing where I am in the network now. The new port forward is denoted in red:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_2.png" />
     
@@ -593,7 +592,7 @@ root@db:~#
 <p>I added the <code>-D</code> option so that I may have a socks proxy to work with should any further tunneling be required. This means now that with the SSH session built, I have a <em>almost</em> <em>direct</em> connection to the <code>db</code> (192.168.2.200) host, as denoted in green below:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_3.png" />
     
@@ -691,7 +690,7 @@ listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
 <p>A cleartext username and password? Well aint that just handy! :D Just to confirm I wrote a pcap to disk with the <code>-W</code> flag, transferred it to my attacking machine and opened it in Wireshark so that I can inspect the whole FTP conversation.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_ftp_session.png" />
     
@@ -723,7 +722,7 @@ celes@dev1:~$
 <p>Ok lets take a moment and make sure I know where I am in the network. The newly accessed server is denoted in red:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_4.png" />
     
@@ -763,7 +762,7 @@ Terra sent me kvasir.png and challenged me to solve the stupid little puzzle she
 <p>Lastly, the <code>.bash_history</code> for <code>celese</code> has a entry <code>stepic --help</code>. <code>stepic</code> is a steganography tool. So, it seemed pretty clear what needs to be done here. My guess was that kvasir.png has a piece of the puzzle that is on Terra&rsquo;s machine. So, I converted the <code>kvasir.png</code> image to hex, and copy pasted the output on my attacking machine into a text file and converted it back to a image using <code>xxd -r -p kvasir.png.xxd &gt; kvasir.png</code>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_kvasir.png" />
     
@@ -865,7 +864,7 @@ kvasir2.png: PNG image data, 290 x 290, 1-bit colormap, non-interlaced
 <p>Lets see what the image looks like:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_kvasir_qr.png" />
     
@@ -1089,7 +1088,7 @@ terra@dev2:~$
 <p>As you can see, I also opened another socks proxy locally on port <code>tcp/8001</code> in the case for any further pivoting needs. Again, to make sure we understand where in the network we are, consider the following diagram, with the path to <code>dev2</code> in red:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_5.png" />
     
@@ -1193,7 +1192,7 @@ uid=1000(locke) gid=1000(locke) groups=1000(locke)
 <p>Shell access as <code>locke</code> on <strong>192.168.4.100</strong>. Nice :D To help me ensure I can comprehend where I am in the network, consider the following diagram, which is turning into a mess thanks to how deep this whole is&hellip; The new connection denoted in red again:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_network_graph_6.png" />
     
@@ -1269,7 +1268,7 @@ No files to extract
 <p>Some googling around got me a hit on a tool called <code>autopsy</code>, which is a disk image analysis framework. I cared little for the case files features and what not, but much rather the actual analysis features. I fired up the tool from the Kali menu, and browsed to the web interface. I had a whole bunch of prompts to work through, and eventually came to a view that allowed me to inspect the disk:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_autospy.png" />
     
@@ -1282,7 +1281,7 @@ No files to extract
 <p>It sounded like this:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_wut_sound.png" />
     
@@ -1293,7 +1292,7 @@ No files to extract
 <p>Yeah, I don&rsquo;t get it either. I was stumped for a few minutes again, until I remembered <a href="http://vulnhub.com/entry/xerxes-201,97/">Xerxes2</a>, which has a similar strange sounding file, but with a hidden message viewable via a spectrogram generated by <a href="http://www.sonicvisualiser.org/index.html">Sonic Visualizer</a>. I downloaded the app, loaded the wav file and got the spectrogram to do its thing:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/kvasir_sonic_viz.png" />
     

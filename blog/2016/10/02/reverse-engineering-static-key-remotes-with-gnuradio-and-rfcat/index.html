@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -99,7 +98,7 @@
 <p>My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I <em>totally</em>  know nothing about really did make for this bit of research to be pretty daunting at first.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_banner.png" />
     
@@ -143,7 +142,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>I setup, wired together and tested everything. The LED light was wired up to the normally open contact so that when the remote button is pressed, the light will go on for a brief period of time and then switch off.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_lab_gear.jpg" />
     
@@ -158,7 +157,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>Capturing the remotes signal turned out to be a little easier than I initially expected. I found <strong>plenty</strong> of resources online that helped me get familiar with ways to do it. The most common capture method I could see was to use a tool called <a href="http://gqrx.dk/">GXRQ</a>. GQRX allows you to tune into the frequency and make a raw recording of the signal to file. This is probably the fastest way to get the recordings to file. The recorded file can then be opened up in <a href="http://gnuradio.org/">gnuradio</a> or <a href="https://github.com/miek/inspectrum">inspectrum</a>. You can do a number of fun things with GQRX, like listening to radio! (I had to enable Hardware AGC in GQRX for this to work) :)</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_fm_radio.png" />
     
@@ -203,7 +202,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>Once this is done, save the flow graph and run it (with your RTL-SDR plugged in) to visualize the signal when you press your remote!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_gnu_radio1.png" />
     
@@ -223,7 +222,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>With this done, run the graph again. You will need to fiddle a little with the seconds per division and counts per division values to get the visualization just right. Unticking the <em>Autorange</em> box will also greatly help you narrow down the signal. As a last tip, if you experience the graph jumping around too much (from left to right), you can toggle a &lsquo;center&rsquo; by focussing the <em>Trig</em> tab and setting the lines that appear with the level toggles.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_demodulated_scope.png" />
     
@@ -244,7 +243,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>This indeed matches the switch positions on my remote. Yay!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_real_remote.jpg" />
     
@@ -257,7 +256,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>Looking at those waveforms is cool and all, but it isn&rsquo;t always practical to keep your finger on a button. Instead, we can record the output to a file for later use. You may choose to record the raw, unprocessed signal from the radio (in cases where you may need to still do some processing on the file maybe?) or save the demodulated waveform. To do this, simply add a new <em>Wave File Sink</em> block after the <em>Complex to Mag</em> block and specify a destination filename.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_wave_file_sink.png" />
     
@@ -278,7 +277,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>If you saved the demodulated wave file, then you can open this file in <a href="http://www.audacityteam.org/">Audacity</a>. Simply launch audacity (we already installed it) and open the recorded wave file. Viewing the recording at first may look something like this:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_audacity_full.png" />
     
@@ -289,7 +288,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>However, when you zoom in a little, you may start seeing the on-off keying becoming obvious:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_audacity_zoomed.png" />
     
@@ -308,7 +307,7 @@ On-off keying is a form of <a href="https://en.wikipedia.org/wiki/Amplitude-shif
 <p>To give you an idea, below is a sample snippet of starting <code>rfcat</code> in <em>&lsquo;research&rsquo; (-r)</em> mode and sending a string as a &lsquo;ping&rsquo; packet. Using RFcat this way, the object <code>d</code> is used to call methods for the radio:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_rfcat_ping.png" />
     
@@ -343,7 +342,7 @@ d.setModeIDLE()
 <p>I ran this script together with a gnuradio flow graph that was set up to dump the signal to a file. I then used this signal as a source to a <em>Scope Sink</em> that was prefixed with a <em>Complex to Mag</em> block. As expected, with this initial attempt I could not find anything in my graphs that even remotely looked like on-off keying!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_raw_binary_xmit.png" />
     
@@ -383,7 +382,7 @@ d.setModeIDLE()
 <p>I now added the hex conversation of the original binary string and added the <code>repeat=500</code> value to <code>RFxmit()</code> to help me find the signal with gnuradio. This was finally what I needed to be able to send data that appeared to look like on-off keying!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_non_pwm_gnuradio.png" />
     
@@ -400,7 +399,7 @@ d.setModeIDLE()
 <p>So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_audacity_full_zoom.png" />
     
@@ -411,7 +410,7 @@ d.setModeIDLE()
 <p>One important difference that I noticed with my remote compared to many similar posts I saw online was that I had this long starting high amplitude before the actual on-off keying signal started. It looked like about half of a pulse was this high amplitude, and the other half signal. I assumed these will all just be handled by adding a bunch of <code>1</code>&rsquo;s in front of my final key as it may have served as some form of preamble or something. ¯\_(ツ)_/¯</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_audacity_full_zoom_pwm.png" />
     
@@ -445,7 +444,7 @@ d.setModeIDLE()
 <p>Before I get to the rest of the newly updated script, lets talk about <a href="https://en.wikipedia.org/wiki/Baud">baud rate</a> quickly. This is something that caused me <strong>a lot</strong> of pain. I managed to get the original waveform from my remote and my generated waveform using scripts to look similar, but there was a serious issue with getting the length of the pulses to match. <em>If you look closely at the below screenshot you will notice there is actually a problem with the key too (missing a bit), but heh, the clock signal is whats important here:</em></p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_baud_rate_miss.png" />
     
@@ -471,7 +470,7 @@ d.setModeIDLE()
 <p>Practically, you can determine the values needed for the formula by opening a wave file you recorded using gnuradio, zooming and selecting one of the short pulses and changing the selection at the bottom dropdown to <em>length and samples</em>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_audacity_baud_rate.png" />
     
@@ -535,7 +534,7 @@ d.setModeIDLE()
 <p>I ran this newly updated script and <strong>BAM</strong>, my labs LED light illuminates! \o/</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_light_on.jpg" />
     
@@ -566,7 +565,7 @@ d.setModeIDLE()
 <p>With that done, I set off to write a toolkit that allows you to work with rfcat and On-off keying data sources such as wave files, or just simple recordings from rfcat itself. After finishing the polishing, I&rsquo;ll release it along with a post detailing its internals and usage! In the meantime, keep an eye on this repository <a href="https://github.com/leonjza/ooktools">https://github.com/leonjza/ooktools</a></p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/re_static_key_ooktools.png" />
     

@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -97,7 +96,7 @@
     <p>Its been a while since I have done a vulnerable boot2root from <a href="https://twitter.com/vulnhub">@VulnHub</a>. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to <a href="https://www.vulnhub.com/entry/darknet-10,120/">Darknet</a> by <a href="https://twitter.com/Q3rv0">@Q3rv0</a>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_logo.png" />
     
@@ -127,7 +126,7 @@ PORT    STATE SERVICE REASON         VERSION
 <p>Just <code>tcp/80</code> to work with really. <code>tcp/111</code> did not yield anything interesting at first glance, but the most obvious next step was definitely the web port.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_homepage.png" />
     
@@ -157,7 +156,7 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 <p>Browsing to <a href="http://192.168.252.140/access/">http://192.168.252.140/access/</a> showed that directory indexing was enabled and revealed the <code>888.darknet.com.backup</code> file.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_access_folder.png" />
     
@@ -179,7 +178,7 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 <p>I took this as a hint that I would have to hack an entry into my local <code>/etc/hosts</code> to resolve <em>888.darknet.com</em> to <em>192.168.252.140</em>. After having done that, we are presented with yet another page with a login.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_login.png" />
     
@@ -194,7 +193,7 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 <p>Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned <code>unrecognized token</code> hinted towards the idea that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value <code>'&quot;1</code> as a username and any text as a password.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_login_error.png" />
     
@@ -237,7 +236,7 @@ sqlite&gt;
 <p>After the login bypass, I was presented with a page titled <strong>Administrador SQL</strong>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_administrator_sql.png" />
     
@@ -275,7 +274,7 @@ INSERT INTO pwn.shell (code) VALUES ('&lt;?php phpinfo(); ?&gt;');
 </code></pre>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_phpinfo.png" />
     
@@ -295,7 +294,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>Lastly, I also learnt that we are currently the <code>devnull</code> user on a Debian Linux box&hellip; Weird. I expected something like <code>www-data</code> but ok.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_id.png" />
     
@@ -306,7 +305,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>Getting back to the <code>/etc/apache2</code> thing, I found another VirtualHost configuration file there in <code>/etc/apache2/sites-available/</code>. This was done using the <code>files.php</code> script I wrote and toggling the <code>a</code> parameter to <code>ls</code> or <code>cat</code> as needed. I was not able to find anything else interesting thanks to that epic <code>open_basedir</code> setting :/</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_888_signal8.png" />
     
@@ -319,7 +318,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>I added another entry to my <code>/etc/hosts</code> and browsed to the new hostname discovered in that configuration file.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_home.png" />
     
@@ -330,7 +329,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>Poking around with the new website had a few points of interest but nothing that had any obvious bugs. The URL <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> had something funny going on with the <code>id</code> field though I could not confirm if this was another SQL injection bug or not. A <code>robots.txt</code> also existed for this site and had the entry <code>Disallow: /xpanel/</code>. Browsing to this I was met with a login page.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel.png" />
     
@@ -347,7 +346,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>To fuzz all of the input fields, I fired up BurpSuite, captured the request to <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> and sent it to Intruder.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_fuzzing.png" />
     
@@ -358,7 +357,7 @@ INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { pri
 <p>Intruder was configured to use a simple fuzzing wordlist sourced from <code>/usr/share/wordlists/wfuzz/Injections/All_attack.txt</code> on Kali Linux from the <code>wordlists</code> package. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see in this case that those that returned an email address in the body and those that didn&rsquo;t based purely on the size. Using this list, I was able to filter out and realize that the payload of <code>count(/child::node())</code> managed to return a valid result for the <code>id</code> parameter.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpath_discovery.png" />
     
@@ -447,7 +446,7 @@ Array
 To start testing the feasibility of the blind boolean based injection, I entered the payload <code>1 and starts-with(email, 'e')</code> into the URL.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpath_booltest.png" />
     
@@ -542,7 +541,7 @@ with open('/usr/share/wfuzz/wordlist/general/spanish.txt') as f:
 <p>Once you have logged in, you presented with a page with a login to <em>Editor PHP</em>.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_loggedin.png" />
     
@@ -553,7 +552,7 @@ with open('/usr/share/wfuzz/wordlist/general/spanish.txt') as f:
 <p>The link to <code>edit.php</code> had little value as it simply appeared to be a &lsquo;troll&rsquo; page. I guess the humor here is the fact that code/os command execution has been relatively painful and this may have been a sign of hope.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_troll_edit.png" />
     
@@ -564,7 +563,7 @@ with open('/usr/share/wfuzz/wordlist/general/spanish.txt') as f:
 <p>When I viewed the page sources for the page I got when I just logged it, I saw a hint to a <code>ploy.php</code> page.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_ploy.png" />
     
@@ -575,7 +574,7 @@ with open('/usr/share/wfuzz/wordlist/general/spanish.txt') as f:
 <p>Browsing to <code>ploy.php</code>, I was met with a file upload and a series of checkboxes to tick.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_ploy_upload.png" />
     
@@ -684,7 +683,7 @@ else:
 <p>Once uploaded, I browsed to the location and was met with what looks like some code execution again!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_shell.png" />
     
@@ -715,7 +714,7 @@ AddType application/x-httpd-php .htaccess
 <p>Uploaded this with my upload helper and boom, a better shell.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_shell2.png" />
     
@@ -728,7 +727,7 @@ AddType application/x-httpd-php .htaccess
 <p>Wtf. The current user is <code>errorlevel</code>&hellip; I double checked and saw that previously we were the <code>devnull</code> user. This had me pretty confused in the beginning and had me spend quite a bit of time to figure out how this is possible. From the <code>phpinfo()</code> output we had no <code>open_basedir</code> restriction so that allowed me to move around the filesystem much more freely than before. I also noticed that I am not able to access the home directory for the <code>errorlevel</code> user so I couldn&rsquo;t really figure out what was going on in there (the red color indicates read/write is not possible).</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_homedirs.png" />
     
@@ -741,7 +740,7 @@ AddType application/x-httpd-php .htaccess
 <p>Anyways, some more enumeration later, I discover some more PHP scripts in <code>/var/www</code>. These were owned by <code>root</code>, meaning that if there are any vulnerabilities, I could effectively become root!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_var_www.png" />
     
@@ -752,7 +751,7 @@ AddType application/x-httpd-php .htaccess
 <p>Due to the fact that these were in <code>/var/www</code>, I could just browse to the IP address of the VM and run these scripts. Calling the <code>sec.php</code> script caused the server to return an HTTP 500 error.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_sec_error.png" />
     
@@ -865,7 +864,7 @@ print r.text
 <p>Running this made the server still respond with an HTTP 500 error. Hmm. I was stuck here for quite some time trying to figure out if I can get some form of logging somewhere that I can read. At some stage, I came across <code>/etc/suphp</code> and realized that the configuration file for it is writable.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_writable.png" />
     
@@ -887,7 +886,7 @@ min_gid=100
 <p>Remember that the PHP scripts we are trying to access are owned by <code>root</code>? Turns out that this is a security feature of <a href="http://www.suphp.org/">suPHP</a> to prevent scripts with too high permissions to run. So, I modify the configuration file again to replace the values with <code>0</code> and upload it to override the original.</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_override.png" />
     
@@ -969,7 +968,7 @@ a:2:{i:0;O:4:&quot;Test&quot;:3:{s:3:&quot;url&quot;;s:35:&quot;http://192.168.2
 <p>Using the shell uploaded, I was finally able to cat the flag!</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/darknet_flag.png" />
     

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta name="generator" content="Hugo 0.37" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts | #!/slash/note</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="active directory, android, api, basic authentication, beta, bot, bypass, canary, canary tokens, centos, certification, challenge, command execution, composer, ctf, digest authentication, dns, exercises, exploit, file transfer, flick, gnuradio, golden ticket, gource, hacking, hex, honeydoc, honeypot, how to, infosec, ios, jabber, jailbreak, java, jenkins, kali linux, kerberos, kvm, lab, library, linux, metasploit, meterpreter, mitm, nessus, nmap, notes, oci, offensive security, offsec, oracle, oscp, penetration testing, php, powershell, proxy, python, quick win, remote, reverse, reverse engineer, review, rfcat, root, sandbox, sdr, security, shell, sleekxmpp, smali, solution, test, tip, tools, try harder, url expansion, visualization, vulnerable vm, vulnhub, zacon, zeus, ">
+    
+    
+    
+    
+      <meta name="robots" content="noindex">
+    
+    
+
+  <meta name="author" content="">
+
+
+    <meta property="og:title" content="Posts" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://leonjza.github.io/post/" />
+
+
+
+<meta property="og:updated_time" content="2015-05-08T07:18:31&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <meta name="theme-color" content="#000">
+
+    
+    
+    
+      <link href="https://leonjza.github.io/post/index.xml" rel="alternate" type="application/rss+xml" title="#!/slash/note" />
+    
+    <link rel="canonical" href="https://leonjza.github.io/post/">
+    
+    
+    <link rel="icon" sizes="any" href="data:image/svg+xml,%3Csvg%20viewBox='0%200%2046%2045'%20xmlns='http://www.w3.org/2000/svg'%3E%3Ctitle%3EAfter%20Dark%3C/title%3E%3Cpath%20d='M.708%2045L23%20.416%2045.292%2045H.708zM35%2038L23%2019%2011%2038h24z'%20fill='%23000'/%3E%3C/svg%3E">
+
+    <style>
+  html{font-size:12px}*{box-sizing:border-box;text-rendering:geometricPrecision}body{font-size:1rem;line-height:1.5rem;margin:0;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif;word-wrap:break-word}h1,h2,h3,h4,h5,h6{line-height:1.3em}fieldset{border:none;padding:0;margin:0}pre{padding:2rem;margin:1.75rem 0;background-color:#fff;border:1px solid #ccc;overflow:auto}code[class*=language-],pre[class*=language-],pre code{font-weight:100;text-shadow:none;margin:1.75rem 0}a{cursor:pointer;color:#ff2e88;text-decoration:none;border-bottom:1px solid #ff2e88}a:hover{background-color:#ff2e88;color:#fff}.grid{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap}.grid.\-top{-ms-flex-align:start;-ms-grid-row-align:flex-start;align-items:flex-start}.grid.\-middle{-ms-flex-align:center;-ms-grid-row-align:center;align-items:center}.grid.\-bottom{-ms-flex-align:end;-ms-grid-row-align:flex-end;align-items:flex-end}.grid.\-stretch{-ms-flex-align:stretch;-ms-grid-row-align:stretch;align-items:stretch}.grid.\-baseline{-ms-flex-align:baseline;-ms-grid-row-align:baseline;align-items:baseline}.grid.\-left{-ms-flex-pack:start;justify-content:flex-start}.grid.\-center{-ms-flex-pack:center;justify-content:center}.grid.\-right{-ms-flex-pack:end;justify-content:flex-end}.grid.\-between{-ms-flex-pack:justify;justify-content:space-between}.grid.\-around{-ms-flex-pack:distribute;justify-content:space-around}.cell{-ms-flex:1;flex:1;box-sizing:border-box}@media screen and (min-width:768px){.cell.\-1of12{-ms-flex:0 0 8.33333%;flex:0 0 8.33333%}.cell.\-2of12{-ms-flex:0 0 16.66667%;flex:0 0 16.66667%}.cell.\-3of12{-ms-flex:0 0 25%;flex:0 0 25%}.cell.\-4of12{-ms-flex:0 0 33.33333%;flex:0 0 33.33333%}.cell.\-5of12{-ms-flex:0 0 41.66667%;flex:0 0 41.66667%}.cell.\-6of12{-ms-flex:0 0 50%;flex:0 0 50%}.cell.\-7of12{-ms-flex:0 0 58.33333%;flex:0 0 58.33333%}.cell.\-8of12{-ms-flex:0 0 66.66667%;flex:0 0 66.66667%}.cell.\-9of12{-ms-flex:0 0 75%;flex:0 0 75%}.cell.\-10of12{-ms-flex:0 0 83.33333%;flex:0 0 83.33333%}.cell.\-11of12{-ms-flex:0 0 91.66667%;flex:0 0 91.66667%}}@media screen and (max-width:768px){.grid{-ms-flex-direction:column;flex-direction:column}.cell{-ms-flex:0 0 auto;flex:0 0 auto}}.hack,.hack blockquote,.hack code,.hack em,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack strong{font-size:1rem;font-style:normal;font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,serif}.hack blockquote,.hack code,.hack em,.hack strong{line-height:20px}.hack blockquote,.hack code,.hack footer,.hack h1,.hack h2,.hack h3,.hack h4,.hack h5,.hack h6,.hack header,.hack li,.hack ol,.hack p,.hack section,.hack ul{float:none;margin:0;padding:0}.hack blockquote,.hack h1,.hack ol,.hack p,.hack ul{margin-top:20px;margin-bottom:20px}.hack h1{position:relative;display:inline-block;display:table-cell;padding:20px 0 30px;margin:0;overflow:hidden}.hack h1:after{content:"====================================================================================================";position:absolute;bottom:10px;left:0}.hack h1+*{margin-top:0}.hack h2,.hack h3,.hack h4,.hack h5,.hack h6{position:relative;margin-bottom:1.75rem}.hack h2:before,.hack h3:before,.hack h4:before,.hack h5:before,.hack h6:before{display:inline}.hack h2:before{content:"## "}.hack h3:before{content:"### "}.hack h4:before{content:"#### "}.hack h5:before{content:"##### "}.hack h6:before{content:"###### "}.hack li{position:relative;display:block;padding-left:20px}.hack li:after{position:absolute;top:0;left:0}.hack ul>li:after{content:"-"}.hack ol{counter-reset:a}.hack ol>li:after{content:counter(a) ".";counter-increment:a}.hack blockquote{position:relative;padding-left:17px;padding-left:2ch;overflow:hidden}.hack blockquote:after{content:">\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>\A>";white-space:pre;position:absolute;top:0;left:0;line-height:20px}.hack em:after,.hack em:before{content:"*";display:inline}.hack pre code:after,.hack pre code:before{content:''}.hack code{font-weight:700}.hack code:after,.hack code:before{content:"`";display:inline}.hack hr{position:relative;height:20px;overflow:hidden;border:0;margin:20px 0}.hack hr:after{content:"----------------------------------------------------------------------------------------------------";position:absolute;top:0;left:0;line-height:20px;width:100%;word-wrap:break-word}@-moz-document url-prefix(){.hack h1{display:block}}.hack-ones ol>li:after{content:"1."}p{margin:0 0 1.75rem}.container{max-width:70rem}.container,.container-fluid{margin:0 auto;padding:0 1rem}.inner{padding:1rem}.inner2x{padding:2rem}.pull-left{float:left}.pull-right{float:right}.progress-bar{height:8px;opacity:.8;background-color:#ccc;margin-top:12px}.progress-bar.progress-bar-show-percent{margin-top:38px}.progress-bar-filled{background-color:gray;height:100%;transition:width .3s ease;position:relative;width:0}.progress-bar-filled:before{content:'';border:6px solid transparent;border-top-color:gray;position:absolute;top:-12px;right:-6px}.progress-bar-filled:after{color:gray;content:attr(data-filled);display:block;font-size:12px;white-space:nowrap;position:absolute;border:6px solid transparent;top:-38px;right:0;-ms-transform:translateX(50%);transform:translateX(50%)}table{width:100%;border-collapse:collapse;margin:1.75rem 0;color:#778087}table td,table th{vertical-align:top;border:1px solid #ccc;line-height:15px;padding:10px}table thead th{font-size:10px}table tbody td:first-child{font-weight:700;color:#333}.form{width:30rem}.form-group{margin-bottom:1.75rem;overflow:auto}.form-group label{border-bottom:2px solid #ccc;color:#333;width:10rem;display:inline-block;height:38px;line-height:38px;padding:0;float:left;position:relative}.form-group.form-success label{color:#4caf50!important;border-color:#4caf50!important}.form-group.form-warning label{color:#ff9800!important;border-color:#ff9800!important}.form-group.form-error label{color:#f44336!important;border-color:#f44336!important}.form-control{outline:none;border:none;border-bottom:2px solid #ccc;padding:.5rem 0;width:20rem;height:38px;background-color:transparent}.form-control:focus{border-color:#555}.form-group.form-textarea label:after{position:absolute;content:'';width:2px;background-color:#fff;right:-2px;top:0;bottom:0}textarea.form-control{height:auto;resize:none;padding:1rem 0;border-bottom:2px solid #ccc;border-left:2px solid #ccc;padding:.5rem}select.form-control{border-radius:0;background-color:transparent;-webkit-appearance:none;-moz-appearance:none;-ms-appearance:none}.help-block{color:#999;margin-top:.5rem}.form-actions{margin-bottom:1.75rem}.btn{display:-ms-inline-flexbox;display:inline-flex;-ms-flex-align:center;align-items:center;-ms-flex-pack:center;justify-content:center;cursor:pointer;outline:none;padding:.65rem 2rem;font-size:1rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;position:relative;z-index:1}.btn:active{box-shadow:inset 0 1px 3px rgba(0,0,0,.12)}.btn.btn-ghost{border-color:#757575;color:#757575;background-color:transparent}.btn.btn-ghost:focus,.btn.btn-ghost:hover{border-color:#424242;color:#424242;z-index:2}.btn.btn-ghost:hover{background-color:transparent}.btn-block{width:100%;display:-ms-flexbox;display:flex}.btn-default{color:#fff;background-color:#e0e0e0;border:1px solid #e0e0e0;color:#333}.btn-default:focus:not(.btn-ghost),.btn-default:hover{background-color:#dcdcdc;border-color:#dcdcdc}.btn-success{color:#fff;background-color:#4caf50;border:1px solid #4caf50}.btn-success:focus:not(.btn-ghost),.btn-success:hover{background-color:#43a047;border-color:#43a047}.btn-success.btn-ghost{border-color:#4caf50;color:#4caf50}.btn-success.btn-ghost:focus,.btn-success.btn-ghost:hover{border-color:#388e3c;color:#388e3c;z-index:2}.btn-error{color:#fff;background-color:#f44336;border:1px solid #f44336}.btn-error:focus:not(.btn-ghost),.btn-error:hover{background-color:#e53935;border-color:#e53935}.btn-error.btn-ghost{border-color:#f44336;color:#f44336}.btn-error.btn-ghost:focus,.btn-error.btn-ghost:hover{border-color:#d32f2f;color:#d32f2f;z-index:2}.btn-warning{color:#fff;background-color:#ff9800;border:1px solid #ff9800}.btn-warning:focus:not(.btn-ghost),.btn-warning:hover{background-color:#fb8c00;border-color:#fb8c00}.btn-warning.btn-ghost{border-color:#ff9800;color:#ff9800}.btn-warning.btn-ghost:focus,.btn-warning.btn-ghost:hover{border-color:#f57c00;color:#f57c00;z-index:2}.btn-info{color:#fff;background-color:#00bcd4;border:1px solid #00bcd4}.btn-info:focus:not(.btn-ghost),.btn-info:hover{background-color:#00acc1;border-color:#00acc1}.btn-info.btn-ghost{border-color:#00bcd4;color:#00bcd4}.btn-info.btn-ghost:focus,.btn-info.btn-ghost:hover{border-color:#0097a7;color:#0097a7;z-index:2}.btn-primary{color:#fff;background-color:#2196f3;border:1px solid #2196f3}.btn-primary:focus:not(.btn-ghost),.btn-primary:hover{background-color:#1e88e5;border-color:#1e88e5}.btn-primary.btn-ghost{border-color:#2196f3;color:#2196f3}.btn-primary.btn-ghost:focus,.btn-primary.btn-ghost:hover{border-color:#1976d2;color:#1976d2;z-index:2}.btn-group{overflow:auto}.btn-group .btn{float:left}.btn-group .btn-ghost:not(:first-child){margin-left:-1px}.card{border:1px solid #ccc}.card .card-header{color:#333;text-align:center;background-color:#ddd;padding:.5rem 0}.alert{color:#ccc;padding:1rem;border:1px solid #ccc;margin-bottom:1.75rem}.alert-success{color:#4caf50;border-color:#4caf50}.alert-error{color:#f44336;border-color:#f44336}.alert-info{color:#00bcd4;border-color:#00bcd4}.alert-warning{color:#ff9800;border-color:#ff9800}.media:not(:last-child){margin-bottom:1.25rem}.media-left{padding-right:1rem}.media-left,.media-right{display:table-cell;vertical-align:top}.media-right{padding-left:1rem}.media-body{display:table-cell;vertical-align:top}.media-heading{font-size:1.16667rem;font-weight:700}.media-content{margin-top:.3rem}.avatarholder,.placeholder{background-color:#f0f0f0;text-align:center;color:#b9b9b9;font-size:1rem;border:1px solid #f0f0f0}.avatarholder{width:48px;height:48px;line-height:46px;font-size:2rem;background-size:cover;background-position:50%;background-repeat:no-repeat}.avatarholder.rounded{border-radius:33px}.loading{display:inline-block;content:'&nbsp;';height:20px;width:20px;margin:0 .5rem;animation:a .6s infinite linear;border:2px solid #e91e63;border-right-color:transparent;border-radius:50%}.btn .loading{margin-bottom:0;width:14px;height:14px}.btn div.loading{float:left}.alert .loading{margin-bottom:-5px}@keyframes a{0%{transform:rotate(0deg)}to{transform:rotate(1turn)}}.menu{width:100%}.menu .menu-item{display:block;color:#616161;border-color:#616161}.menu .menu-item.active,.menu .menu-item:hover{color:#000;border-color:#000;background-color:transparent}@media screen and (max-width:768px){.form-group label{display:block;border-bottom:none;width:100%}.form-group.form-textarea label:after{display:none}.form-control{width:100%}textarea.form-control{border-left:none;padding:.5rem 0}pre::-webkit-scrollbar{height:3px}}@media screen and (max-width:480px){.form{width:100%}}.dark{color:#ccc}.dark,.dark pre{background-color:#000}.dark pre{padding:0;border:none}.dark pre code{color:#00bcd4}.dark h1 a,.dark h2 a,.dark h3 a,.dark h4 a,.dark h5 a{color:#ccc}.dark code,.dark strong{color:#fff}.dark code{font-weight:100}.dark table{color:#ccc}.dark table td,.dark table th{border-color:#444}.dark table tbody td:first-child{color:#fff}.dark .form-group label{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-group.form-textarea label:after{background-color:#000}.dark .form-control{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .form-control:focus{border-color:#ccc;color:#ccc}.dark textarea.form-control{color:#ccc}.dark .card{border-color:rgba(95,95,95,.78)}.dark .card .card-header{background-color:transparent;color:#ccc;border-bottom:1px solid rgba(95,95,95,.78)}.dark .btn.btn-ghost.btn-default{border-color:#ababab;color:#ababab}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#9c9c9c;color:#9c9c9c;z-index:1}.dark .btn.btn-ghost.btn-default:focus,.dark .btn.btn-ghost.btn-default:hover{border-color:#e0e0e0;color:#e0e0e0}.dark .btn.btn-ghost.btn-primary:focus,.dark .btn.btn-ghost.btn-primary:hover{border-color:#64b5f6;color:#64b5f6}.dark .btn.btn-ghost.btn-success:focus,.dark .btn.btn-ghost.btn-success:hover{border-color:#81c784;color:#81c784}.dark .btn.btn-ghost.btn-info:focus,.dark .btn.btn-ghost.btn-info:hover{border-color:#4dd0e1;color:#4dd0e1}.dark .btn.btn-ghost.btn-error:focus,.dark .btn.btn-ghost.btn-error:hover{border-color:#e57373;color:#e57373}.dark .btn.btn-ghost.btn-warning:focus,.dark .btn.btn-ghost.btn-warning:hover{border-color:#ffb74d;color:#ffb74d}.dark .avatarholder,.dark .placeholder{background-color:transparent;border-color:#333}.dark .menu .menu-item{color:#ccc;border-color:rgba(95,95,95,.78)}.dark .menu .menu-item.active,.dark .menu .menu-item:hover{color:#fff;border-color:#ccc}
+  :root {
+  --screen-size-small: 30em; /* breakpoint reference only */
+}
+@keyframes intro {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.muted {
+  color: rgba(255, 255, 255, 0.5);
+}
+.readmore {
+  margin-bottom: 2.2em;
+}
+.responsive-iframe {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+.responsive-iframe iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+iframe {
+  border: 0;
+}
+main, footer {
+  animation: intro 0.3s both;
+  animation-delay: 0.15s;
+}
+footer time[datetime$="M"]:before {
+  content: "\2013\0020";
+}
+@media only screen
+  and ( max-width: 30em ) {
+  footer time[datetime$="M"] {
+    display: none;
+  }
+}
+blockquote cite {
+  display: block;
+}
+blockquote cite::before {
+   content: "\2014";
+}
+:target {
+  color: #fff;
+}
+/* hack.css overrides and enhancements */
+.hack li ul {
+  margin: 0;
+}
+.main {
+  padding: 20px 10px;
+}
+nav a.active {
+  background-color: #ff2e88;
+  color: #fff;
+}
+a[itemprop="url"] {
+  color: #ff9800;
+}
+a[itemprop="url"]:hover {
+  color: #fff;
+}
+a[href*="://"]::after,
+a[rel*="external"] {
+  content: " " url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20class='i-external'%20viewBox='0%200%2032%2032'%20width='14'%20height='14'%20fill='none'%20stroke='%23ff9800'%20stroke-linecap='round'%20stroke-linejoin='round'%20stroke-width='9.38%'%3E%3Cpath%20d='M14%209%20L3%209%203%2029%2023%2029%2023%2018%20M18%204%20L28%204%2028%2014%20M28%204%20L14%2018'/%3E%3C/svg%3E");
+}
+figure a[href*="://"]::after,
+figure a[rel*="external"] {
+  content: "";
+}
+html {
+  font-size: 13px;
+}
+.hack pre {
+  font-size: 17px;
+}
+article [itemprop="description"] {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+@media screen and (min-width: 768px) {
+  html {
+    font-size: 1em;
+  }
+  .container {
+    max-width: 50rem;
+  }
+}
+
+  
+
+</style>
+
+    
+    
+    
+      <script async src="https://leonjza.github.io/js/bpgdec8a.js"></script>
+      <script async src="https://leonjza.github.io/js/bpgdec8.js"></script>
+      <script async src="https://leonjza.github.io/js/bpgdec.js"></script>
+    
+  </head>
+  
+  <body class="hack dark main container">
+    <header>
+  
+  <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+    
+    
+      <a itemprop="url" class="" href="https://leonjza.github.io/"><span itemprop="name">Home</span></a>
+    
+      <a itemprop="url" class="" href="https://leonjza.github.io/about/"><span itemprop="name">About Me</span></a>
+    
+  </nav>
+
+
+</header>
+    <main>
+  <header>
+    <h1>Posts</h1>
+  </header>
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises---nebula/">playing exploit-exercises - nebula</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>48 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2015-05-08T07:18:31&#43;00:00">8 May, 2015</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p>Recently I decided I wanted to have a look at what <a href="https://exploit-exercises.com/">Exploit Exercises</a> had to offer. I was after the memory corruption related exploitation stuff to play with, until I saw the details for <a href="https://exploit-exercises.com/nebula/">Nebula</a>. <em>Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/nebula_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>I did not really have a lot of time on my hands and figured I should start with the &ldquo;easy&rdquo; stuff. Many of the levels Nebula presented were in fact very, very easy. However, towards final levels my knowledge was definitely being tested. Levels started taking much longer to complete as I was yet again realizing that the more you learn, the more you realize you you still have to learn. :)</p>
+
+<p>This is the path I took to solve the 20 challenges.
+</p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises---nebula/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2015-05-08T07:18:31&#43;00:00">
+  <meta itemprop="dateModified" content="2015-05-08T07:18:31&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/">beating sokar the vulnhub turns 0b10 challenge</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>31 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2015-02-21T15:55:03&#43;00:00">21 Feb, 2015</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p><a href="http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html">Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a>
+ created <a href="https://www.vulnhub.com/entry/sokar-1,113/">Sokar</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/sokar_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href="https://leonjza.github.io/blog/2014/09/18/from-persistence/">Persistence</a> challenge from Sep &lsquo;14.
+From the <a href="http://blog.vulnhub.com/2015/01/competition-sokar.html">competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
+Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.</p>
+
+<p>Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!</p>
+
+<p>Here is my entry for the competition. Enjoy! :)
+</p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2015-02-21T15:55:03&#43;00:00">
+  <meta itemprop="dateModified" content="2015-02-21T15:55:03&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/">a trivial iOS jailbreak detection bypass</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>6 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2015-02-20T21:09:21&#43;00:00">20 Feb, 2015</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p>Not too long ago, I toyed with a <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/">Android root detection bypass</a>. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I <em>actually</em> wanted to do impossible as I&rsquo;d very much like to dig under the hood :)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/ios_jailbreak_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>So, its was time to try and bypass the jailbreak detection of the application.
+All I had to work with was a <code>.ipa</code>. Similar to the android <code>.apk</code> file, the <code>.ipa</code> is also just a zipped up archive of the actual application files. To test with, I had a iPad mini. The iPad was running the latest iOS (8.1.2 at the time of this post) and was also jailbroken. If I remember correctly the jailbreak tool used was called TaiG. Anyways, inside the applications <code>.ipa</code> archive was a whole bunch of resource files and what not, including the compiled application executable. This executable is what is of interest.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2015-02-20T21:09:21&#43;00:00">
+  <meta itemprop="dateModified" content="2015-02-20T21:09:21&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/">no more jailbreak detection an adventure into Android app reversing and smali patching</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>18 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2015-02-09T19:10:23&#43;00:00">9 Feb, 2015</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p>I will start by saying that I am by <em>no means</em> a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/android_jailbreak_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Recently I had the opportunity to poke at an Android <code>.apk</code>. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the <code>apk</code>, I needed to get some tools setup and learn a few things about the Android environment <em>really</em> fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the <code>apk</code> had and let it continue normal operations.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2015-02-09T19:10:23&#43;00:00">
+  <meta itemprop="dateModified" content="2015-02-09T19:10:23&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/">hoof to root solving pegasus 1</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>22 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-12-23T08:29:49&#43;00:00">23 Dec, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/pegasus_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Having recently played in the <a href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
+
+<p>Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!</p>
+
+<p>Lets begin.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-12-23T08:29:49&#43;00:00">
+  <meta itemprop="dateModified" content="2014-12-23T08:29:49&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">playing in the playground a offsec virtual pentesting labs review</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>3 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-12-06T17:55:38&#43;00:00">6 Dec, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <p>As you may know, I recently completed the Penetration testing with Kali Linux training and obtained OSCP certification. It was an amazing experience and really taught me more than just <em>&ldquo;hacking stuff&rdquo;</em>. Instead, the training came coupled with self discipline and endurance. By day I make a living in the IT security field, by night, I tinker, research and learn!</p>
+
+<p>With PWK over, not long after that, I was privileged enough to be presented with a opportunity to beta test a new product that <a href="http://www.offensive-security.com/">Offensive Security</a> is planning to launch around January 2015 referred to as&hellip;</p>
+
+<p><em>The Playground</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/playground_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-12-06T17:55:38&#43;00:00">
+  <meta itemprop="dateModified" content="2014-12-06T17:55:38&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/11/22/trying-harder-oscp-and-me/">trying harder oscp and me</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>10 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-11-22T06:33:34&#43;00:00">22 Nov, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <figure>
+  
+    
+      <img class="lazyload" data-src="/images/oscp_logo.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>As I am writing this post, it&rsquo;s the &ldquo;morning after&rdquo; I have received the much awaited email confirming that I have successfully completed the OSCP Certification requirements!</p>
+
+<p>In order to obtain OSCP Certification, one must complete some time in the Penetration Testing with Kali Linux labs followed by a grueling 24 hour exam challenge.</p>
+
+<p>One really big realization that I came to was the fact that one should not attempt to do this if your goal is simply to get the OSCP Certification. Doing PWK is a excellent opportunity to learn and rushing it may cause you to not make it in the exam.</p>
+
+<p>Below is a summary of my experience obtaining OSCP.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/11/22/trying-harder-oscp-and-me/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-11-22T06:33:34&#43;00:00">
+  <meta itemprop="dateModified" content="2014-11-22T06:33:34&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/">solving kvasir netcat edition</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>45 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-11-09T10:27:09&#43;00:00">9 Nov, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p><a href="http://vulnhub.com/entry/kvasir-i,106/">Kvasir</a>, a boot2root by <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+<figure>
+  
+    
+      <img class="lazyload" data-src="/images/netcat.png"  />
+    
+  
+  
+</figure>
+<style media="screen">
+  .blur-up {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    transition: filter 400ms, -webkit-filter 400ms;
+  }
+  .blur-up.lazyloaded {
+    -webkit-filter: blur(0);
+    filter: blur(0);
+  }
+</style>
+
+
+<p>Kvasir is <em>extremely</em> well polished, and it can be seen throughout the VM that <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> has gone through a lot of effort to make every challenge as rewarding as possible. From exploiting simple web based vulnerabilities to service misconfigurations, traffic sniffing, steganography, forensics and cryptopraphy, Kvasir has it all! Solving it also had me make really heavy use of good old netcat.</p>
+
+<p>This writeup details the path I took to read the final flag :)</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-11-09T10:27:09&#43;00:00">
+  <meta itemprop="dateModified" content="2014-11-09T10:27:09&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/">knock-knock who’s there? solving knock knock</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>30 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-10-14T09:14:26&#43;00:00">14 Oct, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="introduction">introduction</h2>
+
+<p><a href="http://vulnhub.com/series/knock-knock,53/">Knock-Knock</a> is a vulnerable boot2root VM by <a href="https://twitter.com/zer0w1re">@zer0w1re</a> and sure as heck was packed with interesting twists and things to learn!</p>
+
+<p>I figured I&rsquo;d just <em>have a quick look™</em>, and midnight that evening ended up with <em>root</em> privileges :D</p>
+
+<p>As always, if you have not done this VM yet, this post is a massive spoiler and I would highly recommend you close up here and try it first :)
+This is my experience &lsquo;knocking&rsquo; on the door.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-10-14T09:14:26&#43;00:00">
+  <meta itemprop="dateModified" content="2014-10-14T09:14:26&#43;00:00">
+  
+</article>
+
+  
+    <article itemscope itemtype="http://schema.org/CreativeWork">
+  <header>
+    <h2 itemprop="name">
+      <a href="https://leonjza.github.io/blog/2014/10/10/another-troll-tamed-solving-troll-2/">another troll tamed solving troll 2</a>
+    </h2>
+    
+      <p class="muted"><svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <circle cx="16" cy="16" r="14" />
+  <path d="M16 8 L16 16 20 20" />
+</svg>
+<span>16 minute read</span>
+<svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+  <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z" />
+</svg>
+
+  Published: <time datetime="2014-10-10T17:32:35&#43;00:00">10 Oct, 2014</time>
+
+</p>
+    
+  </header>
+  
+  <div itemprop="description">
+    <h2 id="foreword">foreword</h2>
+
+<p><a href="https://www.vulnhub.com/entry/tr0ll-2,107/">Tr0ll2</a> is a successor in a boot2root series by <a href="https://twitter.com/Maleus21">@Maleus21</a> hosted over at <a href="http://vulnhub.com/">VulnHub</a>. Having been able to <a href="https://leonjza.github.io/blog/2014/08/15/taming-the-troll/">pwn Tr0ll1</a>, I gave this one a shot too.</p>
+
+<p>Here is my experience taming the troll, again.</p>
+
+<p></p>
+  </div>
+  
+    <nav class="readmore"><a itemprop="url" href="https://leonjza.github.io/blog/2014/10/10/another-troll-tamed-solving-troll-2/">Read More&nbsp;&raquo;</a></nav>
+  
+  <meta itemprop="inLanguage" content="en-us">
+  <meta itemprop="datePublished" content="2014-10-10T17:32:35&#43;00:00">
+  <meta itemprop="dateModified" content="2014-10-10T17:32:35&#43;00:00">
+  
+</article>
+
+  
+</main>
+    <footer>
+  <nav>
+  <p>
+    
+      <a href="https://leonjza.github.io/post/">&laquo; Previous</a> |
+    
+    <span>Page 2 of 4</span>
+    
+      | <a href="https://leonjza.github.io/post/page/3/">Next &raquo;</a>
+    
+  </p>
+</nav>
+
+  
+  <p class="muted">
+    This page was generated using
+    <a target="_blank" rel="noopener" href="https://comfusion.github.io/after-dark/">After Dark</a>
+    for
+    <a target="_blank" rel="noopener" href="https://gohugo.io/">Hugo</a>.
+  </p>
+
+
+</footer>
+  </body>
+</html>

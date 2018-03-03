@@ -54,11 +54,9 @@
     </div>
 
     <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-    </ul>
-
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Home</a></li>
       
       <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
       
@@ -80,8 +78,9 @@
 
     
 
-    <p>Copyright &copy; 2017</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a></p>
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
   </div>
 </div>
 
@@ -99,7 +98,7 @@
 <p>Not too long ago, I toyed with a <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-reversing-and-smali-patching/">Android root detection bypass</a>. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I <em>actually</em> wanted to do impossible as I&rsquo;d very much like to dig under the hood :)</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/ios_jailbreak_logo.png" />
     
@@ -131,7 +130,7 @@ myApplication: Mach-O executable arm
 <p>Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term <code>/bin/bash</code> in the <em>string</em> section:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/ios_jailbreak_hopper.png" />
     
@@ -142,7 +141,7 @@ myApplication: Mach-O executable arm
 <p>In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. <em>-[MobileDisplay isRetinaDisplay]:</em>. Very sneaky :) So we are working with the <code>isRetinaDisplay</code> method which is the one doing the jailbreak detection:</p>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/ios_jailbreak_hopper2.png" />
     
@@ -179,7 +178,7 @@ myApplication: Mach-O executable arm
 </ul>
 
 
-<figure >
+<figure>
     
         <img src="https://leonjza.github.io/images/ios_jailbreak_hex_editor.png" />
     
