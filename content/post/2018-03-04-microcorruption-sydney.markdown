@@ -106,4 +106,4 @@ Continue the CPU and unlock the lock!
 
 ## solution
 
-Enter any `L~!BE"X}` as ASCII or `4c7e21424522587d` as hex encoded input.
+Enter `L~!BE"X}` as ASCII or `4c7e21424522587d` as hex encoded input.
