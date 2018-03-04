@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - sydney",
+    "headline" : "microcorruption - sydney",
+    "description" : "<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>The next post in the series of solving the <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges continues from the <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/">previous challenge</a> called <em>New Orleans</em>. This challenge is titled <em>Sydney</em>.</p>
+
+<p>If you were to read the description when you enter the challenge, one would see the following right at the bottom:</p>
+
+<blockquote>
+<p>This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.</p>
+</blockquote>
+
+<p>Lol. Lets take a closer look.
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-04 18:20:20 &#43;0200 SAST",
+    "dateModified" : "2018-03-04 18:20:20 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/",
+    "wordCount" : "738",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","sydney","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - sydney &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - sydney</h1>
+    <span class="post-date">Mar 4, 2018 &middot; 4 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/sydney">sydney</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>The next post in the series of solving the <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges continues from the <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/">previous challenge</a> called <em>New Orleans</em>. This challenge is titled <em>Sydney</em>.</p>
+
+<p>If you were to read the description when you enter the challenge, one would see the following right at the bottom:</p>
+
+<blockquote>
+<p>This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.</p>
+</blockquote>
+
+<p>Lol. Lets take a closer look.
+</p>
+
+<h2 id="sydney">sydney</h2>
+
+<p>Performing a static analysis of the code, one can see that this time round there is no silly  <code>create_password</code> routine or something similar.</p>
+
+<pre><code class="language-asm">4438 &lt;main&gt;
+4438:  3150 9cff      add   #0xff9c, sp
+443c:  3f40 b444      mov   #0x44b4 &quot;Enter the password to continue.&quot;, r15
+4440:  b012 6645      call  #0x4566 &lt;puts&gt;
+4444:  0f41           mov   sp, r15
+4446:  b012 8044      call  #0x4480 &lt;get_password&gt;
+444a:  0f41           mov   sp, r15
+444c:  b012 8a44      call  #0x448a &lt;check_password&gt;
+4450:  0f93           tst   r15
+</code></pre>
+
+<p>In fact, just a simple <code>get_password</code> and <code>check_password</code> routine before the <code>tst r15</code> call at <code>0x4450</code>. The call to <code>get_password</code> just ends up with a syscall, prompting you for a password, so that is not really interesting to us. What is interesting though is <code>check_password</code>:</p>
+
+<pre><code class="language-asm">448a &lt;check_password&gt;
+448a:  bf90 4c7e 0000 cmp   #0x7e4c, 0x0(r15)
+4490:  0d20           jnz   $+0x1c
+4492:  bf90 2142 0200 cmp   #0x4221, 0x2(r15)
+4498:  0920           jnz   $+0x14
+449a:  bf90 4522 0400 cmp   #0x2245, 0x4(r15)
+44a0:  0520           jne   #0x44ac &lt;check_password+0x22&gt;
+44a2:  1e43           mov   #0x1, r14
+44a4:  bf90 587d 0600 cmp   #0x7d58, 0x6(r15)
+44aa:  0124           jeq   #0x44ae &lt;check_password+0x24&gt;
+44ac:  0e43           clr   r14
+44ae:  0f4e           mov   r14, r15
+44b0:  3041           ret
+</code></pre>
+
+<p>At first sight it looks like the code does a number of compares to values at an offset from the memory address at <code>r15</code>. Could these be parts of the actual password? Lets inspect with the debugger. Setting a breakpoint at <code>0x448a</code> and continuing the CPU (entering a password of <em>test</em> when prompted) until we reach it should help in revealing what is happening.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/sydney_byte_compare.png" />
+    
+    
+</figure>
+
+
+<p>Hah, so after the first <code>cmp</code> instruction, the status register is <code>0x4</code> (N), meaning the jump 14 bytes onwards to <code>0x44ac</code> will be taken, effectively ending the <code>check_password</code> routine prematurely. The bytes in <code>r15</code> at the time of the first <code>cmp</code> instruction was <code>0x439c</code>, which in turn pointed to <code>0x7465</code> in the memory dump (visualised with <code>read r15</code> in the debugger). The bytes in memory is clearly the password (<em>test</em> in this case) that I entered when I was prompted.</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; ' '.join([hex(ord(x)) for x in 'test'])
+'0x74 0x65 0x73 0x74'
+</code></pre>
+
+<p>So, lets take the bytes in the three <code>cmp</code> calls and enter that as the password, keeping our breakpoints and seeing what the CPU does then. The six bytes of interest are: <code>0x7e 0x4c 0x42 0x21 0x22 0x45</code>.</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; '7e4c42212245'.decode('hex')
+'~LB!&quot;E'
+</code></pre>
+
+<p>Resetting the CPU, entering <code>~LB!&quot;E</code> as password and continuing untill we hit the breakpoint at <code>0x448a</code> and then stepping past the first <code>cmp</code> and <code>jnz</code> instructions should now look like this:</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/sydney_little_endian_suprise.png" />
+    
+    
+</figure>
+
+
+<p>Hmm. The value <code>0x7e4c</code> was at <code>0x439c</code> (the address <code>r15</code> points to), but the <code>cmp</code> call set the status register to <code>0x4</code> (N), ending the <code>check_password</code> function again. :|</p>
+
+<p>What I think this challenge is supposed to teach you is about the endianness of the CPU which means it stores values in little endian format in memory. What that means for us is that that password values should be provided as <code>0x4c7e</code> instead of as <code>0x7e4c</code> like we did. So, lets re-arrange the password we enter, and continue to the breakpoint again.</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; '4c7e21424522'.decode('hex')
+'L~!BE&quot;'
+</code></pre>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/sydney_valid_pass.png" />
+    
+    
+</figure>
+
+
+<p>Woohoo. This time the <code>jnz</code> instruction is not taken as the status register is now <code>0x3</code> (CZ) and the next values provided as part of the password checked. By now you might think you have won and decide to just continue the CPU to unlock the lock.</p>
+
+<p>Well, no. See, we missed the part where another <code>cmp</code> happens just after <code>0x1</code> is moved into <code>r14</code>.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/sydney_missing_bytes.png" />
+    
+    
+</figure>
+
+
+<p>This means that when <code>cmp    #0x7d58, 0x6(r15)</code> at <code>0x44a4</code> is called, we will be comparing to <code>0x0</code> (the bytes at <code>r15+6</code>), resulting in the jump at <code>0x44aa</code> not being taken, clearing <code>r14</code> before the routine finishes.</p>
+
+<p>So, to prevent that adn as a final password, we need to enter those the bytes <code>0x58</code> and <code>0x7d</code> too to unlock the lock.</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; '4c7e21424522587d'.decode('hex')
+'L~!BE&quot;X}'
+</code></pre>
+
+<p>Continue the CPU and unlock the lock!</p>
+
+<h2 id="solution">solution</h2>
+
+<p>Enter any <code>L~!BE&quot;X}</code> as ASCII or <code>4c7e21424522587d</code> as hex encoded input.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
