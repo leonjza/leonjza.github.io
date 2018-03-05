@@ -1,6 +1,7 @@
 ---
 title: "microcorruption - sydney"
 date: 2018-03-04T18:20:20+02:00
+description: "solving the sydney microcorruption challenge"
 categories: 
 - ctf
 - exploit
@@ -107,3 +108,7 @@ Continue the CPU and unlock the lock!
 ## solution
 
 Enter `L~!BE"X}` as ASCII or `4c7e21424522587d` as hex encoded input.
+
+## other challenges
+
+For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.

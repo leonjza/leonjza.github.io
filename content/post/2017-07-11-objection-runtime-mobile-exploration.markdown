@@ -1,6 +1,7 @@
 ---
 title: "objection - runtime mobile exploration"
 date: 2017-07-11T14:05:41+02:00
+description: "releasing objection, a runtime mobile security exploration toolkit"
 categories: 
 - ios
 - android 

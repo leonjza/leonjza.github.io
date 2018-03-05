@@ -1,6 +1,7 @@
 ---
 title: "microcorruption - tutorial"
 date: 2018-03-03T21:28:12+02:00
+description: "solving the tutorial microcorruption challenge"
 categories: 
 - ctf
 - exploit
@@ -43,6 +44,6 @@ If `r12` ends up being `0x0009` (indicating that out passwords was 8 characters 
 
 Enter any 8 character string, such as `password`.
 
-## next challenge
+## other challenges
 
-[New Orleans](https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/)
+For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.

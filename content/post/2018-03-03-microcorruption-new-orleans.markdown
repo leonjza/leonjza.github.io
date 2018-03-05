@@ -1,6 +1,7 @@
 ---
 title: "microcorruption - new orleans"
 date: 2018-03-03T22:21:36+02:00
+description: "solving the new orleans microcorruption challenge"
 categories:
 - ctf
 - exploit
@@ -104,3 +105,7 @@ The `tst` instruction on register `r15` should have a non-zero return in the sta
 ## solution
 
 Enter a password of `.g7MGH/` in ASCII or `2e67374d47482f00` as hex.
+
+## other challenges
+
+For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.
