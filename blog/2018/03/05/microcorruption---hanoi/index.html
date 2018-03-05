@@ -47,7 +47,7 @@
     "datePublished": "2018-03-05 19:08:33 &#43;0200 SAST",
     "dateModified" : "2018-03-05 19:08:33 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/",
-    "wordCount" : "935",
+    "wordCount" : "951",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","hanoi","Blog" ]
 }
 </script>
@@ -284,6 +284,8 @@ AAAAAAAAAAAAAAAAc
 
 
 <p>After hitting the breakpoint and inspecting the contents of memory address <code>0x2410</code> with <code>read 2410</code> in the debugger reveals that the byte <code>0x63</code> is at <code>0x2410</code> (thanks to our overflow). This results in the <code>cmp.b</code> instruction setting the status register to <code>0x3</code> (CZ), which in turn means the jump is not taken!</p>
+
+<p>Turns out <code>test_password_valid</code> was just a decoy and the real vulnerability was a simple buffer overflow.</p>
 
 <h2 id="solution">solution</h2>
 
