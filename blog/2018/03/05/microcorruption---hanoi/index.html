@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - hanoi",
+    "headline" : "microcorruption - hanoi",
+    "description" : "solving the hanoi microcorruption challenge",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-05 19:08:33 &#43;0200 SAST",
+    "dateModified" : "2018-03-05 19:08:33 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/",
+    "wordCount" : "936",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","hanoi","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - hanoi &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="solving the hanoi microcorruption challenge">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - hanoi</h1>
+    <span class="post-date">Mar 5, 2018 &middot; 5 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/hanoi">hanoi</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/">previous challenge</a> called <em>Sydney</em>. This challenge is titled <em>Hanoi</em>.</p>
+
+<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
+
+<blockquote>
+<p>LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.</p>
+</blockquote>
+
+<p>Ok, so mention of a HSM here. Neat! Lets take a look at how that works!
+</p>
+
+<h2 id="hanoi">hanoi</h2>
+
+<p>This time round, our <code>main</code> function is quite a bit shorter than the previous programs we have analysed:</p>
+
+<pre><code class="language-asm">4438 &lt;main&gt;
+4438:  b012 2045      call  #0x4520 &lt;login&gt;
+443c:  0f43           clr   r15
+</code></pre>
+
+<p>Just a call to <code>login</code> which in turn has a similar flow to that which we saw in the previous <code>main</code> functions. A semi-shortened, annotated version of <code>login</code> is:</p>
+
+<pre><code class="language-asm">4520 &lt;login&gt;
+4520:  c243 1024      mov.b #0x0, &amp;0x2410
+4524:  3f40 7e44      mov   #0x447e &quot;Enter the password to continue.&quot;, r15
+4528:  b012 de45      call  #0x45de &lt;puts&gt;
+
+; but what if i put in more than 16 characters? ;)
+452c:  3f40 9e44      mov   #0x449e &quot;Remember: passwords are between 8 and 16 characters.&quot;, r15
+4530:  b012 de45      call  #0x45de &lt;puts&gt;
+
+[.. routine to get the password ..]
+
+4544:  b012 5444      call  #0x4454 &lt;test_password_valid&gt;
+4548:  0f93           tst   r15
+454a:  0324           jz    $+0x8
+
+; erm? what is going on here?
+454c:  f240 5000 1024 mov.b #0x50, &amp;0x2410
+4552:  3f40 d344      mov   #0x44d3 &quot;Testing if password is valid.&quot;, r15
+4556:  b012 de45      call  #0x45de &lt;puts&gt;
+
+; and what about here?
+455a:  f290 6300 1024 cmp.b #0x63, &amp;0x2410
+4560:  0720           jne   #0x4570 &lt;login+0x50o&gt;
+
+; grants us access!
+4562:  3f40 f144      mov   #0x44f1 &quot;Access granted.&quot;, r15
+4566:  b012 de45      call  #0x45de &lt;puts&gt;
+456a:  b012 4844      call  #0x4448 &lt;unlock_door&gt;
+456e:  3041           ret
+
+; failed
+4570:  3f40 0145      mov   #0x4501 &quot;That password is not correct.&quot;, r15
+4574:  b012 de45      call  #0x45de &lt;puts&gt;
+4578:  3041           ret
+</code></pre>
+
+<p>Some interesting things happening there it seems. I think the next routine to check out is most definitely <code>test_password_valid</code>. Taking a look at that routine looks as follows:</p>
+
+<pre><code class="language-asm">4454 &lt;test_password_valid&gt;
+
+; move a bunh of stuff around
+4454:  0412           push  r4
+4456:  0441           mov   sp, r4
+4458:  2453           incd  r4
+445a:  2183           decd  sp
+445c:  c443 fcff      mov.b #0x0, -0x4(r4)  ; 0x2400 at this stage
+4460:  3e40 fcff      mov   #0xfffc, r14
+4464:  0e54           add   r4, r14
+4466:  0e12           push  r14
+4468:  0f12           push  r15
+
+; push 0x7d into the stack and prep for a syscall
+446a:  3012 7d00      push  #0x7d
+446e:  b012 7a45      call  #0x457a &lt;INT&gt;
+
+[.. end this routine ..]
+447c:  3041           ret
+</code></pre>
+
+<p>Hmm ok, a bunch of <code>mov</code> instructions and other arithmetic and finally syscall with interrupt <code>0x7d</code> which is described as <em>&ldquo;Interface with the HSM-1. Set a flag in memory if the password passed in is
+correct.&rdquo;</em> according to the locks <a href="https://microcorruption.com/manual.pdf">manual</a>.</p>
+
+<p>So not <em>that</em> interesting after all. Looking at <code>login</code> again, it seems like we would ideally want to have <code>unlock_door</code> called from <code>login</code> at <code>0x456a</code> to win. But how to get there?</p>
+
+<h3 id="debugging">debugging</h3>
+
+<p>My static analysis capabilities were pretty much exhausted here, and it was now time for some runtime debugging. I manually stepped through the program, focussing on the <code>test_password_valid</code> routine. I noticed the password I entered as <code>12345678</code> was stored at offset <code>0x2400</code> and referenced when the interrupt for the HSM to check was set up.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/hanoi_password_in_memory.png" />
+    
+    
+</figure>
+
+
+<p>A few steps through this routine with no obvious ways to fool it, I decided to park it for now and see what happens after <code>test_password_valid</code> is done. This is now back at <code>login</code> once <code>test_password_valid</code> has returned:</p>
+
+<pre><code class="language-asm">; test_password_valid has returned
+4552:  3f40 d344      mov   #0x44d3 &quot;Testing if password is valid.&quot;, r15
+4556:  b012 de45      call  #0x45de &lt;puts&gt;
+
+; what is this cmp doing?
+455a:  f290 6300 1024 cmp.b #0x63, &amp;0x2410
+4560:  0720           jne   #0x4570 &lt;login+0x50&gt;
+
+; making the jne not get taken will land us at unlock_door
+4562:  3f40 f144      mov   #0x44f1 &quot;Access granted.&quot;, r15
+4566:  b012 de45      call  #0x45de &lt;puts&gt;
+456a:  b012 4844      call  #0x4448 &lt;unlock_door&gt;
+</code></pre>
+
+<p>I noticed the <code>cmp.b #0x63, &amp;0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
+
+<p>If we can make the aforementioned instruction pass the test checking if the value at that memory address is <code>0x63</code>, (ASCII character <code>c</code>), then we can get past the <code>jne</code> instruction at <code>0x4560</code>, eventually landing us in <code>unlock_door</code> routine.</p>
+
+<p>So given that the distance to <code>0x2410</code> is 16 bytes from <code>0x2400</code> where our password buffer is stored, lets see if we can overflow the buffer to <code>0x2410</code>.</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; print('A' * 16 + 'c')
+AAAAAAAAAAAAAAAAc
+</code></pre>
+
+<p>I set a breakpoint at <code>0x455a</code> with <code>break 455a</code> in the debugger and continued the CPU entering <code>AAAAAAAAAAAAAAAAc</code> as the password when prompted.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/hanoi_jump_little_endian.png" />
+    
+    
+</figure>
+
+
+<p>After hitting the breakpoint and inspecting the contents of memory address <code>0x2410</code> with <code>read 2410</code> in the debugger reveals that the byte <code>0x63</code> is at <code>0x2410</code> (thanks to our overflow). This results in the <code>cmp.b</code> instruction setting the status register to <code>0x3</code> (CZ), which in turn means the jump is not taken!</p>
+
+<h2 id="solution">solution</h2>
+
+<p>Enter <code>AAAAAAAAAAAAAAAAc</code> as ASCII or <code>4141414141414141414141414141414163</code> as hex encoded input.</p>
+
+<h2 id="other-challenges">other challenges</h2>
+
+<p>For my other writes for the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
