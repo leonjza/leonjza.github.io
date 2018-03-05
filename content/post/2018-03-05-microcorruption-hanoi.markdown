@@ -138,6 +138,8 @@ I set a breakpoint at `0x455a` with `break 455a` in the debugger and continued t
 
 After hitting the breakpoint and inspecting the contents of memory address `0x2410` with `read 2410` in the debugger reveals that the byte `0x63` is at `0x2410` (thanks to our overflow). This results in the `cmp.b` instruction setting the status register to `0x3` (CZ), which in turn means the jump is not taken!
 
+Turns out `test_password_valid` was just a decoy and the real vulnerability was a simple buffer overflow.
+
 ## solution
 
 Enter `AAAAAAAAAAAAAAAAc` as ASCII or `4141414141414141414141414141414163` as hex encoded input.
