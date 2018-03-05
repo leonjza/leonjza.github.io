@@ -1,7 +1,6 @@
 ---
 title: "microcorruption - hanoi"
 date: 2018-03-05T19:08:33+02:00
-description: "solving the hanoi microcorruption challenge"
 categories: 
 - ctf
 - exploit

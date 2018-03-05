@@ -1,7 +1,6 @@
 ---
 title: "microcorruption - new orleans"
 date: 2018-03-03T22:21:36+02:00
-description: "solving the new orleans microcorruption challenge"
 categories:
 - ctf
 - exploit

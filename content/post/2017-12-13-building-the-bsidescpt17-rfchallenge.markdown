@@ -1,7 +1,6 @@
 ---
 title: "building the bsidescpt17 rf challenge"
 date: 2017-12-13T15:26:28+02:00
-description: "building the bsides cape town 2017 rfcat badge challenge"
 categories: 
 - hardware
 - hacking

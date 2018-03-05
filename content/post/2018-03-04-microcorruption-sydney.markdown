@@ -1,7 +1,6 @@
 ---
 title: "microcorruption - sydney"
 date: 2018-03-04T18:20:20+02:00
-description: "solving the sydney microcorruption challenge"
 categories: 
 - ctf
 - exploit

@@ -1,7 +1,6 @@
 ---
 title: "microcorruption - tutorial"
 date: 2018-03-03T21:28:12+02:00
-description: "solving the tutorial microcorruption challenge"
 categories: 
 - ctf
 - exploit
