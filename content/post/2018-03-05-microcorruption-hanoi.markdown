@@ -121,7 +121,7 @@ A few steps through this routine with no obvious ways to fool it, I decided to p
 456a:  b012 4844      call  #0x4448 <unlock_door>
 ```
 
-I noticed the `cmp.b #0x63, &0x2410` instruction again and realised that `0x2410` is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from `0x2400`! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is is because char 17 and 18 forms part of this `cmp.b` instruction!
+I noticed the `cmp.b #0x63, &0x2410` instruction again and realised that `0x2410` is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from `0x2400`! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is because char 17 and 18 forms part of this `cmp.b` instruction!
 
 If we can make the aforementioned instruction pass the test checking if the value at that memory address is `0x63`, (ASCII character `c`), then we can get past the `jne` instruction at `0x4560`, eventually landing us in `unlock_door` routine.
 
