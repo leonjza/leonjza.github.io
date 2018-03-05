@@ -47,7 +47,7 @@
     "datePublished": "2018-03-05 19:08:33 &#43;0200 SAST",
     "dateModified" : "2018-03-05 19:08:33 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/",
-    "wordCount" : "936",
+    "wordCount" : "935",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","hanoi","Blog" ]
 }
 </script>
@@ -262,7 +262,7 @@ correct.&rdquo;</em> according to the locks <a href="https://microcorruption.com
 456a:  b012 4844      call  #0x4448 &lt;unlock_door&gt;
 </code></pre>
 
-<p>I noticed the <code>cmp.b #0x63, &amp;0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
+<p>I noticed the <code>cmp.b #0x63, &amp;0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
 
 <p>If we can make the aforementioned instruction pass the test checking if the value at that memory address is <code>0x63</code>, (ASCII character <code>c</code>), then we can get past the <code>jne</code> instruction at <code>0x4560</code>, eventually landing us in <code>unlock_door</code> routine.</p>
 
