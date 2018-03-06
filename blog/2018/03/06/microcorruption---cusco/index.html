@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - cusco",
+    "headline" : "microcorruption - cusco",
+    "description" : "<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/">previous challenge</a> called <em>Hanoi</em>. This challenge is titled <em>Cusco</em>.</p>
+
+<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
+
+<blockquote>
+<p>This is Software Revision 02. We have improved the security of the lock by removing a conditional  flag that could accidentally get set by passwords that were too long.</p>
+</blockquote>
+
+<p>Oops :P Lets take a closer look at how this fixed version works.
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-06 07:43:25 &#43;0200 SAST",
+    "dateModified" : "2018-03-06 07:43:25 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/06/microcorruption---cusco/",
+    "wordCount" : "631",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","cusco","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - cusco &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - cusco</h1>
+    <span class="post-date">Mar 6, 2018 &middot; 3 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---cusco/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/cusco">cusco</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/">previous challenge</a> called <em>Hanoi</em>. This challenge is titled <em>Cusco</em>.</p>
+
+<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
+
+<blockquote>
+<p>This is Software Revision 02. We have improved the security of the lock by removing a conditional  flag that could accidentally get set by passwords that were too long.</p>
+</blockquote>
+
+<p>Oops :P Lets take a closer look at how this fixed version works.
+</p>
+
+<h2 id="cusco">cusco</h2>
+
+<p>This challenge, just like the previous has a <code>main</code> routine that calls <code>login</code>. At first glance, the <code>login</code> routine itself was not too interesting either:</p>
+
+<pre><code class="language-asm">4500 &lt;login&gt;
+
+; get the password from the user
+4500:  3150 f0ff      add   #0xfff0, sp
+4504:  3f40 7c44      mov   #0x447c &quot;Enter the password to continue.&quot;, r15
+4508:  b012 a645      call  #0x45a6 &lt;puts&gt;
+450c:  3f40 9c44      mov   #0x449c &quot;Remember: passwords are between 8 and 16 characters.&quot;, r15
+4510:  b012 a645      call  #0x45a6 &lt;puts&gt;
+4514:  3e40 3000      mov   #0x30, r14
+4518:  0f41           mov   sp, r15
+451a:  b012 9645      call  #0x4596 &lt;getsn&gt;
+451e:  0f41           mov   sp, r15
+
+; run the test password_valid routine
+4520:  b012 5244      call  #0x4452 &lt;test_password_valid&gt;
+4524:  0f93           tst   r15
+4526:  0524           jz    #0x4532 &lt;login+0x32&gt;
+
+; if r15 is not zero, the previous jump wont be taken
+4528:  b012 4644      call  #0x4446 &lt;unlock_door&gt;
+452c:  3f40 d144      mov   #0x44d1 &quot;Access granted.&quot;, r15
+4530:  023c           jmp   #0x4536 &lt;login+0x36&gt;
+4532:  3f40 e144      mov   #0x44e1 &quot;That password is not correct.&quot;, r15
+4536:  b012 a645      call  #0x45a6 &lt;puts&gt;
+453a:  3150 1000      add   #0x10, sp
+453e:  3041           ret
+</code></pre>
+
+<p>Just a simple <code>getsn</code> to get the password using an interrupt, a call to <code>test_password_valid</code> and finally a conditional jump at <code>0x4524</code> which I suppose is what we would want to get past by having <code>r15</code> not be zero (from within <code>test_password_valid</code> I assume).</p>
+
+<p>Looking at <code>test_password_valid</code>, one would notice pretty much exactly the same logic as was seen in the <a href="https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/">hanoi</a> challenge:</p>
+
+<pre><code class="language-asm">[ ... snip ... ]
+
+4468:  3012 7d00      push  #0x7d
+446c:  b012 4245      call  #0x4542 &lt;INT&gt;
+
+[ ... snip ... ]
+</code></pre>
+
+<p>Effectively just a call to interrupt <code>0x7d</code> which asks the HSM to verify the password. Pants. Time to debug this one.</p>
+
+<h3 id="debugging">debugging</h3>
+
+<p>I stepped through <code>test_password_valid</code> with a password of <code>0123456789</code> and as in the previous challenge, found nothing too interesting about it. Unlike the previous challenge though, the password buffer was closer to the stack pointer when read after the syscall this time. Returning from <code>test_password_valid</code> back to <code>login</code> would leave <code>r15</code> with <code>0x0</code>, resulting in the jump at <code>0x4526</code> being taken.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/cusco_wrong_password.png" />
+    
+    
+</figure>
+
+
+<p>I fuzzed the password input with a number of parameters, and it became evident that there did not seem to be a way (apart knowing the real password) to prevent the jump at <code>0x4526</code> from being taken. <strong>However</strong>. Remember that &ldquo;<em>passwords can be max 16 characters</em>&rdquo; thing? Well, providing a password of more than 16 characters seems to corrupt the stack when <code>login</code> wants to return. Something I noticed too late.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/cusco_stack_corruption.png" />
+    
+    
+</figure>
+
+
+<p>Notice how the stack pointer (<code>sp</code>) is at <code>0x43f3</code>, which is also in the string of <code>A</code>&rsquo;s i provided as a password! In this case, the offset was 17 bytes from the start of the password buffer. Because we corrupted the stack with our user controlled data, the <code>ret</code> instruction will redirect to any address we place there. In this case, the <code>unlock_door</code>&rsquo;s routine that starts at <code>0x4446</code> would be a good place!</p>
+
+<p>All we need to do now is provide a string of 16 characters, and then 2 (little endian formatted) bytes for the <code>unlock_door</code> routine.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/cusco_rewrite_ret.png" />
+    
+    
+</figure>
+
+
+<p>And boom. We have redirected code execution to the <code>unlock_door</code> routine.</p>
+
+<h2 id="solution">solution</h2>
+
+<p>Enter <code>414141414141414141414141414141414644</code> as hex encoded input.</p>
+
+<h2 id="other-challenges">other challenges</h2>
+
+<p>For my other writes for the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
