@@ -74,7 +74,7 @@ Some interesting things happening there it seems. I think the next routine to ch
 ```asm
 4454 <test_password_valid>
 
-; move a bunh of stuff around
+; move a bunch of stuff around
 4454:  0412           push  r4
 4456:  0441           mov   sp, r4
 4458:  2453           incd  r4
