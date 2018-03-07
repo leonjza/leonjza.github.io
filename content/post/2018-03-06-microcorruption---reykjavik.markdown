@@ -158,7 +158,7 @@ This loop continues until `r14` reaches zero, and the registers before the call 
 
 {{< figure src="/images/microcorruption/reykjavik_post_decryt.png" >}}
 
-At this stage its pretty clear that the call to jump to `0x2400` in `main` was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into [https://onlinedisassembler.com](https://onlinedisassembler.com). The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with `cat dump | cut -d" " -f2,3,4,5,6,7,8,9,10,11` and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!
+At this stage its pretty clear that the call to jump to `0x2400` in `main` was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into [https://onlinedisassembler.com](https://onlinedisassembler.com). The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with `cat dump | cut -d" " -f2-11` and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!
 
 {{< figure src="/images/microcorruption/reykjavik_decrypted_dissasembler.png" >}}
 
