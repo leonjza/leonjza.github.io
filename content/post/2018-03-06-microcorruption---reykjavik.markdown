@@ -199,6 +199,10 @@ I needed to see what is happening at `-0x24(r4)` and see if I can control that v
 
 The data at `0x43da` was the start of my password buffer, which is effectively what is being used in the `cmp` instruction. Making sure my password entered started with `0xdb01` (remember, little endian) would be enough for this compare to result in the status flag being set to not have the next conditional jump taken, resulting in a value of `0x7f` being pushed to the stack and a syscall being made to unlock the lock!
 
+My final, annotated version of the dissasembled opcodes looked as follows:
+
+{{< figure src="/images/microcorruption/reykjavik_annotated_decrypted_opcodes.png" >}}
+
 ## solution
 
 Enter `db01` as hex encoded input.
