@@ -45,4 +45,4 @@ Enter any 8 character string, such as `password`.
 
 ## other challenges
 
-For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.
+For my other write ups in the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.

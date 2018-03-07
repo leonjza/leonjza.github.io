@@ -146,4 +146,4 @@ Enter `AAAAAAAAAAAAAAAAc` as ASCII or `4141414141414141414141414141414163` as he
 
 ## other challenges
 
-For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.
+For my other write ups in the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.

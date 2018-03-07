@@ -107,4 +107,4 @@ Enter a password of `.g7MGH/` in ASCII or `2e67374d47482f00` as hex.
 
 ## other challenges
 
-For my other writes for the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link.
+For my other write ups in the microcorruption series, checkout [this](https://leonjza.github.io/categories/microcorruption/) link
