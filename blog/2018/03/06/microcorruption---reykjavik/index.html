@@ -47,7 +47,7 @@
     "datePublished": "2018-03-06 20:25:12 &#43;0200 SAST",
     "dateModified" : "2018-03-06 20:25:12 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/",
-    "wordCount" : "1486",
+    "wordCount" : "1497",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","reykjavik","Blog" ]
 }
 </script>
@@ -134,7 +134,7 @@
 <div class="content container">
   <div class="post">
     <h1 class="post-title">microcorruption - reykjavik</h1>
-    <span class="post-date">Mar 6, 2018 &middot; 7 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/#disqus_thread">Comments</a>
+    <span class="post-date">Mar 6, 2018 &middot; 8 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/#disqus_thread">Comments</a>
     
     <br/>
     <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/reykjavik">reykjavik</a>
@@ -373,6 +373,17 @@ jnz $+0xc
 
 
 <p>The data at <code>0x43da</code> was the start of my password buffer, which is effectively what is being used in the <code>cmp</code> instruction. Making sure my password entered started with <code>0xdb01</code> (remember, little endian) would be enough for this compare to result in the status flag being set to not have the next conditional jump taken, resulting in a value of <code>0x7f</code> being pushed to the stack and a syscall being made to unlock the lock!</p>
+
+<p>My final, annotated version of the dissasembled opcodes looked as follows:</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/reykjavik_annotated_decrypted_opcodes.png" />
+    
+    
+</figure>
+
 
 <h2 id="solution">solution</h2>
 
