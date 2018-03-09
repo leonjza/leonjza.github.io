@@ -98,7 +98,7 @@ Sending this password payload, and inspecting the program after a breakpoint at 
 
 {{< figure src="/images/microcorruption/montevideo_strcpy_nullbyte.png" >}}
 
-It was clear that the jump to `0x4400` was taken as the program counter (`pc`) was there, but, my shellcode was missing. Well... if you have ever dealt with `strcpy` before, you may have spotted that this was going to happen as soon as I chose `0x4400` as the address to jump to, as that address contains a nullbyte which is a string terminator for `strcpy`. Easy fix really, just move along two bytes to avoid a `0x00` byte. With a two byte shift, our password payload looks something like this:
+It was clear that the jump to `0x4400` was taken as the program counter (`pc`) was there, but, my shellcode was missing. Well... if you have ever dealt with `strcpy` before, you may have spotted that this was going to happen as soon as I chose `0x4400` as the address to jump to, as that address contains a nullbyte which is a string terminator for `strcpy`. Easy fix really, just move along two bytes to avoid a `0x00` byte in our payload. With a two byte shift, our password payload looks something like this now:
 
 ```text
 [padding to ret] +  [ret] +  [pad] + [shellcode]
@@ -110,7 +110,7 @@ It was clear that the jump to `0x4400` was taken as the program counter (`pc`) w
 
 {{< figure src="/images/microcorruption/montevideo_null_byte_shellcode.png" >}}
 
-Snap. We have made a little progress, but there is still a null byte in our shellcode because of the opcodes that form part of the `push #0x7f` instruction which is `3012 7f00`. We need to get rid of the `0x00` byte. We can simply modify the shellcode to use any other instructions that will eventually push the value `0xf7` to the stack. Think of things like moving a large value into a register, performing arithmetic and then moving the resultant register value onto the stack instead of the original value as is.
+Snap. We have made some progress, but there is still a null byte in our shellcode because of the opcodes that form part of the `push #0x7f` instruction (`3012 7f00`). We need to get rid of the `0x00` byte. We can simply modify the shellcode to use any other instructions that will eventually push the value `0xf7` to the stack. Think of things like moving a large value into a register, performing arithmetic and then moving the resultant register value onto the stack instead of the original value as is.
 
 I used existing instructions in the program as a reference for ideas on how I can modify the shellcode to avoid null bytes. This was the final shellcode I got to work using the disassembler [here](https://microcorruption.com/assembler):
 
