@@ -47,7 +47,7 @@
     "datePublished": "2018-03-08 18:12:36 &#43;0200 SAST",
     "dateModified" : "2018-03-08 18:12:36 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/08/microcorruption---montevideo/",
-    "wordCount" : "1114",
+    "wordCount" : "1100",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","montevideo","Blog" ]
 }
 </script>
@@ -219,7 +219,7 @@
 <li>After <code>conditional_unlock_door</code> with a too long password buffer, the stack is corrupt and the return address to <code>main</code> overridden.</li>
 </ul>
 
-<p>It seems like this challenge is pretty much exactly the same as previous Whitehorse challenge? The <code>conditional_unlock_door</code> routine calls syscall <code>0x7e</code>, so with our overflow this is not a useful location to jump to as the &ldquo;HSM&rdquo; will validate the password. So, like the previous one, we just need a spot to slide in some shellcode, and them some actual shellcode that we have already built in the previous challenge.</p>
+<p>It seems like this challenge is pretty much exactly the same as previous Whitehorse challenge? The <code>conditional_unlock_door</code> routine calls syscall <code>0x7e</code>, so with our overflow this is not a useful location to jump to as the &ldquo;HSM&rdquo; will validate the password. So, like the previous one, we just need a spot to slide in some shellcode.</p>
 
 <p>Before we can supply the shellcode though, we need to find out where we are overriding and corrupting the stack for that <code>ret</code> instruction. For this, I just supplied a bunch of <code>A</code>&rsquo;s and <code>B</code>&rsquo;s and found that at position 17 and 18 again we have control over the programs execution flow.</p>
 
