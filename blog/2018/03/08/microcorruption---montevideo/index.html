@@ -47,7 +47,7 @@
     "datePublished": "2018-03-08 18:12:36 &#43;0200 SAST",
     "dateModified" : "2018-03-08 18:12:36 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/08/microcorruption---montevideo/",
-    "wordCount" : "1100",
+    "wordCount" : "1101",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","montevideo","Blog" ]
 }
 </script>
@@ -268,7 +268,7 @@
 </figure>
 
 
-<p>It was clear that the jump to <code>0x4400</code> was taken as the program counter (<code>pc</code>) was there, but, my shellcode was missing. Well&hellip; if you have ever dealt with <code>strcpy</code> before, you may have spotted that this was going to happen as soon as I chose <code>0x4400</code> as the address to jump to, as that address contains a nullbyte which is a string terminator for <code>strcpy</code>. Easy fix really, just move along two bytes to avoid a <code>0x00</code> byte. With a two byte shift, our password payload looks something like this:</p>
+<p>It was clear that the jump to <code>0x4400</code> was taken as the program counter (<code>pc</code>) was there, but, my shellcode was missing. Well&hellip; if you have ever dealt with <code>strcpy</code> before, you may have spotted that this was going to happen as soon as I chose <code>0x4400</code> as the address to jump to, as that address contains a nullbyte which is a string terminator for <code>strcpy</code>. Easy fix really, just move along two bytes to avoid a <code>0x00</code> byte in our payload. With a two byte shift, our password payload looks something like this now:</p>
 
 <pre><code class="language-text">[padding to ret] +  [ret] +  [pad] + [shellcode]
 -----------------------------------------------------
@@ -286,7 +286,7 @@
 </figure>
 
 
-<p>Snap. We have made a little progress, but there is still a null byte in our shellcode because of the opcodes that form part of the <code>push #0x7f</code> instruction which is <code>3012 7f00</code>. We need to get rid of the <code>0x00</code> byte. We can simply modify the shellcode to use any other instructions that will eventually push the value <code>0xf7</code> to the stack. Think of things like moving a large value into a register, performing arithmetic and then moving the resultant register value onto the stack instead of the original value as is.</p>
+<p>Snap. We have made some progress, but there is still a null byte in our shellcode because of the opcodes that form part of the <code>push #0x7f</code> instruction (<code>3012 7f00</code>). We need to get rid of the <code>0x00</code> byte. We can simply modify the shellcode to use any other instructions that will eventually push the value <code>0xf7</code> to the stack. Think of things like moving a large value into a register, performing arithmetic and then moving the resultant register value onto the stack instead of the original value as is.</p>
 
 <p>I used existing instructions in the program as a reference for ideas on how I can modify the shellcode to avoid null bytes. This was the final shellcode I got to work using the disassembler <a href="https://microcorruption.com/assembler">here</a>:</p>
 
