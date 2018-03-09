@@ -69,7 +69,7 @@ Inspecting these routines manually, as well as the memory layout after each func
 - After `memset` is done, the password buffer at `0x2400` is zeroed out.
 - After `conditional_unlock_door` with a too long password buffer, the stack is corrupt and the return address to `main` overridden.
 
-It seems like this challenge is pretty much exactly the same as previous Whitehorse challenge? The `conditional_unlock_door` routine calls syscall `0x7e`, so with our overflow this is not a useful location to jump to as the "HSM" will validate the password. So, like the previous one, we just need a spot to slide in some shellcode, and them some actual shellcode that we have already built in the previous challenge.
+It seems like this challenge is pretty much exactly the same as previous Whitehorse challenge? The `conditional_unlock_door` routine calls syscall `0x7e`, so with our overflow this is not a useful location to jump to as the "HSM" will validate the password. So, like the previous one, we just need a spot to slide in some shellcode.
 
 Before we can supply the shellcode though, we need to find out where we are overriding and corrupting the stack for that `ret` instruction. For this, I just supplied a bunch of `A`'s and `B`'s and found that at position 17 and 18 again we have control over the programs execution flow.
 
