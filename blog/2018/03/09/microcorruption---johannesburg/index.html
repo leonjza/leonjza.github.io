@@ -47,7 +47,7 @@
     "datePublished": "2018-03-09 14:31:25 &#43;0200 SAST",
     "dateModified" : "2018-03-09 14:31:25 &#43;0200 SAST",
     "url" : "https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/",
-    "wordCount" : "541",
+    "wordCount" : "533",
     "keywords" : [ "ctf","exploit","assembly","microcorruption","johannesburg","Blog" ]
 }
 </script>
@@ -207,9 +207,9 @@
 </figure>
 
 
-<p>Stepping through the program to pass the <code>jeq</code> instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with <code>read sp+11</code> also showed that the byte contained <code>41</code>, which will cause the <code>cmp.b</code> to set a non equal status register.</p>
+<p>Stepping through the program to pass the <code>jeq</code> instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with <code>read sp+11</code> also showed that the byte contained <code>41</code>, which will cause the <code>cmp.b</code> to fail.</p>
 
-<p>To bypass this check, all we need to do is provide <code>0x6a</code> in the correct position so that the <code>cmp.b</code> will result in an equal status. Inspecting the memory (as well as the instruction <code>0x11(sp)</code>), we can see this is at offset 17. All we need to do is pad the password payload and provide <code>0x6a</code> as the 17th byte.</p>
+<p>To bypass this check, all we need to do is provide <code>0x6a</code> in the correct position so that the <code>cmp.b</code> will be equal. Inspecting the memory (as well as the instruction <code>0x11(sp)</code>), we can see this is at offset 17. All we need to do is pad the password payload and provide <code>0x6a</code> as the 17th byte.</p>
 
 <pre><code class="language-python">python -c &quot;print('41' * 0x11 + '6A' + '42' * 10)&quot;
 41414141414141414141414141414141416A42424242424242424242
