@@ -63,9 +63,9 @@ To inspect this a little closer, I set a breakpoint at the `cmp.b` instruction w
 
 {{< figure src="/images/microcorruption/johannesburg_stack_canary.png" >}}
 
-Stepping through the program to pass the `jeq` instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with `read sp+11` also showed that the byte contained `41`, which will cause the `cmp.b` to set a non equal status register.
+Stepping through the program to pass the `jeq` instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with `read sp+11` also showed that the byte contained `41`, which will cause the `cmp.b` to fail. 
 
-To bypass this check, all we need to do is provide `0x6a` in the correct position so that the `cmp.b` will result in an equal status. Inspecting the memory (as well as the instruction `0x11(sp)`), we can see this is at offset 17. All we need to do is pad the password payload and provide `0x6a` as the 17th byte.
+To bypass this check, all we need to do is provide `0x6a` in the correct position so that the `cmp.b` will be equal. Inspecting the memory (as well as the instruction `0x11(sp)`), we can see this is at offset 17. All we need to do is pad the password payload and provide `0x6a` as the 17th byte.
 
 ```python
 python -c "print('41' * 0x11 + '6A' + '42' * 10)"
