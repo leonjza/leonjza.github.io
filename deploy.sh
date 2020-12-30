@@ -5,6 +5,10 @@
 
 set -e
 
+echo -e "\033[0;32mdid you rememner to run pngcrush on new images?\033[0m"
+echo -e "sleeping for 5 s"
+sleep 5
+
 # Update local source with remote
 echo -e "\033[0;32mUpdating local copy of project sources..\033[0m"
 git pull --no-rebase origin source
