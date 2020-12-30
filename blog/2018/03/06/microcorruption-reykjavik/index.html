@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - reykjavik",
+    "headline" : "microcorruption - reykjavik",
+    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/microcorruption\/microcorruption.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eThis post is part of the series of solving \u003ca href=\u0022https:\/\/microcorruption.com\u0022\u003emicrocorruption.com\u003c\/a\u003e ctf challenges which continues from the \u003ca href=\u0022https:\/\/leonjza.github.io\/blog\/2018\/03\/06\/microcorruption---cusco\/\u0022\u003eprevious challenge\u003c\/a\u003e called \u003cem\u003eCusco\u003c\/em\u003e. This challenge is titled \u003cem\u003eReykjavik\u003c\/em\u003e.\u003c\/p\u003e\n\u003cp\u003eThis challenge has the following description towards the bottom:\u003c\/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003eThis is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.\u003c\/p\u003e\n\u003c\/blockquote\u003e\n\u003cp\u003eRough. But ok, time to see of its better this time. Also, \u0026ldquo;military-grade encryption\u0026rdquo;, hah! :P\u003c\/p\u003e",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-06 20:25:12 \u002b0200 SAST",
+    "dateModified" : "2018-03-06 20:25:12 \u002b0200 SAST",
+    "url" : "https:\/\/leonjza.github.io\/blog\/2018\/03\/06\/microcorruption-reykjavik\/",
+    "wordCount" : "1497",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","reykjavik","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - reykjavik &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br>
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - reykjavik</h1>
+    <span class="post-date">Mar 6, 2018 &middot; 8 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption-reykjavik/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/reykjavik">reykjavik</a>
+    </span>
+    <figure>
+    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+</figure>
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---cusco/">previous challenge</a> called <em>Cusco</em>. This challenge is titled <em>Reykjavik</em>.</p>
+<p>This challenge has the following description towards the bottom:</p>
+<blockquote>
+<p>This is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.</p>
+</blockquote>
+<p>Rough. But ok, time to see of its better this time. Also, &ldquo;military-grade encryption&rdquo;, hah! :P</p>
+<h2 id="reykjavik">reykjavik</h2>
+<p>The <code>main</code> routine this time is a quite a bit different when compared to the previous challenges:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4438</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">main</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
+<span style="color:#960050;background-color:#1e0010">4438:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">e40</span> <span style="color:#ae81ff">2045</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x4520, r14
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">443</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f4e</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r14</span>, <span style="color:#66d9ef">r15</span>
+<span style="color:#960050;background-color:#1e0010">443</span>e:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">e40</span> <span style="color:#66d9ef">f800</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0xf8, r14
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4442</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">0024</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2400, r15
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4446</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">8644</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4486 &lt;enc&gt;
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">; once enc is done, call something without a label?
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">444</span>a:  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">0024</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x2400
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">444</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f43</span>           <span style="color:#66d9ef">clr</span>   <span style="color:#66d9ef">r15</span>
+</code></pre></div><p>Only two <code>call</code>&rsquo;s are made in <code>main</code>, of which the second has no label.</p>
+<p>The <code>enc</code> routine has quite a bit of logic though. Taking a closer, annotated look at the <code>enc</code> routine as I was performing a static analysis resulted in the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4486</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">enc</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
+<span style="color:#960050;background-color:#1e0010">4486:</span>  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">4488:</span>  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">a12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">448</span>a:  <span style="color:#960050;background-color:#1e0010">0912</span>           <span style="color:#a6e22e">push</span>  <span style="color:#66d9ef">r9</span>
+<span style="color:#960050;background-color:#1e0010">448</span>c:  <span style="color:#960050;background-color:#1e0010">0812</span>           <span style="color:#a6e22e">push</span>  <span style="color:#66d9ef">r8</span>
+
+<span style="color:#75715e">; clearing r13, might mean that the instruction at
+</span><span style="color:#75715e">; 4490 will move a 0x0 byte into 0x247c, indicating
+</span><span style="color:#75715e">; the start of a loop
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">448</span>e:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">d43</span>           <span style="color:#66d9ef">clr</span>   <span style="color:#66d9ef">r13</span>
+<span style="color:#960050;background-color:#1e0010">4490:</span>  <span style="color:#a6e22e">cd4d</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r13</span>, <span style="color:#ae81ff">0x247c</span>(<span style="color:#66d9ef">r13</span>)
+<span style="color:#960050;background-color:#1e0010">4494:</span>  <span style="color:#960050;background-color:#1e0010">1</span><span style="color:#a6e22e">d53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r13</span>
+
+<span style="color:#75715e">; this looks like a loop that will continue until
+</span><span style="color:#75715e">; r13 is incremented up to 0x0100 (256). interestingly
+</span><span style="color:#75715e">; that is bytes 0x00 to 0xff...
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">4496:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">d90</span> <span style="color:#ae81ff">0001</span>      <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x100, r13
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">449</span><span style="color:#66d9ef">a</span>:  <span style="color:#66d9ef">fa23</span>           <span style="color:#66d9ef">jne</span>   <span style="color:#75715e">#0x4490 &lt;enc+0xa&gt;
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">; not sure what this is preparing for yet, but it looks
+</span><span style="color:#75715e">; like r11 is being setup for a loop here.
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">449</span>c:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">c40</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x247c, r12
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">a0</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">d43</span>           <span style="color:#66d9ef">clr</span>   <span style="color:#66d9ef">r13</span>
+<span style="color:#960050;background-color:#1e0010">44</span>a2:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b4d</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r13</span>, <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">44</span>a4:  <span style="color:#960050;background-color:#1e0010">684</span><span style="color:#a6e22e">c</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#66d9ef">r12</span>, <span style="color:#66d9ef">r8</span>
+<span style="color:#960050;background-color:#1e0010">44</span>a6:  <span style="color:#960050;background-color:#1e0010">4</span><span style="color:#a6e22e">a48</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r8</span>, <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">44</span>a8:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">d5a</span>           <span style="color:#66d9ef">add</span>   <span style="color:#66d9ef">r10</span>, <span style="color:#66d9ef">r13</span>
+<span style="color:#960050;background-color:#1e0010">44</span>aa:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">a4b</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r10</span>
+
+<span style="color:#75715e">; some arithmetic. maybe an indication of a decrypt of
+</span><span style="color:#75715e">; some sorts or a simple byte swap happening here, needs
+</span><span style="color:#75715e">; debugger
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">44</span>ac:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">af0</span> <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f00</span>      <span style="color:#66d9ef">and</span>   <span style="color:#75715e">#0xf, r10
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">b0</span>:  <span style="color:#ae81ff">5</span><span style="color:#66d9ef">a4a</span> <span style="color:#ae81ff">7244</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#ae81ff">0x4472</span>(<span style="color:#66d9ef">r10</span>), <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">44</span>b4:  <span style="color:#960050;background-color:#1e0010">8</span><span style="color:#a6e22e">a11</span>           <span style="color:#66d9ef">sxt</span>   <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">44</span>b6:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">d5a</span>           <span style="color:#66d9ef">add</span>   <span style="color:#66d9ef">r10</span>, <span style="color:#66d9ef">r13</span>
+<span style="color:#960050;background-color:#1e0010">44</span>b8:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">df0</span> <span style="color:#66d9ef">ff00</span>      <span style="color:#66d9ef">and</span>   <span style="color:#75715e">#0xff, r13
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">bc</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">a4d</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r13</span>, <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">44</span>be:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">a50</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x247c, r10
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">c2</span>:  <span style="color:#ae81ff">694</span><span style="color:#66d9ef">a</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#66d9ef">r10</span>, <span style="color:#66d9ef">r9</span>
+<span style="color:#960050;background-color:#1e0010">44</span>c4:  <span style="color:#a6e22e">ca48</span> <span style="color:#ae81ff">0000</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r8</span>, <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r10</span>)
+<span style="color:#960050;background-color:#1e0010">44</span>c8:  <span style="color:#a6e22e">cc49</span> <span style="color:#ae81ff">0000</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r9</span>, <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r12</span>)
+<span style="color:#960050;background-color:#1e0010">44</span>cc:  <span style="color:#960050;background-color:#1e0010">1</span><span style="color:#a6e22e">b53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">44</span>ce:  <span style="color:#960050;background-color:#1e0010">1</span><span style="color:#a6e22e">c53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r12</span>
+
+<span style="color:#75715e">; the loop with r11 for another 256 bytes
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">44</span>d0:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">b90</span> <span style="color:#ae81ff">0001</span>      <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x100, r11
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">d4</span>:  <span style="color:#66d9ef">e723</span>           <span style="color:#66d9ef">jne</span>   <span style="color:#75715e">#0x44a4 &lt;enc+0x1e&gt;
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">44</span>d6:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b43</span>           <span style="color:#66d9ef">clr</span>   <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">44</span>d8:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">c4b</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r12</span>
+<span style="color:#960050;background-color:#1e0010">44</span>da:  <span style="color:#960050;background-color:#1e0010">183</span><span style="color:#a6e22e">c</span>           <span style="color:#66d9ef">jmp</span>   <span style="color:#75715e">#0x450c &lt;enc+0x86&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">dc</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">c53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r12</span>
+<span style="color:#960050;background-color:#1e0010">44</span>de:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">cf0</span> <span style="color:#66d9ef">ff00</span>      <span style="color:#66d9ef">and</span>   <span style="color:#75715e">#0xff, r12
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">e2</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">a4c</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r12</span>, <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">44</span>e4:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">a50</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x247c, r10
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">e8</span>:  <span style="color:#ae81ff">684</span><span style="color:#66d9ef">a</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#66d9ef">r10</span>, <span style="color:#66d9ef">r8</span>
+<span style="color:#960050;background-color:#1e0010">44</span>ea:  <span style="color:#960050;background-color:#1e0010">4</span><span style="color:#a6e22e">b58</span>           <span style="color:#66d9ef">add.b</span> <span style="color:#66d9ef">r8</span>, <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">44</span>ec:  <span style="color:#960050;background-color:#1e0010">4</span><span style="color:#a6e22e">b4b</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">44</span>ee:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">d4b</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r13</span>
+<span style="color:#960050;background-color:#1e0010">44</span>f0:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">d50</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x247c, r13
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">f4</span>:  <span style="color:#ae81ff">694</span><span style="color:#66d9ef">d</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#66d9ef">r13</span>, <span style="color:#66d9ef">r9</span>
+<span style="color:#960050;background-color:#1e0010">44</span>f6:  <span style="color:#a6e22e">cd48</span> <span style="color:#ae81ff">0000</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r8</span>, <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r13</span>)
+<span style="color:#960050;background-color:#1e0010">44</span>fa:  <span style="color:#a6e22e">ca49</span> <span style="color:#ae81ff">0000</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r9</span>, <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r10</span>)
+<span style="color:#960050;background-color:#1e0010">44</span>fe:  <span style="color:#960050;background-color:#1e0010">695</span><span style="color:#a6e22e">d</span>           <span style="color:#66d9ef">add.b</span> <span style="color:#960050;background-color:#1e0010">@</span><span style="color:#66d9ef">r13</span>, <span style="color:#66d9ef">r9</span>
+<span style="color:#960050;background-color:#1e0010">4500:</span>  <span style="color:#960050;background-color:#1e0010">4</span><span style="color:#a6e22e">d49</span>           <span style="color:#66d9ef">mov.b</span> <span style="color:#66d9ef">r9</span>, <span style="color:#66d9ef">r13</span>
+
+<span style="color:#75715e">; probably the actual decryption taking place here, as
+</span><span style="color:#75715e">; r15 (which was set in main) is used as an offset.
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">4502:</span>  <span style="color:#a6e22e">dfed</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c24</span> <span style="color:#ae81ff">0000</span> <span style="color:#66d9ef">xor.b</span> <span style="color:#ae81ff">0x247c</span>(<span style="color:#66d9ef">r13</span>), <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r15</span>)
+<span style="color:#960050;background-color:#1e0010">4508:</span>  <span style="color:#960050;background-color:#1e0010">1</span><span style="color:#a6e22e">f53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r15</span>
+
+<span style="color:#75715e">; decrement r14 until we get to 0, which will prevent the
+</span><span style="color:#75715e">; jmp back up from being taken, ending the routine.
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">; r14 was set to to 0xf8 (248) in main, so that might mean
+</span><span style="color:#75715e">; that the decrypted bytes is 248 long.
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">450</span>a:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">e53</span>           <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#-0x1, r14
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">450</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">e93</span>           <span style="color:#66d9ef">tst</span>   <span style="color:#66d9ef">r14</span>
+<span style="color:#960050;background-color:#1e0010">450</span>e:  <span style="color:#a6e22e">e623</span>           <span style="color:#66d9ef">jnz</span>   <span style="color:#75715e">#0x44dc &lt;enc+0x56&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4510</span>:  <span style="color:#ae81ff">3841</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r8</span>
+<span style="color:#960050;background-color:#1e0010">4512:</span>  <span style="color:#960050;background-color:#1e0010">3941</span>           <span style="color:#a6e22e">pop</span>   <span style="color:#66d9ef">r9</span>
+<span style="color:#960050;background-color:#1e0010">4514:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">a41</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r10</span>
+<span style="color:#960050;background-color:#1e0010">4516:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">b41</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r11</span>
+<span style="color:#960050;background-color:#1e0010">4518:</span>  <span style="color:#960050;background-color:#1e0010">3041</span>           <span style="color:#a6e22e">ret</span>
+</code></pre></div><p>As you can see, this is a busy routine. There is very clearly some form of byte write, swapping and <code>xor</code> occurring as expected. Some key points to note though is that the memory location <code>0x2400</code> that was written to <code>r15</code> in main is used as a starting offset for an <code>xor</code> instruction occurring within <code>enc</code>. So, that is definitely an interesting location to watch as we debug this routine.</p>
+<h3 id="debugging">debugging</h3>
+<p>To gain a better understanding of what is happening in <code>enc</code>, I set a breakpoint at the entry point of this routine with <code>break 4486</code>. Then continuing the CPU and manually stepping through the instructions while watching what happens around memory address <code>0x2400</code> revealed the following:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_memory_start_decrypt.png"/> 
+</figure>
+
+<p>It looks like a payload already lives from <code>0x2400</code> and a range of bytes from <code>0x00</code> to <code>0xff</code> is written from <code>0x247c</code> onwards.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_first_byte_writes.png"/> 
+</figure>
+
+<p>This memory state is achieved right after this loop has completed and the jump at <code>0x449a</code> is not taken. Alright. Lets move on. The next loop also does a whole bunch of manipulations on the byte range that was just written to memory (and a few other things). There are some weird instructions like the <code>mov.b r11,r11</code> at <code>0x44ec</code> that I couldn&rsquo;t quite understand, but nonetheless.</p>
+<p>The most important thing to see in this loop is that the bytes at <code>0x2400</code> are XOR&rsquo;d with those at <code>0x24f9</code> when the <code>xor.b 0x247c(r13), 0x0(r15)</code> instruction is called the first time. The second time, <code>0x247c(r13)</code> calculates to <code>0x24b6</code>, which is the next XOR.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_first_xor.png"/> 
+</figure>
+
+<p>This loop continues until <code>r14</code> reaches zero, and the registers before the call to <code>enc</code> is restored and the function returns. At this stage, the memory contents at <code>0x2400</code> looks as follows (which should now be the decrypted contents):</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_post_decryt.png"/> 
+</figure>
+
+<p>At this stage its pretty clear that the call to jump to <code>0x2400</code> in <code>main</code> was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into <a href="https://onlinedisassembler.com">https://onlinedisassembler.com</a>. The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with <code>cat dump | cut -d&quot; &quot; -f2-11</code> and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_decrypted_dissasembler.png"/> 
+</figure>
+
+<p>After pasting that into the disassembler, I quickly realised that the whole payload might not be valid code for this section. After the <code>ret</code> the instructions became pretty crazy, so I just removed those. The final opcodes I used (which was ~256 bytes when counted with <code>cat dump.raw | tr -d ' ' | wc -c</code>) were:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">0b12 0412 0441 2452 3150 e0ff 3b40 2045
+073c 1b53 8f11 0f12 0312 b012 6424 2152
+6f4b 4f93 f623 3012 0a00 0312 b012 6424
+2152 3012 1f00 3f40 dcff 0f54 0f12 2312
+b012 6424 3150 0600 b490 db01 dcff 0520
+3012 7f00 b012 6424 2153 3150 2000 3441
+3b41 3041 1e41 0200 0212 0f4e 8f10 024f
+32d0 0080 b012 1000 3241 3041
+</code></pre></div><p>Anyways, I could now step through these instructions in the debugger, and have a disassembled reference I could refer to and see what is happening. The opcodes in the online disassembler would also correspond with those on microcorruption at the top right section which helped confirm that I was on the right track.</p>
+<p>Stepping through each instruction, annotating what I thought was happening helped me understand what was going on. After a few rounds of running the routine, the following instructions were the most interesting as they were the instructions called just before it would jump away from the unlocking logic.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#a6e22e">cmp</span> <span style="color:#75715e">#0x1db, -0x24(r4)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">jnz</span> <span style="color:#66d9ef">$</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0xc</span>
+</code></pre></div><p>I needed to see what is happening at <code>-0x24(r4)</code> and see if I can control that value. To help me locate the memory location of the data used for the <code>cmp</code>, I had to do a little offset calculation. First, the <code>cmp</code> instruction was at <code>0x2448</code>, found by simply looking at the program counter (<code>pc</code>) as I debugged the routine. A breakpoint here let me inspect the registers and perform the offset calculations needed to know what data was used in the <code>cmp</code>. Register <code>r4</code> contained <code>0x43fe</code> which is 17406, so taking <code>0x24</code> (36) from that ends you up with <code>0x43fe</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#ae81ff">0x43fe</span>
+<span style="color:#ae81ff">17406</span>
+<span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#ae81ff">0x43fe</span><span style="color:#f92672">-</span><span style="color:#ae81ff">36</span>
+<span style="color:#ae81ff">17370</span>
+<span style="color:#f92672">&gt;&gt;&gt;</span> hex(<span style="color:#ae81ff">0x43fe</span><span style="color:#f92672">-</span><span style="color:#ae81ff">36</span>)
+<span style="color:#e6db74">&#39;0x43da&#39;</span>
+</code></pre></div><figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_password_buffer.png"/> 
+</figure>
+
+<p>The data at <code>0x43da</code> was the start of my password buffer, which is effectively what is being used in the <code>cmp</code> instruction. Making sure my password entered started with <code>0xdb01</code> (remember, little endian) would be enough for this compare to result in the status flag being set to not have the next conditional jump taken, resulting in a value of <code>0x7f</code> being pushed to the stack and a syscall being made to unlock the lock!</p>
+<p>My final, annotated version of the dissasembled opcodes looked as follows:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_annotated_decrypted_opcodes.png"/> 
+</figure>
+
+<h2 id="solution">solution</h2>
+<p>Enter <code>db01</code> as hex encoded input.</p>
+<h2 id="other-challenges">other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

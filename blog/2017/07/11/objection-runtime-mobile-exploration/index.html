@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "objection - runtime mobile exploration",
+    "headline" : "objection - runtime mobile exploration",
+    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/objection\/objection.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eIn this post, I want to introduce you to a toolkit that I have been working on, called \u003ca href=\u0022https:\/\/github.com\/sensepost\/objection\u0022\u003eobjection\u003c\/a\u003e. The name being a play on the words \u0026ldquo;object\u0026rdquo; and \u0026ldquo;injection\u0026rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution.\u003c\/p\u003e",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-07-11 14:05:41 \u002b0200 SAST",
+    "dateModified" : "2017-07-11 14:05:41 \u002b0200 SAST",
+    "url" : "https:\/\/leonjza.github.io\/blog\/2017\/07\/11\/objection-runtime-mobile-exploration\/",
+    "wordCount" : "698",
+    "keywords" : [ "ios","android","frida","objection","pentest","security","Blog" ]
+}
+</script>
+
+
+  <title>objection - runtime mobile exploration &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br>
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">objection - runtime mobile exploration</h1>
+    <span class="post-date">Jul 11, 2017 &middot; 4 minute read &middot; <a href="https://leonjza.github.io/blog/2017/07/11/objection-runtime-mobile-exploration/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ios">ios</a><a class="label" href="https://leonjza.github.io/categories/android">android</a><a class="label" href="https://leonjza.github.io/categories/frida">frida</a><a class="label" href="https://leonjza.github.io/categories/objection">objection</a><a class="label" href="https://leonjza.github.io/categories/pentest">pentest</a><a class="label" href="https://leonjza.github.io/categories/security">security</a>
+    </span>
+    <figure>
+    <img src="https://leonjza.github.io/images/objection/objection.png"/> 
+</figure>
+
+<p>In this post, I want to introduce you to a toolkit that I have been working on, called <a href="https://github.com/sensepost/objection">objection</a>. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution.</p>
+<p>With jailbreaks for iOS devices becoming increasingly difficult to come by (not to mention the often &lsquo;dodgy&rsquo; utilities out there to perform the exploits that allow you access outside of the iOS jail), the expectation of iOS 11 coming soon and many other operational issues faced when trying to prevent an existing iOS device from updating (and losing the jailbreak), objection will allow you to perform a large portion of the typical mobile security assessment all within the existing constraints of the application sandbox.</p>
+<h1 id="why">why</h1>
+<p>Many times, we as analysts find ourselves in a position where we need to explain the &ldquo;real world relevance&rdquo; of the epic pwnage you had. Often, admitting to the fact that your device was Jailbroken, leaves much to be questioned about how &ldquo;real&rdquo; the attacks you performed are. &ldquo;But if you had root, its technically over anyways, right?&rdquo;. Yes, but that is not the only way.</p>
+<p>Client engagement examples aside, most of the tooling that exists out there rely on the fact that your device is jailbroken (and rightfully so). But what if you simply dont have a Jailbroken device? Well, chances are you only focus on the API endpoints that the application consumes, hoping that the SSL pinning is broken enough for you to get an idea of how it works.</p>
+<p>Lets change that.</p>
+<h1 id="examples">examples</h1>
+<p>Under the hood, objection uses Frida to inject objects into a patched applications runtime and executes them within that applications security context to perform various tasks. Typical tasks may be short lived commands such as ls that will let you browse the mobile devices filesystem from the mobile applications perspective, or longer lived commands such as ios sslpinning disable that hooks common methods that are used to pin SSL certificates, and prevent validations from failing as you use the app.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/objection/objection_ls.png"/> 
+</figure>
+
+<p>While we are talking about the filesystem, it is also possible to download files straight off the device (where you have read access) as well as have the ability to re-upload files where write access is granted, such as the applications Documents directory.</p>
+<p>objection also includes an inline SQLite editor to make manipulating random sqlite databases that might exist a breeze.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/objection/objection_sqlite.png"/> 
+</figure>
+
+<p>Connecting to and querying an arbitrary SQLite database within an applications Documents directory.</p>
+<h1 id="sample-usage">sample usage</h1>
+<p>A sample session where objection is used to explore various parts of a sample iOS application that is already patched and running is shown below:</p>
+<!-- raw HTML omitted -->
+<h1 id="features">features</h1>
+<p>While still a work in progress, objection already contains a number of features. A few notable ones are:</p>
+<ul>
+<li>Interact with the remote filesystem to move around, upload and download files where ever access is granted.</li>
+<li>Dump the current processes memory, explore loaded modules and module exports.</li>
+<li>Interact with SQLite databases on the remote filesystem.</li>
+<li>Dump various bits of shared storages such as NSUserDefaults, NSHTTPCookieStorage and .plist files on an iOS devices disk in a human readable format.</li>
+<li>Simulate a jailbroken environment to test an iOS applications behaviour in such an environment.</li>
+<li>An iOS SSL pinning bypass module that implements the widely known SSL-Killswitch2 methods.</li>
+<li>Dump the iOS keychain.</li>
+<li>Perform iOS TouchID bypasses.</li>
+<li>Perform a type of class-dump that will list the available Objective-C classes and class methods.</li>
+<li>Dynamically hook and watch for method invocations of a specific class method. Additionally, objection can try and dump method arguments passed as they are invoked.</li>
+</ul>
+<p>&hellip; and much more.</p>
+<h1 id="get-it">get it</h1>
+<p>You can get objection right now over at https://github.com/sensepost/objection. Some setup work is needed, as well as a patching process for the IPA you are interested in. Fear not, all of that stuff is documented on the projects wiki that can be found here: https://github.com/sensepost/objection/wiki.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

