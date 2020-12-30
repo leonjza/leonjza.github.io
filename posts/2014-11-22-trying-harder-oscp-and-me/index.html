@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> trying harder oscp and me | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="trying harder oscp and me" />
+<meta property="og:description" content="
+     
+
+
+As I am writing this post, it&rsquo;s the &ldquo;morning after&rdquo; I have received the much awaited email confirming that I have successfully completed the OSCP Certification requirements!
+In order to obtain OSCP Certification, one must complete some time in the Penetration Testing with Kali Linux labs followed by a grueling 24 hour exam challenge.
+One really big realization that I came to was the fact that one should not attempt to do this if your goal is simply to get the OSCP Certification. Doing PWK is a excellent opportunity to learn and rushing it may cause you to not make it in the exam.
+Below is a summary of my experience obtaining OSCP." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2014-11-22-trying-harder-oscp-and-me/" />
+<meta property="article:published_time" content="2014-11-22T06:33:34+00:00" />
+<meta property="article:modified_time" content="2014-11-22T06:33:34+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="trying harder oscp and me"/>
+<meta name="twitter:description" content="
+     
+
+
+As I am writing this post, it&rsquo;s the &ldquo;morning after&rdquo; I have received the much awaited email confirming that I have successfully completed the OSCP Certification requirements!
+In order to obtain OSCP Certification, one must complete some time in the Penetration Testing with Kali Linux labs followed by a grueling 24 hour exam challenge.
+One really big realization that I came to was the fact that one should not attempt to do this if your goal is simply to get the OSCP Certification. Doing PWK is a excellent opportunity to learn and rushing it may cause you to not make it in the exam.
+Below is a summary of my experience obtaining OSCP."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2014-11-09-solving-kvasir-netcat-edition/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2014-12-06-playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&text=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&is_video=false&description=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=trying%20harder%20oscp%20and%20me&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&name=trying%20harder%20oscp%20and%20me&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2foscp_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eAs%20I%20am%20writing%20this%20post%2c%20it%26rsquo%3bs%20the%20%26ldquo%3bmorning%20after%26rdquo%3b%20I%20have%20received%20the%20much%20awaited%20email%20confirming%20that%20I%20have%20successfully%20completed%20the%20OSCP%20Certification%20requirements%21%3c%2fp%3e%0a%3cp%3eIn%20order%20to%20obtain%20OSCP%20Certification%2c%20one%20must%20complete%20some%20time%20in%20the%20Penetration%20Testing%20with%20Kali%20Linux%20labs%20followed%20by%20a%20grueling%2024%20hour%20exam%20challenge.%3c%2fp%3e%0a%3cp%3eOne%20really%20big%20realization%20that%20I%20came%20to%20was%20the%20fact%20that%20one%20should%20not%20attempt%20to%20do%20this%20if%20your%20goal%20is%20simply%20to%20get%20the%20OSCP%20Certification.%20Doing%20PWK%20is%20a%20excellent%20opportunity%20to%20learn%20and%20rushing%20it%20may%20cause%20you%20to%20not%20make%20it%20in%20the%20exam.%3c%2fp%3e%0a%3cp%3eBelow%20is%20a%20summary%20of%20my%20experience%20obtaining%20OSCP.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&t=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#preperation">preperation</a></li>
+    <li><a href="#first-impressions">first impressions</a></li>
+    <li><a href="#meeting-the-pwk-labs">meeting the PWK labs</a></li>
+    <li><a href="#pwning-lab-machines-to-prepare-for-the-exam">pwning lab machines to prepare for the exam</a></li>
+    <li><a href="#last-days-of-the-pwk-lab">last days of the PWK lab</a></li>
+    <li><a href="#oscp-exam">OSCP Exam</a></li>
+    <li><a href="#the-reports">the reports</a></li>
+    <li><a href="#certification">certification</a></li>
+    <li><a href="#oscp-faq">oscp faq</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        trying harder oscp and me
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2014-11-22 06:33:34 &#43;0000 UTC" itemprop="datePublished">2014-11-22</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/oscp">oscp</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/try-harder">try harder</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/offensive-security">offensive security</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/penetration-testing">penetration testing</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/certification">certification</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <figure>
+    <img src="https://leonjza.github.io/images/oscp_logo.png"/> 
+</figure>
+
+<p>As I am writing this post, it&rsquo;s the &ldquo;morning after&rdquo; I have received the much awaited email confirming that I have successfully completed the OSCP Certification requirements!</p>
+<p>In order to obtain OSCP Certification, one must complete some time in the Penetration Testing with Kali Linux labs followed by a grueling 24 hour exam challenge.</p>
+<p>One really big realization that I came to was the fact that one should not attempt to do this if your goal is simply to get the OSCP Certification. Doing PWK is a excellent opportunity to learn and rushing it may cause you to not make it in the exam.</p>
+<p>Below is a summary of my experience obtaining OSCP.</p>
+<h2 id="preperation">preperation</h2>
+<p>Taking OSCP was something I wanted to do for quite some time. I have read a number of blogs and experiences from people that have done it, and the most important take from all of that was the amount of time it took. Considering I had a full time job, it was hard for me to gauge exactly how much lab time I would have needed. So, I decided on getting 3 months to start off with.</p>
+<p>I also found a <a href="http://www.offensive-security.com/documentation/penetration-testing-with-kali.pdf">syllabus</a> online to get an idea about what is covered in the training and prepared myself mentally for what lies ahead.</p>
+<p>With the payments and logistics out of the way, I was scheduled to start 8 Aug &lsquo;14.</p>
+<h2 id="first-impressions">first impressions</h2>
+<p>On the morning of 8 Aug I receive a email with all of the course material and VPN details. I quickly sifted through the videos and pdf materials and decided to have a early look at the lab machines. My very first reaction was &ldquo;Where the heck do I start?&rdquo;. Everything was a little bit of a information overflow, and there is no clear &ldquo;do this, then this, then this.&rdquo;. One is given a overview of what is required from a documentation perspective, but that is about it.</p>
+<p>It was clear that I needed a plan of action. After some time, I decided to watch the videos thoroughly and after that, work through the PDF. The PDF detailed a whole bunch of exercises that had to be completed and documented too.</p>
+<p>One of the more important points to make here was the fact that 2 reports are required in the end. The exam report is of course compulsory but the lab report is optional. However, should you struggle to meet the requirements for the exam challenge, it <em>may</em> be possible to gain some points from your lab report. Of course, if you did not provide one, that chance you have is out the door. With that in mind, I decided to leave the exercises to later when I start to compile the actual lab report and jump right into the labs. In retrospect, I wish I decided to do the exercises first as there were some key elements taught to gear you for the labs.</p>
+<h2 id="meeting-the-pwk-labs">meeting the PWK labs</h2>
+<p>The machines in the lab were of varying difficulty for me. Some of them were almost a little too easy to pwn, while others were way more of a challenge. You are faced with a <em>public</em> network, and ultimately have to gain access to the <em>admin</em> network that is nested deeper in. Using some pivoting techniques, the <em>admin</em> network was definitely the most fun for me.</p>
+<p>I learnt a few hard lessons here though. My initial approach was to start at one IP, and work my way through trying to pwn them. Once I reached a machine I could not crack, I decided to move on. This worked ok for a while, until I came to a point where I was not able to progress any further. I had to go back and loot the machines I had already pwnd, and that lead to learning more about the surrounding networks and their vulnerabilities.</p>
+<p>Almost all of the lab machines are vulnerable to &ldquo;known&rdquo; vulnerabilities. This is not 0day training. However. What I really appreciated about the PWK labs was the fact that even though the vulnerabilities are known, in many cases you have to take proof of concept exploits, and modify them to actually fit your current environment and situation. There are not a lot of <em>push button, get bacon</em> scenarios, and quite a few exploits require you to actually understand the vulnerability and be able to bend it to suit your needs. This is where the requirement to be able to script/code a little comes from.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/oscp_try_harder.png"/> 
+</figure>
+
+<p>Offensive Security have a <a href="http://www.offensive-security.com/when-things-get-tough/">mantra that many know</a>. <em>Try Harder</em>. This is the classic response a student gets when asking for hints/help. It is probably the worst answer you can get when you have been bashing away at something for such a long time, but also the most rewarding when you <em>finally</em> get it.</p>
+<h2 id="pwning-lab-machines-to-prepare-for-the-exam">pwning lab machines to prepare for the exam</h2>
+<p>Many of the lab machines have vulnerabilities that have Metasploit modules. You can easily try the <em>push button, get bacon</em> technique on them. But, it is important to note that in the exam, you will be restricted to what you can use. In fact, there are very clear Metasploit restrictions. From not being allowed to use Metasploit at all, to only being allowed to use certain features of the meterpreter shell. With this in mind, I will always <strong>highly</strong> recommend you attempt to exploit as much as possible in the labs without the use of Metasploit.</p>
+<p>Not being allowed to use Metasploit for me personally was not really such a big deal. Having practiced quite a lot in the labs to <em>not</em> use Metasploit, it was easy to find PoC exploits and modify them as required. I did make a lot of use of <strong>msfpayload</strong> to generate shellcode, but other than that, plain bind/netcat shells were in the order of the day.</p>
+<h2 id="last-days-of-the-pwk-lab">last days of the PWK lab</h2>
+<p>My Lab time was scheduled to end 8 nov 2014. I have spent easily about 4-6 hours a night (where possible) in the labs with even more time on the weekends. With about a week left, I turned my focus to the 3 harder machines in the labs, known as <em>pain</em>, <em>sufferance</em> and <em>humble</em>. These 3 machines definitely were the hardest of the bunch, but I managed to pwn them too. By 7 Nov, I had successfully managed to pwn all of the lab machines and had the first version of my Lab report done.</p>
+<p>It was time to book the exam.</p>
+<h2 id="oscp-exam">OSCP Exam</h2>
+<p>I managed to secure 19 November @11am as the date I was going to attempt the OSCP Certification Challenge. This actually worked out great for me, as it gave me enough time to catch up on some lost sleep, as well as polish the lab report I was going to send in with my Exam report.</p>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Yeah, I am probably going to need this later tomorrow morning. <a href="http://t.co/8rcQ7YNwIS">pic.twitter.com/8rcQ7YNwIS</a></p>&mdash; _leon_jacobs(💥) (@leonjza) <a href="https://twitter.com/leonjza/status/534967808619470849?ref_src=twsrc%5Etfw">November 19, 2014</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>The day before the exam, I stocked up on some <a href="https://twitter.com/leonjza/status/534967808619470849">energy drinks</a> and made sure I get a good nights sleep while trying to keep my mind off the exam until it was time.</p>
+<p>The morning of the exam I was not able to keep the excitement in any longer, and I was up at 8am already getting ready for the challenge. My playlist was ready to jam, distractions such as Skype, Steam, Twitter and IRC were all closed, when finally my email with Exam instructions arrived.</p>
+<p>The exam instructions outlined exactly how much points each machine you have to pwn is worth, as well as all the restrictions that apply to each machine. You also have 23hours 45minutes before your exam VPN will expire, whereafter you have another 24hours to submit your documentation. There are 100 points obtainable in the exam, of which you have to get 70 to pass.</p>
+<p>Within about 5hours, I had secured roughly 50 points. From there, things were going a lot slower. 10 hours in, I went up to 60 points. At about 2am the next morning, the fatigue was playing a massive role and I decided to go take a power nap. I set the alarm for 3am. Of course, I didn&rsquo;t actually sleep, but just letting your body lie down and rest while you ponder about what your next move will be proved to help a lot.</p>
+<p>At about 6am that morning, I was up to 80 points. This is technically already enough to pass (assuming I did not make a mistake and break a rule), but I wanted to try get all of the points I could possibly get. Fast forward to about 9am that morning, I decided to call it and start getting a rough draft of the exam report ready. I wanted to make sure I had all of the screenshots and console output I needed before the VPN expired.</p>
+<h2 id="the-reports">the reports</h2>
+<p>At exactly 1045 that morning, the VPN dropped and the challenge was over. I now had 24 hours to submit the report. Considering I have been up for about 28 hours now (with a 1hour power nap), I thought it best to actually get some sleep and finish the report off afterwards.</p>
+<p>After about 6 hours of ZZZ&rsquo;s, I had a proper dinner and sat down to complete the exam report. The Lab report took me almost 2 weeks to complete, but the exam is nowhere near as much work and was definitely doable in 24hours. 10pm that evening I submitted both of my reports and went straight to bed :D</p>
+<h2 id="certification">certification</h2>
+<p>Almost exactly 24 hours later, I get the confirmation email that I have passed:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/oscp_complete.png"/> 
+</figure>
+
+<p>Dem feels were good :D</p>
+<h2 id="oscp-faq">oscp faq</h2>
+<p>I had quite a number of questions before I started the PWK training. So, let me try and answer a few for others that may have similar questions:</p>
+<p><strong>q: I am not really in a Security Role now, will this be helpful?</strong>
+a: Yes! I am convinced you will learn about things you maybe never even realized was possible. In fact. Not will you learn about common security flaws, you will have the expertise to identify and exploit them as well.</p>
+<p><strong>q: Is scripting/development experience really required?</strong>
+a: I&rsquo;d definitely say yes. To narrow it down, I would say that you don&rsquo;t necessarily have to have some mad ninja l33t dev skillz, but hacking away and debugging existing code (be it C/C++, Python or Perl) to make it work <strong>your</strong> way is definitely a need.</p>
+<p><strong>q: How much time would I need to set aside for this?</strong>
+a: Lots! PWK almost literally ate me up. I was not doing anything else apart from this. I had the odd break for a evening or two, but every chance I had I spent on the labs. Considering I had a full time day job, 3 months was perfect, but I think it may totally be possible to nail it in 1 month assuming you have the free time.</p>
+<p><strong>q: Ok, I got the material, where the heck do I start?</strong>
+a: Now that I have completed the training, I would suggest you watch the videos. Then, work through the PDF documentation (actually doing the exercises) while you prepare your report. Finally start hacking away in the labs.</p>
+<p><strong>q: How hard were the Lab machines?</strong>
+a: That is a really hard question to answer. If you have never ever seen any of this stuff before, you may be in for a lot of learning and may have quite a rough time in the beginning. The <em>toughness</em> I&rsquo;d say is almost entirely relative to your existing experience. But, its not impossible to learn learn learn! :)</p>
+<p><strong>q: Seriously now, how hard was the exam?</strong>
+a: For me? It was hard. Not necessarily just from a technical perspective, but also the time limitation, the rules, the fatigue, the everything! However, I feel the PWK labs are sufficient in gearing you towards it. You won&rsquo;t see the same exploits in the exam as you saw in the lab. So, make sure you understand the fundamental concepts in the labs and you will be fine in the exam!</p>
+<p><strong>q: Anything else?</strong>
+a: TRY HARDER.</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#preperation">preperation</a></li>
+    <li><a href="#first-impressions">first impressions</a></li>
+    <li><a href="#meeting-the-pwk-labs">meeting the PWK labs</a></li>
+    <li><a href="#pwning-lab-machines-to-prepare-for-the-exam">pwning lab machines to prepare for the exam</a></li>
+    <li><a href="#last-days-of-the-pwk-lab">last days of the PWK lab</a></li>
+    <li><a href="#oscp-exam">OSCP Exam</a></li>
+    <li><a href="#the-reports">the reports</a></li>
+    <li><a href="#certification">certification</a></li>
+    <li><a href="#oscp-faq">oscp faq</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&text=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&is_video=false&description=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=trying%20harder%20oscp%20and%20me&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&title=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&name=trying%20harder%20oscp%20and%20me&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2foscp_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eAs%20I%20am%20writing%20this%20post%2c%20it%26rsquo%3bs%20the%20%26ldquo%3bmorning%20after%26rdquo%3b%20I%20have%20received%20the%20much%20awaited%20email%20confirming%20that%20I%20have%20successfully%20completed%20the%20OSCP%20Certification%20requirements%21%3c%2fp%3e%0a%3cp%3eIn%20order%20to%20obtain%20OSCP%20Certification%2c%20one%20must%20complete%20some%20time%20in%20the%20Penetration%20Testing%20with%20Kali%20Linux%20labs%20followed%20by%20a%20grueling%2024%20hour%20exam%20challenge.%3c%2fp%3e%0a%3cp%3eOne%20really%20big%20realization%20that%20I%20came%20to%20was%20the%20fact%20that%20one%20should%20not%20attempt%20to%20do%20this%20if%20your%20goal%20is%20simply%20to%20get%20the%20OSCP%20Certification.%20Doing%20PWK%20is%20a%20excellent%20opportunity%20to%20learn%20and%20rushing%20it%20may%20cause%20you%20to%20not%20make%20it%20in%20the%20exam.%3c%2fp%3e%0a%3cp%3eBelow%20is%20a%20summary%20of%20my%20experience%20obtaining%20OSCP.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-11-22-trying-harder-oscp-and-me%2f&t=trying%20harder%20oscp%20and%20me">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

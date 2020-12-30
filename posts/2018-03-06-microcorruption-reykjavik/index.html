@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> microcorruption - reykjavik | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="microcorruption - reykjavik" />
+<meta property="og:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Cusco. This challenge is titled Reykjavik.
+This challenge has the following description towards the bottom:
+
+This is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.
+
+Rough. But ok, time to see of its better this time. Also, &ldquo;military-grade encryption&rdquo;, hah! :P" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2018-03-06-microcorruption-reykjavik/" />
+<meta property="article:published_time" content="2018-03-06T20:25:12+02:00" />
+<meta property="article:modified_time" content="2018-03-06T20:25:12+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="microcorruption - reykjavik"/>
+<meta name="twitter:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Cusco. This challenge is titled Reykjavik.
+This challenge has the following description towards the bottom:
+
+This is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.
+
+Rough. But ok, time to see of its better this time. Also, &ldquo;military-grade encryption&rdquo;, hah! :P"/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2018-03-06-microcorruption-cusco/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2018-03-07-microcorruption-whitehorse/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&text=microcorruption%20-%20reykjavik">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&is_video=false&description=microcorruption%20-%20reykjavik">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20reykjavik&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&name=microcorruption%20-%20reykjavik&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f06%2fmicrocorruption---cusco%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eCusco%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eReykjavik%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThis%20challenge%20has%20the%20following%20description%20towards%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2002.%20This%20release%20contains%20military-grade%20encryption%20so%20users%20can%20be%20confident%20that%20the%20passwords%20they%20enter%20can%20not%20be%20read%20from%20memory.%20We%20apologize%20for%20making%20it%20too%20easy%20for%20the%20password%20to%20be%20recovered%20on%20prior%20versions.%20The%20engineers%20responsible%20have%20been%20sacked.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eRough.%20But%20ok%2c%20time%20to%20see%20of%20its%20better%20this%20time.%20Also%2c%20%26ldquo%3bmilitary-grade%20encryption%26rdquo%3b%2c%20hah%21%20%3aP%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&t=microcorruption%20-%20reykjavik">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#reykjavik">reykjavik</a>
+      <ul>
+        <li><a href="#debugging">debugging</a></li>
+      </ul>
+    </li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        microcorruption - reykjavik
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2018-03-06 20:25:12 &#43;0200 SAST" itemprop="datePublished">2018-03-06</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/exploit">exploit</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/assembly">assembly</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/reykjavik">reykjavik</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <figure>
+    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+</figure>
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/06/microcorruption---cusco/">previous challenge</a> called <em>Cusco</em>. This challenge is titled <em>Reykjavik</em>.</p>
+<p>This challenge has the following description towards the bottom:</p>
+<blockquote>
+<p>This is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.</p>
+</blockquote>
+<p>Rough. But ok, time to see of its better this time. Also, &ldquo;military-grade encryption&rdquo;, hah! :P</p>
+<h2 id="reykjavik">reykjavik</h2>
+<p>The <code>main</code> routine this time is a quite a bit different when compared to the previous challenges:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
+4438:  3<span style="color:#50fa7b">e40</span> <span style="color:#bd93f9">2045</span>      mov   <span style="color:#6272a4">#0x4520, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  <span style="color:#bd93f9">0</span>f4e           mov   r14, r15
+443<span style="color:#8be9fd;font-style:italic">e:</span>  3<span style="color:#50fa7b">e40</span> f800      mov   <span style="color:#6272a4">#0xf8, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4442</span>:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">0024</span>      mov   <span style="color:#6272a4">#0x2400, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4446</span>:  b012 <span style="color:#bd93f9">8644</span>      call  <span style="color:#6272a4">#0x4486 &lt;enc&gt;
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">; once enc is done, call something without a label?
+</span><span style="color:#6272a4"></span>444<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">0024</span>      call  <span style="color:#6272a4">#0x2400
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">444</span>e:  <span style="color:#bd93f9">0</span>f43           clr   r15
+</code></pre></div><p>Only two <code>call</code>&rsquo;s are made in <code>main</code>, of which the second has no label.</p>
+<p>The <code>enc</code> routine has quite a bit of logic though. Taking a closer, annotated look at the <code>enc</code> routine as I was performing a static analysis resulted in the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4486 &lt;<span style="color:#50fa7b">enc</span>&gt;
+4486:  0<span style="color:#50fa7b">b12</span>           push  r11
+4488:  0<span style="color:#50fa7b">a12</span>           push  r10
+448<span style="color:#8be9fd;font-style:italic">a:</span>  0912           <span style="color:#50fa7b">push</span>  r9
+448<span style="color:#8be9fd;font-style:italic">c:</span>  0812           <span style="color:#50fa7b">push</span>  r8
+
+<span style="color:#6272a4">; clearing r13, might mean that the instruction at
+</span><span style="color:#6272a4">; 4490 will move a 0x0 byte into 0x247c, indicating
+</span><span style="color:#6272a4">; the start of a loop
+</span><span style="color:#6272a4"></span>
+448<span style="color:#8be9fd;font-style:italic">e:</span>  0<span style="color:#50fa7b">d43</span>           clr   r13
+4490:  <span style="color:#50fa7b">cd4d</span> <span style="color:#bd93f9">7</span>c24      mov.b r13, <span style="color:#bd93f9">0x247c</span>(r13)
+4494:  1<span style="color:#50fa7b">d53</span>           inc   r13
+
+<span style="color:#6272a4">; this looks like a loop that will continue until
+</span><span style="color:#6272a4">; r13 is incremented up to 0x0100 (256). interestingly
+</span><span style="color:#6272a4">; that is bytes 0x00 to 0xff...
+</span><span style="color:#6272a4"></span>
+4496:  3<span style="color:#50fa7b">d90</span> <span style="color:#bd93f9">0001</span>      cmp   <span style="color:#6272a4">#0x100, r13
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">449</span>a:  fa23           jne   <span style="color:#6272a4">#0x4490 &lt;enc+0xa&gt;
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">; not sure what this is preparing for yet, but it looks
+</span><span style="color:#6272a4">; like r11 is being setup for a loop here.
+</span><span style="color:#6272a4"></span>
+449<span style="color:#8be9fd;font-style:italic">c:</span>  3<span style="color:#50fa7b">c40</span> <span style="color:#bd93f9">7</span>c24      mov   <span style="color:#6272a4">#0x247c, r12
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a0:  <span style="color:#bd93f9">0</span>d43           clr   r13
+44<span style="color:#8be9fd;font-style:italic">a2:</span>  0<span style="color:#50fa7b">b4d</span>           mov   r13, r11
+44<span style="color:#8be9fd;font-style:italic">a4:</span>  684<span style="color:#50fa7b">c</span>           mov.b @r12, r8
+44<span style="color:#8be9fd;font-style:italic">a6:</span>  4<span style="color:#50fa7b">a48</span>           mov.b r8, r10
+44<span style="color:#8be9fd;font-style:italic">a8:</span>  0<span style="color:#50fa7b">d5a</span>           add   r10, r13
+44<span style="color:#8be9fd;font-style:italic">aa:</span>  0<span style="color:#50fa7b">a4b</span>           mov   r11, r10
+
+<span style="color:#6272a4">; some arithmetic. maybe an indication of a decrypt of
+</span><span style="color:#6272a4">; some sorts or a simple byte swap happening here, needs
+</span><span style="color:#6272a4">; debugger
+</span><span style="color:#6272a4"></span>
+44<span style="color:#8be9fd;font-style:italic">ac:</span>  3<span style="color:#50fa7b">af0</span> <span style="color:#bd93f9">0</span>f00      and   <span style="color:#6272a4">#0xf, r10
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>b0:  <span style="color:#bd93f9">5</span>a4a <span style="color:#bd93f9">7244</span>      mov.b <span style="color:#bd93f9">0x4472</span>(r10), r10
+44<span style="color:#8be9fd;font-style:italic">b4:</span>  8<span style="color:#50fa7b">a11</span>           sxt   r10
+44<span style="color:#8be9fd;font-style:italic">b6:</span>  0<span style="color:#50fa7b">d5a</span>           add   r10, r13
+44<span style="color:#8be9fd;font-style:italic">b8:</span>  3<span style="color:#50fa7b">df0</span> ff00      and   <span style="color:#6272a4">#0xff, r13
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>bc:  <span style="color:#bd93f9">0</span>a4d           mov   r13, r10
+44<span style="color:#8be9fd;font-style:italic">be:</span>  3<span style="color:#50fa7b">a50</span> <span style="color:#bd93f9">7</span>c24      add   <span style="color:#6272a4">#0x247c, r10
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>c2:  <span style="color:#bd93f9">694</span>a           mov.b @r10, r9
+44<span style="color:#8be9fd;font-style:italic">c4:</span>  <span style="color:#50fa7b">ca48</span> <span style="color:#bd93f9">0000</span>      mov.b r8, <span style="color:#bd93f9">0x0</span>(r10)
+44<span style="color:#8be9fd;font-style:italic">c8:</span>  <span style="color:#50fa7b">cc49</span> <span style="color:#bd93f9">0000</span>      mov.b r9, <span style="color:#bd93f9">0x0</span>(r12)
+44<span style="color:#8be9fd;font-style:italic">cc:</span>  1<span style="color:#50fa7b">b53</span>           inc   r11
+44<span style="color:#8be9fd;font-style:italic">ce:</span>  1<span style="color:#50fa7b">c53</span>           inc   r12
+
+<span style="color:#6272a4">; the loop with r11 for another 256 bytes
+</span><span style="color:#6272a4"></span>
+44<span style="color:#8be9fd;font-style:italic">d0:</span>  3<span style="color:#50fa7b">b90</span> <span style="color:#bd93f9">0001</span>      cmp   <span style="color:#6272a4">#0x100, r11
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>d4:  e723           jne   <span style="color:#6272a4">#0x44a4 &lt;enc+0x1e&gt;
+</span><span style="color:#6272a4"></span>
+44<span style="color:#8be9fd;font-style:italic">d6:</span>  0<span style="color:#50fa7b">b43</span>           clr   r11
+44<span style="color:#8be9fd;font-style:italic">d8:</span>  0<span style="color:#50fa7b">c4b</span>           mov   r11, r12
+44<span style="color:#8be9fd;font-style:italic">da:</span>  183<span style="color:#50fa7b">c</span>           jmp   <span style="color:#6272a4">#0x450c &lt;enc+0x86&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>dc:  <span style="color:#bd93f9">1</span>c53           inc   r12
+44<span style="color:#8be9fd;font-style:italic">de:</span>  3<span style="color:#50fa7b">cf0</span> ff00      and   <span style="color:#6272a4">#0xff, r12
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>e2:  <span style="color:#bd93f9">0</span>a4c           mov   r12, r10
+44<span style="color:#8be9fd;font-style:italic">e4:</span>  3<span style="color:#50fa7b">a50</span> <span style="color:#bd93f9">7</span>c24      add   <span style="color:#6272a4">#0x247c, r10
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>e8:  <span style="color:#bd93f9">684</span>a           mov.b @r10, r8
+44<span style="color:#8be9fd;font-style:italic">ea:</span>  4<span style="color:#50fa7b">b58</span>           add.b r8, r11
+44<span style="color:#8be9fd;font-style:italic">ec:</span>  4<span style="color:#50fa7b">b4b</span>           mov.b r11, r11
+44<span style="color:#8be9fd;font-style:italic">ee:</span>  0<span style="color:#50fa7b">d4b</span>           mov   r11, r13
+44<span style="color:#8be9fd;font-style:italic">f0:</span>  3<span style="color:#50fa7b">d50</span> <span style="color:#bd93f9">7</span>c24      add   <span style="color:#6272a4">#0x247c, r13
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>f4:  <span style="color:#bd93f9">694</span>d           mov.b @r13, r9
+44<span style="color:#8be9fd;font-style:italic">f6:</span>  <span style="color:#50fa7b">cd48</span> <span style="color:#bd93f9">0000</span>      mov.b r8, <span style="color:#bd93f9">0x0</span>(r13)
+44<span style="color:#8be9fd;font-style:italic">fa:</span>  <span style="color:#50fa7b">ca49</span> <span style="color:#bd93f9">0000</span>      mov.b r9, <span style="color:#bd93f9">0x0</span>(r10)
+44<span style="color:#8be9fd;font-style:italic">fe:</span>  695<span style="color:#50fa7b">d</span>           add.b @r13, r9
+4500:  4<span style="color:#50fa7b">d49</span>           mov.b r9, r13
+
+<span style="color:#6272a4">; probably the actual decryption taking place here, as
+</span><span style="color:#6272a4">; r15 (which was set in main) is used as an offset.
+</span><span style="color:#6272a4"></span>
+4502:  <span style="color:#50fa7b">dfed</span> <span style="color:#bd93f9">7</span>c24 <span style="color:#bd93f9">0000</span> xor.b <span style="color:#bd93f9">0x247c</span>(r13), <span style="color:#bd93f9">0x0</span>(r15)
+4508:  1<span style="color:#50fa7b">f53</span>           inc   r15
+
+<span style="color:#6272a4">; decrement r14 until we get to 0, which will prevent the
+</span><span style="color:#6272a4">; jmp back up from being taken, ending the routine.
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">; r14 was set to to 0xf8 (248) in main, so that might mean
+</span><span style="color:#6272a4">; that the decrypted bytes is 248 long.
+</span><span style="color:#6272a4"></span>
+450<span style="color:#8be9fd;font-style:italic">a:</span>  3<span style="color:#50fa7b">e53</span>           add   <span style="color:#6272a4">#-0x1, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">450</span>c:  <span style="color:#bd93f9">0</span>e93           tst   r14
+450<span style="color:#8be9fd;font-style:italic">e:</span>  <span style="color:#50fa7b">e623</span>           jnz   <span style="color:#6272a4">#0x44dc &lt;enc+0x56&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4510</span>:  <span style="color:#bd93f9">3841</span>           pop   r8
+4512:  3941           <span style="color:#50fa7b">pop</span>   r9
+4514:  3<span style="color:#50fa7b">a41</span>           pop   r10
+4516:  3<span style="color:#50fa7b">b41</span>           pop   r11
+4518:  3041           <span style="color:#50fa7b">ret</span>
+</code></pre></div><p>As you can see, this is a busy routine. There is very clearly some form of byte write, swapping and <code>xor</code> occurring as expected. Some key points to note though is that the memory location <code>0x2400</code> that was written to <code>r15</code> in main is used as a starting offset for an <code>xor</code> instruction occurring within <code>enc</code>. So, that is definitely an interesting location to watch as we debug this routine.</p>
+<h3 id="debugging">debugging</h3>
+<p>To gain a better understanding of what is happening in <code>enc</code>, I set a breakpoint at the entry point of this routine with <code>break 4486</code>. Then continuing the CPU and manually stepping through the instructions while watching what happens around memory address <code>0x2400</code> revealed the following:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_memory_start_decrypt.png"/> 
+</figure>
+
+<p>It looks like a payload already lives from <code>0x2400</code> and a range of bytes from <code>0x00</code> to <code>0xff</code> is written from <code>0x247c</code> onwards.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_first_byte_writes.png"/> 
+</figure>
+
+<p>This memory state is achieved right after this loop has completed and the jump at <code>0x449a</code> is not taken. Alright. Lets move on. The next loop also does a whole bunch of manipulations on the byte range that was just written to memory (and a few other things). There are some weird instructions like the <code>mov.b r11,r11</code> at <code>0x44ec</code> that I couldn&rsquo;t quite understand, but nonetheless.</p>
+<p>The most important thing to see in this loop is that the bytes at <code>0x2400</code> are XOR&rsquo;d with those at <code>0x24f9</code> when the <code>xor.b 0x247c(r13), 0x0(r15)</code> instruction is called the first time. The second time, <code>0x247c(r13)</code> calculates to <code>0x24b6</code>, which is the next XOR.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_first_xor.png"/> 
+</figure>
+
+<p>This loop continues until <code>r14</code> reaches zero, and the registers before the call to <code>enc</code> is restored and the function returns. At this stage, the memory contents at <code>0x2400</code> looks as follows (which should now be the decrypted contents):</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_post_decryt.png"/> 
+</figure>
+
+<p>At this stage its pretty clear that the call to jump to <code>0x2400</code> in <code>main</code> was because then the encrypted opcodes would be available there and further processing should take place. Now, reading the opcodes like that from a memory dump sucks. So, to make it a little more digestible, I slapped the dump into <a href="https://onlinedisassembler.com">https://onlinedisassembler.com</a>. The process was pretty simple; select the memory dump from microcorruption, paste it into a file, cleanup the dump with <code>cat dump | cut -d&quot; &quot; -f2-11</code> and paste that result into the RAW section in the disassembler. Finally, set the architecture to MSP430 and profit!</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_decrypted_dissasembler.png"/> 
+</figure>
+
+<p>After pasting that into the disassembler, I quickly realised that the whole payload might not be valid code for this section. After the <code>ret</code> the instructions became pretty crazy, so I just removed those. The final opcodes I used (which was ~256 bytes when counted with <code>cat dump.raw | tr -d ' ' | wc -c</code>) were:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">0b12 0412 0441 2452 3150 e0ff 3b40 2045
+073c 1b53 8f11 0f12 0312 b012 6424 2152
+6f4b 4f93 f623 3012 0a00 0312 b012 6424
+2152 3012 1f00 3f40 dcff 0f54 0f12 2312
+b012 6424 3150 0600 b490 db01 dcff 0520
+3012 7f00 b012 6424 2153 3150 2000 3441
+3b41 3041 1e41 0200 0212 0f4e 8f10 024f
+32d0 0080 b012 1000 3241 3041
+</code></pre></div><p>Anyways, I could now step through these instructions in the debugger, and have a disassembled reference I could refer to and see what is happening. The opcodes in the online disassembler would also correspond with those on microcorruption at the top right section which helped confirm that I was on the right track.</p>
+<p>Stepping through each instruction, annotating what I thought was happening helped me understand what was going on. After a few rounds of running the routine, the following instructions were the most interesting as they were the instructions called just before it would jump away from the unlocking logic.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#50fa7b">cmp</span> <span style="color:#6272a4">#0x1db, -0x24(r4)
+</span><span style="color:#6272a4"></span>jnz $+<span style="color:#bd93f9">0xc</span>
+</code></pre></div><p>I needed to see what is happening at <code>-0x24(r4)</code> and see if I can control that value. To help me locate the memory location of the data used for the <code>cmp</code>, I had to do a little offset calculation. First, the <code>cmp</code> instruction was at <code>0x2448</code>, found by simply looking at the program counter (<code>pc</code>) as I debugged the routine. A breakpoint here let me inspect the registers and perform the offset calculations needed to know what data was used in the <code>cmp</code>. Register <code>r4</code> contained <code>0x43fe</code> which is 17406, so taking <code>0x24</code> (36) from that ends you up with <code>0x43fe</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#bd93f9">0x43fe</span>
+<span style="color:#bd93f9">17406</span>
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#bd93f9">0x43fe</span><span style="color:#ff79c6">-</span><span style="color:#bd93f9">36</span>
+<span style="color:#bd93f9">17370</span>
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#8be9fd;font-style:italic">hex</span>(<span style="color:#bd93f9">0x43fe</span><span style="color:#ff79c6">-</span><span style="color:#bd93f9">36</span>)
+<span style="color:#f1fa8c">&#39;0x43da&#39;</span>
+</code></pre></div><figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_password_buffer.png"/> 
+</figure>
+
+<p>The data at <code>0x43da</code> was the start of my password buffer, which is effectively what is being used in the <code>cmp</code> instruction. Making sure my password entered started with <code>0xdb01</code> (remember, little endian) would be enough for this compare to result in the status flag being set to not have the next conditional jump taken, resulting in a value of <code>0x7f</code> being pushed to the stack and a syscall being made to unlock the lock!</p>
+<p>My final, annotated version of the dissasembled opcodes looked as follows:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/reykjavik_annotated_decrypted_opcodes.png"/> 
+</figure>
+
+<h2 id="solution">solution</h2>
+<p>Enter <code>db01</code> as hex encoded input.</p>
+<h2 id="other-challenges">other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#reykjavik">reykjavik</a>
+      <ul>
+        <li><a href="#debugging">debugging</a></li>
+      </ul>
+    </li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&text=microcorruption%20-%20reykjavik">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&is_video=false&description=microcorruption%20-%20reykjavik">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20reykjavik&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&title=microcorruption%20-%20reykjavik">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&name=microcorruption%20-%20reykjavik&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f06%2fmicrocorruption---cusco%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eCusco%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eReykjavik%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThis%20challenge%20has%20the%20following%20description%20towards%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2002.%20This%20release%20contains%20military-grade%20encryption%20so%20users%20can%20be%20confident%20that%20the%20passwords%20they%20enter%20can%20not%20be%20read%20from%20memory.%20We%20apologize%20for%20making%20it%20too%20easy%20for%20the%20password%20to%20be%20recovered%20on%20prior%20versions.%20The%20engineers%20responsible%20have%20been%20sacked.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eRough.%20But%20ok%2c%20time%20to%20see%20of%20its%20better%20this%20time.%20Also%2c%20%26ldquo%3bmilitary-grade%20encryption%26rdquo%3b%2c%20hah%21%20%3aP%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-06-microcorruption-reykjavik%2f&t=microcorruption%20-%20reykjavik">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

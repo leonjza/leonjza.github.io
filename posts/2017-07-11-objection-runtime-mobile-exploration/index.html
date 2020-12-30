@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> objection - runtime mobile exploration | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="objection - runtime mobile exploration" />
+<meta property="og:description" content="
+     
+
+
+In this post, I want to introduce you to a toolkit that I have been working on, called objection. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2017-07-11-objection-runtime-mobile-exploration/" />
+<meta property="article:published_time" content="2017-07-11T14:05:41+02:00" />
+<meta property="article:modified_time" content="2017-07-11T14:05:41+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="objection - runtime mobile exploration"/>
+<meta name="twitter:description" content="
+     
+
+
+In this post, I want to introduce you to a toolkit that I have been working on, called objection. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2017-03-24-sending-am-ook-using-metasploit/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2017-12-13-building-the-bsidescpt17-rfchallenge/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&text=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&is_video=false&description=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=objection%20-%20runtime%20mobile%20exploration&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&t=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents"></nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        objection - runtime mobile exploration
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2017-07-11 14:05:41 &#43;0200 SAST" itemprop="datePublished">2017-07-11</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/ios">ios</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/android">android</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/frida">frida</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/objection">objection</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/pentest">pentest</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/security">security</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <figure>
+    <img src="https://leonjza.github.io/images/objection/objection.png"/> 
+</figure>
+
+<p>In this post, I want to introduce you to a toolkit that I have been working on, called <a href="https://github.com/sensepost/objection">objection</a>. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution.</p>
+<p>With jailbreaks for iOS devices becoming increasingly difficult to come by (not to mention the often &lsquo;dodgy&rsquo; utilities out there to perform the exploits that allow you access outside of the iOS jail), the expectation of iOS 11 coming soon and many other operational issues faced when trying to prevent an existing iOS device from updating (and losing the jailbreak), objection will allow you to perform a large portion of the typical mobile security assessment all within the existing constraints of the application sandbox.</p>
+<h1 id="why">why</h1>
+<p>Many times, we as analysts find ourselves in a position where we need to explain the &ldquo;real world relevance&rdquo; of the epic pwnage you had. Often, admitting to the fact that your device was Jailbroken, leaves much to be questioned about how &ldquo;real&rdquo; the attacks you performed are. &ldquo;But if you had root, its technically over anyways, right?&rdquo;. Yes, but that is not the only way.</p>
+<p>Client engagement examples aside, most of the tooling that exists out there rely on the fact that your device is jailbroken (and rightfully so). But what if you simply dont have a Jailbroken device? Well, chances are you only focus on the API endpoints that the application consumes, hoping that the SSL pinning is broken enough for you to get an idea of how it works.</p>
+<p>Lets change that.</p>
+<h1 id="examples">examples</h1>
+<p>Under the hood, objection uses Frida to inject objects into a patched applications runtime and executes them within that applications security context to perform various tasks. Typical tasks may be short lived commands such as ls that will let you browse the mobile devices filesystem from the mobile applications perspective, or longer lived commands such as ios sslpinning disable that hooks common methods that are used to pin SSL certificates, and prevent validations from failing as you use the app.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/objection/objection_ls.png"/> 
+</figure>
+
+<p>While we are talking about the filesystem, it is also possible to download files straight off the device (where you have read access) as well as have the ability to re-upload files where write access is granted, such as the applications Documents directory.</p>
+<p>objection also includes an inline SQLite editor to make manipulating random sqlite databases that might exist a breeze.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/objection/objection_sqlite.png"/> 
+</figure>
+
+<p>Connecting to and querying an arbitrary SQLite database within an applications Documents directory.</p>
+<h1 id="sample-usage">sample usage</h1>
+<p>A sample session where objection is used to explore various parts of a sample iOS application that is already patched and running is shown below:</p>
+<!-- raw HTML omitted -->
+<h1 id="features">features</h1>
+<p>While still a work in progress, objection already contains a number of features. A few notable ones are:</p>
+<ul>
+<li>Interact with the remote filesystem to move around, upload and download files where ever access is granted.</li>
+<li>Dump the current processes memory, explore loaded modules and module exports.</li>
+<li>Interact with SQLite databases on the remote filesystem.</li>
+<li>Dump various bits of shared storages such as NSUserDefaults, NSHTTPCookieStorage and .plist files on an iOS devices disk in a human readable format.</li>
+<li>Simulate a jailbroken environment to test an iOS applications behaviour in such an environment.</li>
+<li>An iOS SSL pinning bypass module that implements the widely known SSL-Killswitch2 methods.</li>
+<li>Dump the iOS keychain.</li>
+<li>Perform iOS TouchID bypasses.</li>
+<li>Perform a type of class-dump that will list the available Objective-C classes and class methods.</li>
+<li>Dynamically hook and watch for method invocations of a specific class method. Additionally, objection can try and dump method arguments passed as they are invoked.</li>
+</ul>
+<p>&hellip; and much more.</p>
+<h1 id="get-it">get it</h1>
+<p>You can get objection right now over at https://github.com/sensepost/objection. Some setup work is needed, as well as a patching process for the IPA you are interested in. Fear not, all of that stuff is documented on the projects wiki that can be found here: https://github.com/sensepost/objection/wiki.</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents"></nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&text=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&is_video=false&description=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=objection%20-%20runtime%20mobile%20exploration&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&title=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2017-07-11-objection-runtime-mobile-exploration%2f&t=objection%20-%20runtime%20mobile%20exploration">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

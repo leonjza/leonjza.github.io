@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Jabber to Email using SleekXMPP | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Jabber to Email using SleekXMPP" />
+<meta property="og:description" content="So, why would you even want this..?
+Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::
+Introducing SleekXMPP
+SleekXMPP is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like pip install mailer sleekxmpp or for the older school, easy_install sleekxmpp mailer should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2013-06-07-jabber-to-email-using-sleekxmpp/" />
+<meta property="article:published_time" content="2013-06-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2013-06-07T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Jabber to Email using SleekXMPP"/>
+<meta name="twitter:description" content="So, why would you even want this..?
+Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::
+Introducing SleekXMPP
+SleekXMPP is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like pip install mailer sleekxmpp or for the older school, easy_install sleekxmpp mailer should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2013-05-25-how-to-extremely-simple-python-jabber-broadcast-bot/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2013-06-23-quick-win-quickly-execute-last-shell-command/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&text=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&is_video=false&description=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Jabber%20to%20Email%20using%20SleekXMPP&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&name=Jabber%20to%20Email%20using%20SleekXMPP&description=%3ch3%20id%3d%22so-why-would-you-even-want-this%22%3eSo%2c%20why%20would%20you%20even%20want%20this..%3f%3c%2fh3%3e%0a%3cp%3eWell%2c%20to%20be%20honest%2c%20I%20am%20not%20really%20sure%20of%20many%20use%20cases%20for%20this%2c%20however%20maybe%20someone%2c%20somewhere%20will%20need%20to%20do%20something%20like%20this%2c%20and%20I%20would%20have%20done%20my%20deed%20and%20saved%20someone%20some%20time%20%3a%3asun%3a%3a%3c%2fp%3e%0a%3ch3%20id%3d%22introducing-sleekxmpp%22%3eIntroducing%20SleekXMPP%3c%2fh3%3e%0a%3cp%3e%3ca%20href%3d%22http%3a%2f%2fsleekxmpp.com%2f%22%3eSleekXMPP%3c%2fa%3e%20is%20a%20python%20XMPP%20framework.%20It%20takes%20a%20bit%20to%20get%20your%20head%20around%20it%2c%20but%20once%20you%20have%20some%20basics%20covered%20its%20quite%20a%20rewarding%20library%20to%20work%20with.%20%3a%29%20To%20start%2c%20you%20need%20to%20install%202%20dependencies.%20Python%20Mailer%20and%20SleekXMPP%20itself.%20Something%20like%20%3ccode%3epip%20install%20mailer%20sleekxmpp%3c%2fcode%3e%20or%20for%20the%20older%20school%2c%20%3ccode%3eeasy_install%20sleekxmpp%20mailer%3c%2fcode%3e%20should%20do%20the%20trick.%20It%20can%26rsquo%3bt%20hurt%20to%20check%20if%20the%20distro%20you%20use%20has%20these%20are%20packages%20already%20too.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&t=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#so-why-would-you-even-want-this">So, why would you even want this..?</a></li>
+        <li><a href="#introducing-sleekxmpp">Introducing SleekXMPP</a></li>
+        <li><a href="#configuration-and-testing-time">Configuration and testing time</a></li>
+        <li><a href="#ok-code">Ok, code</a></li>
+        <li><a href="#so-how-do-i-actually-use-this-thing-i-just-saw">So how do I actually use this thing I just saw?</a></li>
+        <li><a href="#things-to-note">Things to note.</a></li>
+        <li><a href="#test-d">Test! :D</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        Jabber to Email using SleekXMPP
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2013-06-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-07</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/jabber">jabber</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/sleekxmpp">sleekxmpp</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/bot">bot</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <h3 id="so-why-would-you-even-want-this">So, why would you even want this..?</h3>
+<p>Well, to be honest, I am not really sure of many use cases for this, however maybe someone, somewhere will need to do something like this, and I would have done my deed and saved someone some time ::sun::</p>
+<h3 id="introducing-sleekxmpp">Introducing SleekXMPP</h3>
+<p><a href="http://sleekxmpp.com/">SleekXMPP</a> is a python XMPP framework. It takes a bit to get your head around it, but once you have some basics covered its quite a rewarding library to work with. :) To start, you need to install 2 dependencies. Python Mailer and SleekXMPP itself. Something like <code>pip install mailer sleekxmpp</code> or for the older school, <code>easy_install sleekxmpp mailer</code> should do the trick. It can&rsquo;t hurt to check if the distro you use has these are packages already too.</p>
+<h3 id="configuration-and-testing-time">Configuration and testing time</h3>
+<p>Once the install completes, do a quick check to see if everything is ok, Try to import the modules. They should return no errors. If they do, check that the installation of the previously mentioned dependencies were successful.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">%</span> python2
+Python <span style="color:#bd93f9">2.7</span><span style="color:#ff79c6">.</span><span style="color:#bd93f9">5</span> (default, May <span style="color:#bd93f9">12</span> <span style="color:#bd93f9">2013</span>, <span style="color:#bd93f9">12</span>:<span style="color:#bd93f9">00</span>:<span style="color:#bd93f9">47</span>)
+[GCC <span style="color:#bd93f9">4.8</span><span style="color:#ff79c6">.</span><span style="color:#bd93f9">0</span> <span style="color:#bd93f9">20130502</span> (prerelease)] on linux2
+Type <span style="color:#f1fa8c">&#34;help&#34;</span>, <span style="color:#f1fa8c">&#34;copyright&#34;</span>, <span style="color:#f1fa8c">&#34;credits&#34;</span> <span style="color:#ff79c6">or</span> <span style="color:#f1fa8c">&#34;license&#34;</span> <span style="color:#ff79c6">for</span> more information<span style="color:#ff79c6">.</span>
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">import</span> sleekxmpp
+<span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">import</span> mailer
+<span style="color:#ff79c6">&gt;&gt;&gt;</span>
+</code></pre></div><p>Next, you need a <em>bot</em> account to use. Provision a user on your jabber server for the bot and test with a jabber client that it works.</p>
+<h3 id="ok-code">Ok, code</h3>
+<p>Next, we take the <a href="http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot">sample</a> echobot from the SleekXMPP website, and modify it slightly to handle our incoming message by sending a email, instead of simply replying back what we have sent.</p>
+<p>First, we import the mailer requirements with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">from</span> mailer <span style="color:#ff79c6">import</span> Mailer
+<span style="color:#ff79c6">from</span> mailer <span style="color:#ff79c6">import</span> Message
+</code></pre></div><p>The above can be placed right after the option parser has been imported. Then, we only need to change the <code>message</code> method within the <code>EchoBot</code> class really:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/env python</span>
+
+<span style="color:#6272a4"># Shameless SleekXMPP modification of the</span>
+<span style="color:#6272a4"># echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot</span>
+
+<span style="color:#ff79c6">if</span> msg[<span style="color:#f1fa8c">&#39;type&#39;</span>] <span style="color:#ff79c6">in</span> (<span style="color:#f1fa8c">&#39;chat&#39;</span>, <span style="color:#f1fa8c">&#39;normal&#39;</span>):
+
+   <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Received Message:</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">%(body)s</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">%</span> msg
+
+   <span style="color:#6272a4"># Mail the message Received</span>
+   message <span style="color:#ff79c6">=</span> Message(From<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#39;Jabber Email Service&#39; &lt;someone@domain.com&gt;&#34;</span>,
+         To<span style="color:#ff79c6">=</span>[<span style="color:#f1fa8c">&#34;someone@domain.com&#34;</span>],
+         Subject<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;[Jabber Message Received] From: </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">%</span> msg[<span style="color:#f1fa8c">&#34;from&#34;</span>])
+   themessage <span style="color:#ff79c6">=</span> msg[<span style="color:#f1fa8c">&#34;body&#34;</span>]
+   themessage <span style="color:#ff79c6">=</span> themessage<span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;unicode_escape&#39;</span>)<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#39;ascii&#39;</span>,<span style="color:#f1fa8c">&#39;ignore&#39;</span>)
+   message<span style="color:#ff79c6">.</span>Body <span style="color:#ff79c6">=</span> themessage
+
+   sender <span style="color:#ff79c6">=</span> Mailer(<span style="color:#f1fa8c">&#34;127.0.0.1&#34;</span>)
+   sender<span style="color:#ff79c6">.</span>send(message)
+</code></pre></div><p>A complete modified example that includes the above changes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/env python</span>
+<span style="color:#6272a4"># -*- coding: utf-8 -*-</span>
+
+<span style="color:#6272a4"># Shameless SleekXMPP modification of the</span>
+<span style="color:#6272a4"># echobot http://sleekxmpp.com/#here-s-your-first-sleekxmpp-bot</span>
+
+<span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">    SleekXMPP: The Sleek XMPP Library
+</span><span style="color:#f1fa8c">    Copyright (C) 2010  Nathanael C. Fritz
+</span><span style="color:#f1fa8c">    This file is part of SleekXMPP.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">    See the file LICENSE for copying permission.
+</span><span style="color:#f1fa8c">&#34;&#34;&#34;</span>
+
+<span style="color:#ff79c6">import</span> sys
+<span style="color:#ff79c6">import</span> logging
+<span style="color:#ff79c6">import</span> getpass
+<span style="color:#ff79c6">from</span> optparse <span style="color:#ff79c6">import</span> OptionParser
+
+<span style="color:#ff79c6">from</span> mailer <span style="color:#ff79c6">import</span> Mailer
+<span style="color:#ff79c6">from</span> mailer <span style="color:#ff79c6">import</span> Message
+
+<span style="color:#ff79c6">import</span> sleekxmpp
+
+<span style="color:#6272a4"># Python versions before 3.0 do not use UTF-8 encoding</span>
+<span style="color:#6272a4"># by default. To ensure that Unicode is handled properly</span>
+<span style="color:#6272a4"># throughout SleekXMPP, we will set the default encoding</span>
+<span style="color:#6272a4"># ourselves to UTF-8.</span>
+<span style="color:#ff79c6">if</span> sys<span style="color:#ff79c6">.</span>version_info <span style="color:#ff79c6">&lt;</span> (<span style="color:#bd93f9">3</span>, <span style="color:#bd93f9">0</span>):
+    <span style="color:#8be9fd;font-style:italic">reload</span>(sys)
+    sys<span style="color:#ff79c6">.</span>setdefaultencoding(<span style="color:#f1fa8c">&#39;utf8&#39;</span>)
+<span style="color:#ff79c6">else</span>:
+    <span style="color:#8be9fd;font-style:italic">raw_input</span> <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">input</span>
+
+
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">EchoBot</span>(sleekxmpp<span style="color:#ff79c6">.</span>ClientXMPP):
+
+    <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">    A simple SleekXMPP bot that will echo messages it
+</span><span style="color:#f1fa8c">    receives, along with a short thank you message.
+</span><span style="color:#f1fa8c">    &#34;&#34;&#34;</span>
+
+    <span style="color:#ff79c6">def</span> __init__(self, jid, password):
+        sleekxmpp<span style="color:#ff79c6">.</span>ClientXMPP<span style="color:#ff79c6">.</span>__init__(self, jid, password)
+
+        <span style="color:#6272a4"># The session_start event will be triggered when</span>
+        <span style="color:#6272a4"># the bot establishes its connection with the server</span>
+        <span style="color:#6272a4"># and the XML streams are ready for use. We want to</span>
+        <span style="color:#6272a4"># listen for this event so that we we can initialize</span>
+        <span style="color:#6272a4"># our roster.</span>
+        self<span style="color:#ff79c6">.</span>add_event_handler(<span style="color:#f1fa8c">&#34;session_start&#34;</span>, self<span style="color:#ff79c6">.</span>start)
+
+        <span style="color:#6272a4"># The message event is triggered whenever a message</span>
+        <span style="color:#6272a4"># stanza is received. Be aware that that includes</span>
+        <span style="color:#6272a4"># MUC messages and error messages.</span>
+        self<span style="color:#ff79c6">.</span>add_event_handler(<span style="color:#f1fa8c">&#34;message&#34;</span>, self<span style="color:#ff79c6">.</span>message)
+
+    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">start</span>(self, event):
+        <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">        Process the session_start event.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        Typical actions for the session_start event are
+</span><span style="color:#f1fa8c">        requesting the roster and broadcasting an initial
+</span><span style="color:#f1fa8c">        presence stanza.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        Arguments:
+</span><span style="color:#f1fa8c">            event -- An empty dictionary. The session_start
+</span><span style="color:#f1fa8c">                     event does not provide any additional
+</span><span style="color:#f1fa8c">                     data.
+</span><span style="color:#f1fa8c">        &#34;&#34;&#34;</span>
+        self<span style="color:#ff79c6">.</span>send_presence()
+        self<span style="color:#ff79c6">.</span>get_roster()
+        self<span style="color:#ff79c6">.</span>nick <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;jabberMailBot&#34;</span>
+
+    <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">message</span>(self, msg):
+        <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">        Process incoming message stanzas. Be aware that this also
+</span><span style="color:#f1fa8c">        includes MUC messages and error messages. It is usually
+</span><span style="color:#f1fa8c">        a good idea to check the messages&#39;s type before processing
+</span><span style="color:#f1fa8c">        or sending replies.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">        Arguments:
+</span><span style="color:#f1fa8c">            msg -- The received message stanza. See the documentation
+</span><span style="color:#f1fa8c">                   for stanza objects and the Message stanza to see
+</span><span style="color:#f1fa8c">                   how it may be used.
+</span><span style="color:#f1fa8c">        &#34;&#34;&#34;</span>
+        <span style="color:#ff79c6">if</span> msg[<span style="color:#f1fa8c">&#39;type&#39;</span>] <span style="color:#ff79c6">in</span> (<span style="color:#f1fa8c">&#39;chat&#39;</span>, <span style="color:#f1fa8c">&#39;normal&#39;</span>):
+
+            <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Received Message:</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">%(body)s</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">%</span> msg
+
+            <span style="color:#6272a4"># Mail the message Received</span>
+            message <span style="color:#ff79c6">=</span> Message(From<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#39;Jabber Email Service&#39; &lt;someone@domain.com&gt;&#34;</span>,
+                  To<span style="color:#ff79c6">=</span>[<span style="color:#f1fa8c">&#34;someone@domain.com&#34;</span>],
+                  Subject<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;[Jabber Message Received] From: </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">%</span> msg[<span style="color:#f1fa8c">&#34;from&#34;</span>])
+            themessage <span style="color:#ff79c6">=</span> msg[<span style="color:#f1fa8c">&#34;body&#34;</span>]
+            themessage <span style="color:#ff79c6">=</span> themessage<span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;unicode_escape&#39;</span>)<span style="color:#ff79c6">.</span>encode(<span style="color:#f1fa8c">&#39;ascii&#39;</span>,<span style="color:#f1fa8c">&#39;ignore&#39;</span>)
+            message<span style="color:#ff79c6">.</span>Body <span style="color:#ff79c6">=</span> themessage
+
+            sender <span style="color:#ff79c6">=</span> Mailer(<span style="color:#f1fa8c">&#34;127.0.0.1&#34;</span>)
+            sender<span style="color:#ff79c6">.</span>send(message)
+
+<span style="color:#ff79c6">if</span> __name__ <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;__main__&#39;</span>:
+    <span style="color:#6272a4"># Setup the command line arguments.</span>
+    optp <span style="color:#ff79c6">=</span> OptionParser()
+
+    <span style="color:#6272a4"># Output verbosity options.</span>
+    optp<span style="color:#ff79c6">.</span>add_option(<span style="color:#f1fa8c">&#39;-q&#39;</span>, <span style="color:#f1fa8c">&#39;--quiet&#39;</span>, help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;set logging to ERROR&#39;</span>,
+                    action<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;store_const&#39;</span>, dest<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;loglevel&#39;</span>,
+                    const<span style="color:#ff79c6">=</span>logging<span style="color:#ff79c6">.</span>ERROR, default<span style="color:#ff79c6">=</span>logging<span style="color:#ff79c6">.</span>INFO)
+    optp<span style="color:#ff79c6">.</span>add_option(<span style="color:#f1fa8c">&#39;-d&#39;</span>, <span style="color:#f1fa8c">&#39;--debug&#39;</span>, help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;set logging to DEBUG&#39;</span>,
+                    action<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;store_const&#39;</span>, dest<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;loglevel&#39;</span>,
+                    const<span style="color:#ff79c6">=</span>logging<span style="color:#ff79c6">.</span>DEBUG, default<span style="color:#ff79c6">=</span>logging<span style="color:#ff79c6">.</span>INFO)
+    optp<span style="color:#ff79c6">.</span>add_option(<span style="color:#f1fa8c">&#39;-v&#39;</span>, <span style="color:#f1fa8c">&#39;--verbose&#39;</span>, help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;set logging to COMM&#39;</span>,
+                    action<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;store_const&#39;</span>, dest<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;loglevel&#39;</span>,
+                    const<span style="color:#ff79c6">=</span><span style="color:#bd93f9">5</span>, default<span style="color:#ff79c6">=</span>logging<span style="color:#ff79c6">.</span>INFO)
+
+    <span style="color:#6272a4"># JID and password options.</span>
+    optp<span style="color:#ff79c6">.</span>add_option(<span style="color:#f1fa8c">&#34;-j&#34;</span>, <span style="color:#f1fa8c">&#34;--jid&#34;</span>, dest<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;jid&#34;</span>,
+                    help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;JID to use&#34;</span>)
+    optp<span style="color:#ff79c6">.</span>add_option(<span style="color:#f1fa8c">&#34;-p&#34;</span>, <span style="color:#f1fa8c">&#34;--password&#34;</span>, dest<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span>,
+                    help<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password to use&#34;</span>)
+
+    opts, args <span style="color:#ff79c6">=</span> optp<span style="color:#ff79c6">.</span>parse_args()
+
+    <span style="color:#6272a4"># Setup logging.</span>
+    logging<span style="color:#ff79c6">.</span>basicConfig(level<span style="color:#ff79c6">=</span>opts<span style="color:#ff79c6">.</span>loglevel,
+                        format<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">%(levelname)-8s</span><span style="color:#f1fa8c"> </span><span style="color:#f1fa8c">%(message)s</span><span style="color:#f1fa8c">&#39;</span>)
+
+    <span style="color:#ff79c6">if</span> opts<span style="color:#ff79c6">.</span>jid <span style="color:#ff79c6">is</span> None:
+        opts<span style="color:#ff79c6">.</span>jid <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">raw_input</span>(<span style="color:#f1fa8c">&#34;Username: &#34;</span>)
+    <span style="color:#ff79c6">if</span> opts<span style="color:#ff79c6">.</span>password <span style="color:#ff79c6">is</span> None:
+        opts<span style="color:#ff79c6">.</span>password <span style="color:#ff79c6">=</span> getpass<span style="color:#ff79c6">.</span>getpass(<span style="color:#f1fa8c">&#34;Password: &#34;</span>)
+
+    <span style="color:#6272a4"># Setup the EchoBot and register plugins. Note that while plugins may</span>
+    <span style="color:#6272a4"># have interdependencies, the order in which you register them does</span>
+    <span style="color:#6272a4"># not matter.</span>
+    xmpp <span style="color:#ff79c6">=</span> EchoBot(opts<span style="color:#ff79c6">.</span>jid, opts<span style="color:#ff79c6">.</span>password)
+    xmpp<span style="color:#ff79c6">.</span>register_plugin(<span style="color:#f1fa8c">&#39;xep_0030&#39;</span>) <span style="color:#6272a4"># Service Discovery</span>
+    xmpp<span style="color:#ff79c6">.</span>register_plugin(<span style="color:#f1fa8c">&#39;xep_0004&#39;</span>) <span style="color:#6272a4"># Data Forms</span>
+    xmpp<span style="color:#ff79c6">.</span>register_plugin(<span style="color:#f1fa8c">&#39;xep_0060&#39;</span>) <span style="color:#6272a4"># PubSub</span>
+    xmpp<span style="color:#ff79c6">.</span>register_plugin(<span style="color:#f1fa8c">&#39;xep_0199&#39;</span>) <span style="color:#6272a4"># XMPP Ping</span>
+
+    <span style="color:#6272a4"># If you are working with an OpenFire server, you may need</span>
+    <span style="color:#6272a4"># to adjust the SSL version used:</span>
+    <span style="color:#6272a4"># xmpp.ssl_version = ssl.PROTOCOL_SSLv3</span>
+
+    <span style="color:#6272a4"># If you want to verify the SSL certificates offered by a server:</span>
+    <span style="color:#6272a4"># xmpp.ca_certs = &#34;path/to/ca/cert&#34;</span>
+
+    <span style="color:#6272a4"># Connect to the XMPP server and start processing XMPP stanzas.</span>
+    <span style="color:#ff79c6">if</span> xmpp<span style="color:#ff79c6">.</span>connect():
+        <span style="color:#6272a4"># If you do not have the dnspython library installed, you will need</span>
+        <span style="color:#6272a4"># to manually specify the name of the server if it does not match</span>
+        <span style="color:#6272a4"># the one in the JID. For example, to use Google Talk you would</span>
+        <span style="color:#6272a4"># need to use:</span>
+        <span style="color:#6272a4">#</span>
+        <span style="color:#6272a4"># if xmpp.connect((&#39;talk.google.com&#39;, 5222)):</span>
+        <span style="color:#6272a4">#     ...</span>
+        xmpp<span style="color:#ff79c6">.</span>process(block<span style="color:#ff79c6">=</span>True)
+        <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;Done&#34;</span>)
+    <span style="color:#ff79c6">else</span>:
+        <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#34;Unable to connect.&#34;</span>)
+</code></pre></div><h3 id="so-how-do-i-actually-use-this-thing-i-just-saw">So how do I actually use this thing I just saw?</h3>
+<p>Take the complete example and save it to a file like <code>bot.py</code>. Then, run it!
+The complete example will echo the message just before it attempts to mail it. You can comment out line <strong>86</strong> to stop this from happening and run the script with the <code>-q</code> argument once you are happy all is working.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">% python bot.py -j <span style="color:#f1fa8c">&#34;myEmailbot@myJabberServer.local&#34;</span>
+Password:
+INFO     Negotiating TLS
+INFO     Using SSL version: <span style="color:#bd93f9">3</span>
+INFO     CERT: Time <span style="color:#ff79c6">until</span> certificate expiration: <span style="color:#bd93f9">952</span> days, 6:46:01.014041
+
+Received Message:
+This is a <span style="color:#8be9fd;font-style:italic">test</span> message that will be mailed :D
+</code></pre></div><h3 id="things-to-note">Things to note.</h3>
+<ul>
+<li>Even though the script allows you to specify a <code>-p</code> argument, I would highly discourage the usage of this. Any person that has access to your machine, be it legitimate or not, would then see your bot&rsquo;s process, with the password in the <code>ps</code> output!</li>
+<li>Ensure the SMTP server specified in line <strong>96</strong> of the complete example allows yo to relay! Change it if needed.</li>
+</ul>
+<h3 id="test-d">Test! :D</h3>
+<p>Send your bot a message and see if your mail arrives ^^</p>
+<p><strong>EDIT</strong>: Modify the message encoding to ASCII as the utf8 stuff seems to barf out sometimes :|</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#so-why-would-you-even-want-this">So, why would you even want this..?</a></li>
+        <li><a href="#introducing-sleekxmpp">Introducing SleekXMPP</a></li>
+        <li><a href="#configuration-and-testing-time">Configuration and testing time</a></li>
+        <li><a href="#ok-code">Ok, code</a></li>
+        <li><a href="#so-how-do-i-actually-use-this-thing-i-just-saw">So how do I actually use this thing I just saw?</a></li>
+        <li><a href="#things-to-note">Things to note.</a></li>
+        <li><a href="#test-d">Test! :D</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&text=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&is_video=false&description=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Jabber%20to%20Email%20using%20SleekXMPP&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&title=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&name=Jabber%20to%20Email%20using%20SleekXMPP&description=%3ch3%20id%3d%22so-why-would-you-even-want-this%22%3eSo%2c%20why%20would%20you%20even%20want%20this..%3f%3c%2fh3%3e%0a%3cp%3eWell%2c%20to%20be%20honest%2c%20I%20am%20not%20really%20sure%20of%20many%20use%20cases%20for%20this%2c%20however%20maybe%20someone%2c%20somewhere%20will%20need%20to%20do%20something%20like%20this%2c%20and%20I%20would%20have%20done%20my%20deed%20and%20saved%20someone%20some%20time%20%3a%3asun%3a%3a%3c%2fp%3e%0a%3ch3%20id%3d%22introducing-sleekxmpp%22%3eIntroducing%20SleekXMPP%3c%2fh3%3e%0a%3cp%3e%3ca%20href%3d%22http%3a%2f%2fsleekxmpp.com%2f%22%3eSleekXMPP%3c%2fa%3e%20is%20a%20python%20XMPP%20framework.%20It%20takes%20a%20bit%20to%20get%20your%20head%20around%20it%2c%20but%20once%20you%20have%20some%20basics%20covered%20its%20quite%20a%20rewarding%20library%20to%20work%20with.%20%3a%29%20To%20start%2c%20you%20need%20to%20install%202%20dependencies.%20Python%20Mailer%20and%20SleekXMPP%20itself.%20Something%20like%20%3ccode%3epip%20install%20mailer%20sleekxmpp%3c%2fcode%3e%20or%20for%20the%20older%20school%2c%20%3ccode%3eeasy_install%20sleekxmpp%20mailer%3c%2fcode%3e%20should%20do%20the%20trick.%20It%20can%26rsquo%3bt%20hurt%20to%20check%20if%20the%20distro%20you%20use%20has%20these%20are%20packages%20already%20too.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-06-07-jabber-to-email-using-sleekxmpp%2f&t=Jabber%20to%20Email%20using%20SleekXMPP">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

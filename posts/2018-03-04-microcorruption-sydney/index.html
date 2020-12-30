@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> microcorruption - sydney | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="microcorruption - sydney" />
+<meta property="og:description" content="
+     
+
+
+The next post in the series of solving the microcorruption.com ctf challenges continues from the previous challenge called New Orleans. This challenge is titled Sydney.
+If you were to read the description when you enter the challenge, one would see the following right at the bottom:
+
+This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.
+
+Lol. Lets take a closer look." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2018-03-04-microcorruption-sydney/" />
+<meta property="article:published_time" content="2018-03-04T18:20:20+02:00" />
+<meta property="article:modified_time" content="2018-03-04T18:20:20+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="microcorruption - sydney"/>
+<meta name="twitter:description" content="
+     
+
+
+The next post in the series of solving the microcorruption.com ctf challenges continues from the previous challenge called New Orleans. This challenge is titled Sydney.
+If you were to read the description when you enter the challenge, one would see the following right at the bottom:
+
+This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.
+
+Lol. Lets take a closer look."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2018-03-03-microcorruption-new-orleans/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2018-03-05-microcorruption-hanoi/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&text=microcorruption%20-%20sydney">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&is_video=false&description=microcorruption%20-%20sydney">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20sydney&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&name=microcorruption%20-%20sydney&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThe%20next%20post%20in%20the%20series%20of%20solving%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption---new-orleans%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eNew%20Orleans%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eSydney%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eIf%20you%20were%20to%20read%20the%20description%20when%20you%20enter%20the%20challenge%2c%20one%20would%20see%20the%20following%20right%20at%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20%20Software%20Revision%2002.%20%20We%20have%20received%20reports%20that%20the%20prior%20version%20of%20the%20lock%20was%20%20bypassable%20without%20knowing%20the%20password.%20We%20have%20fixed%20this%20and%20removed%20the%20password%20from%20memory.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eLol.%20Lets%20take%20a%20closer%20look.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&t=microcorruption%20-%20sydney">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#sydney">sydney</a></li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        microcorruption - sydney
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2018-03-04 18:20:20 &#43;0200 SAST" itemprop="datePublished">2018-03-04</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/exploit">exploit</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/assembly">assembly</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/sydney">sydney</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <figure>
+    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+</figure>
+
+<p>The next post in the series of solving the <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges continues from the <a href="https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/">previous challenge</a> called <em>New Orleans</em>. This challenge is titled <em>Sydney</em>.</p>
+<p>If you were to read the description when you enter the challenge, one would see the following right at the bottom:</p>
+<blockquote>
+<p>This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.</p>
+</blockquote>
+<p>Lol. Lets take a closer look.</p>
+<h2 id="sydney">sydney</h2>
+<p>Performing a static analysis of the code, one can see that this time round there is no silly  <code>create_password</code> routine or something similar.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
+4438:  3150 9<span style="color:#50fa7b">cff</span>      add   <span style="color:#6272a4">#0xff9c, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  <span style="color:#bd93f9">3</span>f40 b444      mov   <span style="color:#6272a4">#0x44b4 &#34;Enter the password to continue.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4440</span>:  b012 <span style="color:#bd93f9">6645</span>      call  <span style="color:#6272a4">#0x4566 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4444</span>:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+4446:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8044</span>      call  <span style="color:#6272a4">#0x4480 &lt;get_password&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">444</span>a:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+444<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8</span>a44      call  <span style="color:#6272a4">#0x448a &lt;check_password&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4450</span>:  <span style="color:#bd93f9">0</span>f93           tst   r15
+</code></pre></div><p>In fact, just a simple <code>get_password</code> and <code>check_password</code> routine before the <code>tst r15</code> call at <code>0x4450</code>. The call to <code>get_password</code> just ends up with a syscall, prompting you for a password, so that is not really interesting to us. What is interesting though is <code>check_password</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">448<span style="color:#50fa7b">a</span> &lt;check_password&gt;
+448<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4</span>c7e <span style="color:#bd93f9">0000</span> cmp   <span style="color:#6272a4">#0x7e4c, 0x0(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4490</span>:  <span style="color:#bd93f9">0</span>d20           jnz   $+<span style="color:#bd93f9">0x1c</span>
+4492:  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">2142</span> <span style="color:#bd93f9">0200</span> cmp   <span style="color:#6272a4">#0x4221, 0x2(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4498</span>:  <span style="color:#bd93f9">0920</span>           jnz   $+<span style="color:#bd93f9">0x14</span>
+449<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4522</span> <span style="color:#bd93f9">0400</span> cmp   <span style="color:#6272a4">#0x2245, 0x4(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a0:  <span style="color:#bd93f9">0520</span>           jne   <span style="color:#6272a4">#0x44ac &lt;check_password+0x22&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a2:  <span style="color:#bd93f9">1</span>e43           mov   <span style="color:#6272a4">#0x1, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a4:  bf90 <span style="color:#bd93f9">587</span>d <span style="color:#bd93f9">0600</span> cmp   <span style="color:#6272a4">#0x7d58, 0x6(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>aa:  <span style="color:#bd93f9">0124</span>           jeq   <span style="color:#6272a4">#0x44ae &lt;check_password+0x24&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>ac:  <span style="color:#bd93f9">0</span>e43           clr   r14
+44<span style="color:#8be9fd;font-style:italic">ae:</span>  0<span style="color:#50fa7b">f4e</span>           mov   r14, r15
+44<span style="color:#8be9fd;font-style:italic">b0:</span>  3041           <span style="color:#50fa7b">ret</span>
+</code></pre></div><p>At first sight it looks like the code does a number of compares to values at an offset from the memory address at <code>r15</code>. Could these be parts of the actual password? Lets inspect with the debugger. Setting a breakpoint at <code>0x448a</code> and continuing the CPU (entering a password of <em>test</em> when prompted) until we reach it should help in revealing what is happening.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/sydney_byte_compare.png"/> 
+</figure>
+
+<p>Hah, so after the first <code>cmp</code> instruction, the status register is <code>0x4</code> (N), meaning the jump 14 bytes onwards to <code>0x44ac</code> will be taken, effectively ending the <code>check_password</code> routine prematurely. The bytes in <code>r15</code> at the time of the first <code>cmp</code> instruction was <code>0x439c</code>, which in turn pointed to <code>0x7465</code> in the memory dump (visualised with <code>read r15</code> in the debugger). The bytes in memory is clearly the password (<em>test</em> in this case) that I entered when I was prompted.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39; &#39;</span><span style="color:#ff79c6">.</span>join([<span style="color:#8be9fd;font-style:italic">hex</span>(<span style="color:#8be9fd;font-style:italic">ord</span>(x)) <span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#f1fa8c">&#39;test&#39;</span>])
+<span style="color:#f1fa8c">&#39;0x74 0x65 0x73 0x74&#39;</span>
+</code></pre></div><p>So, lets take the bytes in the three <code>cmp</code> calls and enter that as the password, keeping our breakpoints and seeing what the CPU does then. The six bytes of interest are: <code>0x7e 0x4c 0x42 0x21 0x22 0x45</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;7e4c42212245&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;~LB!&#34;E&#39;</span>
+</code></pre></div><p>Resetting the CPU, entering <code>~LB!&quot;E</code> as password and continuing untill we hit the breakpoint at <code>0x448a</code> and then stepping past the first <code>cmp</code> and <code>jnz</code> instructions should now look like this:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/sydney_little_endian_suprise.png"/> 
+</figure>
+
+<p>Hmm. The value <code>0x7e4c</code> was at <code>0x439c</code> (the address <code>r15</code> points to), but the <code>cmp</code> call set the status register to <code>0x4</code> (N), ending the <code>check_password</code> function again. :|</p>
+<p>What I think this challenge is supposed to teach you is about the endianness of the CPU which means it stores values in little endian format in memory. What that means for us is that that password values should be provided as <code>0x4c7e</code> instead of as <code>0x7e4c</code> like we did. So, lets re-arrange the password we enter, and continue to the breakpoint again.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;L~!BE&#34;&#39;</span>
+</code></pre></div><figure>
+    <img src="https://leonjza.github.io/images/microcorruption/sydney_valid_pass.png"/> 
+</figure>
+
+<p>Woohoo. This time the <code>jnz</code> instruction is not taken as the status register is now <code>0x3</code> (CZ) and the next values provided as part of the password checked. By now you might think you have won and decide to just continue the CPU to unlock the lock.</p>
+<p>Well, no. See, we missed the part where another <code>cmp</code> happens just after <code>0x1</code> is moved into <code>r14</code>.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/microcorruption/sydney_missing_bytes.png"/> 
+</figure>
+
+<p>This means that when <code>cmp    #0x7d58, 0x6(r15)</code> at <code>0x44a4</code> is called, we will be comparing to <code>0x0</code> (the bytes at <code>r15+6</code>), resulting in the jump at <code>0x44aa</code> not being taken, clearing <code>r14</code> before the routine finishes.</p>
+<p>So, to prevent that adn as a final password, we need to enter those the bytes <code>0x58</code> and <code>0x7d</code> too to unlock the lock.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522587d&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;L~!BE&#34;X}&#39;</span>
+</code></pre></div><p>Continue the CPU and unlock the lock!</p>
+<h2 id="solution">solution</h2>
+<p>Enter <code>L~!BE&quot;X}</code> as ASCII or <code>4c7e21424522587d</code> as hex encoded input.</p>
+<h2 id="other-challenges">other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li><a href="#sydney">sydney</a></li>
+    <li><a href="#solution">solution</a></li>
+    <li><a href="#other-challenges">other challenges</a></li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&text=microcorruption%20-%20sydney">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&is_video=false&description=microcorruption%20-%20sydney">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=microcorruption%20-%20sydney&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&title=microcorruption%20-%20sydney">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&name=microcorruption%20-%20sydney&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThe%20next%20post%20in%20the%20series%20of%20solving%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption---new-orleans%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eNew%20Orleans%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eSydney%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eIf%20you%20were%20to%20read%20the%20description%20when%20you%20enter%20the%20challenge%2c%20one%20would%20see%20the%20following%20right%20at%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20%20Software%20Revision%2002.%20%20We%20have%20received%20reports%20that%20the%20prior%20version%20of%20the%20lock%20was%20%20bypassable%20without%20knowing%20the%20password.%20We%20have%20fixed%20this%20and%20removed%20the%20password%20from%20memory.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eLol.%20Lets%20take%20a%20closer%20look.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2018-03-04-microcorruption-sydney%2f&t=microcorruption%20-%20sydney">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>

