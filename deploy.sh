@@ -26,7 +26,7 @@ echo -e "\033[0;32mStaging updates for GitHub...\033[0m"
 cd public
 
 # Get latest (if any) and new local changes
-git pull --rebase
+git pull
 git add -A
 
 # Commit changes.
