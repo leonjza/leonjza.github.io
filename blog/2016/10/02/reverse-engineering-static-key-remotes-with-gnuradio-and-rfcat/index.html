@@ -1,127 +1,106 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html lang="en-us">
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> reverse engineering static key remotes with gnuradio and rfcat | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="reverse engineering static key remotes with gnuradio and rfcat" />
+<meta property="og:description" content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
+My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally  know nothing about really did make for this bit of research to be pretty daunting at first.
+
+     
+
+
+Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/" />
+<meta property="article:published_time" content="2016-10-02T16:05:22+02:00" />
+<meta property="article:modified_time" content="2016-10-02T16:05:22+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="reverse engineering static key remotes with gnuradio and rfcat"/>
+<meta name="twitter:description" content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
+My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally  know nothing about really did make for this bit of research to be pretty daunting at first.
+
+     
+
+
+Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer."/>
 
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
 
   
-  <script type="application/ld+json">
-{
-    "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https:\/\/leonjza.github.io"
-    },
-    "articleSection" : "post",
-    "name" : "reverse engineering static key remotes with gnuradio and rfcat",
-    "headline" : "reverse engineering static key remotes with gnuradio and rfcat",
-    "description" : "\u003cp\u003eAt \u003ca href=\u0022https:\/\/www.defcon.org\/html\/defcon-24\/dc-24-index.html\u0022\u003edefcon24\u003c\/a\u003e this year, I impulsively bought myself some new toys. Amongst what I got included a \u003ca href=\u0022https:\/\/greatscottgadgets.com\/yardstickone\/\u0022\u003eYARD Stick One\u003c\/a\u003e and a \u003ca href=\u0022https:\/\/greatscottgadgets.com\/ubertoothone\/\u0022\u003eUbertooth One\u003c\/a\u003e. I already owned a DVB-T dongle much like \u003ca href=\u0022https:\/\/www.amazon.co.uk\/Digital-DVB-T-RTL2832U-FC0013B-Receiver\/dp\/B00NOP0P6W\u0022\u003ethis one\u003c\/a\u003e that I bought at defcon23 the previous year.\u003c\/p\u003e\n\u003cp\u003eMy interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I \u003cem\u003etotally\u003c\/em\u003e  know nothing about really did make for this bit of research to be pretty daunting at first.\u003c\/p\u003e\n\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/re_static_key_banner.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eNonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.\u003c\/p\u003e",
-    "inLanguage" : "en-US",
-    "author" : "Leon Jacobs",
-    "creator" : "Leon Jacobs",
-    "publisher": "Leon Jacobs",
-    "accountablePerson" : "Leon Jacobs",
-    "copyrightHolder" : "Leon Jacobs",
-    "copyrightYear" : "2016",
-    "datePublished": "2016-10-02 16:05:22 \u002b0200 SAST",
-    "dateModified" : "2016-10-02 16:05:22 \u002b0200 SAST",
-    "url" : "https:\/\/leonjza.github.io\/blog\/2016\/10\/02\/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat\/",
-    "wordCount" : "3639",
-    "keywords" : [ "sdr","hacking","gnuradio","rfcat","Blog" ]
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
 }
 </script>
-
-
-  <title>reverse engineering static key remotes with gnuradio and rfcat &middot; </title>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  
-
-  
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
-  <link href="https://leonjza.github.io/favicon.png" rel="icon">
-
-  
-  
-  
-  
-
-  <meta name="description" content="">
-  <meta name="keywords" content="sdr,rfcat,gnuradio,remote">
-  
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-44457032-2', 'auto');
-    ga('send', 'pageview');
-  </script>
   
 </head>
-<body class="theme-base-0d">
-<div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      
-      <h1></h1>
-      <p class="lead">#!/slash/note<br>
-<em>A checkbox unchecker&rsquo;s notepad</em></p>
-    </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
-      
-    </ul>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
-      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
-      
-      
-      
-      
-      
-      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
-      
-      
-      </li>
-    </ul>
-
-    
-
-    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
-
+    <header id="header">
+  <a href="https://leonjza.github.io">
+  
+    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
+  
+  <div id="title">
+    <h1>#!/slash/note</h1>
   </div>
-</div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+      
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+  </div>
+</header>
 
 
-<div class="content container">
-  <div class="post">
-    <h1 class="post-title">reverse engineering static key remotes with gnuradio and rfcat</h1>
-    <span class="post-date">Oct 2, 2016 &middot; 18 minute read &middot; <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/#disqus_thread">Comments</a>
+
     
-    <br/>
-    <a class="label" href="https://leonjza.github.io/categories/sdr">sdr</a><a class="label" href="https://leonjza.github.io/categories/hacking">hacking</a><a class="label" href="https://leonjza.github.io/categories/gnuradio">gnuradio</a><a class="label" href="https://leonjza.github.io/categories/rfcat">rfcat</a>
-    </span>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <div class="content" itemprop="articleBody">
+  
     <p>At <a href="https://www.defcon.org/html/defcon-24/dc-24-index.html">defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href="https://greatscottgadgets.com/yardstickone/">YARD Stick One</a> and a <a href="https://greatscottgadgets.com/ubertoothone/">Ubertooth One</a>. I already owned a DVB-T dongle much like <a href="https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W">this one</a> that I bought at defcon23 the previous year.</p>
 <p>My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I <em>totally</em>  know nothing about really did make for this bit of research to be pretty daunting at first.</p>
 <figure>
@@ -418,36 +397,33 @@ d.setModeIDLE()
 </figure>
 
 <p>Happy hacking!</p>
+  
   </div>
-  <div id="disqus_thread"></div>
-</div>
+</article>
 
 
-<script type="text/javascript">
-var disqus_shortname = "slashnote";
-(function () {
-    var s = document.createElement('script'); s.async = true;
-    s.type = 'text/javascript';
-    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());
-</script>
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
 
 
-
-<script type="text/javascript">
-    var disqus_shortname = "slashnote";
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 </body>
-</html>
 
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+</html>

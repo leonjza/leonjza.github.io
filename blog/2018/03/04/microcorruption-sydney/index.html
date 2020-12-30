@@ -1,127 +1,112 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html lang="en-us">
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> microcorruption - sydney | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="microcorruption - sydney" />
+<meta property="og:description" content="
+     
+
+
+The next post in the series of solving the microcorruption.com ctf challenges continues from the previous challenge called New Orleans. This challenge is titled Sydney.
+If you were to read the description when you enter the challenge, one would see the following right at the bottom:
+
+This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.
+
+Lol. Lets take a closer look." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/blog/2018/03/04/microcorruption-sydney/" />
+<meta property="article:published_time" content="2018-03-04T18:20:20+02:00" />
+<meta property="article:modified_time" content="2018-03-04T18:20:20+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="microcorruption - sydney"/>
+<meta name="twitter:description" content="
+     
+
+
+The next post in the series of solving the microcorruption.com ctf challenges continues from the previous challenge called New Orleans. This challenge is titled Sydney.
+If you were to read the description when you enter the challenge, one would see the following right at the bottom:
+
+This is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.
+
+Lol. Lets take a closer look."/>
 
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
 
   
-  <script type="application/ld+json">
-{
-    "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https:\/\/leonjza.github.io"
-    },
-    "articleSection" : "post",
-    "name" : "microcorruption - sydney",
-    "headline" : "microcorruption - sydney",
-    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/microcorruption\/microcorruption.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eThe next post in the series of solving the \u003ca href=\u0022https:\/\/microcorruption.com\u0022\u003emicrocorruption.com\u003c\/a\u003e ctf challenges continues from the \u003ca href=\u0022https:\/\/leonjza.github.io\/blog\/2018\/03\/03\/microcorruption---new-orleans\/\u0022\u003eprevious challenge\u003c\/a\u003e called \u003cem\u003eNew Orleans\u003c\/em\u003e. This challenge is titled \u003cem\u003eSydney\u003c\/em\u003e.\u003c\/p\u003e\n\u003cp\u003eIf you were to read the description when you enter the challenge, one would see the following right at the bottom:\u003c\/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003eThis is  Software Revision 02.  We have received reports that the prior version of the lock was  bypassable without knowing the password. We have fixed this and removed the password from memory.\u003c\/p\u003e\n\u003c\/blockquote\u003e\n\u003cp\u003eLol. Lets take a closer look.\u003c\/p\u003e",
-    "inLanguage" : "en-US",
-    "author" : "Leon Jacobs",
-    "creator" : "Leon Jacobs",
-    "publisher": "Leon Jacobs",
-    "accountablePerson" : "Leon Jacobs",
-    "copyrightHolder" : "Leon Jacobs",
-    "copyrightYear" : "2018",
-    "datePublished": "2018-03-04 18:20:20 \u002b0200 SAST",
-    "dateModified" : "2018-03-04 18:20:20 \u002b0200 SAST",
-    "url" : "https:\/\/leonjza.github.io\/blog\/2018\/03\/04\/microcorruption-sydney\/",
-    "wordCount" : "751",
-    "keywords" : [ "ctf","exploit","assembly","microcorruption","sydney","Blog" ]
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
 }
 </script>
-
-
-  <title>microcorruption - sydney &middot; </title>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  
-
-  
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
-  <link href="https://leonjza.github.io/favicon.png" rel="icon">
-
-  
-  
-  
-  
-
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-44457032-2', 'auto');
-    ga('send', 'pageview');
-  </script>
   
 </head>
-<body class="theme-base-0d">
-<div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      
-      <h1></h1>
-      <p class="lead">#!/slash/note<br>
-<em>A checkbox unchecker&rsquo;s notepad</em></p>
-    </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
-      
-    </ul>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
-      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
-      
-      
-      
-      
-      
-      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
-      
-      
-      </li>
-    </ul>
-
-    
-
-    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
-
+    <header id="header">
+  <a href="https://leonjza.github.io">
+  
+    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
+  
+  <div id="title">
+    <h1>#!/slash/note</h1>
   </div>
-</div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+      
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+  </div>
+</header>
 
 
-<div class="content container">
-  <div class="post">
-    <h1 class="post-title">microcorruption - sydney</h1>
-    <span class="post-date">Mar 4, 2018 &middot; 4 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption-sydney/#disqus_thread">Comments</a>
+
     
-    <br/>
-    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/sydney">sydney</a>
-    </span>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <div class="content" itemprop="articleBody">
+  
     <figure>
     <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
 </figure>
@@ -134,40 +119,40 @@
 <p>Lol. Lets take a closer look.</p>
 <h2 id="sydney">sydney</h2>
 <p>Performing a static analysis of the code, one can see that this time round there is no silly  <code>create_password</code> routine or something similar.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4438</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">main</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
-<span style="color:#960050;background-color:#1e0010">4438:</span>  <span style="color:#960050;background-color:#1e0010">3150</span> <span style="color:#960050;background-color:#1e0010">9</span><span style="color:#a6e22e">cff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xff9c, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">443</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#66d9ef">b444</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x44b4 &#34;Enter the password to continue.&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4440</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">6645</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4566 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4444</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f41</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">sp</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4446:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">8044</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4480 &lt;get_password&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">444</span><span style="color:#66d9ef">a</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f41</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">sp</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">444</span>c:  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">8</span><span style="color:#66d9ef">a44</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x448a &lt;check_password&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4450</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f93</span>           <span style="color:#66d9ef">tst</span>   <span style="color:#66d9ef">r15</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
+4438:  3150 9<span style="color:#50fa7b">cff</span>      add   <span style="color:#6272a4">#0xff9c, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  <span style="color:#bd93f9">3</span>f40 b444      mov   <span style="color:#6272a4">#0x44b4 &#34;Enter the password to continue.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4440</span>:  b012 <span style="color:#bd93f9">6645</span>      call  <span style="color:#6272a4">#0x4566 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4444</span>:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+4446:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8044</span>      call  <span style="color:#6272a4">#0x4480 &lt;get_password&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">444</span>a:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
+444<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8</span>a44      call  <span style="color:#6272a4">#0x448a &lt;check_password&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4450</span>:  <span style="color:#bd93f9">0</span>f93           tst   r15
 </code></pre></div><p>In fact, just a simple <code>get_password</code> and <code>check_password</code> routine before the <code>tst r15</code> call at <code>0x4450</code>. The call to <code>get_password</code> just ends up with a syscall, prompting you for a password, so that is not really interesting to us. What is interesting though is <code>check_password</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">448</span><span style="color:#a6e22e">a</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#66d9ef">check_password</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
-<span style="color:#960050;background-color:#1e0010">448</span>a:  <span style="color:#a6e22e">bf90</span> <span style="color:#ae81ff">4</span><span style="color:#66d9ef">c7e</span> <span style="color:#ae81ff">0000</span> <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x7e4c, 0x0(r15)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4490</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">d20</span>           <span style="color:#66d9ef">jnz</span>   <span style="color:#66d9ef">$</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x1c</span>
-<span style="color:#960050;background-color:#1e0010">4492:</span>  <span style="color:#a6e22e">bf90</span> <span style="color:#ae81ff">2142</span> <span style="color:#ae81ff">0200</span> <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x4221, 0x2(r15)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4498</span>:  <span style="color:#ae81ff">0920</span>           <span style="color:#66d9ef">jnz</span>   <span style="color:#66d9ef">$</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x14</span>
-<span style="color:#960050;background-color:#1e0010">449</span>a:  <span style="color:#a6e22e">bf90</span> <span style="color:#ae81ff">4522</span> <span style="color:#ae81ff">0400</span> <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x2245, 0x4(r15)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">a0</span>:  <span style="color:#ae81ff">0520</span>           <span style="color:#66d9ef">jne</span>   <span style="color:#75715e">#0x44ac &lt;check_password+0x22&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">a2</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">e43</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x1, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">a4</span>:  <span style="color:#66d9ef">bf90</span> <span style="color:#ae81ff">587</span><span style="color:#66d9ef">d</span> <span style="color:#ae81ff">0600</span> <span style="color:#66d9ef">cmp</span>   <span style="color:#75715e">#0x7d58, 0x6(r15)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">aa</span>:  <span style="color:#ae81ff">0124</span>           <span style="color:#66d9ef">jeq</span>   <span style="color:#75715e">#0x44ae &lt;check_password+0x24&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">44</span><span style="color:#66d9ef">ac</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">e43</span>           <span style="color:#66d9ef">clr</span>   <span style="color:#66d9ef">r14</span>
-<span style="color:#960050;background-color:#1e0010">44</span>ae:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">f4e</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r14</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">44</span>b0:  <span style="color:#960050;background-color:#1e0010">3041</span>           <span style="color:#a6e22e">ret</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">448<span style="color:#50fa7b">a</span> &lt;check_password&gt;
+448<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4</span>c7e <span style="color:#bd93f9">0000</span> cmp   <span style="color:#6272a4">#0x7e4c, 0x0(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4490</span>:  <span style="color:#bd93f9">0</span>d20           jnz   $+<span style="color:#bd93f9">0x1c</span>
+4492:  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">2142</span> <span style="color:#bd93f9">0200</span> cmp   <span style="color:#6272a4">#0x4221, 0x2(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4498</span>:  <span style="color:#bd93f9">0920</span>           jnz   $+<span style="color:#bd93f9">0x14</span>
+449<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4522</span> <span style="color:#bd93f9">0400</span> cmp   <span style="color:#6272a4">#0x2245, 0x4(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a0:  <span style="color:#bd93f9">0520</span>           jne   <span style="color:#6272a4">#0x44ac &lt;check_password+0x22&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a2:  <span style="color:#bd93f9">1</span>e43           mov   <span style="color:#6272a4">#0x1, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a4:  bf90 <span style="color:#bd93f9">587</span>d <span style="color:#bd93f9">0600</span> cmp   <span style="color:#6272a4">#0x7d58, 0x6(r15)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>aa:  <span style="color:#bd93f9">0124</span>           jeq   <span style="color:#6272a4">#0x44ae &lt;check_password+0x24&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>ac:  <span style="color:#bd93f9">0</span>e43           clr   r14
+44<span style="color:#8be9fd;font-style:italic">ae:</span>  0<span style="color:#50fa7b">f4e</span>           mov   r14, r15
+44<span style="color:#8be9fd;font-style:italic">b0:</span>  3041           <span style="color:#50fa7b">ret</span>
 </code></pre></div><p>At first sight it looks like the code does a number of compares to values at an offset from the memory address at <code>r15</code>. Could these be parts of the actual password? Lets inspect with the debugger. Setting a breakpoint at <code>0x448a</code> and continuing the CPU (entering a password of <em>test</em> when prompted) until we reach it should help in revealing what is happening.</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_byte_compare.png"/> 
 </figure>
 
 <p>Hah, so after the first <code>cmp</code> instruction, the status register is <code>0x4</code> (N), meaning the jump 14 bytes onwards to <code>0x44ac</code> will be taken, effectively ending the <code>check_password</code> routine prematurely. The bytes in <code>r15</code> at the time of the first <code>cmp</code> instruction was <code>0x439c</code>, which in turn pointed to <code>0x7465</code> in the memory dump (visualised with <code>read r15</code> in the debugger). The bytes in memory is clearly the password (<em>test</em> in this case) that I entered when I was prompted.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">.</span>join([hex(ord(x)) <span style="color:#66d9ef">for</span> x <span style="color:#f92672">in</span> <span style="color:#e6db74">&#39;test&#39;</span>])
-<span style="color:#e6db74">&#39;0x74 0x65 0x73 0x74&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39; &#39;</span><span style="color:#ff79c6">.</span>join([<span style="color:#8be9fd;font-style:italic">hex</span>(<span style="color:#8be9fd;font-style:italic">ord</span>(x)) <span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#f1fa8c">&#39;test&#39;</span>])
+<span style="color:#f1fa8c">&#39;0x74 0x65 0x73 0x74&#39;</span>
 </code></pre></div><p>So, lets take the bytes in the three <code>cmp</code> calls and enter that as the password, keeping our breakpoints and seeing what the CPU does then. The six bytes of interest are: <code>0x7e 0x4c 0x42 0x21 0x22 0x45</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#e6db74">&#39;7e4c42212245&#39;</span><span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;hex&#39;</span>)
-<span style="color:#e6db74">&#39;~LB!&#34;E&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;7e4c42212245&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;~LB!&#34;E&#39;</span>
 </code></pre></div><p>Resetting the CPU, entering <code>~LB!&quot;E</code> as password and continuing untill we hit the breakpoint at <code>0x448a</code> and then stepping past the first <code>cmp</code> and <code>jnz</code> instructions should now look like this:</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_little_endian_suprise.png"/> 
@@ -175,8 +160,8 @@
 
 <p>Hmm. The value <code>0x7e4c</code> was at <code>0x439c</code> (the address <code>r15</code> points to), but the <code>cmp</code> call set the status register to <code>0x4</code> (N), ending the <code>check_password</code> function again. :|</p>
 <p>What I think this challenge is supposed to teach you is about the endianness of the CPU which means it stores values in little endian format in memory. What that means for us is that that password values should be provided as <code>0x4c7e</code> instead of as <code>0x7e4c</code> like we did. So, lets re-arrange the password we enter, and continue to the breakpoint again.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#e6db74">&#39;4c7e21424522&#39;</span><span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;hex&#39;</span>)
-<span style="color:#e6db74">&#39;L~!BE&#34;&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;L~!BE&#34;&#39;</span>
 </code></pre></div><figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_valid_pass.png"/> 
 </figure>
@@ -189,43 +174,40 @@
 
 <p>This means that when <code>cmp    #0x7d58, 0x6(r15)</code> at <code>0x44a4</code> is called, we will be comparing to <code>0x0</code> (the bytes at <code>r15+6</code>), resulting in the jump at <code>0x44aa</code> not being taken, clearing <code>r14</code> before the routine finishes.</p>
 <p>So, to prevent that adn as a final password, we need to enter those the bytes <code>0x58</code> and <code>0x7d</code> too to unlock the lock.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#e6db74">&#39;4c7e21424522587d&#39;</span><span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;hex&#39;</span>)
-<span style="color:#e6db74">&#39;L~!BE&#34;X}&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522587d&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
+<span style="color:#f1fa8c">&#39;L~!BE&#34;X}&#39;</span>
 </code></pre></div><p>Continue the CPU and unlock the lock!</p>
 <h2 id="solution">solution</h2>
 <p>Enter <code>L~!BE&quot;X}</code> as ASCII or <code>4c7e21424522587d</code> as hex encoded input.</p>
 <h2 id="other-challenges">other challenges</h2>
 <p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  
   </div>
-  <div id="disqus_thread"></div>
-</div>
+</article>
 
 
-<script type="text/javascript">
-var disqus_shortname = "slashnote";
-(function () {
-    var s = document.createElement('script'); s.async = true;
-    s.type = 'text/javascript';
-    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());
-</script>
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
 
 
-
-<script type="text/javascript">
-    var disqus_shortname = "slashnote";
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 </body>
-</html>
 
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+</html>

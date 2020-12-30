@@ -1,127 +1,106 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html lang="en-us">
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> no more jailbreak detection an adventure into Android app reversing and smali patching | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="no more jailbreak detection an adventure into Android app reversing and smali patching" />
+<meta property="og:description" content="introduction
+I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
+
+     
+
+
+Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/" />
+<meta property="article:published_time" content="2015-02-09T19:10:23+00:00" />
+<meta property="article:modified_time" content="2015-02-09T19:10:23+00:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="no more jailbreak detection an adventure into Android app reversing and smali patching"/>
+<meta name="twitter:description" content="introduction
+I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
+
+     
+
+
+Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations."/>
 
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
 
   
-  <script type="application/ld+json">
-{
-    "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https:\/\/leonjza.github.io"
-    },
-    "articleSection" : "post",
-    "name" : "no more jailbreak detection an adventure into Android app reversing and smali patching",
-    "headline" : "no more jailbreak detection an adventure into Android app reversing and smali patching",
-    "description" : "\u003ch2 id=\u0022introduction\u0022\u003eintroduction\u003c\/h2\u003e\n\u003cp\u003eI will start by saying that I am by \u003cem\u003eno means\u003c\/em\u003e a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don\u0026rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.\u003c\/p\u003e\n\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/android_jailbreak_logo.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eRecently I had the opportunity to poke at an Android \u003ccode\u003e.apk\u003c\/code\u003e. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the \u003ccode\u003eapk\u003c\/code\u003e, I needed to get some tools setup and learn a few things about the Android environment \u003cem\u003ereally\u003c\/em\u003e fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the \u003ccode\u003eapk\u003c\/code\u003e had and let it continue normal operations.\u003c\/p\u003e",
-    "inLanguage" : "en-US",
-    "author" : "Leon Jacobs",
-    "creator" : "Leon Jacobs",
-    "publisher": "Leon Jacobs",
-    "accountablePerson" : "Leon Jacobs",
-    "copyrightHolder" : "Leon Jacobs",
-    "copyrightYear" : "2015",
-    "datePublished": "2015-02-09 19:10:23 \u002b0000 UTC",
-    "dateModified" : "2015-02-09 19:10:23 \u002b0000 UTC",
-    "url" : "https:\/\/leonjza.github.io\/blog\/2015\/02\/09\/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching\/",
-    "wordCount" : "3662",
-    "keywords" : [ "android","jailbreak","root","reverse engineer","sandbox","java","smali","Blog" ]
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
 }
 </script>
-
-
-  <title>no more jailbreak detection an adventure into Android app reversing and smali patching &middot; </title>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  
-
-  
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
-  <link href="https://leonjza.github.io/favicon.png" rel="icon">
-
-  
-  
-  
-  
-
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-44457032-2', 'auto');
-    ga('send', 'pageview');
-  </script>
   
 </head>
-<body class="theme-base-0d">
-<div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      
-      <h1></h1>
-      <p class="lead">#!/slash/note<br>
-<em>A checkbox unchecker&rsquo;s notepad</em></p>
-    </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
-      
-    </ul>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
-      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
-      
-      
-      
-      
-      
-      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
-      
-      
-      </li>
-    </ul>
-
-    
-
-    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
-
+    <header id="header">
+  <a href="https://leonjza.github.io">
+  
+    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
+  
+  <div id="title">
+    <h1>#!/slash/note</h1>
   </div>
-</div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+      
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+  </div>
+</header>
 
 
-<div class="content container">
-  <div class="post">
-    <h1 class="post-title">no more jailbreak detection an adventure into Android app reversing and smali patching</h1>
-    <span class="post-date">Feb 9, 2015 &middot; 18 minute read &middot; <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/#disqus_thread">Comments</a>
+
     
-    <br/>
-    <a class="label" href="https://leonjza.github.io/categories/android">android</a><a class="label" href="https://leonjza.github.io/categories/jailbreak">jailbreak</a><a class="label" href="https://leonjza.github.io/categories/root">root</a><a class="label" href="https://leonjza.github.io/categories/reverse-engineer">reverse engineer</a><a class="label" href="https://leonjza.github.io/categories/sandbox">sandbox</a><a class="label" href="https://leonjza.github.io/categories/java">java</a><a class="label" href="https://leonjza.github.io/categories/smali">smali</a>
-    </span>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <div class="content" itemprop="articleBody">
+  
     <h2 id="introduction">introduction</h2>
 <p>I will start by saying that I am by <em>no means</em> a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.</p>
 <figure>
@@ -157,10 +136,10 @@
 
 <p>Aaaand it works! I was actually testing network connectivity of the <code>apk</code> in question, so I will add the information for that at the end of the post as a small FYI.</p>
 <p>With the emulator running and working, it was time to install the <code>apk</code> to test. To do this, we use a tool call <code>adb</code>. This can be found in <code>~/Library/Android/sdk/platform-tools/adb</code>. A number of features are available to us using <code>adb</code>, such as pushing files to and from the device and installing applications. The <code>apk</code> I was testing, was installed while the emulator was running:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
-* daemon not running. starting it now on port <span style="color:#ae81ff">5037</span> *
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
+* daemon not running. starting it now on port <span style="color:#bd93f9">5037</span> *
 * daemon started successfully *
-<span style="color:#ae81ff">2383</span> KB/s <span style="color:#f92672">(</span><span style="color:#ae81ff">4184313</span> bytes in 1.714s<span style="color:#f92672">)</span>
+<span style="color:#bd93f9">2383</span> KB/s <span style="color:#ff79c6">(</span><span style="color:#bd93f9">4184313</span> bytes in 1.714s<span style="color:#ff79c6">)</span>
     pkg: /data/local/tmp/MyApplication.apk
 Success
 </code></pre></div><p>The application popped up under the menu on the emulator and I was able to launch it. However, the application sees the Andriod Emulator as a jailbroken device, and refuses to start up. Not a problem :)</p>
@@ -168,12 +147,12 @@ Success
 <h2 id="looking-at-the-apk-getting-the-juicy-bits">looking at the apk, getting the juicy bits</h2>
 <p>Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a <code>apk</code> gets to be, and what it contains. Most importantly, the <code>apk</code> can be unzipped and its contents further examined. <a href="http://en.wikipedia.org/wiki/Android_application_package">Wikipedia</a> does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in <code>classes.dex</code>. This is what looks like to be the compiled logic in the [dex file format](<a href="http://en.wikipedia.org/wiki/Dalvik_(software)">http://en.wikipedia.org/wiki/Dalvik_(software)</a> understandable by the Dalvik virtual machine. Ok. But how do I make that into something <strong>I</strong> can understand?</p>
 <p>In comes <a href="https://code.google.com/p/dex2jar/">dex2jar</a>. A utility that will convert android dex files into Java source. :) I <a href="https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip">downloaded</a> the latest archive and extracted it. I then extracted classes.dex from the <code>apk</code> too:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » unzip MyApplication.apk classes.dex
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » unzip MyApplication.apk classes.dex
 Archive:  MyApplication.apk
   inflating: classes.dex
 </code></pre></div><p>With the <code>classes.dex</code> file ready, I ran it through <code>dex2jar</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » dex2jar-0.0.9.15/dex2jar.sh classes.dex
-this cmd is deprecated, use the d2j-dex2jar <span style="color:#66d9ef">if</span> possible
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » dex2jar-0.0.9.15/dex2jar.sh classes.dex
+this cmd is deprecated, use the d2j-dex2jar <span style="color:#ff79c6">if</span> possible
 dex2jar version: translator-0.0.9.15
 dex2jar classes.dex -&gt; classes_dex2jar.jar
 Done.
@@ -187,11 +166,11 @@ Done.
 <h2 id="decompiling-the-classesdex">decompiling the classes.dex</h2>
 <p>With some knowledge about the code, and knowing what I am after (the <code>RootDetection</code> class, <code>isRooted</code> method), it was time to move on to decompiling the dex to smali. This can be done easily using <a href="https://code.google.com/p/smali/">smali/baksmali</a> which is an assembler/disassembler for Android&rsquo;s dex format. I downloaded the latest versions of <a href="https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar">smali</a> and <a href="https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar">baksmali</a> and prepared to disassemble the <code>classes.dex</code> file that we used earlier to get some Java sources out of.</p>
 <p>Using the <code>baksmali</code> tool, I pushed <code>classes.dex</code> through it to a output directory of <code>out</code> with <code>java -jar baksmali-2.0.5.jar classes.dex -o out</code>. This produced the disassembled version of the classes.dex and allowed me to read through it. I don’t really get a lot of this <code>smali</code>, but it is not that hard to find what you may be looking for. A simple grep may reveal all the answers:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » grep -Ri isRooted out/
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » grep -Ri isRooted out/
 Binary file out//classes.dex matches
-out//com/MyApplication/utils/RootDetection.smali:.method public isRooted<span style="color:#f92672">(</span>Landroid/content/pm/PackageManager;<span style="color:#f92672">)</span>Z
+out//com/MyApplication/utils/RootDetection.smali:.method public isRooted<span style="color:#ff79c6">(</span>Landroid/content/pm/PackageManager;<span style="color:#ff79c6">)</span>Z
 </code></pre></div><p>Yay. the <code>isRooted</code> method is easily identifiable. Opening the file containing the the <code>isRooted</code> method reveals the smali too:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">.method public isRooted(Landroid/content/pm/PackageManager;)Z
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">.method public isRooted(Landroid/content/pm/PackageManager;)Z
     .registers 3
     .param p1, &#34;pm&#34;    # Landroid/content/pm/PackageManager;
 
@@ -214,22 +193,22 @@ out//com/MyApplication/utils/RootDetection.smali:.method public isRooted<span st
 <h2 id="preparing-the-patch">preparing the patch</h2>
 <p>As we can see, <code>isRooted</code> has quite a bit of logic in it. Referring back to the <code>jar</code> file I created with <code>dex2jar</code>, we can deduce that we want <code>isRooted</code> to return <code>false</code>. Makes sense right? Now, I don’t write smali out of my head, but that did not stop me. How can I see what smali code would look like to just return <code>false</code>? Well, I could just write my own <code>.java</code> code, compile it, and check what the output is like once its disassembled right? Yep!</p>
 <p>So I created <code>RootDetection.java</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RootDetection</span>
-<span style="color:#f92672">{</span>
-    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isRooted</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
-    <span style="color:#f92672">}</span>
-<span style="color:#f92672">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd;font-style:italic">class</span> <span style="color:#50fa7b">RootDetection</span>
+<span style="color:#ff79c6">{</span>
+    <span style="color:#8be9fd;font-style:italic">public</span> <span style="color:#8be9fd">boolean</span> <span style="color:#50fa7b">isRooted</span><span style="color:#ff79c6">()</span> <span style="color:#ff79c6">{</span>
+        <span style="color:#ff79c6">return</span> <span style="color:#ff79c6">false</span><span style="color:#ff79c6">;</span>
+    <span style="color:#ff79c6">}</span>
+<span style="color:#ff79c6">}</span>
 </code></pre></div><p>As you can see, <code>isRooted</code> will now just return false as I&rsquo;d like it to! I had to hack away a bit at it to get the compilation to pass without errors, and this is probably the step that will usually require a bit of intuition. An important thing to note here is that I had to remove the argument from the original <code>isRooted</code> call. I had to keep this in mind when I was going to patch the original method. Anyways, I compiled the file <code>RootDetection.java</code> using the <code>javac</code> command line:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » javac -source 1.6 -target 1.6 RootDetection.java
-warning: <span style="color:#f92672">[</span>options<span style="color:#f92672">]</span> bootstrap class path not set in conjunction with -source 1.6
-<span style="color:#ae81ff">1</span> warning
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » javac -source 1.6 -target 1.6 RootDetection.java
+warning: <span style="color:#ff79c6">[</span>options<span style="color:#ff79c6">]</span> bootstrap class path not <span style="color:#8be9fd;font-style:italic">set</span> in conjunction with -source 1.6
+<span style="color:#bd93f9">1</span> warning
 ------------------------------------------------------------
 leonjza@Laptop » file RootDetection.class
-RootDetection.class: compiled Java class data, version 50.0 <span style="color:#f92672">(</span>Java 1.6<span style="color:#f92672">)</span>
+RootDetection.class: compiled Java class data, version 50.0 <span style="color:#ff79c6">(</span>Java 1.6<span style="color:#ff79c6">)</span>
 </code></pre></div><p>You will notice I specified the <code>-source</code> and <code>-target</code> flags for <code>javac</code>. If I did not do this, <code>baksmali</code> would have not been able to decompile the java class :(</p>
 <p>With my compiled method ready, it was time to see what this looks like in smali. There was just one more thing stopping me from seeing that though. The compiled java is not in the dex format that Andriod uses. Luckily there is a tool to convert this that comes with the Android sdk and lives in <code>~/Library/Android/sdk/build-tools/21.1.1/dx</code>. I converted the <code>class</code> to <code>dex</code> format using the command <code>~/Library/Android/sdk/build-tools/21.1.1/dx --dex  --output=RootDetection.dex RootDetection.class</code>. This produced a new file called <code>RootDetection.dex</code> which is recognizable by <code>baksmali</code>. I  then proceeded to decompile the generated <code>.dex</code> with <code>baksmali</code> and set the output to <code>RootDetection/</code> with <code>java -jar baksmali-2.0.5.jar RootDetection.dex -o RootDetection/</code>. Inspecting the generated smali code, I now had a sample of what it would look like if it should simply return false:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># virtual methods
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># virtual methods
 .method public isRooted()Z
     .registers 2
 
@@ -243,277 +222,274 @@ RootDetection.class: compiled Java class data, version 50.0 <span style="color:#
 <p>With the <code>RootDetection</code> class now patched, I re-assembled the <code>classes.dex</code> file from the generated smali code with <code>java -jar smali-2.0.5.jar -o classes.dex out</code>. The Reassembly generated no errors so I assumed it was successful.</p>
 <h2 id="repackaging-and-signing-the-apk">repackaging and signing the apk</h2>
 <p>With the patch applied and the new <code>classes.dex</code> generated, it was time to repackage the <code>apk</code>. The first step was to add the new <code>classes.dex</code> to the <code>apk</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » zip MyApplication.apk classes.dex
-updating: classes.dex <span style="color:#f92672">(</span>deflated 56%<span style="color:#f92672">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » zip MyApplication.apk classes.dex
+updating: classes.dex <span style="color:#ff79c6">(</span>deflated 56%<span style="color:#ff79c6">)</span>
 </code></pre></div><p>Next, the package has to be resigned as the <code>classes.dex</code> will no longer have the same hashes in <code>META-INF/MANIFEST.MF</code> as it originally had. Attempts to install the repackeged <code>apk</code> without resigning it may result in a error such as <em>Failure [INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION]</em>. I used a tool called &lsquo;sign&rsquo; found <a href="https://github.com/appium/sign">here</a> to get hold of <code>sign.jar</code>. This would sign my apk using the test keys. I downloaded it using <code>wget https://github.com/appium/sign/raw/master/dist/sign.jar</code>, and ran it to sign my patched <code>apk</code> with <code>java -jar sign.jar MyApplication_no_root.apk</code>. This produced a file called <code>MyApplication_no_root.s.apk</code>.</p>
 <p>Excellent. The only thing left for me to do was to install the application using <code>adb</code> and see if my patch worked, which it did! :D The usual error message about the jailbreak no longer displayed and I could continue with the rest of my testing.</p>
 <h2 id="notes-about-traffic-interception">notes about traffic interception</h2>
 <p>I have covered what I originally intended with the jailbreak detection patching, but want to add a few notes about traffic interception using the Emulator.</p>
 <p>I used <a href="http://portswigger.net/burp/">Burp Suite</a> to intercept traffic and had it running locally, with a proxy open on <code>tcp/8080</code>. To redirect the emulators traffic though, I had to add a startup option to the emulator as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8080
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">~/Library/Android/sdk/tools/emulator -avd <span style="color:#8be9fd;font-style:italic">test</span> -http-proxy localhost:8080
 </code></pre></div><p>This proved affective and I was able to see <code>http</code> traffic just fine. However, when it came to <code>https</code> traffic, I wanted to take a spoon and remove my eye. Requests would just &lsquo;hang&rsquo;, the browser would freak out, the application I was testing would just stall, it was just a mess. Some research into the topic revealed I was not the only one planning some personal surgery and a few bright people have come up with some solutions.</p>
 <p>The first pain I had was even though I installed the PortSwagger CA onto the device (via <code>~/Library/Android/sdk/platform-tools/adb push ~/Downloads/BurpCa.cer /storage/sdcard</code> and then the devices Settings -&gt; Security -&gt; Install form SD Card), the certificate validation would still just fail due to date errors. So, I moved the devices date on by 3 days, and viola! Grr.</p>
 <p>The next pain was the fact that the Emulator (or Android OS?) would not attempt to make a request to hostnames, but to the IP&rsquo;s directly, making it very hard to trace in Burp. Luckily though, I found a script (and lost the original source, but I take no credit for this), that will help with the rewrites to hostnames and pass them to Burp as expected. This was mostly a problem in the application itself and not so much the web browser. The script to help with this was:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># TODO&#39;s:</span>
-<span style="color:#75715e"># - Script currently doesn&#39;t treat TCP connections a streamed data. Normally we should buffer input</span>
-<span style="color:#75715e">#   untill enough data has been received and then do our checks. However since the connections are</span>
-<span style="color:#75715e">#   local all data is received at once (most of the time) so this code does work :)</span>
-<span style="color:#f92672">import</span> twisted
-<span style="color:#f92672">from</span> twisted.names <span style="color:#f92672">import</span> server, dns, client
-<span style="color:#f92672">from</span> twisted.internet <span style="color:#f92672">import</span> reactor, defer
-<span style="color:#f92672">from</span> twisted.internet.endpoints <span style="color:#f92672">import</span> TCP4ServerEndpoint
-<span style="color:#f92672">from</span> twisted.protocols <span style="color:#f92672">import</span> portforward
-<span style="color:#f92672">import</span> re
-<span style="color:#f92672">from</span> socket <span style="color:#f92672">import</span> <span style="color:#f92672">*</span>
-<span style="color:#f92672">import</span> struct
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4"># TODO&#39;s:</span>
+<span style="color:#6272a4"># - Script currently doesn&#39;t treat TCP connections a streamed data. Normally we should buffer input</span>
+<span style="color:#6272a4">#   untill enough data has been received and then do our checks. However since the connections are</span>
+<span style="color:#6272a4">#   local all data is received at once (most of the time) so this code does work :)</span>
+<span style="color:#ff79c6">import</span> twisted
+<span style="color:#ff79c6">from</span> twisted.names <span style="color:#ff79c6">import</span> server, dns, client
+<span style="color:#ff79c6">from</span> twisted.internet <span style="color:#ff79c6">import</span> reactor, defer
+<span style="color:#ff79c6">from</span> twisted.internet.endpoints <span style="color:#ff79c6">import</span> TCP4ServerEndpoint
+<span style="color:#ff79c6">from</span> twisted.protocols <span style="color:#ff79c6">import</span> portforward
+<span style="color:#ff79c6">import</span> re
+<span style="color:#ff79c6">from</span> socket <span style="color:#ff79c6">import</span> <span style="color:#ff79c6">*</span>
+<span style="color:#ff79c6">import</span> struct
 
-<span style="color:#75715e"># symbolic definition of getsockopt parameter</span>
-SO_ORIGINAL_DST <span style="color:#f92672">=</span> <span style="color:#ae81ff">80</span>
+<span style="color:#6272a4"># symbolic definition of getsockopt parameter</span>
+SO_ORIGINAL_DST <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">80</span>
 
-<span style="color:#75715e"># Mapping of domain name to given unique IP</span>
-mappings <span style="color:#f92672">=</span> dict()
-<span style="color:#75715e"># Mapping of given unique IP to domain name</span>
-reversemappings <span style="color:#f92672">=</span> dict()
-
-
-<span style="color:#75715e"># --------------------------------------- DNS SERVER ---------------------------------------</span>
+<span style="color:#6272a4"># Mapping of domain name to given unique IP</span>
+mappings <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">dict</span>()
+<span style="color:#6272a4"># Mapping of given unique IP to domain name</span>
+reversemappings <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">dict</span>()
 
 
-<span style="color:#75715e"># Custom DNS server which assigns a unique IP address to every domain, even if</span>
-<span style="color:#75715e"># in reality two domains share the same IP.</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyResolver</span>(client<span style="color:#f92672">.</span>Resolver):
-
-        <span style="color:#75715e"># Start with IP 1.1.1.1</span>
-        <span style="color:#66d9ef">def</span> __init__(self, servers):
-                client<span style="color:#f92672">.</span>Resolver<span style="color:#f92672">.</span>__init__(self, servers<span style="color:#f92672">=</span>servers)
-                self<span style="color:#f92672">.</span>ttl <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
-                self<span style="color:#f92672">.</span>ip <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>]
-
-        <span style="color:#75715e"># Helper function: Move to next IP and return it as a string</span>
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">nextIp</span>(self):
-                self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">3</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-                <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">1</span>,<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>):
-                        <span style="color:#66d9ef">if</span> (self<span style="color:#f92672">.</span>ip[i] <span style="color:#f92672">==</span> <span style="color:#ae81ff">255</span>):
-                                self<span style="color:#f92672">.</span>ip[i] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
-                                self<span style="color:#f92672">.</span>ip[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-                <span style="color:#66d9ef">return</span> str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">0</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span> str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span>str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">2</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span>str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">3</span>])
-
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lookupAddress</span>(self, name, timeout <span style="color:#f92672">=</span> None):
-                <span style="color:#75715e"># If it&#39;s the first time a DNS lookup is done for this domain, assign it</span>
-                <span style="color:#75715e"># a unique IP and update the mappings</span>
-                <span style="color:#66d9ef">if</span> (<span style="color:#f92672">not</span> mappings<span style="color:#f92672">.</span>has_key(name)):
-                        ip <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>nextIp()
-                        mappings[name] <span style="color:#f92672">=</span> ip
-                        reversemappings[str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">0</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span> str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">1</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span>str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">2</span>]) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span>str(self<span style="color:#f92672">.</span>ip[<span style="color:#ae81ff">3</span>])] <span style="color:#f92672">=</span> name
-
-                <span style="color:#75715e"># Get the mapped IP!</span>
-                ip <span style="color:#f92672">=</span> mappings[name]
-                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;DNS:&#34;</span>, name, <span style="color:#e6db74">&#34;-&gt;&#34;</span>, ip
-
-                <span style="color:#75715e"># From the manual: &#34;Defer is useful when you&#39;re writing synchronous code to an asynchronous</span>
-                <span style="color:#75715e"># interface: i.e., some code is calling you expecting a Deferred result, but you don&#39;t actually</span>
-                <span style="color:#75715e"># need to do anything asynchronous. Just return defer.succeed(theResult).&#34;</span>
-                <span style="color:#66d9ef">return</span> defer<span style="color:#f92672">.</span>succeed([(dns<span style="color:#f92672">.</span>RRHeader(name, dns<span style="color:#f92672">.</span>A, dns<span style="color:#f92672">.</span>IN, self<span style="color:#f92672">.</span>ttl, dns<span style="color:#f92672">.</span>Record_A(ip, self<span style="color:#f92672">.</span>ttl)),), (), ()])
+<span style="color:#6272a4"># --------------------------------------- DNS SERVER ---------------------------------------</span>
 
 
-<span style="color:#75715e"># --------------------------------------- HTTP PROXY ---------------------------------------</span>
+<span style="color:#6272a4"># Custom DNS server which assigns a unique IP address to every domain, even if</span>
+<span style="color:#6272a4"># in reality two domains share the same IP.</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ProxyResolver</span>(client<span style="color:#ff79c6">.</span>Resolver):
+
+        <span style="color:#6272a4"># Start with IP 1.1.1.1</span>
+        <span style="color:#ff79c6">def</span> __init__(self, servers):
+                client<span style="color:#ff79c6">.</span>Resolver<span style="color:#ff79c6">.</span>__init__(self, servers<span style="color:#ff79c6">=</span>servers)
+                self<span style="color:#ff79c6">.</span>ttl <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">10</span>
+                self<span style="color:#ff79c6">.</span>ip <span style="color:#ff79c6">=</span> [<span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">1</span>, <span style="color:#bd93f9">1</span>]
+
+        <span style="color:#6272a4"># Helper function: Move to next IP and return it as a string</span>
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">nextIp</span>(self):
+                self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">3</span>] <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>
+                <span style="color:#ff79c6">for</span> i <span style="color:#ff79c6">in</span> <span style="color:#8be9fd;font-style:italic">range</span>(<span style="color:#bd93f9">3</span>,<span style="color:#bd93f9">1</span>,<span style="color:#ff79c6">-</span><span style="color:#bd93f9">1</span>):
+                        <span style="color:#ff79c6">if</span> (self<span style="color:#ff79c6">.</span>ip[i] <span style="color:#ff79c6">==</span> <span style="color:#bd93f9">255</span>):
+                                self<span style="color:#ff79c6">.</span>ip[i] <span style="color:#ff79c6">=</span> <span style="color:#bd93f9">1</span>
+                                self<span style="color:#ff79c6">.</span>ip[i<span style="color:#ff79c6">-</span><span style="color:#bd93f9">1</span>] <span style="color:#ff79c6">+=</span> <span style="color:#bd93f9">1</span>
+                <span style="color:#ff79c6">return</span> <span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">0</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">1</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span><span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">2</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span><span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">3</span>])
+
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">lookupAddress</span>(self, name, timeout <span style="color:#ff79c6">=</span> None):
+                <span style="color:#6272a4"># If it&#39;s the first time a DNS lookup is done for this domain, assign it</span>
+                <span style="color:#6272a4"># a unique IP and update the mappings</span>
+                <span style="color:#ff79c6">if</span> (<span style="color:#ff79c6">not</span> mappings<span style="color:#ff79c6">.</span>has_key(name)):
+                        ip <span style="color:#ff79c6">=</span> self<span style="color:#ff79c6">.</span>nextIp()
+                        mappings[name] <span style="color:#ff79c6">=</span> ip
+                        reversemappings[<span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">0</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span> <span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">1</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span><span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">2</span>]) <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#34;.&#34;</span> <span style="color:#ff79c6">+</span><span style="color:#8be9fd;font-style:italic">str</span>(self<span style="color:#ff79c6">.</span>ip[<span style="color:#bd93f9">3</span>])] <span style="color:#ff79c6">=</span> name
+
+                <span style="color:#6272a4"># Get the mapped IP!</span>
+                ip <span style="color:#ff79c6">=</span> mappings[name]
+                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;DNS:&#34;</span>, name, <span style="color:#f1fa8c">&#34;-&gt;&#34;</span>, ip
+
+                <span style="color:#6272a4"># From the manual: &#34;Defer is useful when you&#39;re writing synchronous code to an asynchronous</span>
+                <span style="color:#6272a4"># interface: i.e., some code is calling you expecting a Deferred result, but you don&#39;t actually</span>
+                <span style="color:#6272a4"># need to do anything asynchronous. Just return defer.succeed(theResult).&#34;</span>
+                <span style="color:#ff79c6">return</span> defer<span style="color:#ff79c6">.</span>succeed([(dns<span style="color:#ff79c6">.</span>RRHeader(name, dns<span style="color:#ff79c6">.</span>A, dns<span style="color:#ff79c6">.</span>IN, self<span style="color:#ff79c6">.</span>ttl, dns<span style="color:#ff79c6">.</span>Record_A(ip, self<span style="color:#ff79c6">.</span>ttl)),), (), ()])
 
 
-<span style="color:#75715e"># Communication between your actual proxy (Burp, WebScarab, ..) and our script.</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyClient</span>(portforward<span style="color:#f92672">.</span>ProxyClient):
-        <span style="color:#66d9ef">def</span> __init__(self):
-                self<span style="color:#f92672">.</span>gotestablished <span style="color:#f92672">=</span> False
-                self<span style="color:#f92672">.</span>requestdata <span style="color:#f92672">=</span> None
-
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">setRequestData</span>(self, data):
-                self<span style="color:#f92672">.</span>requestdata <span style="color:#f92672">=</span> data
-
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dataReceived</span>(self, data):
-                <span style="color:#75715e"># TODO: How does this work when proxying a real device?! Connect shouldn&#39;t be sent then?!</span>
-                <span style="color:#66d9ef">if</span> self<span style="color:#f92672">.</span>gotestablished <span style="color:#f92672">or</span> self<span style="color:#f92672">.</span>requestdata <span style="color:#f92672">==</span> None:
-                        <span style="color:#75715e"># If the connection has been established just forward the data to the emulator</span>
-                        <span style="color:#75715e"># TODO: Check this</span>
-                        portforward<span style="color:#f92672">.</span>ProxyClient<span style="color:#f92672">.</span>dataReceived(self, data)
-                <span style="color:#66d9ef">else</span>:
-                        <span style="color:#75715e"># TODO: Check this</span>
-                        <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> <span style="color:#e6db74">&#34;HTTP/1.0 200 Connection established</span><span style="color:#ae81ff">\r\n\r\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">in</span> data:
-                                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;Warning: Unexpected proxy reply:&#34;</span>, repr(data[:<span style="color:#ae81ff">30</span>])
-                        <span style="color:#66d9ef">else</span>:
-                                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;Proxy CONNECT reply: &gt;&#34;</span>, repr(data[:<span style="color:#ae81ff">30</span>])
-
-                        self<span style="color:#f92672">.</span>gotestablished <span style="color:#f92672">=</span> True
-                        <span style="color:#75715e"># Forward data to Android</span>
-                        self<span style="color:#f92672">.</span>transport<span style="color:#f92672">.</span>write(self<span style="color:#f92672">.</span>requestdata)
+<span style="color:#6272a4"># --------------------------------------- HTTP PROXY ---------------------------------------</span>
 
 
-<span style="color:#75715e"># TODO: Check this</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyClientFactory</span>(portforward<span style="color:#f92672">.</span>ProxyClientFactory):
-        protocol <span style="color:#f92672">=</span> ProxyClient
+<span style="color:#6272a4"># Communication between your actual proxy (Burp, WebScarab, ..) and our script.</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ProxyClient</span>(portforward<span style="color:#ff79c6">.</span>ProxyClient):
+        <span style="color:#ff79c6">def</span> __init__(self):
+                self<span style="color:#ff79c6">.</span>gotestablished <span style="color:#ff79c6">=</span> False
+                self<span style="color:#ff79c6">.</span>requestdata <span style="color:#ff79c6">=</span> None
+
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">setRequestData</span>(self, data):
+                self<span style="color:#ff79c6">.</span>requestdata <span style="color:#ff79c6">=</span> data
+
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">dataReceived</span>(self, data):
+                <span style="color:#6272a4"># TODO: How does this work when proxying a real device?! Connect shouldn&#39;t be sent then?!</span>
+                <span style="color:#ff79c6">if</span> self<span style="color:#ff79c6">.</span>gotestablished <span style="color:#ff79c6">or</span> self<span style="color:#ff79c6">.</span>requestdata <span style="color:#ff79c6">==</span> None:
+                        <span style="color:#6272a4"># If the connection has been established just forward the data to the emulator</span>
+                        <span style="color:#6272a4"># TODO: Check this</span>
+                        portforward<span style="color:#ff79c6">.</span>ProxyClient<span style="color:#ff79c6">.</span>dataReceived(self, data)
+                <span style="color:#ff79c6">else</span>:
+                        <span style="color:#6272a4"># TODO: Check this</span>
+                        <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">not</span> <span style="color:#f1fa8c">&#34;HTTP/1.0 200 Connection established</span><span style="color:#f1fa8c">\r\n\r\n</span><span style="color:#f1fa8c">&#34;</span> <span style="color:#ff79c6">in</span> data:
+                                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Warning: Unexpected proxy reply:&#34;</span>, <span style="color:#8be9fd;font-style:italic">repr</span>(data[:<span style="color:#bd93f9">30</span>])
+                        <span style="color:#ff79c6">else</span>:
+                                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Proxy CONNECT reply: &gt;&#34;</span>, <span style="color:#8be9fd;font-style:italic">repr</span>(data[:<span style="color:#bd93f9">30</span>])
+
+                        self<span style="color:#ff79c6">.</span>gotestablished <span style="color:#ff79c6">=</span> True
+                        <span style="color:#6272a4"># Forward data to Android</span>
+                        self<span style="color:#ff79c6">.</span>transport<span style="color:#ff79c6">.</span>write(self<span style="color:#ff79c6">.</span>requestdata)
 
 
-<span style="color:#75715e"># Custom HTTP proxy. Intercepts the CONNECT &lt;ip&gt; command, looks up the corresponding domain name, and</span>
-<span style="color:#75715e"># forwards the correct CONNECT &lt;domain&gt; command to your actual proxy.</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyServer</span>(portforward<span style="color:#f92672">.</span>ProxyServer):
-        clientProtocolFactory <span style="color:#f92672">=</span> ProxyClientFactory
-
-        <span style="color:#66d9ef">def</span> __init__(self):
-                self<span style="color:#f92672">.</span>receivedfirst <span style="color:#f92672">=</span> False
-                self<span style="color:#f92672">.</span>connectre <span style="color:#f92672">=</span> re<span style="color:#f92672">.</span>compile(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;CONNECT (\d+\.\d+\.\d+\.\d+):\d+ HTTP&#39;</span>)
-                self<span style="color:#f92672">.</span>otherre <span style="color:#f92672">=</span> re<span style="color:#f92672">.</span>compile(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;\w+ http://(\d+\.\d+\.\d+\.\d+)&#39;</span>)
-                self<span style="color:#f92672">.</span>firstdata <span style="color:#f92672">=</span> None
+<span style="color:#6272a4"># TODO: Check this</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ProxyClientFactory</span>(portforward<span style="color:#ff79c6">.</span>ProxyClientFactory):
+        protocol <span style="color:#ff79c6">=</span> ProxyClient
 
 
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">dataReceived</span>(self, data):
-                <span style="color:#75715e"># The first time we recieve data we must check for invisible proxiying and rewrite</span>
-                <span style="color:#75715e"># the CONNECT/GET requests to use the actual domain name.</span>
-                <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> self<span style="color:#f92672">.</span>receivedfirst:
-                        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;INCOMING TCP CONN: &gt;&#34;</span>, repr(data<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">&#34;</span>)[<span style="color:#ae81ff">0</span>][:<span style="color:#ae81ff">40</span>])
+<span style="color:#6272a4"># Custom HTTP proxy. Intercepts the CONNECT &lt;ip&gt; command, looks up the corresponding domain name, and</span>
+<span style="color:#6272a4"># forwards the correct CONNECT &lt;domain&gt; command to your actual proxy.</span>
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ProxyServer</span>(portforward<span style="color:#ff79c6">.</span>ProxyServer):
+        clientProtocolFactory <span style="color:#ff79c6">=</span> ProxyClientFactory
 
-                        <span style="color:#75715e"># Of course invisible proxying is unnecessairy if the CONNECT command is actually used!</span>
-
-                        <span style="color:#75715e"># ------------------------- Invisible Proxying Support ---------------------------</span>
-
-                        <span style="color:#75715e"># TODO: This is UNTESTED and EXPERIMENTAL code</span>
-                        <span style="color:#e6db74">&#34;&#34;&#34;
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">                        # TODO: Get ourselves an Android VMWare image and test this :)
-</span><span style="color:#e6db74">                        # Only do invisible proxifying if there is no CONNECT command
-</span><span style="color:#e6db74">                        # TODO: We should actually check if it *START* with CONNECT
-</span><span style="color:#e6db74">                        if not &#34;CONNECT&#34; in data:
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">                                # We support invisible proxying for real Android devicec, where the computer is configured
-</span><span style="color:#e6db74">                                # as the router, and all HTTP(S) traffic is redirected to our tool. In this scenario we
-</span><span style="color:#e6db74">                                # don&#39;t receive a CONNECT request. Instead we get the original destination IP address and
-</span><span style="color:#e6db74">                                # manually construct the CONNECT request.
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">                                # TODO: Test this on other operating systems than Linux
-</span><span style="color:#e6db74">                                try:
-</span><span style="color:#e6db74">                                        # Ask the OS the original destination of the connection
-</span><span style="color:#e6db74">                                        dst = socket.getsockopt(self.transport.socket, SOL_IP, SO_ORIGINAL_DST, 16)
-</span><span style="color:#e6db74">                                        # Exclamation mark tells unpack that dst is big-endian
-</span><span style="color:#e6db74">                                        # 2x  : two pad bytes
-</span><span style="color:#e6db74">                                        # H   : unsigned short (port)
-</span><span style="color:#e6db74">                                        # 4s  : char string of 4 bytes (ip)
-</span><span style="color:#e6db74">                                        # 8x  : eight pad bytes
-</span><span style="color:#e6db74">                                        srv_port, srv_ip = struct.unpack(&#34;!2xH4s8x&#34;, dst)
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">                                        if srv_port == 443:
-</span><span style="color:#e6db74">                                                self.peer.setRequestData(data)
-</span><span style="color:#e6db74">                                                data = &#34;CONNECT &#34; + inet_ntoa(srv_ip) + &#34;:&#34; + str(srv_port) + &#34; HTTP/1.1</span><span style="color:#ae81ff">\r\n\r\n</span><span style="color:#e6db74">&#34;
-</span><span style="color:#e6db74">                                                print &#34;PROXIFYING HTTPS: &#34; + repr(data.strip())
-</span><span style="color:#e6db74">                                        # NOTE: If you uncomment this elif block, your proxy must support invisible proxying
-</span><span style="color:#e6db74">                                        elif srv_port == 80:
-</span><span style="color:#e6db74">                                                # Rewrite to absolute GET request if info available
-</span><span style="color:#e6db74">                                                if reversemappings.has_key(inet_ntoa(srv_ip)):
-</span><span style="color:#e6db74">                                                        data = re.sub(r&#39;^GET &#39;, &#34;GET http://&#34; + reversemappings[inet_ntoa(srv_ip)] + &#34;:&#34; + str(srv_port), data)
-</span><span style="color:#e6db74">                                                else:
-</span><span style="color:#e6db74">                                                        print &#34;Warning: got redirected HTTP request but unable to find destination hostname:port&#34;
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">                                except Exception, e:
-</span><span style="color:#e6db74">                                        print &#34;Something went wrong with invisible proxying:&#34;, e.getMessage()
-</span><span style="color:#e6db74">                        &#34;&#34;&#34;</span>
-
-                        <span style="color:#75715e"># ------------------- Rewrite CONNECT/GET/POST with domain name ---------------------</span>
-
-                        resultconnect <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>connectre<span style="color:#f92672">.</span>match(data)
-                        resultother <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>otherre<span style="color:#f92672">.</span>match(data)
-
-                        <span style="color:#75715e"># TODO: We shouldn&#39;t use a normal replace after using regular expressions..</span>
-                        <span style="color:#75715e"># Replace IP in CONNECT</span>
-                        <span style="color:#66d9ef">if</span> (resultconnect <span style="color:#f92672">!=</span> None <span style="color:#f92672">and</span> reversemappings<span style="color:#f92672">.</span>has_key(resultconnect<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>))):
-                                data <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>replace(resultconnect<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>), reversemappings[resultconnect<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>)])
-                                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;REWRITING CONNECT:&#34;</span>, resultconnect<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>), <span style="color:#e6db74">&#34;-&gt;&#34;</span>, reversemappings[resultconnect<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>)]
-                        <span style="color:#75715e"># Replace IP in GET, POST, HEAD, etc</span>
-                        <span style="color:#66d9ef">elif</span> (resultother <span style="color:#f92672">!=</span> None <span style="color:#f92672">and</span> reversemappings<span style="color:#f92672">.</span>has_key(resultother<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>))):
-                                data <span style="color:#f92672">=</span> data<span style="color:#f92672">.</span>replace(resultother<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>), reversemappings[resultother<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>)])
-                                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;REWRITING HTTP METHOD:&#34;</span>, resultother<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>), <span style="color:#e6db74">&#34;-&gt;&#34;</span>, reversemappings[resultother<span style="color:#f92672">.</span>group(<span style="color:#ae81ff">1</span>)]
-
-                        self<span style="color:#f92672">.</span>firstdata <span style="color:#f92672">=</span> data
-                        self<span style="color:#f92672">.</span>receivedfirst <span style="color:#f92672">=</span> True
-
-                        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;OUTGOING TCP: &gt;&#34;</span>, repr(data<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">&#34;</span>)[<span style="color:#ae81ff">0</span>][:<span style="color:#ae81ff">40</span>])
+        <span style="color:#ff79c6">def</span> __init__(self):
+                self<span style="color:#ff79c6">.</span>receivedfirst <span style="color:#ff79c6">=</span> False
+                self<span style="color:#ff79c6">.</span>connectre <span style="color:#ff79c6">=</span> re<span style="color:#ff79c6">.</span>compile(<span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#39;CONNECT (\d+\.\d+\.\d+\.\d+):\d+ HTTP&#39;</span>)
+                self<span style="color:#ff79c6">.</span>otherre <span style="color:#ff79c6">=</span> re<span style="color:#ff79c6">.</span>compile(<span style="color:#f1fa8c">r</span><span style="color:#f1fa8c">&#39;\w+ http://(\d+\.\d+\.\d+\.\d+)&#39;</span>)
+                self<span style="color:#ff79c6">.</span>firstdata <span style="color:#ff79c6">=</span> None
 
 
-                <span style="color:#75715e"># forward data</span>
-                portforward<span style="color:#f92672">.</span>ProxyServer<span style="color:#f92672">.</span>dataReceived(self, data)
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">dataReceived</span>(self, data):
+                <span style="color:#6272a4"># The first time we recieve data we must check for invisible proxiying and rewrite</span>
+                <span style="color:#6272a4"># the CONNECT/GET requests to use the actual domain name.</span>
+                <span style="color:#ff79c6">if</span> <span style="color:#ff79c6">not</span> self<span style="color:#ff79c6">.</span>receivedfirst:
+                        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;INCOMING TCP CONN: &gt;&#34;</span>, <span style="color:#8be9fd;font-style:italic">repr</span>(data<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\r</span><span style="color:#f1fa8c">&#34;</span>)[<span style="color:#bd93f9">0</span>][:<span style="color:#bd93f9">40</span>])
+
+                        <span style="color:#6272a4"># Of course invisible proxying is unnecessairy if the CONNECT command is actually used!</span>
+
+                        <span style="color:#6272a4"># ------------------------- Invisible Proxying Support ---------------------------</span>
+
+                        <span style="color:#6272a4"># TODO: This is UNTESTED and EXPERIMENTAL code</span>
+                        <span style="color:#f1fa8c">&#34;&#34;&#34;
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                        # TODO: Get ourselves an Android VMWare image and test this :)
+</span><span style="color:#f1fa8c">                        # Only do invisible proxifying if there is no CONNECT command
+</span><span style="color:#f1fa8c">                        # TODO: We should actually check if it *START* with CONNECT
+</span><span style="color:#f1fa8c">                        if not &#34;CONNECT&#34; in data:
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                                # We support invisible proxying for real Android devicec, where the computer is configured
+</span><span style="color:#f1fa8c">                                # as the router, and all HTTP(S) traffic is redirected to our tool. In this scenario we
+</span><span style="color:#f1fa8c">                                # don&#39;t receive a CONNECT request. Instead we get the original destination IP address and
+</span><span style="color:#f1fa8c">                                # manually construct the CONNECT request.
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                                # TODO: Test this on other operating systems than Linux
+</span><span style="color:#f1fa8c">                                try:
+</span><span style="color:#f1fa8c">                                        # Ask the OS the original destination of the connection
+</span><span style="color:#f1fa8c">                                        dst = socket.getsockopt(self.transport.socket, SOL_IP, SO_ORIGINAL_DST, 16)
+</span><span style="color:#f1fa8c">                                        # Exclamation mark tells unpack that dst is big-endian
+</span><span style="color:#f1fa8c">                                        # 2x  : two pad bytes
+</span><span style="color:#f1fa8c">                                        # H   : unsigned short (port)
+</span><span style="color:#f1fa8c">                                        # 4s  : char string of 4 bytes (ip)
+</span><span style="color:#f1fa8c">                                        # 8x  : eight pad bytes
+</span><span style="color:#f1fa8c">                                        srv_port, srv_ip = struct.unpack(&#34;!2xH4s8x&#34;, dst)
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                                        if srv_port == 443:
+</span><span style="color:#f1fa8c">                                                self.peer.setRequestData(data)
+</span><span style="color:#f1fa8c">                                                data = &#34;CONNECT &#34; + inet_ntoa(srv_ip) + &#34;:&#34; + str(srv_port) + &#34; HTTP/1.1</span><span style="color:#f1fa8c">\r\n\r\n</span><span style="color:#f1fa8c">&#34;
+</span><span style="color:#f1fa8c">                                                print &#34;PROXIFYING HTTPS: &#34; + repr(data.strip())
+</span><span style="color:#f1fa8c">                                        # NOTE: If you uncomment this elif block, your proxy must support invisible proxying
+</span><span style="color:#f1fa8c">                                        elif srv_port == 80:
+</span><span style="color:#f1fa8c">                                                # Rewrite to absolute GET request if info available
+</span><span style="color:#f1fa8c">                                                if reversemappings.has_key(inet_ntoa(srv_ip)):
+</span><span style="color:#f1fa8c">                                                        data = re.sub(r&#39;^GET &#39;, &#34;GET http://&#34; + reversemappings[inet_ntoa(srv_ip)] + &#34;:&#34; + str(srv_port), data)
+</span><span style="color:#f1fa8c">                                                else:
+</span><span style="color:#f1fa8c">                                                        print &#34;Warning: got redirected HTTP request but unable to find destination hostname:port&#34;
+</span><span style="color:#f1fa8c">
+</span><span style="color:#f1fa8c">                                except Exception, e:
+</span><span style="color:#f1fa8c">                                        print &#34;Something went wrong with invisible proxying:&#34;, e.getMessage()
+</span><span style="color:#f1fa8c">                        &#34;&#34;&#34;</span>
+
+                        <span style="color:#6272a4"># ------------------- Rewrite CONNECT/GET/POST with domain name ---------------------</span>
+
+                        resultconnect <span style="color:#ff79c6">=</span> self<span style="color:#ff79c6">.</span>connectre<span style="color:#ff79c6">.</span>match(data)
+                        resultother <span style="color:#ff79c6">=</span> self<span style="color:#ff79c6">.</span>otherre<span style="color:#ff79c6">.</span>match(data)
+
+                        <span style="color:#6272a4"># TODO: We shouldn&#39;t use a normal replace after using regular expressions..</span>
+                        <span style="color:#6272a4"># Replace IP in CONNECT</span>
+                        <span style="color:#ff79c6">if</span> (resultconnect <span style="color:#ff79c6">!=</span> None <span style="color:#ff79c6">and</span> reversemappings<span style="color:#ff79c6">.</span>has_key(resultconnect<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>))):
+                                data <span style="color:#ff79c6">=</span> data<span style="color:#ff79c6">.</span>replace(resultconnect<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>), reversemappings[resultconnect<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>)])
+                                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;REWRITING CONNECT:&#34;</span>, resultconnect<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>), <span style="color:#f1fa8c">&#34;-&gt;&#34;</span>, reversemappings[resultconnect<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>)]
+                        <span style="color:#6272a4"># Replace IP in GET, POST, HEAD, etc</span>
+                        <span style="color:#ff79c6">elif</span> (resultother <span style="color:#ff79c6">!=</span> None <span style="color:#ff79c6">and</span> reversemappings<span style="color:#ff79c6">.</span>has_key(resultother<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>))):
+                                data <span style="color:#ff79c6">=</span> data<span style="color:#ff79c6">.</span>replace(resultother<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>), reversemappings[resultother<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>)])
+                                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;REWRITING HTTP METHOD:&#34;</span>, resultother<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>), <span style="color:#f1fa8c">&#34;-&gt;&#34;</span>, reversemappings[resultother<span style="color:#ff79c6">.</span>group(<span style="color:#bd93f9">1</span>)]
+
+                        self<span style="color:#ff79c6">.</span>firstdata <span style="color:#ff79c6">=</span> data
+                        self<span style="color:#ff79c6">.</span>receivedfirst <span style="color:#ff79c6">=</span> True
+
+                        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;OUTGOING TCP: &gt;&#34;</span>, <span style="color:#8be9fd;font-style:italic">repr</span>(data<span style="color:#ff79c6">.</span>split(<span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\r</span><span style="color:#f1fa8c">&#34;</span>)[<span style="color:#bd93f9">0</span>][:<span style="color:#bd93f9">40</span>])
+
+
+                <span style="color:#6272a4"># forward data</span>
+                portforward<span style="color:#ff79c6">.</span>ProxyServer<span style="color:#ff79c6">.</span>dataReceived(self, data)
 
 
 
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProxyFactory</span>(portforward<span style="color:#f92672">.</span>ProxyFactory):
-        protocol <span style="color:#f92672">=</span> ProxyServer
+<span style="color:#ff79c6">class</span> <span style="color:#50fa7b">ProxyFactory</span>(portforward<span style="color:#ff79c6">.</span>ProxyFactory):
+        protocol <span style="color:#ff79c6">=</span> ProxyServer
 
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">doStart</span>(self):
-                <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">==== Android Proxy Up and Running ====</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>
-
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;AndroidProxy   ---   (C) Mathy Vanhoef&#34;</span>
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;This program comes with ABSOLUTELY NO WARRANTY.&#34;</span>
-        <span style="color:#66d9ef">print</span>
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;DNS server will listen on localhost:53&#34;</span>
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;HTTP Proxy will listen on localhost:8007&#34;</span>
-        <span style="color:#66d9ef">print</span>
-        <span style="color:#75715e">#print &#34;Physical device: Configure your computer dns server and as router (NOT as proxy) and execute&#34;</span>
-        <span style="color:#75715e">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8007&#34;</span>
-        <span style="color:#75715e">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8007&#34;</span>
-        <span style="color:#75715e">#print</span>
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;Emulator: start it using: emulator @AvdName -http-proxy http://localhost:8007 -dns-server localhost&#34;</span>
-        <span style="color:#66d9ef">print</span>
-        <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#34;Don&#39;t forget to start your normal proxy on localhost:8080&#34;</span>
-        <span style="color:#66d9ef">print</span>
-
-        <span style="color:#75715e"># Setup custom DNS server</span>
-        resolvers <span style="color:#f92672">=</span> []
-        <span style="color:#75715e">#resolvers.append(ProxyResolver([(&#39;8.8.8.8&#39;, 53)]))</span>
-        resolvers<span style="color:#f92672">.</span>append(ProxyResolver([(<span style="color:#e6db74">&#39;10.0.141.20&#39;</span>, <span style="color:#ae81ff">53</span>)]))
-        f <span style="color:#f92672">=</span> server<span style="color:#f92672">.</span>DNSServerFactory(clients<span style="color:#f92672">=</span>resolvers)
-        p <span style="color:#f92672">=</span> dns<span style="color:#f92672">.</span>DNSDatagramProtocol(f)
-        reactor<span style="color:#f92672">.</span>listenUDP(<span style="color:#ae81ff">53</span>, p)
-
-        <span style="color:#75715e"># Setup TCP proxy server</span>
-        endpoint <span style="color:#f92672">=</span> TCP4ServerEndpoint(reactor, <span style="color:#ae81ff">8007</span>)
-        endpoint<span style="color:#f92672">.</span>listen(ProxyFactory(<span style="color:#e6db74">&#39;localhost&#39;</span>, <span style="color:#ae81ff">8080</span>))
-
-        <span style="color:#75715e"># Start DNS and TCP server</span>
-        reactor<span style="color:#f92672">.</span>run();
+        <span style="color:#ff79c6">def</span> <span style="color:#50fa7b">doStart</span>(self):
+                <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;</span><span style="color:#f1fa8c">\t</span><span style="color:#f1fa8c">==== Android Proxy Up and Running ====</span><span style="color:#f1fa8c">\n</span><span style="color:#f1fa8c">&#34;</span>
 
 
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+<span style="color:#ff79c6">def</span> <span style="color:#50fa7b">main</span>():
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;AndroidProxy   ---   (C) Mathy Vanhoef&#34;</span>
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;This program comes with ABSOLUTELY NO WARRANTY.&#34;</span>
+        <span style="color:#ff79c6">print</span>
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;DNS server will listen on localhost:53&#34;</span>
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;HTTP Proxy will listen on localhost:8007&#34;</span>
+        <span style="color:#ff79c6">print</span>
+        <span style="color:#6272a4">#print &#34;Physical device: Configure your computer dns server and as router (NOT as proxy) and execute&#34;</span>
+        <span style="color:#6272a4">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8007&#34;</span>
+        <span style="color:#6272a4">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8007&#34;</span>
+        <span style="color:#6272a4">#print</span>
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Emulator: start it using: emulator @AvdName -http-proxy http://localhost:8007 -dns-server localhost&#34;</span>
+        <span style="color:#ff79c6">print</span>
+        <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Don&#39;t forget to start your normal proxy on localhost:8080&#34;</span>
+        <span style="color:#ff79c6">print</span>
+
+        <span style="color:#6272a4"># Setup custom DNS server</span>
+        resolvers <span style="color:#ff79c6">=</span> []
+        <span style="color:#6272a4">#resolvers.append(ProxyResolver([(&#39;8.8.8.8&#39;, 53)]))</span>
+        resolvers<span style="color:#ff79c6">.</span>append(ProxyResolver([(<span style="color:#f1fa8c">&#39;10.0.141.20&#39;</span>, <span style="color:#bd93f9">53</span>)]))
+        f <span style="color:#ff79c6">=</span> server<span style="color:#ff79c6">.</span>DNSServerFactory(clients<span style="color:#ff79c6">=</span>resolvers)
+        p <span style="color:#ff79c6">=</span> dns<span style="color:#ff79c6">.</span>DNSDatagramProtocol(f)
+        reactor<span style="color:#ff79c6">.</span>listenUDP(<span style="color:#bd93f9">53</span>, p)
+
+        <span style="color:#6272a4"># Setup TCP proxy server</span>
+        endpoint <span style="color:#ff79c6">=</span> TCP4ServerEndpoint(reactor, <span style="color:#bd93f9">8007</span>)
+        endpoint<span style="color:#ff79c6">.</span>listen(ProxyFactory(<span style="color:#f1fa8c">&#39;localhost&#39;</span>, <span style="color:#bd93f9">8080</span>))
+
+        <span style="color:#6272a4"># Start DNS and TCP server</span>
+        reactor<span style="color:#ff79c6">.</span>run();
+
+
+<span style="color:#ff79c6">if</span> __name__ <span style="color:#ff79c6">==</span> <span style="color:#f1fa8c">&#34;__main__&#34;</span>:
         main()
 </code></pre></div><p>Run this with <code>sudo python AndroidProxy.py</code> (assuming you saved it as that), and change your Emulators launch options to <code>~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8007 -dns-server localhost -debug-proxy</code>. Running it with sudo is needed as the script starts a DNS server locally. The <code>-debug-proxy</code> option is optional, but is useful for further debugging of the traffic.</p>
 <p>As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as <code>DNS: clients3.google.com -&gt; 1.1.1.4</code>. This is just the internal storage key and not the IP it resolved :D</p>
 <h2 id="summary">summary</h2>
 <p>Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?</p>
+  
   </div>
-  <div id="disqus_thread"></div>
-</div>
+</article>
 
 
-<script type="text/javascript">
-var disqus_shortname = "slashnote";
-(function () {
-    var s = document.createElement('script'); s.async = true;
-    s.type = 'text/javascript';
-    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());
-</script>
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
 
 
-
-<script type="text/javascript">
-    var disqus_shortname = "slashnote";
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 </body>
-</html>
 
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+</html>

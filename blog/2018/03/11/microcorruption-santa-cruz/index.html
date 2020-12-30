@@ -1,127 +1,112 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<html lang="en-us">
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title> microcorruption - santa cruz | #!/slash/note</title>
+  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta property="og:title" content="microcorruption - santa cruz" />
+<meta property="og:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
+The challenge has the following description when you start:
+
+This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
+
+Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/" />
+<meta property="article:published_time" content="2018-03-11T20:23:43+02:00" />
+<meta property="article:modified_time" content="2018-03-11T20:23:43+02:00" />
+
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="microcorruption - santa cruz"/>
+<meta name="twitter:description" content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
+The challenge has the following description when you start:
+
+This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
+
+Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process."/>
 
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  
+  
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
 
   
-  <script type="application/ld+json">
-{
-    "@context" : "http://schema.org",
-    "@type" : "BlogPosting",
-    "mainEntityOfPage": {
-         "@type": "WebPage",
-         "@id": "https:\/\/leonjza.github.io"
-    },
-    "articleSection" : "post",
-    "name" : "microcorruption - santa cruz",
-    "headline" : "microcorruption - santa cruz",
-    "description" : "\u003cfigure\u003e\n    \u003cimg src=\u0022\/images\/microcorruption\/microcorruption.png\u0022\/\u003e \n\u003c\/figure\u003e\n\n\u003cp\u003eThis post is part of the series of solving \u003ca href=\u0022https:\/\/microcorruption.com\u0022\u003emicrocorruption.com\u003c\/a\u003e ctf challenges which continues from the \u003ca href=\u0022https:\/\/leonjza.github.io\/blog\/2018\/03\/09\/microcorruption---johannesburg\/\u0022\u003eprevious challenge\u003c\/a\u003e called \u003cem\u003eJohannesburg\u003c\/em\u003e. This challenge is titled \u003cem\u003eSanta Cruz\u003c\/em\u003e.\u003c\/p\u003e\n\u003cp\u003eThe challenge has the following description when you start:\u003c\/p\u003e\n\u003cblockquote\u003e\n\u003cp\u003eThis is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.\u003c\/p\u003e\n\u003c\/blockquote\u003e\n\u003cp\u003eMaybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.\u003c\/p\u003e",
-    "inLanguage" : "en-US",
-    "author" : "Leon Jacobs",
-    "creator" : "Leon Jacobs",
-    "publisher": "Leon Jacobs",
-    "accountablePerson" : "Leon Jacobs",
-    "copyrightHolder" : "Leon Jacobs",
-    "copyrightYear" : "2018",
-    "datePublished": "2018-03-11 20:23:43 \u002b0200 SAST",
-    "dateModified" : "2018-03-11 20:23:43 \u002b0200 SAST",
-    "url" : "https:\/\/leonjza.github.io\/blog\/2018\/03\/11\/microcorruption-santa-cruz\/",
-    "wordCount" : "2015",
-    "keywords" : [ "ctf","exploit","assembly","microcorruption","santa cruz","Blog" ]
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+
+  
+  
+  
+  
+  
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-44457032-2', 'auto');
+	
+	ga('send', 'pageview');
 }
 </script>
-
-
-  <title>microcorruption - santa cruz &middot; </title>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/poole-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-overrides.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/hyde-x.css">
-  <link rel="stylesheet" href="https://leonjza.github.io/css/highlight/solarized_light.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-  
-
-  
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://leonjza.github.io/touch-icon-144-precomposed.png">
-  <link href="https://leonjza.github.io/favicon.png" rel="icon">
-
-  
-  
-  
-  
-
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-44457032-2', 'auto');
-    ga('send', 'pageview');
-  </script>
   
 </head>
-<body class="theme-base-0d">
-<div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      
-      <h1></h1>
-      <p class="lead">#!/slash/note<br>
-<em>A checkbox unchecker&rsquo;s notepad</em></p>
-    </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/">Blog</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/post">Posts</a></li>
-      
-      <li class="sidebar-nav-item"><a href="https://leonjza.github.io/about/">About Me</a></li>
-      
-    </ul>
+<body class="max-width mx-auto px3 ltr">
+  <div class="content index py4">
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
-      <a href="https://github.com/leonjza"><i class="fa fa-github-square fa-3x"></i></a>
-      
-      
-      
-      
-      
-      <a href="https://twitter.com/leonjza"><i class="fa fa-twitter-square fa-3x"></i></a>
-      
-      
-      </li>
-    </ul>
-
-    
-
-    <p>Copyright &copy; 2020 <a href="https://leonjza.github.io/license/">License</a><br/>
-       Powered by <a href="http://gohugo.io">Hugo</a> and <a href="https://github.com/zyro/hyde-x">Hyde-X</a></p>
-
+    <header id="header">
+  <a href="https://leonjza.github.io">
+  
+    <div id="logo" style="background-image: url(https://leonjza.github.io/images/logo.png)"></div>
+  
+  <div id="title">
+    <h1>#!/slash/note</h1>
   </div>
-</div>
+  </a>
+  <div id="nav">
+    <ul>
+      <li class="icon">
+        <a href="#"><i class="fas fa-bars fa-2x"></i></a>
+      </li>
+      
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+      
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+      
+    </ul>
+  </div>
+</header>
 
 
-<div class="content container">
-  <div class="post">
-    <h1 class="post-title">microcorruption - santa cruz</h1>
-    <span class="post-date">Mar 11, 2018 &middot; 10 minute read &middot; <a href="https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/#disqus_thread">Comments</a>
+
     
-    <br/>
-    <a class="label" href="https://leonjza.github.io/categories/ctf">ctf</a><a class="label" href="https://leonjza.github.io/categories/exploit">exploit</a><a class="label" href="https://leonjza.github.io/categories/assembly">assembly</a><a class="label" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a><a class="label" href="https://leonjza.github.io/categories/santa-cruz">santa cruz</a>
-    </span>
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <div class="content" itemprop="articleBody">
+  
     <figure>
     <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
 </figure>
@@ -134,106 +119,106 @@
 <p>Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.</p>
 <h2 id="santa-cruz">santa cruz</h2>
 <p>Static analysis of the programs' code showed that we are calling <code>login</code> from <code>main</code> again, after adjusting the stack pointer.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4438</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">main</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
-<span style="color:#960050;background-color:#1e0010">4438:</span>  <span style="color:#960050;background-color:#1e0010">3150</span> <span style="color:#a6e22e">ceff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffce, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">443</span><span style="color:#66d9ef">c</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">5045</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4550 &lt;login&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
+4438:  3150 <span style="color:#50fa7b">ceff</span>      add   <span style="color:#6272a4">#0xffce, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  b012 <span style="color:#bd93f9">5045</span>      call  <span style="color:#6272a4">#0x4550 &lt;login&gt;
 </span></code></pre></div><p>Nothing too interesting. However, <code>login</code> was <em>much</em> larger when compared to previous versions we have seen. Once I finished skimming through <code>login</code>, I noticed that this program contained a number of methods that don&rsquo;t seem to be called at all. For example, <code>test_username_and_password_valid</code>, <code>putchar</code> and <code>getchar</code>.</p>
 <p>It quickly became evident that most of the important logic was within <code>login</code>. As previously mentioned, this routine was quite large, so lets take a closer look at it in smaller chunks.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4550</span> <span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">login</span><span style="color:#960050;background-color:#1e0010">&gt;</span>
-<span style="color:#960050;background-color:#1e0010">4550:</span>  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">4552:</span>  <span style="color:#960050;background-color:#1e0010">0412</span>           <span style="color:#a6e22e">push</span>  <span style="color:#66d9ef">r4</span>
-<span style="color:#960050;background-color:#1e0010">4554:</span>  <span style="color:#960050;background-color:#1e0010">0441</span>           <span style="color:#a6e22e">mov</span>   <span style="color:#66d9ef">sp</span>, <span style="color:#66d9ef">r4</span>
-<span style="color:#960050;background-color:#1e0010">4556:</span>  <span style="color:#960050;background-color:#1e0010">2452</span>           <span style="color:#a6e22e">add</span>   <span style="color:#75715e">#0x4, r4
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4558</span>:  <span style="color:#ae81ff">3150</span> <span style="color:#66d9ef">d8ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffd8, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">455</span><span style="color:#66d9ef">c</span>:  <span style="color:#66d9ef">c443</span> <span style="color:#66d9ef">faff</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#75715e">#0x0, -0x6(r4)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4560</span>:  <span style="color:#66d9ef">f442</span> <span style="color:#66d9ef">e7ff</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#75715e">#0x8, -0x19(r4)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4564</span>:  <span style="color:#66d9ef">f440</span> <span style="color:#ae81ff">1000</span> <span style="color:#66d9ef">e8ff</span> <span style="color:#66d9ef">mov.b</span> <span style="color:#75715e">#0x10, -0x18(r4)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4550 &lt;<span style="color:#50fa7b">login</span>&gt;
+4550:  0<span style="color:#50fa7b">b12</span>           push  r11
+4552:  0412           <span style="color:#50fa7b">push</span>  r4
+4554:  0441           <span style="color:#50fa7b">mov</span>   sp, r4
+4556:  2452           <span style="color:#50fa7b">add</span>   <span style="color:#6272a4">#0x4, r4
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4558</span>:  <span style="color:#bd93f9">3150</span> d8ff      add   <span style="color:#6272a4">#0xffd8, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">455</span>c:  c443 faff      mov.b <span style="color:#6272a4">#0x0, -0x6(r4)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4560</span>:  f442 e7ff      mov.b <span style="color:#6272a4">#0x8, -0x19(r4)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4564</span>:  f440 <span style="color:#bd93f9">1000</span> e8ff mov.b <span style="color:#6272a4">#0x10, -0x18(r4)
 </span></code></pre></div><p>The beginning of <code>login</code> contained three interesting instructions to move the bytes <code>0x0</code>, <code>0x8</code> and <code>0x10</code> into very specific locations within memory. This caught my eye pretty quickly and they are important so keep them in mind.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">456</span>a:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f40</span> <span style="color:#ae81ff">8444</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x4484 &#34;Authentication now requires a username and password.&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">456</span><span style="color:#66d9ef">e</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4572</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#66d9ef">b944</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x44b9 &#34;Remember: both are between 8 and 16 characters.&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4576</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">456<span style="color:#8be9fd;font-style:italic">a:</span>  3<span style="color:#50fa7b">f40</span> <span style="color:#bd93f9">8444</span>      mov   <span style="color:#6272a4">#0x4484 &#34;Authentication now requires a username and password.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">456</span>e:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4572</span>:  <span style="color:#bd93f9">3</span>f40 b944      mov   <span style="color:#6272a4">#0x44b9 &#34;Remember: both are between 8 and 16 characters.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4576</span>:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
 </span></code></pre></div><p>This section is pretty vanilla. It simply prints out some strings. Notice though the fact that both the username and password is supposed to be between 8 (<code>0x8</code>) and 16 (<code>0x10</code>) characters.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">457</span>a:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f40</span> <span style="color:#66d9ef">e944</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x44e9 &#34;Please enter your username:&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">457</span><span style="color:#66d9ef">e</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4582</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">e40</span> <span style="color:#ae81ff">6300</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x63, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4586</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">458</span><span style="color:#66d9ef">a</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">1847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4718 &lt;getsn&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">458</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4592</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4596</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">e40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">459</span><span style="color:#66d9ef">a</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f44</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r4</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">459</span>c:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f50</span> <span style="color:#66d9ef">d6ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffd6, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">a0</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">5447</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4754 &lt;strcpy&gt;
-</span><span style="color:#75715e"></span>
-<span style="color:#960050;background-color:#1e0010">45</span>a4:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f40</span> <span style="color:#ae81ff">0545</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x4505 &#34;Please enter your password:&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">a8</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">ac</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">e40</span> <span style="color:#ae81ff">6300</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x63, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">b0</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">b4</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">1847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4718 &lt;getsn&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">b8</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">bc</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">c0</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">b44</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r4</span>, <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">45</span>c2:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">b50</span> <span style="color:#66d9ef">e9ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffe9, r11
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">c6</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">e40</span> <span style="color:#ae81ff">0424</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x2404, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">ca</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f4b</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>cc:  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">5447</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4754 &lt;strcpy&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">457<span style="color:#8be9fd;font-style:italic">a:</span>  3<span style="color:#50fa7b">f40</span> e944      mov   <span style="color:#6272a4">#0x44e9 &#34;Please enter your username:&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">457</span>e:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4582</span>:  <span style="color:#bd93f9">3</span>e40 <span style="color:#bd93f9">6300</span>      mov   <span style="color:#6272a4">#0x63, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4586</span>:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">458</span>a:  b012 <span style="color:#bd93f9">1847</span>      call  <span style="color:#6272a4">#0x4718 &lt;getsn&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">458</span>e:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4592</span>:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4596</span>:  <span style="color:#bd93f9">3</span>e40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">459</span>a:  <span style="color:#bd93f9">0</span>f44           mov   r4, r15
+459<span style="color:#8be9fd;font-style:italic">c:</span>  3<span style="color:#50fa7b">f50</span> d6ff      add   <span style="color:#6272a4">#0xffd6, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>a0:  b012 <span style="color:#bd93f9">5447</span>      call  <span style="color:#6272a4">#0x4754 &lt;strcpy&gt;
+</span><span style="color:#6272a4"></span>
+45<span style="color:#8be9fd;font-style:italic">a4:</span>  3<span style="color:#50fa7b">f40</span> <span style="color:#bd93f9">0545</span>      mov   <span style="color:#6272a4">#0x4505 &#34;Please enter your password:&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>a8:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>ac:  <span style="color:#bd93f9">3</span>e40 <span style="color:#bd93f9">6300</span>      mov   <span style="color:#6272a4">#0x63, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>b0:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>b4:  b012 <span style="color:#bd93f9">1847</span>      call  <span style="color:#6272a4">#0x4718 &lt;getsn&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>b8:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>bc:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>c0:  <span style="color:#bd93f9">0</span>b44           mov   r4, r11
+45<span style="color:#8be9fd;font-style:italic">c2:</span>  3<span style="color:#50fa7b">b50</span> e9ff      add   <span style="color:#6272a4">#0xffe9, r11
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>c6:  <span style="color:#bd93f9">3</span>e40 <span style="color:#bd93f9">0424</span>      mov   <span style="color:#6272a4">#0x2404, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>ca:  <span style="color:#bd93f9">0</span>f4b           mov   r11, r15
+45<span style="color:#8be9fd;font-style:italic">cc:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">5447</span>      call  <span style="color:#6272a4">#0x4754 &lt;strcpy&gt;
 </span></code></pre></div><p>Much like the previous challenge, this section simply gets the username and password from the user. Once a value has been captured, <code>strcpy</code> is called to move the data to another section in memory after echoing it back to the user.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">45</span>d0:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">f4b</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r11</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>d2:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">e44</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r4</span>, <span style="color:#66d9ef">r14</span>
-<span style="color:#960050;background-color:#1e0010">45</span>d4:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">e50</span> <span style="color:#66d9ef">e8ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffe8, r14
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">d8</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">e53</span>           <span style="color:#66d9ef">inc</span>   <span style="color:#66d9ef">r14</span>
-<span style="color:#960050;background-color:#1e0010">45</span>da:  <span style="color:#a6e22e">ce93</span> <span style="color:#ae81ff">0000</span>      <span style="color:#66d9ef">tst.b</span> <span style="color:#ae81ff">0x0</span>(<span style="color:#66d9ef">r14</span>)
-<span style="color:#960050;background-color:#1e0010">45</span>de:  <span style="color:#a6e22e">fc23</span>           <span style="color:#66d9ef">jnz</span>   <span style="color:#75715e">#0x45d8 &lt;login+0x88&gt;
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">; the loop is done
-</span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">45</span>e0:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b4e</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r14</span>, <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">45</span>e2:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b8f</span>           <span style="color:#66d9ef">sub</span>   <span style="color:#66d9ef">r15</span>, <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">45</span>e4:  <span style="color:#960050;background-color:#1e0010">5</span><span style="color:#a6e22e">f44</span> <span style="color:#66d9ef">e8ff</span>      <span style="color:#66d9ef">mov.b</span> -<span style="color:#ae81ff">0x18</span>(<span style="color:#66d9ef">r4</span>), <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>e8:  <span style="color:#960050;background-color:#1e0010">8</span><span style="color:#a6e22e">f11</span>           <span style="color:#66d9ef">sxt</span>   <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>ea:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b9f</span>           <span style="color:#66d9ef">cmp</span>   <span style="color:#66d9ef">r15</span>, <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">45</span>ec:  <span style="color:#960050;background-color:#1e0010">0628</span>           <span style="color:#a6e22e">jnc</span>   <span style="color:#75715e">#0x45fa &lt;login+0xaa&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">ee</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">f42</span> <span style="color:#ae81ff">0024</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#960050;background-color:#1e0010">&amp;</span><span style="color:#ae81ff">0x2400</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>f2:  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">45</span><span style="color:#66d9ef">f6</span>:  <span style="color:#ae81ff">3040</span> <span style="color:#ae81ff">4044</span>      <span style="color:#66d9ef">br</span>    <span style="color:#75715e">#0x4440 &lt;__stop_progExec__&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">45<span style="color:#8be9fd;font-style:italic">d0:</span>  0<span style="color:#50fa7b">f4b</span>           mov   r11, r15
+45<span style="color:#8be9fd;font-style:italic">d2:</span>  0<span style="color:#50fa7b">e44</span>           mov   r4, r14
+45<span style="color:#8be9fd;font-style:italic">d4:</span>  3<span style="color:#50fa7b">e50</span> e8ff      add   <span style="color:#6272a4">#0xffe8, r14
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>d8:  <span style="color:#bd93f9">1</span>e53           inc   r14
+45<span style="color:#8be9fd;font-style:italic">da:</span>  <span style="color:#50fa7b">ce93</span> <span style="color:#bd93f9">0000</span>      tst.b <span style="color:#bd93f9">0x0</span>(r14)
+45<span style="color:#8be9fd;font-style:italic">de:</span>  <span style="color:#50fa7b">fc23</span>           jnz   <span style="color:#6272a4">#0x45d8 &lt;login+0x88&gt;
+</span><span style="color:#6272a4"></span>
+<span style="color:#6272a4">; the loop is done
+</span><span style="color:#6272a4"></span>45<span style="color:#8be9fd;font-style:italic">e0:</span>  0<span style="color:#50fa7b">b4e</span>           mov   r14, r11
+45<span style="color:#8be9fd;font-style:italic">e2:</span>  0<span style="color:#50fa7b">b8f</span>           sub   r15, r11
+45<span style="color:#8be9fd;font-style:italic">e4:</span>  5<span style="color:#50fa7b">f44</span> e8ff      mov.b -<span style="color:#bd93f9">0x18</span>(r4), r15
+45<span style="color:#8be9fd;font-style:italic">e8:</span>  8<span style="color:#50fa7b">f11</span>           sxt   r15
+45<span style="color:#8be9fd;font-style:italic">ea:</span>  0<span style="color:#50fa7b">b9f</span>           cmp   r15, r11
+45<span style="color:#8be9fd;font-style:italic">ec:</span>  0628           <span style="color:#50fa7b">jnc</span>   <span style="color:#6272a4">#0x45fa &lt;login+0xaa&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>ee:  <span style="color:#bd93f9">1</span>f42 <span style="color:#bd93f9">0024</span>      mov   &amp;<span style="color:#bd93f9">0x2400</span>, r15
+45<span style="color:#8be9fd;font-style:italic">f2:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">45</span>f6:  <span style="color:#bd93f9">3040</span> <span style="color:#bd93f9">4044</span>      br    <span style="color:#6272a4">#0x4440 &lt;__stop_progExec__&gt;
 </span></code></pre></div><p>This section seems to have a loop, incrementing <code>r14</code> until the byte at the memory location pointed to by <code>r14</code> is <code>0x0</code>. A length counter maybe? After the loop, the byte at <code>-0x18(r4)</code> (which is set to <code>0x10</code> at the start of the <code>login</code> routine remember?) is compared to that which is in <code>r15</code>. Depending on the outcome of the <code>cmp</code> at <code>0x45ea</code>, the program may be stopped. I guess this is the overflow protection implemented.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">45</span>fa:  <span style="color:#960050;background-color:#1e0010">5</span><span style="color:#a6e22e">f44</span> <span style="color:#66d9ef">e7ff</span>      <span style="color:#66d9ef">mov.b</span> -<span style="color:#ae81ff">0x19</span>(<span style="color:#66d9ef">r4</span>), <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">45</span>fe:  <span style="color:#960050;background-color:#1e0010">8</span><span style="color:#a6e22e">f11</span>           <span style="color:#66d9ef">sxt</span>   <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4600:</span>  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">b9f</span>           <span style="color:#66d9ef">cmp</span>   <span style="color:#66d9ef">r15</span>, <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">4602:</span>  <span style="color:#960050;background-color:#1e0010">062</span><span style="color:#a6e22e">c</span>           <span style="color:#66d9ef">jc</span>    <span style="color:#75715e">#0x4610 &lt;login+0xc0&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4604</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">f42</span> <span style="color:#ae81ff">0224</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#960050;background-color:#1e0010">&amp;</span><span style="color:#ae81ff">0x2402</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4608:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">460</span><span style="color:#66d9ef">c</span>:  <span style="color:#ae81ff">3040</span> <span style="color:#ae81ff">4044</span>      <span style="color:#66d9ef">br</span>    <span style="color:#75715e">#0x4440 &lt;__stop_progExec__&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">45<span style="color:#8be9fd;font-style:italic">fa:</span>  5<span style="color:#50fa7b">f44</span> e7ff      mov.b -<span style="color:#bd93f9">0x19</span>(r4), r15
+45<span style="color:#8be9fd;font-style:italic">fe:</span>  8<span style="color:#50fa7b">f11</span>           sxt   r15
+4600:  0<span style="color:#50fa7b">b9f</span>           cmp   r15, r11
+4602:  062<span style="color:#50fa7b">c</span>           jc    <span style="color:#6272a4">#0x4610 &lt;login+0xc0&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4604</span>:  <span style="color:#bd93f9">1</span>f42 <span style="color:#bd93f9">0224</span>      mov   &amp;<span style="color:#bd93f9">0x2402</span>, r15
+4608:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">460</span>c:  <span style="color:#bd93f9">3040</span> <span style="color:#bd93f9">4044</span>      br    <span style="color:#6272a4">#0x4440 &lt;__stop_progExec__&gt;
 </span></code></pre></div><p>Similarly, another <code>cmp</code> is done with the value at <code>-0x19(r4)</code> (which was set to <code>0x8</code> at the beginning of <code>login</code>) with a similar abrupt stop if it fails. This is most likely the lower bounds checking.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">4610:</span>  <span style="color:#a6e22e">c443</span> <span style="color:#66d9ef">d4ff</span>      <span style="color:#66d9ef">mov.b</span> <span style="color:#75715e">#0x0, -0x2c(r4)
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4614</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#66d9ef">d4ff</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0xffd4, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4618</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f54</span>           <span style="color:#66d9ef">add</span>   <span style="color:#66d9ef">r4</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">461</span>a:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">f12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">461</span>c:  <span style="color:#960050;background-color:#1e0010">0</span><span style="color:#a6e22e">f44</span>           <span style="color:#66d9ef">mov</span>   <span style="color:#66d9ef">r4</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">461</span>e:  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f50</span> <span style="color:#66d9ef">e9ff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffe9, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4622</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4624:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">f50</span> <span style="color:#66d9ef">edff</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0xffed, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4628</span>:  <span style="color:#ae81ff">0</span><span style="color:#66d9ef">f12</span>           <span style="color:#66d9ef">push</span>  <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">462</span>a:  <span style="color:#960050;background-color:#1e0010">3012</span> <span style="color:#960050;background-color:#1e0010">7</span><span style="color:#a6e22e">d00</span>      <span style="color:#66d9ef">push</span>  <span style="color:#75715e">#0x7d
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">462</span><span style="color:#66d9ef">e</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#66d9ef">c446</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x46c4 &lt;INT&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4632</span>:  <span style="color:#ae81ff">3152</span>           <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x8, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4634</span>:  <span style="color:#66d9ef">c493</span> <span style="color:#66d9ef">d4ff</span>      <span style="color:#66d9ef">tst.b</span> -<span style="color:#ae81ff">0x2c</span>(<span style="color:#66d9ef">r4</span>)
-<span style="color:#960050;background-color:#1e0010">4638:</span>  <span style="color:#960050;background-color:#1e0010">0524</span>           <span style="color:#a6e22e">jz</span>    <span style="color:#75715e">#0x4644 &lt;login+0xf4&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">463</span><span style="color:#66d9ef">a</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">4</span><span style="color:#66d9ef">a44</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x444a &lt;unlock_door&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">463</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">2145</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x4521 &#34;Access granted.&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4642</span>:  <span style="color:#ae81ff">023</span><span style="color:#66d9ef">c</span>           <span style="color:#66d9ef">jmp</span>   <span style="color:#75715e">#0x4648 &lt;login+0xf8&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4644</span>:  <span style="color:#ae81ff">3</span><span style="color:#66d9ef">f40</span> <span style="color:#ae81ff">3145</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#75715e">#0x4531 &#34;That password is not correct.&#34;, r15
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4648</span>:  <span style="color:#66d9ef">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4610:  <span style="color:#50fa7b">c443</span> d4ff      mov.b <span style="color:#6272a4">#0x0, -0x2c(r4)
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4614</span>:  <span style="color:#bd93f9">3</span>f40 d4ff      mov   <span style="color:#6272a4">#0xffd4, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4618</span>:  <span style="color:#bd93f9">0</span>f54           add   r4, r15
+461<span style="color:#8be9fd;font-style:italic">a:</span>  0<span style="color:#50fa7b">f12</span>           push  r15
+461<span style="color:#8be9fd;font-style:italic">c:</span>  0<span style="color:#50fa7b">f44</span>           mov   r4, r15
+461<span style="color:#8be9fd;font-style:italic">e:</span>  3<span style="color:#50fa7b">f50</span> e9ff      add   <span style="color:#6272a4">#0xffe9, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4622</span>:  <span style="color:#bd93f9">0</span>f12           push  r15
+4624:  3<span style="color:#50fa7b">f50</span> edff      add   <span style="color:#6272a4">#0xffed, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4628</span>:  <span style="color:#bd93f9">0</span>f12           push  r15
+462<span style="color:#8be9fd;font-style:italic">a:</span>  3012 7<span style="color:#50fa7b">d00</span>      push  <span style="color:#6272a4">#0x7d
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">462</span>e:  b012 c446      call  <span style="color:#6272a4">#0x46c4 &lt;INT&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4632</span>:  <span style="color:#bd93f9">3152</span>           add   <span style="color:#6272a4">#0x8, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4634</span>:  c493 d4ff      tst.b -<span style="color:#bd93f9">0x2c</span>(r4)
+4638:  0524           <span style="color:#50fa7b">jz</span>    <span style="color:#6272a4">#0x4644 &lt;login+0xf4&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">463</span>a:  b012 <span style="color:#bd93f9">4</span>a44      call  <span style="color:#6272a4">#0x444a &lt;unlock_door&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">463</span>e:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">2145</span>      mov   <span style="color:#6272a4">#0x4521 &#34;Access granted.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4642</span>:  <span style="color:#bd93f9">023</span>c           jmp   <span style="color:#6272a4">#0x4648 &lt;login+0xf8&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4644</span>:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">3145</span>      mov   <span style="color:#6272a4">#0x4531 &#34;That password is not correct.&#34;, r15
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4648</span>:  b012 <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
 </span></code></pre></div><p>For this next section, it looks like the stack is being setup for syscall <code>0x7d</code> to be called. Depending on the result, <code>unlock_door</code> would be called or a message would simply be printed saying that the password was incorrect.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">464</span>c:  <span style="color:#a6e22e">c493</span> <span style="color:#66d9ef">faff</span>      <span style="color:#66d9ef">tst.b</span> -<span style="color:#ae81ff">0x6</span>(<span style="color:#66d9ef">r4</span>)
-<span style="color:#960050;background-color:#1e0010">4650:</span>  <span style="color:#960050;background-color:#1e0010">0624</span>           <span style="color:#a6e22e">jz</span>    <span style="color:#75715e">#0x465e &lt;login+0x10e&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4652</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">f42</span> <span style="color:#ae81ff">0024</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#960050;background-color:#1e0010">&amp;</span><span style="color:#ae81ff">0x2400</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4656:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">465</span><span style="color:#66d9ef">a</span>:  <span style="color:#ae81ff">3040</span> <span style="color:#ae81ff">4044</span>      <span style="color:#66d9ef">br</span>    <span style="color:#75715e">#0x4440 &lt;__stop_progExec__&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">465</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">3150</span> <span style="color:#ae81ff">2800</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x28, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4662</span>:  <span style="color:#ae81ff">3441</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r4</span>
-<span style="color:#960050;background-color:#1e0010">4664:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">b41</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">4666:</span>  <span style="color:#960050;background-color:#1e0010">3041</span>           <span style="color:#a6e22e">ret</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">464<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">c493</span> faff      tst.b -<span style="color:#bd93f9">0x6</span>(r4)
+4650:  0624           <span style="color:#50fa7b">jz</span>    <span style="color:#6272a4">#0x465e &lt;login+0x10e&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4652</span>:  <span style="color:#bd93f9">1</span>f42 <span style="color:#bd93f9">0024</span>      mov   &amp;<span style="color:#bd93f9">0x2400</span>, r15
+4656:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">465</span>a:  <span style="color:#bd93f9">3040</span> <span style="color:#bd93f9">4044</span>      br    <span style="color:#6272a4">#0x4440 &lt;__stop_progExec__&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">465</span>e:  <span style="color:#bd93f9">3150</span> <span style="color:#bd93f9">2800</span>      add   <span style="color:#6272a4">#0x28, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4662</span>:  <span style="color:#bd93f9">3441</span>           pop   r4
+4664:  3<span style="color:#50fa7b">b41</span>           pop   r11
+4666:  3041           <span style="color:#50fa7b">ret</span>
 </code></pre></div><p>Before we leave the routine, a final check is done with <code>tst.b -0x6(r4)</code>. If the value at the memory address at this time is zero, the function would return as normal (based on the <code>jz</code> instruction), otherwise, another abrupt stop would occur.</p>
 <p>From the static analysis we can see that three distinct checks are being done. An upper and lower bounds check and an arbitrary null byte check. Time to fuzz the inputs and see how that works out.</p>
 <h3 id="debugging">debugging</h3>
@@ -257,8 +242,8 @@
 <p>As a final test, I provided a username of 50 <code>44</code>&rsquo;s and a password of 9 <code>41</code>&rsquo;s. The username overrode the two bytes used for bounds checking, as well as the suspected return address for <code>login</code>. The password however was placed at a static offset at <code>0x43b4</code> and terminated with a null byte inside of the username buffer.</p>
 <p>It seemed clear at this stage that all I would need to do was set my own values for the password buffer lengths and corrupt the memory past the return address, redirecting the code flow to something like <code>unlock_door</code>.</p>
 <p>Given that the bytes used for bounds checking was at offsets 18 and 19 from where the password buffer started, I chose to place the values <code>0x1</code> and <code>0x99</code> as the new min/max values. I then continued to overflow the buffer, hoping to replace the address <code>login</code> would return to to <code>0x4242</code> to test if I can reach it.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python <span style="color:#f92672">-</span>c <span style="color:#e6db74">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + 30 * &#39;42&#39;)&#34;</span>
-<span style="color:#ae81ff">41414141414141414141414141414141410199424242424242424242424242424242424242424242424242424242424242</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + 30 * &#39;42&#39;)&#34;</span>
+<span style="color:#bd93f9">41414141414141414141414141414141410199424242424242424242424242424242424242424242424242424242424242</span>
 </code></pre></div><p>With my username payload ready, I simply provided two bytes for the password as <code>4343</code>.</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/santa_cruz_payload_1.png"/> 
@@ -266,15 +251,15 @@
 
 <p>This time round, I passed the two bounds checks that occur between <code>0x45ec</code> and <code>0x460c</code>. The HSM did not validate the password I provided (no surprise there), but after the <code>That password is not correct.</code>, another <code>Invalid Password Length: password too long.</code> message was printed. This has to be as a result of that <code>tst.b -0x6(r4)</code> call towards the end of <code>login</code>.</p>
 <p>Setting a breakpoint at <code>0x464c</code>, I inspected the memory contents that was being tested. For reference, lets have one more look at the end of the <code>login</code> routine as well:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#960050;background-color:#1e0010">464</span>c:  <span style="color:#a6e22e">c493</span> <span style="color:#66d9ef">faff</span>      <span style="color:#66d9ef">tst.b</span> -<span style="color:#ae81ff">0x6</span>(<span style="color:#66d9ef">r4</span>)
-<span style="color:#960050;background-color:#1e0010">4650:</span>  <span style="color:#960050;background-color:#1e0010">0624</span>           <span style="color:#a6e22e">jz</span>    <span style="color:#75715e">#0x465e &lt;login+0x10e&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4652</span>:  <span style="color:#ae81ff">1</span><span style="color:#66d9ef">f42</span> <span style="color:#ae81ff">0024</span>      <span style="color:#66d9ef">mov</span>   <span style="color:#960050;background-color:#1e0010">&amp;</span><span style="color:#ae81ff">0x2400</span>, <span style="color:#66d9ef">r15</span>
-<span style="color:#960050;background-color:#1e0010">4656:</span>  <span style="color:#a6e22e">b012</span> <span style="color:#ae81ff">2847</span>      <span style="color:#66d9ef">call</span>  <span style="color:#75715e">#0x4728 &lt;puts&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">465</span><span style="color:#66d9ef">a</span>:  <span style="color:#ae81ff">3040</span> <span style="color:#ae81ff">4044</span>      <span style="color:#66d9ef">br</span>    <span style="color:#75715e">#0x4440 &lt;__stop_progExec__&gt;
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">465</span><span style="color:#66d9ef">e</span>:  <span style="color:#ae81ff">3150</span> <span style="color:#ae81ff">2800</span>      <span style="color:#66d9ef">add</span>   <span style="color:#75715e">#0x28, sp
-</span><span style="color:#75715e"></span><span style="color:#ae81ff">4662</span>:  <span style="color:#ae81ff">3441</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r4</span>
-<span style="color:#960050;background-color:#1e0010">4664:</span>  <span style="color:#960050;background-color:#1e0010">3</span><span style="color:#a6e22e">b41</span>           <span style="color:#66d9ef">pop</span>   <span style="color:#66d9ef">r11</span>
-<span style="color:#960050;background-color:#1e0010">4666:</span>  <span style="color:#960050;background-color:#1e0010">3041</span>           <span style="color:#a6e22e">ret</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">464<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">c493</span> faff      tst.b -<span style="color:#bd93f9">0x6</span>(r4)
+4650:  0624           <span style="color:#50fa7b">jz</span>    <span style="color:#6272a4">#0x465e &lt;login+0x10e&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4652</span>:  <span style="color:#bd93f9">1</span>f42 <span style="color:#bd93f9">0024</span>      mov   &amp;<span style="color:#bd93f9">0x2400</span>, r15
+4656:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2847</span>      call  <span style="color:#6272a4">#0x4728 &lt;puts&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">465</span>a:  <span style="color:#bd93f9">3040</span> <span style="color:#bd93f9">4044</span>      br    <span style="color:#6272a4">#0x4440 &lt;__stop_progExec__&gt;
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">465</span>e:  <span style="color:#bd93f9">3150</span> <span style="color:#bd93f9">2800</span>      add   <span style="color:#6272a4">#0x28, sp
+</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4662</span>:  <span style="color:#bd93f9">3441</span>           pop   r4
+4664:  3<span style="color:#50fa7b">b41</span>           pop   r11
+4666:  3041           <span style="color:#50fa7b">ret</span>
 </code></pre></div><p>In order for us to take the jump at <code>0x4650</code> to <code>0x465e</code> (bypassing the abrupt stop), we need to have the byte at <code>-0x6(r4)</code> be null.</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/santa_cruz_null_byte_check.png"/> 
@@ -283,19 +268,19 @@
 <p>Running the program with our <code>4343</code> payload as the password, we can see we have a <code>42</code> at <code>0x43c6</code> (which is <code>0x43cc</code> - <code>0x6</code>). We know that the end of our username and password buffers have null bytes in memory, so we could use that to get this final null byte written for the check to pass.</p>
 <p>We two options here. We could use the username field to overflow up to where the null byte should be written, and then provide the rest of the payload as the password field as one option. We could also use the password field to simply pad up to the null byte field and have that written there, keeping our primary payload in the username field. I opted for the latter. Inspecting the memory layout, one can see that the null byte should be at offset 18 from the start of the password buffer.</p>
 <p>Generating the username payload was now done as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#960050;background-color:#1e0010">$</span> python <span style="color:#f92672">-</span>c <span style="color:#e6db74">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + &#39;44&#39; * 30)&#34;</span>
-<span style="color:#ae81ff">41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">$ python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + &#39;44&#39; * 30)&#34;</span>
+<span style="color:#bd93f9">41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444</span>
 </code></pre></div><p>The password payload on the other hand was (with an expectation of a nullbyte at pos 18):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#960050;background-color:#1e0010">$</span> python <span style="color:#f92672">-</span>c <span style="color:#e6db74">&#34;print(&#39;42&#39; * 17)&#34;</span>
-<span style="color:#ae81ff">4242424242424242424242424242424242</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">$ python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;42&#39; * 17)&#34;</span>
+<span style="color:#bd93f9">4242424242424242424242424242424242</span>
 </code></pre></div><figure>
     <img src="https://leonjza.github.io/images/microcorruption/santa_cruz_null_byte_check.png"/> 
 </figure>
 
 <p>Woohoo! The byte at <code>0x43c6</code> is now <code>0x0</code>, bypassing the check. If we were to continue execution at this point, we would end up at invalid instructions and a message such as <code>insn address unaligned</code> within the debugger. This is good news!</p>
 <p>The only thing that is left for us to do is to set the address to jump to when <code>login</code> returns. This was at offset 23 from the username buffer. A routine called <code>unlock_door</code> started at <code>0x444a</code> (so <code>4a44</code> for endianness) which called the correct interrupt to unlock the lock. So, keeping our password field as is, we generate the username with:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#960050;background-color:#1e0010">$</span> python <span style="color:#f92672">-</span>c <span style="color:#e6db74">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + &#39;44&#39; * 23 + &#39;4a44&#39;)&#34;</span>
-<span style="color:#ae81ff">4141414141414141414141414141414141019944444444444444444444444444444444444444444444444</span>a44
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">$ python <span style="color:#ff79c6">-</span>c <span style="color:#f1fa8c">&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + &#39;44&#39; * 23 + &#39;4a44&#39;)&#34;</span>
+<span style="color:#bd93f9">4141414141414141414141414141414141019944444444444444444444444444444444444444444444444</span>a44
 </code></pre></div><figure>
     <img src="https://leonjza.github.io/images/microcorruption/santa_cruz_unlocked.png"/> 
 </figure>
@@ -304,36 +289,33 @@
 <p>Enter <code>41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444</code> as hex encoded input for the username and <code>4242424242424242424242424242424242</code> as hex encoded input for the password.</p>
 <h2 id="other-challenges">other challenges</h2>
 <p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
+  
   </div>
-  <div id="disqus_thread"></div>
-</div>
+</article>
 
 
-<script type="text/javascript">
-var disqus_shortname = "slashnote";
-(function () {
-    var s = document.createElement('script'); s.async = true;
-    s.type = 'text/javascript';
-    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
-    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-}());
-</script>
+    <footer id="footer">
+  <div class="footer-left">
+    Copyright  &copy; 2020  Leon Jacobs 
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+        <li><a href="https://leonjza.github.io/">Home</a></li>
+         
+        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
 
 
-
-<script type="text/javascript">
-    var disqus_shortname = "slashnote";
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
-<script src="https://leonjza.github.io/js/highlight.pack.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+  </div>
 </body>
-</html>
 
+<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
+<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
+<script src=https://leonjza.github.io/js/main.js></script>
+</html>

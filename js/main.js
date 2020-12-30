@@ -1,152 +1,113 @@
-// Dean Attali / Beautiful Jekyll 2016
+/**
+ * Sets up Justified Gallery.
+ */
+if (!!$.prototype.justifiedGallery) {
+  var options = {
+    rowHeight: 140,
+    margins: 4,
+    lastRow: "justify"
+  };
+  $(".article-gallery").justifiedGallery(options);
+}
 
-var main = {
+$(document).ready(function() {
 
-  bigImgEl : null,
-  numImgs : null,
+  /**
+   * Shows the responsive navigation menu on mobile.
+   */
+  $("#header > #nav > ul > .icon").click(function() {
+    $("#header > #nav > ul").toggleClass("responsive");
+  });
 
-  init : function() {
-    // Shorten the navbar after scrolling a little bit down
-    $(window).scroll(function() {
-        if ($(".navbar").offset().top > 50) {
-            $(".navbar").addClass("top-nav-short");
-        } else {
-            $(".navbar").removeClass("top-nav-short");
+
+  /**
+   * Controls the different versions of  the menu in blog post articles 
+   * for Desktop, tablet and mobile.
+   */
+  if ($(".post").length) {
+    var menu = $("#menu");
+    var nav = $("#menu > #nav");
+    var menuIcon = $("#menu-icon, #menu-icon-tablet");
+
+    /**
+     * Display the menu on hi-res laptops and desktops.
+     */
+    if ($(document).width() >= 1440) {
+      menu.css("visibility", "visible");
+      menuIcon.addClass("active");
+    }
+
+    /**
+     * Display the menu if the menu icon is clicked.
+     */
+    menuIcon.click(function() {
+      if (menu.css("visibility") === "hidden") {
+        menu.css("visibility", "visible");
+        menuIcon.addClass("active");
+      } else {
+        menu.css("visibility", "hidden");
+        menuIcon.removeClass("active");
+      }
+      return false;
+    });
+
+    /**
+     * Add a scroll listener to the menu to hide/show the navigation links.
+     */
+    if (menu.length) {
+      $(window).on("scroll", function() {
+        var topDistance = menu.offset().top;
+
+        // hide only the navigation links on desktop
+        if (!nav.is(":visible") && topDistance < 50) {
+          nav.show();
+        } else if (nav.is(":visible") && topDistance > 100) {
+          nav.hide();
         }
-    });
 
-    // On mobile, hide the avatar when expanding the navbar menu
-    $('#main-navbar').on('show.bs.collapse', function () {
-      $(".navbar").addClass("top-nav-expanded");
-    });
-    $('#main-navbar').on('hidden.bs.collapse', function () {
-      $(".navbar").removeClass("top-nav-expanded");
-    });
-
-    // On mobile, when clicking on a multi-level navbar menu, show the child links
-    $('#main-navbar').on("click", ".navlinks-parent", function(e) {
-      var target = e.target;
-      $.each($(".navlinks-parent"), function(key, value) {
-        if (value == target) {
-          $(value).parent().toggleClass("show-children");
-        } else {
-          $(value).parent().removeClass("show-children");
+        // on tablet, hide the navigation icon as well and show a "scroll to top
+        // icon" instead
+        if ( ! $( "#menu-icon" ).is(":visible") && topDistance < 50 ) {
+          $("#menu-icon-tablet").show();
+          $("#top-icon-tablet").hide();
+        } else if (! $( "#menu-icon" ).is(":visible") && topDistance > 100) {
+          $("#menu-icon-tablet").hide();
+          $("#top-icon-tablet").show();
         }
       });
-    });
-
-    // Ensure nested navbar menus are not longer than the menu header
-    var menus = $(".navlinks-container");
-    if (menus.length > 0) {
-      var navbar = $("#main-navbar").find("ul");
-      var fakeMenuHtml = "<li class='fake-menu' style='display:none;'><a></a></li>";
-      navbar.append(fakeMenuHtml);
-      var fakeMenu = $(".fake-menu");
-
-      $.each(menus, function(i) {
-        var parent = $(menus[i]).find(".navlinks-parent");
-        var children = $(menus[i]).find(".navlinks-children a");
-        var words = [];
-        $.each(children, function(idx, el) { words = words.concat($(el).text().trim().split(/\s+/)); });
-        var maxwidth = 0;
-        $.each(words, function(id, word) {
-          fakeMenu.html("<a>" + word + "</a>");
-          var width =  fakeMenu.width();
-          if (width > maxwidth) {
-            maxwidth = width;
-          }
-        });
-        $(menus[i]).css('min-width', maxwidth + 'px')
-      });
-
-      fakeMenu.remove();
     }
 
-    // show the big header image
-    main.initImgs();
-  },
+    /**
+     * Show mobile navigation menu after scrolling upwards,
+     * hide it again after scrolling downwards.
+     */
+    if ($( "#footer-post").length) {
+      var lastScrollTop = 0;
+      $(window).on("scroll", function() {
+        var topDistance = $(window).scrollTop();
 
-  initImgs : function() {
-    // If the page was large images to randomly select from, choose an image
-    if ($("#header-big-imgs").length > 0) {
-      main.bigImgEl = $("#header-big-imgs");
-      main.numImgs = main.bigImgEl.attr("data-num-img");
-
-          // 2fc73a3a967e97599c9763d05e564189
-    // set an initial image
-    var imgInfo = main.getImgInfo();
-    var src = imgInfo.src;
-    var desc = imgInfo.desc;
-    var position = imgInfo.position;
-      main.setImg(src, desc, position);
-
-    // For better UX, prefetch the next image so that it will already be loaded when we want to show it
-      var getNextImg = function() {
-      var imgInfo = main.getImgInfo();
-      var src = imgInfo.src;
-      var desc = imgInfo.desc;
-      var position = imgInfo.position;
-
-    var prefetchImg = new Image();
-      prefetchImg.src = src;
-    // if I want to do something once the image is ready: `prefetchImg.onload = function(){}`
-
-      setTimeout(function(){
-                  var img = $("<div></div>").addClass("big-img-transition").css("background-image", 'url(' + src + ')');
-        if (position !== undefined) {
-          img.css("background-position", position);
+        if (topDistance > lastScrollTop){
+          // downscroll -> show menu
+          $("#footer-post").hide();
+        } else {
+          // upscroll -> hide menu
+          $("#footer-post").show();
         }
-        $(".intro-header.big-img").prepend(img);
-        setTimeout(function(){ img.css("opacity", "1"); }, 50);
+        lastScrollTop = topDistance;
 
-      // after the animation of fading in the new image is done, prefetch the next one
-        //img.one("transitioned webkitTransitionEnd oTransitionEnd MSTransitionEnd", function(){
-      setTimeout(function() {
-        main.setImg(src, desc, position);
-      img.remove();
-        getNextImg();
-      }, 1000);
-        //});
-      }, 6000);
-      };
+        // close all submenu"s on scroll
+        $("#nav-footer").hide();
+        $("#toc-footer").hide();
+        $("#share-footer").hide();
 
-    // If there are multiple images, cycle through them
-    if (main.numImgs > 1) {
-        getNextImg();
+        // show a "navigation" icon when close to the top of the page, 
+        // otherwise show a "scroll to the top" icon
+        if (topDistance < 50) {
+          $("#actions-footer > #top").hide();
+        } else if (topDistance > 100) {
+          $("#actions-footer > #top").show();
+        }
+      });
     }
-    }
-  },
-
-  getImgInfo : function() {
-    var randNum = Math.floor((Math.random() * main.numImgs) + 1);
-    var src = main.bigImgEl.attr("data-img-src-" + randNum);
-  var desc = main.bigImgEl.attr("data-img-desc-" + randNum);
-  var position = main.bigImgEl.attr("data-img-position-" + randNum);
-
-  return {
-    src : src,
-    desc : desc,
-    position : position
   }
-  },
-
-  setImg : function(src, desc, position) {
-  $(".intro-header.big-img").css("background-image", 'url(' + src + ')');
-  if (position !== undefined) {
-    $(".intro-header.big-img").css("background-position", position);
-  }
-  else {
-    // Remove background-position if added to the prev image.
-    $(".intro-header.big-img").css("background-position", "");
-  }
-  if (typeof desc !== typeof undefined && desc !== false) {
-    $(".img-desc").text(desc).show();
-  } else {
-    $(".img-desc").hide();
-  }
-  }
-};
-
-// 2fc73a3a967e97599c9763d05e564189
-
-document.addEventListener('DOMContentLoaded', main.init);
+});
