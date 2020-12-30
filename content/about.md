@@ -9,6 +9,11 @@ menu = "main"
 
 ['Caffeine fueled', '(╯°□°)╯︵ ┻━┻', 'Security guy', 'Metalhead', 'I saw your password', 'KOOBo+KXleKAv+KXlSnjgaM=']
 
-I thinker, tinker, toggle, tweak and test!
+I am usually busy thinkering, tinkering, toggling, tweaking and testing!
 
-The best way to get hold of me would be via a [Twitter](https://twitter.com/leonjza) Direct Message. All of my open source projects can be found on my personal Github [here](https://github.com/leonjza), or employer Github [here](https://github.com/sensepost)
+- [Twitter](https://twitter.com/leonjza) <-- the best way to get hold of me!
+
+My FOSS projects are all on Github, some on my personal profile, others in my employer's org.
+
+- [Github](https://github.com/leonjza) (personal)
+- [Github](https://github.com/sensepost) (employer)
