@@ -7,13 +7,8 @@ title = "About Me"
 menu = "main"
 +++
 
-### Get hold of me via these methods:
+['Caffeine fueled', '(╯°□°)╯︵ ┻━┻', 'Security guy', 'Metalhead', 'I saw your password', 'KOOBo+KXleKAv+KXlSnjgaM=']
 
-- [https://keybase.io/leonjza](https://keybase.io/leonjza)
-- [https://twitter.com/leonjza](https://twitter.com/leonjza)
-- [https://github.com/leonjza](https://github.com/leonjza)
+I thinker, tinker, toggle, tweak and test!
 
-- Alternatively, leonja511 at gmail dot com ([PGP](/key.asc))
-
-### Certs I have managed to obtain:
-{{< figure src="/images/certs/oscp.png" link="http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/" >}}
+The best way to get hold of me would be via a [Twitter](https://twitter.com/leonjza) Direct Message. All of my open source projects can be found on my personal Github [here](https://github.com/leonjza), or employer Github [here](https://github.com/sensepost)
