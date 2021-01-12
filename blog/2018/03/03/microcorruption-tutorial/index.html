@@ -34,7 +34,7 @@ Lets look at the tutorial level first."/>
   
   <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
   
-  
+   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -256,14 +256,14 @@ if (!doNotTrack) {
 <h2 id="tutorial-level">tutorial level</h2>
 <p>As expected, the first level is super simple. Most of your time is spent on this level getting to know the web based debugger as well as general tips and tricks for moving around.</p>
 <p>When you follow the tutorial, you will notice that the flaw you need to exploit in this challenge is simply a length based one as the <code>check_password</code> routine simply checks if the password has a length of <code>9</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4484 &lt;<span style="color:#50fa7b">check_password</span>&gt;
-4484:  6<span style="color:#50fa7b">e4f</span>           mov.b @r15, r14
-4486:  1<span style="color:#50fa7b">f53</span>           inc   r15
-4488:  1<span style="color:#50fa7b">c53</span>           inc   r12
-448<span style="color:#8be9fd;font-style:italic">a:</span>  0<span style="color:#50fa7b">e93</span>           tst   r14
-448<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">fb23</span>           jnz   <span style="color:#6272a4">#0x4484 &lt;check_password+0x0&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">448</span>e:  <span style="color:#bd93f9">3</span>c90 <span style="color:#bd93f9">0900</span>      cmp   <span style="color:#6272a4">#0x9, r12   ; password length check
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4492</span>:  <span style="color:#bd93f9">0224</span>           jeq   <span style="color:#6272a4">#0x4498 &lt;check_password+0x14&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4484 &lt;<span style="color:#ff0">check_password</span>&gt;
+4484:  6<span style="color:#ff0">e4f</span>           <span style="color:#7fffd4">mov.b</span> @<span style="color:#7fffd4">r15</span>, <span style="color:#7fffd4">r14</span>
+4486:  1<span style="color:#ff0">f53</span>           <span style="color:#7fffd4">inc</span>   <span style="color:#7fffd4">r15</span>
+4488:  1<span style="color:#ff0">c53</span>           <span style="color:#7fffd4">inc</span>   <span style="color:#7fffd4">r12</span>
+448a:  0<span style="color:#ff0">e93</span>           <span style="color:#7fffd4">tst</span>   <span style="color:#7fffd4">r14</span>
+448c:  <span style="color:#ff0">fb23</span>           <span style="color:#7fffd4">jnz</span>   <span style="color:#0f0">#0x4484 &lt;check_password+0x0&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">448</span><span style="color:#7fffd4">e</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">c90</span> <span style="color:#f60">0900</span>      <span style="color:#7fffd4">cmp</span>   <span style="color:#0f0">#0x9, r12   ; password length check
+</span><span style="color:#0f0"></span><span style="color:#f60">4492</span>:  <span style="color:#f60">0224</span>           <span style="color:#7fffd4">jeq</span>   <span style="color:#0f0">#0x4498 &lt;check_password+0x14&gt;
 </span></code></pre></div><p>Once you hit the instruction at <code>0x4484</code>, the first character of the password you entered is loaded into <code>r14</code> (which you can see from the memory layout if you were to browse to <code>0x439c</code>) from the memory location pointed to in <code>r15</code>. Next, the registers <code>r12</code> and <code>r15</code> are incremented. This will continue until a null byte (a typical string terminator in C) is reached, causing the jump at <code>0x448c</code> not to be followed, making the <code>cmp</code> be the next instruction.</p>
 <p>If <code>r12</code> ends up being <code>0x0009</code> (indicating that out passwords was 8 characters long with a null byte), then the jump at <code>0x4492</code> will occur, finally calling the interrupt to unlock the lock.</p>
 <figure>
@@ -420,7 +420,7 @@ if (!doNotTrack) {
 
   <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2020  Leon Jacobs 
+    Copyright  &copy; 2021  Leon Jacobs 
   </div>
   <div class="footer-right">
     <nav>

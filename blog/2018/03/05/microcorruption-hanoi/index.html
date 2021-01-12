@@ -42,7 +42,7 @@ Ok, so mention of a HSM here. Neat! Lets take a look at how that works!"/>
   
   <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
   
-  
+   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -271,64 +271,64 @@ if (!doNotTrack) {
 <p>Ok, so mention of a HSM here. Neat! Lets take a look at how that works!</p>
 <h2 id="hanoi">hanoi</h2>
 <p>This time round, our <code>main</code> function is quite a bit shorter than the previous programs we have analysed:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
-4438:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">2045</span>      call  <span style="color:#6272a4">#0x4520 &lt;login&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  <span style="color:#bd93f9">0</span>f43           clr   r15
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#ff0">main</span>&gt;
+4438:  <span style="color:#ff0">b012</span> <span style="color:#f60">2045</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4520 &lt;login&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">443</span><span style="color:#7fffd4">c</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f43</span>           <span style="color:#7fffd4">clr</span>   <span style="color:#7fffd4">r15</span>
 </code></pre></div><p>Just a call to <code>login</code> which in turn has a similar flow to that which we saw in the previous <code>main</code> functions. A semi-shortened, annotated version of <code>login</code> is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4520 &lt;<span style="color:#50fa7b">login</span>&gt;
-4520:  <span style="color:#50fa7b">c243</span> <span style="color:#bd93f9">1024</span>      mov.b <span style="color:#6272a4">#0x0, &amp;0x2410
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4524</span>:  <span style="color:#bd93f9">3</span>f40 <span style="color:#bd93f9">7</span>e44      mov   <span style="color:#6272a4">#0x447e &#34;Enter the password to continue.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4528</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span>
-<span style="color:#6272a4">; but what if i put in more than 16 characters? ;)
-</span><span style="color:#6272a4"></span>452<span style="color:#8be9fd;font-style:italic">c:</span>  3<span style="color:#50fa7b">f40</span> <span style="color:#bd93f9">9</span>e44      mov   <span style="color:#6272a4">#0x449e &#34;Remember: passwords are between 8 and 16 characters.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4530</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span>
-[<span style="color:#50fa7b">..</span> routine to get the password ..]
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4520 &lt;<span style="color:#ff0">login</span>&gt;
+4520:  <span style="color:#ff0">c243</span> <span style="color:#f60">1024</span>      <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x0, &amp;0x2410
+</span><span style="color:#0f0"></span><span style="color:#f60">4524</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">f40</span> <span style="color:#f60">7</span><span style="color:#7fffd4">e44</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x447e &#34;Enter the password to continue.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4528</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span>
+<span style="color:#0f0">; but what if i put in more than 16 characters? ;)
+</span><span style="color:#0f0"></span>452c:  3<span style="color:#ff0">f40</span> <span style="color:#f60">9</span><span style="color:#7fffd4">e44</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x449e &#34;Remember: passwords are between 8 and 16 characters.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4530</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span>
+[<span style="color:#ff0">..</span> <span style="color:#7fffd4">routine</span> <span style="color:#7fffd4">to</span> <span style="color:#7fffd4">get</span> <span style="color:#7fffd4">the</span> <span style="color:#7fffd4">password</span> <span style="color:#7fffd4">..</span>]
 
-4544:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">5444</span>      call  <span style="color:#6272a4">#0x4454 &lt;test_password_valid&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4548</span>:  <span style="color:#bd93f9">0</span>f93           tst   r15
-454<span style="color:#8be9fd;font-style:italic">a:</span>  0324           <span style="color:#50fa7b">jz</span>    $+<span style="color:#bd93f9">0x8</span>
+4544:  <span style="color:#ff0">b012</span> <span style="color:#f60">5444</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4454 &lt;test_password_valid&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">4548</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f93</span>           <span style="color:#7fffd4">tst</span>   <span style="color:#7fffd4">r15</span>
+454a:  0324           <span style="color:#ff0">jz</span>    <span style="color:#7fffd4">$</span>+<span style="color:#f60">0x8</span>
 
-<span style="color:#6272a4">; erm? what is going on here?
-</span><span style="color:#6272a4"></span>454<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">f240</span> <span style="color:#bd93f9">5000</span> <span style="color:#bd93f9">1024</span> mov.b <span style="color:#6272a4">#0x50, &amp;0x2410
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4552</span>:  <span style="color:#bd93f9">3</span>f40 d344      mov   <span style="color:#6272a4">#0x44d3 &#34;Testing if password is valid.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4556</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span>
-<span style="color:#6272a4">; and what about here?
-</span><span style="color:#6272a4"></span>455<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">f290</span> <span style="color:#bd93f9">6300</span> <span style="color:#bd93f9">1024</span> cmp.b <span style="color:#6272a4">#0x63, &amp;0x2410
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4560</span>:  <span style="color:#bd93f9">0720</span>           jne   <span style="color:#6272a4">#0x4570 &lt;login+0x50o&gt;
-</span><span style="color:#6272a4"></span>
-<span style="color:#6272a4">; grants us access!
-</span><span style="color:#6272a4"></span>4562:  3<span style="color:#50fa7b">f40</span> f144      mov   <span style="color:#6272a4">#0x44f1 &#34;Access granted.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4566</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">456</span>a:  b012 <span style="color:#bd93f9">4844</span>      call  <span style="color:#6272a4">#0x4448 &lt;unlock_door&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">456</span>e:  <span style="color:#bd93f9">3041</span>           ret
+<span style="color:#0f0">; erm? what is going on here?
+</span><span style="color:#0f0"></span>454c:  <span style="color:#ff0">f240</span> <span style="color:#f60">5000</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x50, &amp;0x2410
+</span><span style="color:#0f0"></span><span style="color:#f60">4552</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">f40</span> <span style="color:#7fffd4">d344</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44d3 &#34;Testing if password is valid.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4556</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span>
+<span style="color:#0f0">; and what about here?
+</span><span style="color:#0f0"></span>455a:  <span style="color:#ff0">f290</span> <span style="color:#f60">6300</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">cmp.b</span> <span style="color:#0f0">#0x63, &amp;0x2410
+</span><span style="color:#0f0"></span><span style="color:#f60">4560</span>:  <span style="color:#f60">0720</span>           <span style="color:#7fffd4">jne</span>   <span style="color:#0f0">#0x4570 &lt;login+0x50o&gt;
+</span><span style="color:#0f0"></span>
+<span style="color:#0f0">; grants us access!
+</span><span style="color:#0f0"></span>4562:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">f144</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44f1 &#34;Access granted.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4566</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">a</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">4844</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4448 &lt;unlock_door&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">e</span>:  <span style="color:#f60">3041</span>           <span style="color:#7fffd4">ret</span>
 
-<span style="color:#6272a4">; failed
-</span><span style="color:#6272a4"></span>4570:  3<span style="color:#50fa7b">f40</span> <span style="color:#bd93f9">0145</span>      mov   <span style="color:#6272a4">#0x4501 &#34;That password is not correct.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4574</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4578</span>:  <span style="color:#bd93f9">3041</span>           ret
+<span style="color:#0f0">; failed
+</span><span style="color:#0f0"></span>4570:  3<span style="color:#ff0">f40</span> <span style="color:#f60">0145</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x4501 &#34;That password is not correct.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4574</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">4578</span>:  <span style="color:#f60">3041</span>           <span style="color:#7fffd4">ret</span>
 </code></pre></div><p>Some interesting things happening there it seems. I think the next routine to check out is most definitely <code>test_password_valid</code>. Taking a look at that routine looks as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4454 &lt;<span style="color:#50fa7b">test_password_valid</span>&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4454 &lt;<span style="color:#ff0">test_password_valid</span>&gt;
 
-<span style="color:#6272a4">; move a bunch of stuff around
-</span><span style="color:#6272a4"></span>4454:  0412           <span style="color:#50fa7b">push</span>  r4
-4456:  0441           <span style="color:#50fa7b">mov</span>   sp, r4
-4458:  2453           <span style="color:#50fa7b">incd</span>  r4
-445<span style="color:#8be9fd;font-style:italic">a:</span>  2183           <span style="color:#50fa7b">decd</span>  sp
-445<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">c443</span> fcff      mov.b <span style="color:#6272a4">#0x0, -0x4(r4)  ; 0x2400 at this stage
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4460</span>:  <span style="color:#bd93f9">3</span>e40 fcff      mov   <span style="color:#6272a4">#0xfffc, r14
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4464</span>:  <span style="color:#bd93f9">0</span>e54           add   r4, r14
-4466:  0<span style="color:#50fa7b">e12</span>           push  r14
-4468:  0<span style="color:#50fa7b">f12</span>           push  r15
+<span style="color:#0f0">; move a bunch of stuff around
+</span><span style="color:#0f0"></span>4454:  0412           <span style="color:#ff0">push</span>  <span style="color:#7fffd4">r4</span>
+4456:  0441           <span style="color:#ff0">mov</span>   <span style="color:#7fffd4">sp</span>, <span style="color:#7fffd4">r4</span>
+4458:  2453           <span style="color:#ff0">incd</span>  <span style="color:#7fffd4">r4</span>
+445a:  2183           <span style="color:#ff0">decd</span>  <span style="color:#7fffd4">sp</span>
+445c:  <span style="color:#ff0">c443</span> <span style="color:#7fffd4">fcff</span>      <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x0, -0x4(r4)  ; 0x2400 at this stage
+</span><span style="color:#0f0"></span><span style="color:#f60">4460</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">e40</span> <span style="color:#7fffd4">fcff</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0xfffc, r14
+</span><span style="color:#0f0"></span><span style="color:#f60">4464</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">e54</span>           <span style="color:#7fffd4">add</span>   <span style="color:#7fffd4">r4</span>, <span style="color:#7fffd4">r14</span>
+4466:  0<span style="color:#ff0">e12</span>           <span style="color:#7fffd4">push</span>  <span style="color:#7fffd4">r14</span>
+4468:  0<span style="color:#ff0">f12</span>           <span style="color:#7fffd4">push</span>  <span style="color:#7fffd4">r15</span>
 
-<span style="color:#6272a4">; push 0x7d into the stack and prep for a syscall
-</span><span style="color:#6272a4"></span>446<span style="color:#8be9fd;font-style:italic">a:</span>  3012 7<span style="color:#50fa7b">d00</span>      push  <span style="color:#6272a4">#0x7d
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">446</span>e:  b012 <span style="color:#bd93f9">7</span>a45      call  <span style="color:#6272a4">#0x457a &lt;INT&gt;
-</span><span style="color:#6272a4"></span>
-[<span style="color:#50fa7b">..</span> end this routine ..]
-447<span style="color:#8be9fd;font-style:italic">c:</span>  3041           <span style="color:#50fa7b">ret</span>
+<span style="color:#0f0">; push 0x7d into the stack and prep for a syscall
+</span><span style="color:#0f0"></span>446a:  3012 7<span style="color:#ff0">d00</span>      <span style="color:#7fffd4">push</span>  <span style="color:#0f0">#0x7d
+</span><span style="color:#0f0"></span><span style="color:#f60">446</span><span style="color:#7fffd4">e</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">7</span><span style="color:#7fffd4">a45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x457a &lt;INT&gt;
+</span><span style="color:#0f0"></span>
+[<span style="color:#ff0">..</span> <span style="color:#7fffd4">end</span> <span style="color:#7fffd4">this</span> <span style="color:#7fffd4">routine</span> <span style="color:#7fffd4">..</span>]
+447c:  3041           <span style="color:#ff0">ret</span>
 </code></pre></div><p>Hmm ok, a bunch of <code>mov</code> instructions and other arithmetic and finally syscall with interrupt <code>0x7d</code> which is described as <em>&ldquo;Interface with the HSM-1. Set a flag in memory if the password passed in is
 correct.&quot;</em> according to the locks <a href="https://microcorruption.com/manual.pdf">manual</a>.</p>
 <p>So not <em>that</em> interesting after all. Looking at <code>login</code> again, it seems like we would ideally want to have <code>unlock_door</code> called from <code>login</code> at <code>0x456a</code> to win. But how to get there?</p>
@@ -339,22 +339,22 @@ correct.&quot;</em> according to the locks <a href="https://microcorruption.com/
 </figure>
 
 <p>A few steps through this routine with no obvious ways to fool it, I decided to park it for now and see what happens after <code>test_password_valid</code> is done. This is now back at <code>login</code> once <code>test_password_valid</code> has returned:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#6272a4">; test_password_valid has returned
-</span><span style="color:#6272a4"></span>4552:  3<span style="color:#50fa7b">f40</span> d344      mov   <span style="color:#6272a4">#0x44d3 &#34;Testing if password is valid.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4556</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span>
-<span style="color:#6272a4">; what is this cmp doing?
-</span><span style="color:#6272a4"></span>455<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">f290</span> <span style="color:#bd93f9">6300</span> <span style="color:#bd93f9">1024</span> cmp.b <span style="color:#6272a4">#0x63, &amp;0x2410
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4560</span>:  <span style="color:#bd93f9">0720</span>           jne   <span style="color:#6272a4">#0x4570 &lt;login+0x50&gt;
-</span><span style="color:#6272a4"></span>
-<span style="color:#6272a4">; making the jne not get taken will land us at unlock_door
-</span><span style="color:#6272a4"></span>4562:  3<span style="color:#50fa7b">f40</span> f144      mov   <span style="color:#6272a4">#0x44f1 &#34;Access granted.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4566</span>:  b012 de45      call  <span style="color:#6272a4">#0x45de &lt;puts&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">456</span>a:  b012 <span style="color:#bd93f9">4844</span>      call  <span style="color:#6272a4">#0x4448 &lt;unlock_door&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#0f0">; test_password_valid has returned
+</span><span style="color:#0f0"></span>4552:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">d344</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44d3 &#34;Testing if password is valid.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4556</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span>
+<span style="color:#0f0">; what is this cmp doing?
+</span><span style="color:#0f0"></span>455a:  <span style="color:#ff0">f290</span> <span style="color:#f60">6300</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">cmp.b</span> <span style="color:#0f0">#0x63, &amp;0x2410
+</span><span style="color:#0f0"></span><span style="color:#f60">4560</span>:  <span style="color:#f60">0720</span>           <span style="color:#7fffd4">jne</span>   <span style="color:#0f0">#0x4570 &lt;login+0x50&gt;
+</span><span style="color:#0f0"></span>
+<span style="color:#0f0">; making the jne not get taken will land us at unlock_door
+</span><span style="color:#0f0"></span>4562:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">f144</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44f1 &#34;Access granted.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4566</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">a</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">4844</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4448 &lt;unlock_door&gt;
 </span></code></pre></div><p>I noticed the <code>cmp.b #0x63, &amp;0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
 <p>If we can make the aforementioned instruction pass the test checking if the value at that memory address is <code>0x63</code>, (ASCII character <code>c</code>), then we can get past the <code>jne</code> instruction at <code>0x4560</code>, eventually landing us in <code>unlock_door</code> routine.</p>
 <p>So given that the distance to <code>0x2410</code> is 16 bytes from <code>0x2400</code> where our password buffer is stored, lets see if we can overflow the buffer to <code>0x2410</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#ff79c6">print</span>(<span style="color:#f1fa8c">&#39;A&#39;</span> <span style="color:#ff79c6">*</span> <span style="color:#bd93f9">16</span> <span style="color:#ff79c6">+</span> <span style="color:#f1fa8c">&#39;c&#39;</span>)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; <span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;A&#39;</span> * <span style="color:#f60">16</span> + <span style="color:#87ceeb">&#39;c&#39;</span>)
 AAAAAAAAAAAAAAAAc
 </code></pre></div><p>I set a breakpoint at <code>0x455a</code> with <code>break 455a</code> in the debugger and continued the CPU entering <code>AAAAAAAAAAAAAAAAc</code> as the password when prompted.</p>
 <figure>
@@ -517,7 +517,7 @@ AAAAAAAAAAAAAAAAc
 
   <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2020  Leon Jacobs 
+    Copyright  &copy; 2021  Leon Jacobs 
   </div>
   <div class="footer-right">
     <nav>

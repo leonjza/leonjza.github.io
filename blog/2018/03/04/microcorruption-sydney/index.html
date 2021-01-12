@@ -42,7 +42,7 @@ Lol. Lets take a closer look."/>
   
   <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
   
-  
+   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -267,40 +267,40 @@ if (!doNotTrack) {
 <p>Lol. Lets take a closer look.</p>
 <h2 id="sydney">sydney</h2>
 <p>Performing a static analysis of the code, one can see that this time round there is no silly  <code>create_password</code> routine or something similar.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#50fa7b">main</span>&gt;
-4438:  3150 9<span style="color:#50fa7b">cff</span>      add   <span style="color:#6272a4">#0xff9c, sp
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">443</span>c:  <span style="color:#bd93f9">3</span>f40 b444      mov   <span style="color:#6272a4">#0x44b4 &#34;Enter the password to continue.&#34;, r15
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4440</span>:  b012 <span style="color:#bd93f9">6645</span>      call  <span style="color:#6272a4">#0x4566 &lt;puts&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4444</span>:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
-4446:  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8044</span>      call  <span style="color:#6272a4">#0x4480 &lt;get_password&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">444</span>a:  <span style="color:#bd93f9">0</span>f41           mov   sp, r15
-444<span style="color:#8be9fd;font-style:italic">c:</span>  <span style="color:#50fa7b">b012</span> <span style="color:#bd93f9">8</span>a44      call  <span style="color:#6272a4">#0x448a &lt;check_password&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4450</span>:  <span style="color:#bd93f9">0</span>f93           tst   r15
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#ff0">main</span>&gt;
+4438:  3150 9<span style="color:#ff0">cff</span>      <span style="color:#7fffd4">add</span>   <span style="color:#0f0">#0xff9c, sp
+</span><span style="color:#0f0"></span><span style="color:#f60">443</span><span style="color:#7fffd4">c</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">f40</span> <span style="color:#7fffd4">b444</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44b4 &#34;Enter the password to continue.&#34;, r15
+</span><span style="color:#0f0"></span><span style="color:#f60">4440</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">6645</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4566 &lt;puts&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">4444</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f41</span>           <span style="color:#7fffd4">mov</span>   <span style="color:#7fffd4">sp</span>, <span style="color:#7fffd4">r15</span>
+4446:  <span style="color:#ff0">b012</span> <span style="color:#f60">8044</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4480 &lt;get_password&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">444</span><span style="color:#7fffd4">a</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f41</span>           <span style="color:#7fffd4">mov</span>   <span style="color:#7fffd4">sp</span>, <span style="color:#7fffd4">r15</span>
+444c:  <span style="color:#ff0">b012</span> <span style="color:#f60">8</span><span style="color:#7fffd4">a44</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x448a &lt;check_password&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">4450</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f93</span>           <span style="color:#7fffd4">tst</span>   <span style="color:#7fffd4">r15</span>
 </code></pre></div><p>In fact, just a simple <code>get_password</code> and <code>check_password</code> routine before the <code>tst r15</code> call at <code>0x4450</code>. The call to <code>get_password</code> just ends up with a syscall, prompting you for a password, so that is not really interesting to us. What is interesting though is <code>check_password</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">448<span style="color:#50fa7b">a</span> &lt;check_password&gt;
-448<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4</span>c7e <span style="color:#bd93f9">0000</span> cmp   <span style="color:#6272a4">#0x7e4c, 0x0(r15)
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4490</span>:  <span style="color:#bd93f9">0</span>d20           jnz   $+<span style="color:#bd93f9">0x1c</span>
-4492:  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">2142</span> <span style="color:#bd93f9">0200</span> cmp   <span style="color:#6272a4">#0x4221, 0x2(r15)
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">4498</span>:  <span style="color:#bd93f9">0920</span>           jnz   $+<span style="color:#bd93f9">0x14</span>
-449<span style="color:#8be9fd;font-style:italic">a:</span>  <span style="color:#50fa7b">bf90</span> <span style="color:#bd93f9">4522</span> <span style="color:#bd93f9">0400</span> cmp   <span style="color:#6272a4">#0x2245, 0x4(r15)
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a0:  <span style="color:#bd93f9">0520</span>           jne   <span style="color:#6272a4">#0x44ac &lt;check_password+0x22&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a2:  <span style="color:#bd93f9">1</span>e43           mov   <span style="color:#6272a4">#0x1, r14
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>a4:  bf90 <span style="color:#bd93f9">587</span>d <span style="color:#bd93f9">0600</span> cmp   <span style="color:#6272a4">#0x7d58, 0x6(r15)
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>aa:  <span style="color:#bd93f9">0124</span>           jeq   <span style="color:#6272a4">#0x44ae &lt;check_password+0x24&gt;
-</span><span style="color:#6272a4"></span><span style="color:#bd93f9">44</span>ac:  <span style="color:#bd93f9">0</span>e43           clr   r14
-44<span style="color:#8be9fd;font-style:italic">ae:</span>  0<span style="color:#50fa7b">f4e</span>           mov   r14, r15
-44<span style="color:#8be9fd;font-style:italic">b0:</span>  3041           <span style="color:#50fa7b">ret</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">448<span style="color:#ff0">a</span> &lt;<span style="color:#7fffd4">check_password</span>&gt;
+448a:  <span style="color:#ff0">bf90</span> <span style="color:#f60">4</span><span style="color:#7fffd4">c7e</span> <span style="color:#f60">0000</span> <span style="color:#7fffd4">cmp</span>   <span style="color:#0f0">#0x7e4c, 0x0(r15)
+</span><span style="color:#0f0"></span><span style="color:#f60">4490</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">d20</span>           <span style="color:#7fffd4">jnz</span>   <span style="color:#7fffd4">$</span>+<span style="color:#f60">0x1c</span>
+4492:  <span style="color:#ff0">bf90</span> <span style="color:#f60">2142</span> <span style="color:#f60">0200</span> <span style="color:#7fffd4">cmp</span>   <span style="color:#0f0">#0x4221, 0x2(r15)
+</span><span style="color:#0f0"></span><span style="color:#f60">4498</span>:  <span style="color:#f60">0920</span>           <span style="color:#7fffd4">jnz</span>   <span style="color:#7fffd4">$</span>+<span style="color:#f60">0x14</span>
+449a:  <span style="color:#ff0">bf90</span> <span style="color:#f60">4522</span> <span style="color:#f60">0400</span> <span style="color:#7fffd4">cmp</span>   <span style="color:#0f0">#0x2245, 0x4(r15)
+</span><span style="color:#0f0"></span><span style="color:#f60">44</span><span style="color:#7fffd4">a0</span>:  <span style="color:#f60">0520</span>           <span style="color:#7fffd4">jne</span>   <span style="color:#0f0">#0x44ac &lt;check_password+0x22&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">44</span><span style="color:#7fffd4">a2</span>:  <span style="color:#f60">1</span><span style="color:#7fffd4">e43</span>           <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x1, r14
+</span><span style="color:#0f0"></span><span style="color:#f60">44</span><span style="color:#7fffd4">a4</span>:  <span style="color:#7fffd4">bf90</span> <span style="color:#f60">587</span><span style="color:#7fffd4">d</span> <span style="color:#f60">0600</span> <span style="color:#7fffd4">cmp</span>   <span style="color:#0f0">#0x7d58, 0x6(r15)
+</span><span style="color:#0f0"></span><span style="color:#f60">44</span><span style="color:#7fffd4">aa</span>:  <span style="color:#f60">0124</span>           <span style="color:#7fffd4">jeq</span>   <span style="color:#0f0">#0x44ae &lt;check_password+0x24&gt;
+</span><span style="color:#0f0"></span><span style="color:#f60">44</span><span style="color:#7fffd4">ac</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">e43</span>           <span style="color:#7fffd4">clr</span>   <span style="color:#7fffd4">r14</span>
+44ae:  0<span style="color:#ff0">f4e</span>           <span style="color:#7fffd4">mov</span>   <span style="color:#7fffd4">r14</span>, <span style="color:#7fffd4">r15</span>
+44b0:  3041           <span style="color:#ff0">ret</span>
 </code></pre></div><p>At first sight it looks like the code does a number of compares to values at an offset from the memory address at <code>r15</code>. Could these be parts of the actual password? Lets inspect with the debugger. Setting a breakpoint at <code>0x448a</code> and continuing the CPU (entering a password of <em>test</em> when prompted) until we reach it should help in revealing what is happening.</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_byte_compare.png"/> 
 </figure>
 
 <p>Hah, so after the first <code>cmp</code> instruction, the status register is <code>0x4</code> (N), meaning the jump 14 bytes onwards to <code>0x44ac</code> will be taken, effectively ending the <code>check_password</code> routine prematurely. The bytes in <code>r15</code> at the time of the first <code>cmp</code> instruction was <code>0x439c</code>, which in turn pointed to <code>0x7465</code> in the memory dump (visualised with <code>read r15</code> in the debugger). The bytes in memory is clearly the password (<em>test</em> in this case) that I entered when I was prompted.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39; &#39;</span><span style="color:#ff79c6">.</span>join([<span style="color:#8be9fd;font-style:italic">hex</span>(<span style="color:#8be9fd;font-style:italic">ord</span>(x)) <span style="color:#ff79c6">for</span> x <span style="color:#ff79c6">in</span> <span style="color:#f1fa8c">&#39;test&#39;</span>])
-<span style="color:#f1fa8c">&#39;0x74 0x65 0x73 0x74&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; <span style="color:#87ceeb">&#39; &#39;</span>.join([hex(ord(x)) <span style="color:#f00">for</span> x in <span style="color:#87ceeb">&#39;test&#39;</span>])
+<span style="color:#87ceeb">&#39;0x74 0x65 0x73 0x74&#39;</span>
 </code></pre></div><p>So, lets take the bytes in the three <code>cmp</code> calls and enter that as the password, keeping our breakpoints and seeing what the CPU does then. The six bytes of interest are: <code>0x7e 0x4c 0x42 0x21 0x22 0x45</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;7e4c42212245&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
-<span style="color:#f1fa8c">&#39;~LB!&#34;E&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; <span style="color:#87ceeb">&#39;7e4c42212245&#39;</span>.decode(<span style="color:#87ceeb">&#39;hex&#39;</span>)
+<span style="color:#87ceeb">&#39;~LB!&#34;E&#39;</span>
 </code></pre></div><p>Resetting the CPU, entering <code>~LB!&quot;E</code> as password and continuing untill we hit the breakpoint at <code>0x448a</code> and then stepping past the first <code>cmp</code> and <code>jnz</code> instructions should now look like this:</p>
 <figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_little_endian_suprise.png"/> 
@@ -308,8 +308,8 @@ if (!doNotTrack) {
 
 <p>Hmm. The value <code>0x7e4c</code> was at <code>0x439c</code> (the address <code>r15</code> points to), but the <code>cmp</code> call set the status register to <code>0x4</code> (N), ending the <code>check_password</code> function again. :|</p>
 <p>What I think this challenge is supposed to teach you is about the endianness of the CPU which means it stores values in little endian format in memory. What that means for us is that that password values should be provided as <code>0x4c7e</code> instead of as <code>0x7e4c</code> like we did. So, lets re-arrange the password we enter, and continue to the breakpoint again.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
-<span style="color:#f1fa8c">&#39;L~!BE&#34;&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; <span style="color:#87ceeb">&#39;4c7e21424522&#39;</span>.decode(<span style="color:#87ceeb">&#39;hex&#39;</span>)
+<span style="color:#87ceeb">&#39;L~!BE&#34;&#39;</span>
 </code></pre></div><figure>
     <img src="https://leonjza.github.io/images/microcorruption/sydney_valid_pass.png"/> 
 </figure>
@@ -322,8 +322,8 @@ if (!doNotTrack) {
 
 <p>This means that when <code>cmp    #0x7d58, 0x6(r15)</code> at <code>0x44a4</code> is called, we will be comparing to <code>0x0</code> (the bytes at <code>r15+6</code>), resulting in the jump at <code>0x44aa</code> not being taken, clearing <code>r14</code> before the routine finishes.</p>
 <p>So, to prevent that adn as a final password, we need to enter those the bytes <code>0x58</code> and <code>0x7d</code> too to unlock the lock.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">&gt;&gt;&gt;</span> <span style="color:#f1fa8c">&#39;4c7e21424522587d&#39;</span><span style="color:#ff79c6">.</span>decode(<span style="color:#f1fa8c">&#39;hex&#39;</span>)
-<span style="color:#f1fa8c">&#39;L~!BE&#34;X}&#39;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; <span style="color:#87ceeb">&#39;4c7e21424522587d&#39;</span>.decode(<span style="color:#87ceeb">&#39;hex&#39;</span>)
+<span style="color:#87ceeb">&#39;L~!BE&#34;X}&#39;</span>
 </code></pre></div><p>Continue the CPU and unlock the lock!</p>
 <h2 id="solution">solution</h2>
 <p>Enter <code>L~!BE&quot;X}</code> as ASCII or <code>4c7e21424522587d</code> as hex encoded input.</p>
@@ -475,7 +475,7 @@ if (!doNotTrack) {
 
   <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2020  Leon Jacobs 
+    Copyright  &copy; 2021  Leon Jacobs 
   </div>
   <div class="footer-right">
     <nav>

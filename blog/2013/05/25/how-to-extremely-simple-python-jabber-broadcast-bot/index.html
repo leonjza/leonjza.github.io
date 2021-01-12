@@ -28,7 +28,7 @@ As a team at work, we have long gone dropped the whole Skype group chat thing fo
   
   <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
   
-  
+   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -261,54 +261,54 @@ if (!doNotTrack) {
 <h3 id="introducing-jabbersendpy">Introducing jabbersend.py</h3>
 <p>With our jabber server now configured and working, we are ready to start automating things. From here we need two things. Something that will broadcast for us, and something <em>to</em> broadcast. The <em>what to broadcast</em> is entirely up to you, as the script will accept a text file to broadcast.</p>
 <p>The only dependency you probably need to satisfy will be <code>xmpp</code>. This should be easily doable with something like <code>easy_install xmpp</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#6272a4">#!/usr/bin/python</span>
-<span style="color:#ff79c6">import</span> sys<span style="color:#ff79c6">,</span>os<span style="color:#ff79c6">,</span>xmpp<span style="color:#ff79c6">,</span>time
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<span style="color:#f00">import</span> sys,os,xmpp,time
 
-<span style="color:#6272a4"># check the received arguments</span>
-<span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">len</span>(sys<span style="color:#ff79c6">.</span>argv) <span style="color:#ff79c6">&lt;</span> <span style="color:#bd93f9">2</span>:
-    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Syntax: jabbersend.py JID textfile&#34;</span>
-    sys<span style="color:#ff79c6">.</span>exit(<span style="color:#bd93f9">0</span>)
+<span style="color:#0f0"># check the received arguments</span>
+<span style="color:#f00">if</span> len(sys.argv) &lt; <span style="color:#f60">2</span>:
+    <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;Syntax: jabbersend.py JID textfile&#34;</span>
+    sys.exit(<span style="color:#f60">0</span>)
 
-<span style="color:#6272a4"># set the values to work with and read the file</span>
-tojid<span style="color:#ff79c6">=</span>sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">1</span>]
-m <span style="color:#ff79c6">=</span> <span style="color:#8be9fd;font-style:italic">open</span>(sys<span style="color:#ff79c6">.</span>argv[<span style="color:#bd93f9">2</span>],<span style="color:#f1fa8c">&#39;r&#39;</span>)
-array <span style="color:#ff79c6">=</span> m<span style="color:#ff79c6">.</span>readlines()
-m<span style="color:#ff79c6">.</span>close()
+<span style="color:#0f0"># set the values to work with and read the file</span>
+tojid=sys.argv[<span style="color:#f60">1</span>]
+m = open(sys.argv[<span style="color:#f60">2</span>],<span style="color:#87ceeb">&#39;r&#39;</span>)
+array = m.readlines()
+m.close()
 
-msg<span style="color:#ff79c6">=</span><span style="color:#f1fa8c">&#34;&#34;</span>
-<span style="color:#ff79c6">for</span> record <span style="color:#ff79c6">in</span> array:
-        msg <span style="color:#ff79c6">=</span> msg <span style="color:#ff79c6">+</span> record
+msg=<span style="color:#87ceeb">&#34;&#34;</span>
+<span style="color:#f00">for</span> record in array:
+        msg = msg + record
 
-<span style="color:#6272a4"># configure your jabber account for the bot here.</span>
-username <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#39;jabber_bot@jabber.server&#39;</span> <span style="color:#6272a4"># from whom will the message be sent</span>
-password <span style="color:#ff79c6">=</span> <span style="color:#f1fa8c">&#39;jabber_bot_secret_password&#39;</span>
+<span style="color:#0f0"># configure your jabber account for the bot here.</span>
+username = <span style="color:#87ceeb">&#39;jabber_bot@jabber.server&#39;</span> <span style="color:#0f0"># from whom will the message be sent</span>
+password = <span style="color:#87ceeb">&#39;jabber_bot_secret_password&#39;</span>
 
-jid<span style="color:#ff79c6">=</span>xmpp<span style="color:#ff79c6">.</span>protocol<span style="color:#ff79c6">.</span>JID(username)
+jid=xmpp.protocol.JID(username)
 
-<span style="color:#6272a4"># for debugging purposes, uncomment the below line so that &#39;debug&#39; is 1.</span>
-<span style="color:#6272a4"># This makes the script very verbose though, but its helpful if you stuck ^^</span>
-<span style="color:#6272a4">#cl=xmpp.Client(jid.getDomain(),debug=1)</span>
-cl<span style="color:#ff79c6">=</span>xmpp<span style="color:#ff79c6">.</span>Client(jid<span style="color:#ff79c6">.</span>getDomain(),debug<span style="color:#ff79c6">=</span>[])
+<span style="color:#0f0"># for debugging purposes, uncomment the below line so that &#39;debug&#39; is 1.</span>
+<span style="color:#0f0"># This makes the script very verbose though, but its helpful if you stuck ^^</span>
+<span style="color:#0f0">#cl=xmpp.Client(jid.getDomain(),debug=1)</span>
+cl=xmpp.Client(jid.getDomain(),debug=[])
 
-<span style="color:#6272a4"># Sadly I don&#39;t have a valid certificate for my jabber server, so this had to</span>
-<span style="color:#6272a4"># be set to False. I do however recommend, if you can, to get a valid certificate</span>
-<span style="color:#6272a4"># and enable this</span>
-con<span style="color:#ff79c6">=</span>cl<span style="color:#ff79c6">.</span>connect(secure<span style="color:#ff79c6">=</span>False) <span style="color:#6272a4"># Set this to validate the servers certificate.</span>
-<span style="color:#ff79c6">if</span> <span style="color:#ff79c6">not</span> con:
-    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Could not connect&#34;</span>
-    sys<span style="color:#ff79c6">.</span>exit()
+<span style="color:#0f0"># Sadly I don&#39;t have a valid certificate for my jabber server, so this had to</span>
+<span style="color:#0f0"># be set to False. I do however recommend, if you can, to get a valid certificate</span>
+<span style="color:#0f0"># and enable this</span>
+con=cl.connect(secure=False) <span style="color:#0f0"># Set this to validate the servers certificate.</span>
+<span style="color:#f00">if</span> not con:
+    <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;Could not connect&#34;</span>
+    sys.exit()
 
-<span style="color:#6272a4"># authenticate the client</span>
-auth<span style="color:#ff79c6">=</span>cl<span style="color:#ff79c6">.</span>auth(jid<span style="color:#ff79c6">.</span>getNode(),password,resource<span style="color:#ff79c6">=</span>jid<span style="color:#ff79c6">.</span>getResource())
-<span style="color:#ff79c6">if</span> <span style="color:#ff79c6">not</span> auth:
-    <span style="color:#ff79c6">print</span> <span style="color:#f1fa8c">&#34;Authentication failed&#34;</span>
-    sys<span style="color:#ff79c6">.</span>exit()
+<span style="color:#0f0"># authenticate the client</span>
+auth=cl.auth(jid.getNode(),password,resource=jid.getResource())
+<span style="color:#f00">if</span> not auth:
+    <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;Authentication failed&#34;</span>
+    sys.exit()
 
-<span style="color:#6272a4"># send the message</span>
-<span style="color:#8be9fd;font-style:italic">id</span><span style="color:#ff79c6">=</span>cl<span style="color:#ff79c6">.</span>send(xmpp<span style="color:#ff79c6">.</span>protocol<span style="color:#ff79c6">.</span>Message(tojid, msg))
+<span style="color:#0f0"># send the message</span>
+id=cl.send(xmpp.protocol.Message(tojid, msg))
 
-<span style="color:#6272a4"># some older servers will not send the message if you disconnect immediately</span>
-time<span style="color:#ff79c6">.</span>sleep(<span style="color:#bd93f9">1</span>)
+<span style="color:#0f0"># some older servers will not send the message if you disconnect immediately</span>
+time.sleep(<span style="color:#f60">1</span>)
 </code></pre></div><h3 id="we-have-the-code-now-use-it">We have the code, now use it!</h3>
 <p>Save this code to something like <code>jabbersend.py</code> and execute it like this:
 <code>python jabbersend.py all@broadcast.jabber.server message_file.txt</code></p>
@@ -466,7 +466,7 @@ The OSSEC broadcasting I&rsquo;ll blog a little later, but you can obviously see
 
   <footer id="footer">
   <div class="footer-left">
-    Copyright  &copy; 2020  Leon Jacobs 
+    Copyright  &copy; 2021  Leon Jacobs 
   </div>
   <div class="footer-right">
     <nav>
