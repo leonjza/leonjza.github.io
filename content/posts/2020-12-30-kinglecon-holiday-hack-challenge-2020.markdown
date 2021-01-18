@@ -30,7 +30,7 @@ Embrace the format, it's part of the fun.
 
 {{< figure src="/images/holidayhack-20/hackerfam.png" title="me and some hacker fam in the talks lobby!" >}}
 
-I won’t repeat all of the logistics, instead, I want to dive straight into the challenges themselves. Basically, there were two "types" of challenges. The main objectives and the "terminal" challenges. Terminal challenges were typically easier (but definitely fun and challenging too!), and once completed the Elf next to the terminal would typically provide some hints and other info for objectives.
+I won’t repeat all of the logistics, instead, I want to dive straight into the challenges themselves. Basically, there were two "types" of challenges. The main objectives and the "terminal" challenges. Terminal challenges were typically easier (but definitely fun and challenging too!), and once completed the Elf next to the terminal would provide some hints and other info for objectives.
 
 ## format
 
@@ -38,7 +38,7 @@ I never really found myself in a position where I did not have an idea of what I
 
 ## terminals
 
-Terminal challenges were usually a little easier, but absolutely a blast overall. Once completed, they would reveal vital hints for the main objectives, so clearing them was really important.
+Once completed, terminal challanges would reveal vital hints for the main objectives, so clearing them was really useful and fun!
 
 ### unescape tmux
 
@@ -72,7 +72,7 @@ Starting the challenge we get.
 
 {{< figure src="/images/holidayhack-20/terminal_kringle_kiosk_shell.png" title="kringle kiosk initial shell" >}}
 
-From the initial output we're asked if we can get a bash shell. Well that sounds doable I'm sure.
+From the initial output we're asked if we can get a bash shell.
 
 Hitting `enter` after that message we're presented with a menu with a few options. Playing with option `4` to _Print Name Badge_, if you entered `;/bin/bash` as your name you will solve the challenge and get the shell.
 
@@ -111,7 +111,7 @@ Opening the terminal challenge for the first time shows the following:
 
 {{< figure src="/images/holidayhack-20/terminal_speaker_unprep_shell.png" title="speaker unpreparedness terminal welcome message" >}}
 
-This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each lived in the `lab/` directory, making it possible to fiddle with them and not break the "real" ones.
+This challenge actually consisted of three challenges in total; door, lights and vending machine and Bushy was happy to give hints for each after completing one. Editable versions of each challange lived in the `lab/` directory, making it possible to fiddle with them and not break the "real" ones.
 
 #### door
 
@@ -127,7 +127,7 @@ Checking......
 Beep boop invalid password
 ```
 
-Ok, `poo` is not the password. If we run `strings` over the binary we could maybe narrow it down. A good string to search for would also be _"What do you enter?"_. I usually `grep` for these types of things to narrow a match down with a little bit of context using the `-A` and `-B` flags to print me some data before and after a match. The output from `strings` over a binary can be noisy, so this is a bit of a habit I guess.
+Ok, `poo` is not the password. If we run `strings` over the binary we could maybe narrow it down. A good string to search for would be _"What do you enter?"_. I usually `grep` for these types of things to narrow a match down with a little bit of context using the `-A` and `-B` flags to print me some data before and after a match. The output from `strings` over a binary can be noisy, so this is a bit of a habit I guess.
 
 ```text
 elf@aaa8cc7e08d2 ~ $ strings door | grep -i "what do you enter" -A 10 -B 10
@@ -157,7 +157,7 @@ the environment: couldn't get the executable name
 Something went wrong in the environment: RESOURCE_IDThe error message is: ask for help!
 ```
 
-Notice the section that reads `And don't forget, the password is "Op3nTheD00r"` ? There's the password too!
+Notice the section that reads `And don't forget, the password is "Op3nTheD00r"` ? There's the password too! If you just grepped for `password` you would have also found this.
 
 ```text
 elf@aaa8cc7e08d2 ~ $ ./door 
@@ -184,7 +184,7 @@ The terminal just blinks: Welcome back, elf-technician
 What do you enter? > 
 ```
 
-Investigating the configuration files contents shows what looks like an "encrypted" version of the password is stored.
+Investigating the configuration files' contents shows what looks like an "encrypted" version of the password is stored.
 
 ```text
 elf@51340abdb0bc ~/lab $ cat lights.conf 
@@ -192,7 +192,7 @@ password: E$ed633d885dcb9b2f3f0118361de4d57752712c27c5316a95d9e5e5b124
 name: elf-technician
 ```
 
-I fiddled with the values for a bit, and eventually set the `password` value for `name` and ran `lights` again.
+I fiddled with the values for a bit, and eventually set the `password` value for `name` and ran `lights` again after reading the hint we had on our badge.
 
 ```text
 elf@5641592049a0 ~/lab $ cat lights.conf 
@@ -214,7 +214,7 @@ That would have turned on the lights!
 If you've figured out the real password, be sure you run /home/elf/lights
 ```
 
-Noticed the `Computer-TurnLightsOn` there? That’s the password ;) Looks like the program jumps into a decryption routine if a value starts with `E$`. lol.
+Noticed the `Computer-TurnLightsOn` there? That’s the password ;) Looks like the program jumps into an opportunistic decryption routine if a value starts with `E$`. lol.
 
 With that done, running the real `light` program should turn the lights on in the Speaker Unpreparedness room.
 
@@ -230,9 +230,9 @@ Lights on!
 
 #### vending-machine
 
-This was actually the very last challenge I solved, and honestly, I don't really like my solution. From all of the hints available both on your badge and from Bushy Evergreen I gathered that it was a classic Vigenère cipher that needed cracking, but alas, I couldn't solve it that way.
+This was actually the very last challenge I solved, and honestly, I don't like my solution. From all of the hints available both on your badge and from Bushy Evergreen I gathered that it was a classic Vigenère cipher that needed cracking, but alas, I couldn't solve it that way.
 
-Running the `./vending-machine` binary, you were asked to enter a code to turn the vending machines back on. Inspecting the `vending-machines.json` configuration file next to the binary we see:
+Running the `./vending-machine` binary, you were asked to enter a code to turn the vending machine back on. Inspecting the `vending-machines.json` configuration file next to the binary we see:
 
 ```json
 {
@@ -243,7 +243,7 @@ Running the `./vending-machine` binary, you were asked to enter a code to turn t
 
 In the `lab/` folder, if we delete the `vending-machine.json` file and re-run the `vending-machine` binary, we're asked to enter new fields for a new configuration file. This is what I figured was the Chosen plaintext primitive for the Vigenère crack, but alas, that failed for me.
 
-After many, many attempts at solving this I asked for some help and was told some people were just brute forcing the password. So, again in the `lab/` folder I tested the output you'd get in the `vending-machine.json` when choosing single character passwords, and eventually came to see if we used something that started with a `C`, we'd get an output string of `L` in the `.json` file.
+After many, many attempts at solving this I asked for some help and was told some people were just brute forcing the password. So, again in the `lab/` folder I tested the output you'd get in the `vending-machine.json` when choosing single character passwords, and eventually came to see if we used something that started with a `C`, we'd get an output string of `L` line in the `password` field in the `.json` file.
 
 In the end, I scripted the brute force. Not my proudest moment, but I really tried!
 
@@ -292,7 +292,7 @@ _Ribb Bonbowford_ stands next to a terminal called "The Elf C0de" in the dining 
 
 {{< figure src="/images/holidayhack-20/terminal_the_elf_code_ribb_bonbowford.png" title="the elf c0de terminal in the dining room" >}}
 
-For this challenge, you are presented with a 2D game where you need to control your character using a small JavaScript program. Each level is different and presents you with a gradually more difficult problem to solve.
+Here you are presented with a 2D game where you need to control your character using a small JavaScript program. Each level is different and presents you with a gradually more difficult problem to solve.
 
 {{< figure src="/images/holidayhack-20/terminal_the_elf_code_level1.png" title="the elf c0de terminal in the dining room" >}}
 
@@ -371,7 +371,7 @@ Opening the phone by clicking on it we see this.
 
 {{< figure src="/images/holidayhack-20/terminal_33.6kbps_phone.png" title="phone ui" >}}
 
-Picking up the phone and dialling the number you'd hear a warped version of initial beep from the ever popular dialup sequence you could hear way, waaaay back. One of the hints Fitzy linked to was a recording of that exact sound here: <https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg>
+Picking up the phone and dialling the number you'd hear a warped version of initial beep from the ever popular dialup sequence you would hear way, waaaay back (yeah, I remember those!). One of the hints Fitzy linked to was a recording of that exact sound here: <https://upload.wikimedia.org/wikipedia/commons/3/33/Dial_up_modem_noises.ogg>
 
 The words on the note next to the phone corresponded to different sections of the dialup sequence, but they were morphed making them hard to identify quickly. I opened the reference `.ogg` file in Audacity and started piecing together the bits needed.
 
@@ -463,7 +463,7 @@ Ah! We can't see what's inside `/var/www/html`, but redis running as root should
 
 Writing a web shell via Redis is done by configuring Redis (via the command injection) where to save database snapshots, adding a new key containing a web shell, then saving a snapshot. This results in the web shell being written to the path we specified.
 
-Anyways, now that we're ready to write that web shell. We know the webserver is configured to use PHP, so a small PHP webshell like this should be fine.
+We know the webserver is configured to use PHP, so a small PHP webshell like this should be fine.
 
 ```php
 <?=`$_GET[1]`?>
@@ -644,7 +644,7 @@ Opening the terminal presents us with a starting point.
 {{< figure src="/images/holidayhack-20/terminal_sort_o_matic_1.png" title="sort-o-matic terminal initial screen" >}}
 {{< figure src="/images/holidayhack-20/terminal_sort_o_matic_2.png" title="sort-o-matic terminal initial answers screen" >}}
 
-You could click on the questions to get an idea of what type of regular expression they looked for. Some questions had example data that the regex had to match and not match as well. I had valid answers that would have invalid matches be accepted, which wasn't great.
+You could click on the questions to get an idea of what type of regular expression they looked for. Some questions had example data that the regex had to match and not match. I had valid answers that would have invalid matches be accepted, which wasn't great.
 
 {{< figure src="/images/holidayhack-20/terminal_sort_o_matic_question.png" title="sort-o-matic question format" >}}
 
@@ -673,13 +673,13 @@ Opening the terminal presents us with a splash screen where we could choose a di
 
 {{< figure src="/images/holidayhack-20/terminal_snowball_fight_splash.png" title="snowball fight game splash screen" >}}
 
-Starting a game had you see two squares, one where your fortresses were and another where you have tried to guess where you enemies fortresses were.
+Starting a game had you see two squares, one where your fortresses were and another where you have to guess where you enemies fortresses are.
 
 {{< figure src="/images/holidayhack-20/terminal_snow_ball_player.png" title="snowball fight player fortresses" >}}
 
 {{< figure src="/images/holidayhack-20/terminal_snow_ball_enemy.png" title="snowball fight enemy fortresses that you guessed" >}}
 
-The aim was to win a game on impossible, but if you have that a shot you'd see that it’s pretty much impossible. The computer always hit your fortresses with near perfect accuracy. Reading the hints given on your badge and by Tangle Coalbox you'd come to realise that the aim here was to predict the numbers used by the computers random number generator. When you chose to play an easy game, your username was used as a seed to determine where all of the fortresses (yours and the computers) would be positioned. If you started multiple consecutive games with the same name (read: seed), the positions would have been exactly the same.
+The aim was to win a game on impossible, but if you gave that a try you'd see that it’s pretty much impossible. The computer always hit your fortresses with perfect accuracy. Reading the hints given on your badge and by Tangle Coalbox you'd come to realise that the aim here was to predict the numbers used by the computers random number generator. When you chose to play an easy game, your username was used as a seed to determine where all of the fortresses (yours and the computers) would be positioned. If you started multiple consecutive games with the same name (read: seed), the positions would have been exactly the same.
 
 But on impossible you don’t get to choose your name, the computer generated it for you, and what’s worse, you don’t get to see what it chose. This is what we had to predict. Watching Tom Liston's [talk](https://www.youtube.com/watch?v=Jo5Nlbqd-Vg) was key for me to solving this. I learnt a ton about the [Mersenne Twister](https://en.wikipedia.org/wiki/Mersenne_Twister) pseudorandom number generator (PRNG), and ways to abuse it. Tim's talk also contained a link to a project of his to help predict the next values of a PRNG granted you were able to seed it with at least 624 previous, sequential values [here](https://github.com/tliston/mt19937).
 
@@ -722,7 +722,7 @@ for i in range(mt19937.n):
 print(f'next #: {myprng.extract_number()}')
 ```
 
-Using the predicted number of `324105638`, we then start a new easy game making `324105638` our username and winning it to reveal the positions of the enemy fortresses.
+Using the predicted number of `324105638`, we then start a new easy game making `324105638` our username in an incognito tab, winning it to reveal the positions of the enemy fortresses.
 
 {{< figure src="/images/holidayhack-20/terminal_snow_ball_easy_predict.png" title="snowball fight easy game with predicted seed" >}}
 
@@ -734,7 +734,7 @@ Solving this challenge provides hints for the later blockchain challenges, 11a &
 
 ## objectives
 
-Many of the objectives required hints from some of the [terminal](#terminals) challenges first. I did not really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible.
+Many of the objectives required hints from some of the [terminal](#terminals) challenges first. I did not really have a strategy other than walking around and clicking on terminals as I saw them. As I went through them, I chose to do the main objectives that were available next to them as well. At first, only the first 5 main objectives were visible until you unlock the door in Santas workshop to impersonate him.
 
 ### 1 - uncover santas gift list
 
@@ -787,7 +787,7 @@ http://santa.s3.amazonaws.com/
         Bucket found but access denied: santa
 ```
 
-I was stumped for a while on this one. Most of my attempts was me messing with permutations of the words in the provided word list, until I noticed the `wrapper3000` hint, and added that to the word list.
+I was stumped for a while on this one. Most of my attempts was me messing with permutations of the words in the provided word list (I figured those bucket names were generic and surely they were taken before Kringlecon 3), until I noticed the `wrapper3000` hint, and added that to the word list.
 
 ```text
 elf@cb4ef197f1c4:~/bucket_finder$ ./bucket_finder.rb -d wordlist 
@@ -864,7 +864,7 @@ After completing the [linux primer](#linux-primer) terminal challenge, some hint
 
 Opening the challenge we get a link to download an executable at <https://download.holidayhackchallenge.com/2020/santa-shop/santa-shop.exe>.
 
-I took this file and ran it on a Windows VM, which installed what looked like an Electron application and presented me with the password screen the challenge referred to. The hint we get from the terminal challenge tells us that it is possible to extract source code for electron apps using a utility called [asar](https://www.npmjs.com/package/asar). More specifically, this utility can read the archive format for `.asar` files, and we have to get that from the Point-of-Sale application.
+I took this file and ran it on a Windows VM, which installed what looked like an Electron application and presented me with the password screen the challenge referred to. The hint we get from the terminal challenge tells us that it is possible to extract JavaScript source code for electron apps using a utility called [asar](https://www.npmjs.com/package/asar). More specifically, this utility can read the archive format for `.asar` files, and we have to get that from the Point-of-Sale application.
 
 To get the file, open task manager after running santa-shop. Browse to the "Details" tab and search for the `santa-shop.exe` process. Right click any of the few and hit "Open file location".
 
@@ -1027,7 +1027,7 @@ The first entry in the results was not specific to the AudioDeviceCmdlets compon
 
 I think this one was the hardest. By now I have gotten into the habit of searching through the Atomic Red Team `atomics/` directory for details on how some of these techniques were run, but this time I couldn’t find any batch files with correct answers that they were asking for. So, I had to search purely in Splunk this time.
 
-I figured that with command line auditing enabled we should be able to see at least where/how the batch file would get invoked, and hopefully as a result of the auditing see the subsequent commands in the bat file that were run as well. To narrow things down, I started with this search (removing splunk agents to reduce noise): `index=* cmdline=* cmdline!="*SplunkUniversalForwarder*" "*.bat*"`. This resulted in some Sysmon events I could spot, and adding `|  stats count by index` to the search revealed T1059.003 and T1547.001. Great, however, the Atomic Red Team atomics for those weren't as useful as I had hoped (at least none of my answered worked haha).
+I figured that with command line auditing enabled we should be able to see at least where/how the batch file would get invoked, and hopefully as a result of the auditing see the subsequent commands in the bat file that were run as well. To narrow things down, I started with this search (removing splunk agents to reduce noise): `index=* cmdline=* cmdline!="*SplunkUniversalForwarder*" "*.bat*"`. This resulted in some Sysmon events I could spot, and adding `|  stats count by index` to the search revealed T1059.003 and T1547.001. Great, however, the Atomic Red Team atomics for those weren't as useful as I had hoped (at least none of my answers worked haha).
 
 To make the data more readable for me with the relevant parts, I tabled the columns I figured would be interesting and started working through those with `index=* cmdline=* cmdline!="*SplunkUniversalForwarder*" "*.bat*" | sort _time desc | table index, cmdline`.
 
@@ -1057,17 +1057,17 @@ For this challenge you had to have watched the talk that Angel Candysalt spoke a
 
 {{< figure src="/images/holidayhack-20/sleigh_can_d_bus_santa.png" title="santa by the sliegh in the netwars room" >}}
 
-Clicking on the Sleigh as Santa presented this interface with the message on the right scrolling by really fast.
+Clicking on the Sleigh as Santa presented this interface with the messages on the right scrolling by really fast.
 
 {{< figure src="/images/holidayhack-20/sleigh_interface.png" title="sleigh can-d-bus interface" >}}
 
-It takes a little while to get used to the interface, so clicking around and seeing the effects messages wise is highly encouraged.
+It takes a little while to get used to the interface, so clicking around and seeing the effects it has on the messages you see is highly encouraged.
 
-From the [CANBus investigation challenge](#can-bus-investigation) we learnt that messages have a type and a data field, separated by the `#`. As far as filtering goes, the Epoch and Time fields can be ignored. However, the ID and Message fields are. My approach was to filter out everything that was just racing by so I could get the message log as quiet as possible. That meant I had the following rules at first.
+From the [CANBus investigation challenge](#can-bus-investigation) we learnt that messages have a type and a data field, separated by the `#`. As far as filtering goes, the Epoch and Time fields can be ignored. The ID and Message fields are important. My approach was to filter out everything that was just racing by so I could get the message log as quiet as possible. That meant I had the following rules at first.
 
 {{< figure src="/images/holidayhack-20/sleigh_all_filter.png" title="sleigh filtering all default traffic" >}}
 
-With the message log quiet, I started to fiddle with the controls and filters to map which message ID's related to which feature. For example, I would toggle the Accelerator up (after starting the sleigh) and then remove filters to see which messages were being generated.
+With the message log quiet, I started to fiddle with the controls and filters to map which message ID's related to which feature. For example, I would toggle the Accelerator up (after starting the sleigh) and then remove filters to see which messages were being generated. Repeating that for each feature I ended with the following list.
 
 ```text
 244 - Accelerator
@@ -1096,7 +1096,7 @@ This was actually one of the few web hacking challenges and was pretty simple. F
 
 {{< figure src="/images/holidayhack-20/broken_tag_generator_error.png" title="broken tag generator text file upload error" >}}
 
-The error displayed reveals a local path of a `.rb` file (so I guessed this was a Ruby web app), and what I am guessing is a temporary directory for processing uploads. Next, I uploaded a legitimate image which I figured the web app would allow. I opened the browser console to see what web traffic was generated with the upload, which revealed that an accepted image would be loaded from an image specific endpoint.
+The error displayed reveals a local path of a `.rb` file (so I guessed this was a Ruby web app), and what I am guessing is a temporary directory for processing uploads. Next, I uploaded a legitimate image which I figured the web app would allow. I opened the browser console to see what web traffic was generated with the upload, which revealed that an accepted image would be accessible from an image specific endpoint.
 
 {{< figure src="/images/holidayhack-20/broken_tag_generator_upload.png" title="broken tag generator upload web traffic" >}}
 
@@ -1104,7 +1104,7 @@ I opened the image URL in a new tab, which revealed the full URL as <https://tag
 
 {{< figure src="/images/holidayhack-20/broken_tag_generator_lfi.png" title="broken tag generator lfi" >}}
 
-With LFI on Linux hosts you can query for a lot of interesting information from the `/proc` mount, and given that the challenge asked us to reveal what was stored in an environment variable, we could reveal that by reading `/proc/selv/environ`.
+With LFI on Linux hosts you can query for a lot of interesting information from the `/proc` mount, and given that the challenge asked us to reveal what was stored in an environment variable, we could reveal that by reading `/proc/self/environ`.
 
 {{< figure src="/images/holidayhack-20/broken_tag_generator_answer.png" title="broken tag generator `GREETZ` variable" >}}
 
@@ -1261,7 +1261,7 @@ Capturing on 'eth0'
 ^C4 packets captured
 ```
 
-Neat, so `4c:24:57:ab:ed:84` is making the ARP request, so let's forge a response, saying that we are that host! This is where the `arp_resp.py` script given to us in the `scripts/` directory will be handy. The parts we need to complete are clearly marked too. Now, an ARP packet actually contains a number of fields. You could view the pcaps in Wireshark (or Cloudshark like the hints had), or, since we're receiving a new ARP request every second, we can use scapy to capture a packet and then just copy out the relevant fields from there. The provided script actually has all the code we need too!
+Neat, `4c:24:57:ab:ed:84` is making the ARP request, so let's forge a response, saying that we are that host! This is where the `arp_resp.py` script given to us in the `scripts/` directory will be handy. The parts we need to complete are clearly marked too. Now, an ARP packet actually contains a number of fields. You could view the pcaps in Wireshark (or Cloudshark like the hints had), or, since we're receiving a new ARP request every second, we can use scapy to capture a packet and then just copy out the relevant fields from there. The provided script actually has all the code we need too!
 
 ```text
 >>> from scapy.all import *
@@ -1660,7 +1660,7 @@ $ python3 main-blog.py
 chain verify: False
 ```
 
-Closer inspection of the `verify_chain()` function reveals that it accepts a second argument to specify the hash for the previous block. Since we don't have the full blockchain data that starts with the genesis block, we need to specify the hash we can find from the data we do have. So, I looped the blocks in the chin after loading and extracted the `PreviousHash`.
+Closer inspection of the `verify_chain()` function reveals that it accepts a second argument to specify the hash for the previous block. Since we don't have the full blockchain data that starts with the genesis block, we need to specify the hash we can find from the data we do have. So, I looped the blocks in the chain after loading and extracted the `PreviousHash`.
 
 ```python
 # [ ... ]
@@ -1735,13 +1735,12 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-Easy! We also had a total of `1548` blocks in our chain, and therefore `1548` nonces which was more than enough to replicate the state of the PRNG. At this point I realised I did not have to resort to silly shell parsing of the Nonce values as they were available in code when looping the blocks in the blockchain.
+Easy! We also had a total of `1548` blocks in our chain, and therefore `1548` nonces which was more than enough to replicate the state of the PRNG. At this point I also realised I did not have to resort to silly shell parsing of the Nonce values as they were available in code when looping the blocks in the blockchain.
 
 ```python
 # [ ... ]
 
 c2 = Chain(load=True, filename='blockchain.dat')
-print(f'chain verify: {c2.verify_chain(official_public_key, "c6e2e6ecb785e7132c8003ab5aaba88d")}')
 
 # extract the nonce values from all the blocks in the chain
 nonce = [block.nonce for block in c2.blocks]
@@ -1756,9 +1755,9 @@ $ python3 main-blog.py
 [16420456181932970466, 2411124002006105373]
 ```
 
-Now at this stage I naively thought I could just replicate what we had done in the [snowball fight](#snowball-fight) by replicating the PRNG's state, and then continue to reveal the next values. The problem was though that when you did this, you would not get the correct nonce value! Remember, the question states (and you can easily verify) that the last block we have has the index `129996`, and they want to know the nonce value for `130000`. That’s just 4 predictions forward? Well, those values won’t be correct.
+At this stage I naively thought I could just replicate what we had done in the [snowball fight](#snowball-fight) by replicating the PRNG's state, and then continue to reveal the next values. The problem was though that when you did this, you would not get the correct nonce value! Remember, the question states (and you can easily verify) that the last block we have has the index `129996`, and they want to know the nonce value for `130000`. That’s just 4 predictions forward? Well, those values won’t be correct.
 
-My first hypothesis was that because we are only feeding 624 numbers into the algorithm, our predictions should at least match the nonce value for the 625th block we have in the chain. Alas, even this was incorrect as it seemed like we could not even predict the next one correctly!
+My first hypothesis was that because we are only feeding 624 numbers into the algorithm, our predictions should at least match the nonce value for the 625th block we have in the chain, right? No, even this was incorrect as it seemed like we could not even predict the 625th nonce correctly!
 
 Re-reading Tom's original script from the terminal challenge, I realised that it was actually expecting 32bit numbers, and not 64bit ones like we are feeding to it at the moment. The biggest hint for that was this function in the `mt19937` class.
 
@@ -1769,7 +1768,7 @@ def my_int32(self, x):
 
 Because of this function, only part of our 64bit numbers were fed into the algorithm to determine state, meaning that our predictions won't match. The question though was, how do you handle 64bit numbers? At this stage I could bore you with the countless Google's I did and various articles I read. In the end, there were two things I saw that helped me realise what I had to do.
 
-Unfortunately, I can't recall the source of the first hint, but I read an (article|code|blog|paper) that mentioned that the algorithm expects a DWORD, which is a 32bit unsigned integer, for each entry in the state array. That had me think I'd have to split the 64bit integer up into two 32bit integers. But, I had no idea if I had to feed both into the algorithm, or one, of if both, which one first? Anyways.
+Unfortunately, I can't recall the source of the first hint, but I read an (article|code|blog|paper) that mentioned that the algorithm expects a DWORD, which is a 32bit unsigned integer, for each entry in the state array. That had me think I'd have to split the 64bit integer up into two 32bit integers. But, I had no idea if I had to feed both into the algorithm, or one, or if both, which one first? Anyways.
 
 The second hint was reading code for an existing [mersenne-twister-predictor](https://github.com/kmyk/mersenne-twister-predictor) project on Github to try and see if (and how) it handled 64bit values. I found the relevant code [here](https://github.com/kmyk/mersenne-twister-predictor/blob/25b5723c70e60398d2e8d6fdd51b887e343a97ae/mt19937predictor.py#L88-L101), which had the `setrandbits()` function accept raw bits and an indication of how many bits.
 
@@ -1792,7 +1791,7 @@ def setrandbits(self, y, bits):
             bits -= 32
 ```
 
-See, here we can also see that 32bit values were being fed into the state array after being split up using some bitshift magic (and a hint of how many bits were expected). The state array feeding was also continuously done until there were no more bits left, meaning that the complete 64bit integer had to be squeezed in, in chunks of 32bit. That was enough to put me on the right path to solve this one!
+Here we can see that 32bit values were being fed into the state array after being split up using some bitshift magic (and a hint of how many bits were expected). The state array feeding was also continuously done until there were no more bits left, meaning that the complete 64bit integer had to be squeezed in, in chunks of 32bit. That was enough to put me on the right path to solve this one!
 
 To split up the 64bit number, you can literally just google something like "split 64-bit into two 32-bit" (ignoring the "how to convert 64bit apps to 32bit" lol). Regardless of the language the result is in, bitshift operations are usually pretty generic. The first hit for my suggested search was [this](https://stackoverflow.com/a/2810302) post which showed the operations needed to both pack and unpack the 64bit integer. To get the lower number use `number & 0xffffffff`, and to get the higher number use `number >> 32`.
 
