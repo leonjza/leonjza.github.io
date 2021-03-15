@@ -54,7 +54,7 @@ Would respond with:
 [...]
 ```
 
-If you tried to run `cat ../flag.txt`, the server would respond with `Man that's a mouthful to echo, what even?`. I length check was implemented, so to get a smaller command, use `< ../flag.txt`.
+If you tried to run `cat ../flag.txt`, the server would respond with `Man that's a mouthful to echo, what even?`. A length check was implemented, so to get a smaller command, use `< ../flag.txt`.
 
 ```text
 GET /?echo=`<%20../flag.txt` HTTP/1.1
