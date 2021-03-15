@@ -14,7 +14,7 @@ fi
 
 name="$@"
 date=`date +%Y-%m-%d`
-path="post/"
+path="posts/"
 
 # build the path, replacing spaces with dashes
 title=$path$date"-"${name// /-}
