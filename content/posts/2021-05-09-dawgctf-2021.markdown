@@ -1,0 +1,156 @@
+---
+title: "DawgCTF 2021"
+date: 2021-05-09T08:04:40+02:00
+categories:
+- writeup
+- ctf
+- htb
+- dawgctf
+- 2021
+---
+
+{{< figure src="/images/dawgctf_2021/dawgctf.png" >}}
+
+# foreword
+
+[DawgCTF 20201](https://umbccd.io/) was the first CTF I played together with some local people much smarter than me over at [Hack South](https://hacksouth.africa/). We managed to grab 28th place too.
+
+{{< figure src="/images/dawgctf_2021/dawgctf_placement.png" >}}
+
+I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
+
+# Solutions
+
+## reversing - calculator
+
+- Category: Reversing
+- Points: 50
+- Files: Windows PE
+
+This was the duplicate challenge, but I'm writing up how I did it anyways. We get a Windows PE file that if run would ask for input files.
+
+{{< figure src="/images/dawgctf_2021/calculator_1.png" >}}
+
+Reversing the binary in Cutter, we can see a check for two arguments provided to the program, and another check if a variable is `0x40` to enter a block that looks like it will print the flag.
+
+```c
+if ((int32_t)argv < 3) {
+    fcn.0041104b((int32_t)"Please supply input files to calculate\n", unaff_EDI);
+    uVar1 = 0xffffffff;
+    uVar3 = extraout_EDX;
+} else {
+    var_ch = fcn.00411348(envp[1]);
+    var_18h = fcn.00411348(envp[2]);
+    fcn.0041104b((int32_t)"calculated: %d\n", var_ch * var_18h);
+    uVar3 = extraout_EDX_00;
+    if (var_ch * var_18h == 0x40) {
+        fcn.004110fa(&var_120h, 0, 0x100);
+        fcn.004111c2((int32_t)&var_120h);
+        fcn.0041104b((int32_t)"final flag: %s\n", (int32_t)&var_120h);
+        uVar3 = extraout_EDX_01;
+    }
+    uVar1 = 0;
+}
+```
+
+Getting past the first check is simple, provide two arguments. For the second check though we could do one of two things. Either we reverse the whole application to figure out how to get that variable to be `0x40`, or we can apply a binary patch to just flow there regardless of the variable values. Reading the assembly for the value comparison to `0x40` we see:
+
+```asm
+0x00411bf2      add     esp, 8
+0x00411bf5      mov     eax, dword [var_ch]
+0x00411bf8      imul    eax, dword [var_18h]
+0x00411bfc      cmp     eax, 0x40  ; 64
+0x00411bff      jne     0x411c3a
+```
+
+The `jne` (jump not equal) can be changed to `je` (jump equal). Cutter makes this super simple. Right click the instruction in the disassembly view and edit it. You can actually do this in the decompiler view as well. Crazy powerful.
+
+{{< figure src="/images/dawgctf_2021/calculator_2.png" >}}
+
+Copy the modified binary you opened in Cutter to a Windows VM and watch the flag get spewed out.
+
+{{< figure src="/images/dawgctf_2021/calculator_3.png" >}}
+
+Flag: `final flag: DawgCTF{c4LcU14T0r_64}`.
+
+## reversing - back to the lab 1
+
+- Category: Reversing
+- Points: 150
+- Files: labVIEW vi file
+
+> We've gotten hold of the plant control program, but the MELTDOWN button is locked. Figure out the flag and press the button!
+> Note: To run the program, you'll have to press the Run button in the upper left of the window. Press the Abort button to stop it.
+> Note: To run the program, you'll need some rather expensive software; look for the "community edition", it's free. It's bulky, so maybe consider installing on a VM.
+> Author: nb
+
+The file we got was not something I was familiar with. Figuring out what can read a `.vi` file, I `strings` the file, and Google a printable part of the header I get.
+
+{{< figure src="/images/dawgctf_2021/labview_1.png" >}}
+
+The challenge hinted towards a community edition, so I got a copy of it [here](https://www.ni.com/en-us/shop/labview/select-edition/labview-community-edition.html). A 2GB download and installation that took forever later, I could open the file we got.
+
+{{< figure src="/images/dawgctf_2021/labview_2.png" >}}
+
+At first glance this looked like it could be some ICS related reversing challenge. I have never used (or heard of) this application before, so I took quite a bit to figure out how to use it. Eventually I found the "source" (don't even know if that is what you'd call it, but whatever) by right clicking one of the widgets and clicking "Find Terminal".
+
+{{< figure src="/images/dawgctf_2021/labview_3.png" >}}
+
+That dropped me into a sort-of visual editor.
+
+{{< figure src="/images/dawgctf_2021/labview_4.png" >}}
+
+After a significant amount of time I got used to reading it, right-clicking things to see what the different widgets meant and following the paths of the connected parts to see how data flows from the initial flag field in the upper left corner. There were two loops that processed parts of the string you'd input as the flag. Those would eventually end up in a `And` operation that would light up the thingy that indicated you had the correct flag.
+
+The debugger was the trickiest to figure out. You could right-click a widget and set a breakpoint. Once you run the thing (application? I honestly don't know what you'd call this thing haha), execution would pause much like you'd expect a traditional debugger to do. The thing was though, where the heck do you see the values in the different flows. Turns out, when you click this tiny "retain wire values" button, you can hover over the different links to see the current values in a "Probe Window".
+
+{{< figure src="/images/dawgctf_2021/labview_5.png" >}}
+
+Being able to see the values as you step though the schematic made it easier for me to reimplement the operations performed on the input data, in reverse in a tiny Python script.
+
+{{< figure src="/images/dawgctf_2021/labview_6.png" >}}
+
+```python
+C1 = "AdrbFQC~hwZGPWK0Zop"
+C2 = "s:)DHK8Uj&]Uj+"
+
+p1 = [chr(ord(x) ^ 5) for x in C1]
+p2 = [chr(ord(x) + 10) for x in C2][::-1]
+
+print("".join(p1 + p2))
+```
+
+Flag: `DawgCTF{mr_BURN5_ju5t_g0t_BURN3D}`
+
+## misc - identifications
+
+- Category: Miscellaneous
+- Points: 125
+- Files: Two images
+
+> Hey man. I'm standing in front of this Verizon central office building. What's its CLLI code?  
+> What? No, I don't know where I am, my GPS is broken. I tried to connect to some Wi-Fi so I could download a map or something, but I don't know the password to any of these networks.  
+>identifications.7z: <https://drive.google.com/file/d/1YkzVIwbNKWKG4I0K8F_J8DCC9mqBn2ET/view?usp=sharing>  
+> Once you figure out the CLLI code, make sure to wrap it in DawgCTF{}.  
+> Author: nb
+
+We get two images to start and talk of a CLLI. A quick Google reveals that CLLI's are codes used to [ID telco sites](https://en.wikipedia.org/wiki/CLLI_code) in the US.
+
+{{< figure src="/images/dawgctf_2021/identifications_1.png" >}}
+
+{{< figure src="/images/dawgctf_2021/identifications_2.png" >}}
+
+The second image has some output on a device that shows wireless network in the area. So, using [WiGLE](https://wigle.net/) I search for `DC:9F:DB:F5:68:93` (first network in the list) and find a location. Opening the location on Google maps with street view, I pinpoint exactly where that building in the image is.
+
+<https://www.google.com/maps/@39.367583,-77.1647889,3a,75y,114.95h,76.63t/data=!3m6!1e1!3m4!1suVXHOWHg8__NiAn8G56x2A!2e0!7i13312!8i6656>
+
+The address appears to be:
+
+```text
+1305 MD-808
+Mt Airy, Maryland
+```
+
+The next part was to find how to lookup CLLI's given that I know the address now. I found [this](https://www.telcodata.us/search-area-code-exchange-by-clli?cllicode=MTARMDMARS1) URL after using the search term `verizon "clli" mt airy` which revealed `MTARMDMARS1` as the CLLI for the site.
+
+Flag: `DawgCTF{MTARMDMARS1}`
