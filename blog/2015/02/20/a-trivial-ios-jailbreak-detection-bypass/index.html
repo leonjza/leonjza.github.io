@@ -12,7 +12,6 @@
 <meta property="og:description" content="introduction
 Not too long ago, I toyed with a Android root detection bypass. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I actually wanted to do impossible as I&rsquo;d very much like to dig under the hood :)
 
-     
 
 
 So, its was time to try and bypass the jailbreak detection of the application.
@@ -28,7 +27,6 @@ All I had to work with was a .ipa. Similar to the android .apk file, the .ipa is
 <meta name="twitter:description" content="introduction
 Not too long ago, I toyed with a Android root detection bypass. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I actually wanted to do impossible as I&rsquo;d very much like to dig under the hood :)
 
-     
 
 
 So, its was time to try and bypass the jailbreak detection of the application.
@@ -180,7 +178,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f20%2fa-trivial-ios-jailbreak-detection-bypass%2f&name=a%20trivial%20iOS%20jailbreak%20detection%20bypass&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eNot%20too%20long%20ago%2c%20I%20toyed%20with%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f%22%3eAndroid%20root%20detection%20bypass%3c%2fa%3e.%20In%20a%20similar%20scenario%2c%20I%20was%20poking%20at%20a%20iOS%20application%20that%20also%20had%20some%20root%20detection%20built%20in.%20For%20very%20much%20the%20same%20purpose%2c%20I%20suppose%20the%20application%20has%20its%20own%20~reasons~%20for%20the%20jailbreak%20detection.%20Of%20course%2c%20this%20makes%20the%20testing%20I%20%3cem%3eactually%3c%2fem%3e%20wanted%20to%20do%20impossible%20as%20I%26rsquo%3bd%20very%20much%20like%20to%20dig%20under%20the%20hood%20%3a%29%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fios_jailbreak_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eSo%2c%20its%20was%20time%20to%20try%20and%20bypass%20the%20jailbreak%20detection%20of%20the%20application.%0aAll%20I%20had%20to%20work%20with%20was%20a%20%3ccode%3e.ipa%3c%2fcode%3e.%20Similar%20to%20the%20android%20%3ccode%3e.apk%3c%2fcode%3e%20file%2c%20the%20%3ccode%3e.ipa%3c%2fcode%3e%20is%20also%20just%20a%20zipped%20up%20archive%20of%20the%20actual%20application%20files.%20To%20test%20with%2c%20I%20had%20a%20iPad%20mini.%20The%20iPad%20was%20running%20the%20latest%20iOS%20%288.1.2%20at%20the%20time%20of%20this%20post%29%20and%20was%20also%20jailbroken.%20If%20I%20remember%20correctly%20the%20jailbreak%20tool%20used%20was%20called%20TaiG.%20Anyways%2c%20inside%20the%20applications%20%3ccode%3e.ipa%3c%2fcode%3e%20archive%20was%20a%20whole%20bunch%20of%20resource%20files%20and%20what%20not%2c%20including%20the%20compiled%20application%20executable.%20This%20executable%20is%20what%20is%20of%20interest.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f20%2fa-trivial-ios-jailbreak-detection-bypass%2f&name=a%20trivial%20iOS%20jailbreak%20detection%20bypass&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eNot%20too%20long%20ago%2c%20I%20toyed%20with%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f%22%3eAndroid%20root%20detection%20bypass%3c%2fa%3e.%20In%20a%20similar%20scenario%2c%20I%20was%20poking%20at%20a%20iOS%20application%20that%20also%20had%20some%20root%20detection%20built%20in.%20For%20very%20much%20the%20same%20purpose%2c%20I%20suppose%20the%20application%20has%20its%20own%20~reasons~%20for%20the%20jailbreak%20detection.%20Of%20course%2c%20this%20makes%20the%20testing%20I%20%3cem%3eactually%3c%2fem%3e%20wanted%20to%20do%20impossible%20as%20I%26rsquo%3bd%20very%20much%20like%20to%20dig%20under%20the%20hood%20%3a%29%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fios_jailbreak_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eSo%2c%20its%20was%20time%20to%20try%20and%20bypass%20the%20jailbreak%20detection%20of%20the%20application.%0aAll%20I%20had%20to%20work%20with%20was%20a%20%3ccode%3e.ipa%3c%2fcode%3e.%20Similar%20to%20the%20android%20%3ccode%3e.apk%3c%2fcode%3e%20file%2c%20the%20%3ccode%3e.ipa%3c%2fcode%3e%20is%20also%20just%20a%20zipped%20up%20archive%20of%20the%20actual%20application%20files.%20To%20test%20with%2c%20I%20had%20a%20iPad%20mini.%20The%20iPad%20was%20running%20the%20latest%20iOS%20%288.1.2%20at%20the%20time%20of%20this%20post%29%20and%20was%20also%20jailbroken.%20If%20I%20remember%20correctly%20the%20jailbreak%20tool%20used%20was%20called%20TaiG.%20Anyways%2c%20inside%20the%20applications%20%3ccode%3e.ipa%3c%2fcode%3e%20archive%20was%20a%20whole%20bunch%20of%20resource%20files%20and%20what%20not%2c%20including%20the%20compiled%20application%20executable.%20This%20executable%20is%20what%20is%20of%20interest.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -254,8 +252,7 @@ if (!doNotTrack) {
     <div class="content" itemprop="articleBody">
       <h2 id="introduction">introduction</h2>
 <p>Not too long ago, I toyed with a <a href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/">Android root detection bypass</a>. In a similar scenario, I was poking at a iOS application that also had some root detection built in. For very much the same purpose, I suppose the application has its own ~reasons~ for the jailbreak detection. Of course, this makes the testing I <em>actually</em> wanted to do impossible as I&rsquo;d very much like to dig under the hood :)</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ios_jailbreak_logo.png"/> 
+<figure><img src="https://leonjza.github.io/images/ios_jailbreak_logo.png"/>
 </figure>
 
 <p>So, its was time to try and bypass the jailbreak detection of the application.
@@ -269,13 +266,11 @@ All I had to work with was a <code>.ipa</code>. Similar to the android <code>.ap
 myApplication: Mach-O executable arm
 </code></pre></div><p>Compiled as a <em>Mach-O executable</em> from Objective-C, I loaded up the binary from the extracted <code>.ipa</code> into the Hopper disassembler to help me get an idea of what is happening. Hopper has some nice features such as generating pseudo code etc, so I quite like using it for these types of excursions. To start off, I searched around for strings that were related to the word <strong>jailbreak</strong> within the app. Class definitions, methods or any strings related to the term jailbreak was ok. I just wanted to get something to start off with. I found nothing.</p>
 <p>Of course this had me thinking that I may have missed the plot entirely. I continued to search for other things related to jailbreaking, and got a hit immediately for the term <code>/bin/bash</code> in the <em>string</em> section:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ios_jailbreak_hopper.png"/> 
+<figure><img src="https://leonjza.github.io/images/ios_jailbreak_hopper.png"/>
 </figure>
 
 <p>In fact, there are quite a few other jailbreak related strings in this section. From within Hopper, one can check where these strings are referenced from. So, I followed this and landed up in a function that does what I would have expected a jailbreak detection function to do, but with a completely unexpected class/method name. <em>-[MobileDisplay isRetinaDisplay]:</em>. Very sneaky :) So we are working with the <code>isRetinaDisplay</code> method which is the one doing the jailbreak detection:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ios_jailbreak_hopper2.png"/> 
+<figure><img src="https://leonjza.github.io/images/ios_jailbreak_hopper2.png"/>
 </figure>
 
 <p>As can be seen in the above screenshot, the <code>fileExistsAtPath</code> for <code>/Applications/Cydia.app</code> is hardly something I would have expected in a <code>isRetinaDisplay</code> implementation :P</p>
@@ -296,8 +291,7 @@ myApplication: Mach-O executable arm
 <li>/private/jailbreak.txt -&gt; /0000000/0000000000000</li>
 <li>cydia://package/com.example.package -&gt; cyd00://package/com.example.package</li>
 </ul>
-<figure>
-    <img src="https://leonjza.github.io/images/ios_jailbreak_hex_editor.png"/> 
+<figure><img src="https://leonjza.github.io/images/ios_jailbreak_hex_editor.png"/>
 </figure>
 
 <p>I saved the modifications that I had done, and <code>scp</code>&rsquo;d the binary back to my iPad to the folder where it was installed. I literally just overwrote the existing binary. At this stage I figured I will most certainly have some form of signing related problem as the binary has been tampered with. Well, this was not the case. Instead, I no longer was greeted with the lame jailbreak security error :P</p>
@@ -421,7 +415,7 @@ myApplication: Mach-O executable arm
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f20%2fa-trivial-ios-jailbreak-detection-bypass%2f&name=a%20trivial%20iOS%20jailbreak%20detection%20bypass&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eNot%20too%20long%20ago%2c%20I%20toyed%20with%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f%22%3eAndroid%20root%20detection%20bypass%3c%2fa%3e.%20In%20a%20similar%20scenario%2c%20I%20was%20poking%20at%20a%20iOS%20application%20that%20also%20had%20some%20root%20detection%20built%20in.%20For%20very%20much%20the%20same%20purpose%2c%20I%20suppose%20the%20application%20has%20its%20own%20~reasons~%20for%20the%20jailbreak%20detection.%20Of%20course%2c%20this%20makes%20the%20testing%20I%20%3cem%3eactually%3c%2fem%3e%20wanted%20to%20do%20impossible%20as%20I%26rsquo%3bd%20very%20much%20like%20to%20dig%20under%20the%20hood%20%3a%29%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fios_jailbreak_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eSo%2c%20its%20was%20time%20to%20try%20and%20bypass%20the%20jailbreak%20detection%20of%20the%20application.%0aAll%20I%20had%20to%20work%20with%20was%20a%20%3ccode%3e.ipa%3c%2fcode%3e.%20Similar%20to%20the%20android%20%3ccode%3e.apk%3c%2fcode%3e%20file%2c%20the%20%3ccode%3e.ipa%3c%2fcode%3e%20is%20also%20just%20a%20zipped%20up%20archive%20of%20the%20actual%20application%20files.%20To%20test%20with%2c%20I%20had%20a%20iPad%20mini.%20The%20iPad%20was%20running%20the%20latest%20iOS%20%288.1.2%20at%20the%20time%20of%20this%20post%29%20and%20was%20also%20jailbroken.%20If%20I%20remember%20correctly%20the%20jailbreak%20tool%20used%20was%20called%20TaiG.%20Anyways%2c%20inside%20the%20applications%20%3ccode%3e.ipa%3c%2fcode%3e%20archive%20was%20a%20whole%20bunch%20of%20resource%20files%20and%20what%20not%2c%20including%20the%20compiled%20application%20executable.%20This%20executable%20is%20what%20is%20of%20interest.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f20%2fa-trivial-ios-jailbreak-detection-bypass%2f&name=a%20trivial%20iOS%20jailbreak%20detection%20bypass&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eNot%20too%20long%20ago%2c%20I%20toyed%20with%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f%22%3eAndroid%20root%20detection%20bypass%3c%2fa%3e.%20In%20a%20similar%20scenario%2c%20I%20was%20poking%20at%20a%20iOS%20application%20that%20also%20had%20some%20root%20detection%20built%20in.%20For%20very%20much%20the%20same%20purpose%2c%20I%20suppose%20the%20application%20has%20its%20own%20~reasons~%20for%20the%20jailbreak%20detection.%20Of%20course%2c%20this%20makes%20the%20testing%20I%20%3cem%3eactually%3c%2fem%3e%20wanted%20to%20do%20impossible%20as%20I%26rsquo%3bd%20very%20much%20like%20to%20dig%20under%20the%20hood%20%3a%29%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fios_jailbreak_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eSo%2c%20its%20was%20time%20to%20try%20and%20bypass%20the%20jailbreak%20detection%20of%20the%20application.%0aAll%20I%20had%20to%20work%20with%20was%20a%20%3ccode%3e.ipa%3c%2fcode%3e.%20Similar%20to%20the%20android%20%3ccode%3e.apk%3c%2fcode%3e%20file%2c%20the%20%3ccode%3e.ipa%3c%2fcode%3e%20is%20also%20just%20a%20zipped%20up%20archive%20of%20the%20actual%20application%20files.%20To%20test%20with%2c%20I%20had%20a%20iPad%20mini.%20The%20iPad%20was%20running%20the%20latest%20iOS%20%288.1.2%20at%20the%20time%20of%20this%20post%29%20and%20was%20also%20jailbroken.%20If%20I%20remember%20correctly%20the%20jailbreak%20tool%20used%20was%20called%20TaiG.%20Anyways%2c%20inside%20the%20applications%20%3ccode%3e.ipa%3c%2fcode%3e%20archive%20was%20a%20whole%20bunch%20of%20resource%20files%20and%20what%20not%2c%20including%20the%20compiled%20application%20executable.%20This%20executable%20is%20what%20is%20of%20interest.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

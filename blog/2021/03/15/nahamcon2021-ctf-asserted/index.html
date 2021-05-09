@@ -11,7 +11,8 @@
   <meta property="og:title" content="NahamCon2021 CTF - Asserted" />
 <meta property="og:description" content="category web - medium
 solution The challenge URL dropped us on a page related to fitness, with not a lot of interesting interactions.
-  Navigating the pages you&rsquo;d see a URL scheme where a page parameter is set. Eg: page=about. An about.php also exists, so this was potentially vuln to LFI. Using .. in the page parameter resulted in a warning message indicating that some filtering was taking place." />
+ Navigating the pages you&rsquo;d see a URL scheme where a page parameter is set. Eg: page=about. An about.php also exists, so this was potentially vuln to LFI. Using .. in the page parameter resulted in a warning message indicating that some filtering was taking place.
+$ curl &#34;http://challenge." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-03-15T11:52:39&#43;02:00" />
@@ -22,7 +23,8 @@ solution The challenge URL dropped us on a page related to fitness, with not a l
 <meta name="twitter:title" content="NahamCon2021 CTF - Asserted"/>
 <meta name="twitter:description" content="category web - medium
 solution The challenge URL dropped us on a page related to fitness, with not a lot of interesting interactions.
-  Navigating the pages you&rsquo;d see a URL scheme where a page parameter is set. Eg: page=about. An about.php also exists, so this was potentially vuln to LFI. Using .. in the page parameter resulted in a warning message indicating that some filtering was taking place."/>
+ Navigating the pages you&rsquo;d see a URL scheme where a page parameter is set. Eg: page=about. An about.php also exists, so this was potentially vuln to LFI. Using .. in the page parameter resulted in a warning message indicating that some filtering was taking place.
+$ curl &#34;http://challenge."/>
 
   
   
@@ -170,7 +172,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge.">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -245,8 +247,7 @@ if (!doNotTrack) {
 <p>web - medium</p>
 <h2 id="solution">solution</h2>
 <p>The challenge URL dropped us on a page related to fitness, with not a lot of interesting interactions.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/asserted.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/asserted.png"/>
 </figure>
 
 <p>Navigating the pages you&rsquo;d see a URL scheme where a <code>page</code> parameter is set. Eg: <code>page=about</code>. An <code>about.php</code> also exists, so this was potentially vuln to LFI. Using <code>..</code> in the <code>page</code> parameter resulted in a warning message indicating that some filtering was taking place.</p>
@@ -281,8 +282,7 @@ error_log(print_r(<span style="color:#eedd82">$d</span>, <span style="color:#f00
 
 <span style="color:#0f0">// ...
 </span></code></pre></div><p>Using this debug line I added code to the request to close the original <code>strpos()</code> call so that it would fail, and closed off the rest of the original <code>strpos()</code> so that it would fail as well.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/asserted_code_inject.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/asserted_code_inject.png"/>
 </figure>
 
 <p>Passing <code>','foo') === false &amp;&amp; strpos('1</code> as a <code>page</code> parameter value would result in the application saying that it could not find the file we wanted to include. Excellent! The challenge hint tells us that the flag is in <code>/flag.txt</code>, so to echo that I just added a <code>die(file_get_contents('/flag.txt'))</code>, exactly the same way the security check worked.</p>
@@ -403,7 +403,7 @@ flag{85a25711fa6e111ed54b86468a45b90c}
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge.">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

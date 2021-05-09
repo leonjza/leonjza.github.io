@@ -255,16 +255,14 @@ PORT   STATE SERVICE REASON  VERSION
 22/tcp open  ssh     syn-ack (protocol 2.0)
 80/tcp open  http    syn-ack Apache httpd 2.4.7 ((Ubuntu))
 </code></pre></div><p>So, <code>ssh</code>, <code>ftp</code>, and <code>http</code>. Naturally my first reaction was to inspect the web service.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/troll_web.png"/> 
+<figure><img src="https://leonjza.github.io/images/troll_web.png"/>
 </figure>
 
 <p>The <code>robots.txt</code> file revealed:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">User-agent:*
 Disallow: /secret
 </code></pre></div><p>Browsing to <code>/secret</code> revealed yet another <em>interesting</em> piece of art:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/troll_secret_path.png"/> 
+<figure><img src="https://leonjza.github.io/images/troll_secret_path.png"/>
 </figure>
 
 <p>Right&hellip; A little early to be &lsquo;mad&rsquo;, but nonetheless, lets move on.</p>
@@ -303,8 +301,7 @@ local: lol.pcap remote: lol.pcap
 ftp&gt; bye
 <span style="color:#f60">221</span> Goodbye.
 </code></pre></div><p>Well that worked, and showed that we have a file <code>lol.pcap</code> to look at. Interesting. I fired up wireshark and opened the pcap. Following the TCP streams it looked like in a previous session there was activity with a file called <code>secret_stuff.txt</code> that is no longer available. I filtered out that stream and continued down the rabbit hole, until I saw the message:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/troll_pcap.png"/> 
+<figure><img src="https://leonjza.github.io/images/troll_pcap.png"/>
 </figure>
 
 <p>Ok. Well. I tried a few things after this, until eventually I figured it may be a web path. Sooo, off to the website we went and browsed to http://192.168.56.101/sup3rs3cr3tdirlol/. In this path there was a binary  called <code>roflmao</code>. I downloaded the bin and did some static analysis (paranoid and all that) to see if I can figure out what it does before running it. Eventually I just made it executable and ran it:</p>
@@ -323,8 +320,7 @@ root@kali:~/Desktop/Tr0ll# chmod +x roflmao
 root@kali:~/Desktop/Tr0ll# ./roflmao
 Find address 0x0856BF to proceed
 </code></pre></div><p>Nice. <code>0x0856BF</code> is not exactly helpful. But what does it mean? From the previous analysis I have done it also looked like the bin is really just printing the string as can be seen above. After some poking around and exchanging ideas with <a href="https://twitter.com/barrebas">@barrebas</a> on IRC, I remembered that the previous vague hint was a directory on the web site. So, I tried http://192.168.56.101/0x0856BF/:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/troll_0x856bf.png"/> 
+<figure><img src="https://leonjza.github.io/images/troll_0x856bf.png"/>
 </figure>
 
 <h2 id="nohydraplz">nohydraplz</h2>

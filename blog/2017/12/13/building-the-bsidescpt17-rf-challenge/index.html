@@ -234,30 +234,25 @@ if (!doNotTrack) {
     <div class="content" itemprop="articleBody">
       <p>In this post I want to talk a little about the BSides Cape Town 2017 RFCat challenge and how I went about trying to build a challenge for it. Unfortunately I was not able to able to attend the conference itself, but still had the privilege to contribute in some way!</p>
 <p>The first question you may have could be: &ldquo;But why RFCat?&rdquo;. Truthfully, some people that are way better at this hacking thing than me (and that were also primarily responsible for this years BSides badge hardware) came up with this idea: &ldquo;Wouldn&rsquo;t it be cool to have a cc1111 chip on the badges?&rdquo;. The cc1111 chip is <a href="https://github.com/atlas0fd00m/rfcat">RFCat</a> compatible, so naturally this would be the goto firmware to use for the chip. With this in mind, I got invited by <a href="https://twitter.com/elasticninja">@elasticninja</a> to see if I would be interested in building an RFCat based challenge and without hesitation agreed! So there we were.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/cc1111.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/cc1111.jpg"/>
 </figure>
 
 <h1 id="the-hardware">the hardware</h1>
 <p>Taking a quick look at the actual hardware used, the badge itself was composed of two separate physical badges which included a black &ldquo;flux capacitor&rdquo; badge and a red &ldquo;rf badge&rdquo;. The flux capacitor badge sported an 2AL3B ESP chip that gave the badge wifi capabilities amongst others cool things.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-front.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-front.jpg"/>
 </figure>
 
 <p>The power bank used was estimated to give at least a full days power to the badge allowing for people to play with and hack away without needing a recharge too often.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-back.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/flux-capacitor-back.jpg"/>
 </figure>
 
 <p>The power bank itself was wired to a USB cable, letting you unplug it and charge the power bank easily. There were also two buttons soldered on to the back of the badge.</p>
 <p>For the purposes of this post though, we will only focus on the red RF badge with the cc1111 chip soldered on.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/rfbadge-front.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/rfbadge-front.jpg"/>
 </figure>
 
 <p>The RF badge (as already mentioned previously) had a cc1111, RFCat compatible chip, a USB port and a button (no idea what that did haha).</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/rfbadge-back.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/rfbadge-back.jpg"/>
 </figure>
 
 <p>The back of the badge was not that interesting.</p>
@@ -270,8 +265,7 @@ if (!doNotTrack) {
 <li>It should be possible to replicate, adapt and hack at later even after the con is over.</li>
 </ul>
 <p>As you can see, these are very high level goals without much details, but it was enough for me to get started and reflect on should I lose track of what I am trying to do. When talking to Mike about what he had in mind in terms of the challenge and the logistics thereof, it was explained that a hardware box would be used as the goal to unlock using the RFCat based challenge. In essence, once a player &ldquo;wins&rdquo;, a small bit of python code would be used to unlock a magnetic lock or something similar, thereby allowing you to retrieve the prize. At the conference, this box also included a lock picking challenge!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/plutonium.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/plutonium.jpg"/>
 </figure>
 
 <p>After some time pondering ideas, I figured that for the challenge itself, it may be necessary for clients to talk to a &ldquo;server&rdquo;. The server needs the ability to receive messages from clients, process them and be authoritative in terms of who has progressed to which state of the game. At the same time I realised that it might be cool for the badges to be able to talk to each other using a similar medium. An idea that has been discussed at the office a few times now (albeit in a slightly different form).</p>
@@ -279,18 +273,15 @@ if (!doNotTrack) {
 <h1 id="building-blocks-for-the-broadcast-like-chat-system">building blocks for the broadcast-like chat system</h1>
 <p>Before I could do anything interesting with the broadcast idea though, I had to step back a few steps and get the two Yardstick One&rsquo;s I had to &ldquo;talk to each other&rdquo;. Something that sounds super simple in theory (and it actually is), but when trying it gave me a few hours of grey hairs. Previously I have only been able to send messages and receive/replay other messages.</p>
 <p>Using my host workstation, I had a Yardstick One &amp; RFCat fired up in research mode, and another similar setup in a VMWare based virtual machine with another Yardstick One connected using USB passthrough mode to the VM. This setup allowed me to easily play with the send/receive ideas between the Yardsticks and test various things.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/yardsticks.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/yardsticks.jpg"/>
 </figure>
 
 <p>I tried quite a few things to be honest. Making sure I use the same frequency, modulation and baud rate on both ends of the transmission seemed obvious but just didn&rsquo;t get me a way to reliably transfer data between the two Yardsticks. I would prepare hex encoded bytes to send with <code>RFsend()</code> on the one end, and try and receive them again using <code>RFRecv()</code> on the other end but just couldn&rsquo;t reliably get transmissions to flow. In fact, all I got was noise. Using the <code>discover()</code> method, one could remove some of the noise filtering automatically applied by RFCat (lowball mode) to try and discover more signals, but this too failed me. Eventually I toggled the <a href="https://github.com/atlas0fd00m/rfcat/blob/19bc9b057390a5c8a101395a0874fd728e30b63b/rflib/chipcon_nic.py#L1426">IdentSyncWord</a> flag in the discover() method and realised that I never set a sync word to begin with. Well&hellip; one call to <code>setMdmSyncWord()</code> later and could finally reliably transfer frames between the two Yardstick Ones!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/rf-researchmode-edit.png"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/rf-researchmode-edit.png"/>
 </figure>
 
 <p>With the ability to transfer frames reliably, it was time to write some scripts to make this easier. A simple <code>send.py</code> and <code>receive.py</code> would suffice. All they need to do is setup the radios by configuring the frequency, sync word, baud rate and modulation in use. Then, simply encode and send / decode on receive.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/bsides17badge/send-receive.png"/> 
+<figure><img src="https://leonjza.github.io/images/bsides17badge/send-receive.png"/>
 </figure>
 
 <p>Those scripts looked as follows:</p>

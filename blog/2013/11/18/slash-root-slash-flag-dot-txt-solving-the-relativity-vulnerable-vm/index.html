@@ -375,8 +375,7 @@ ftp&gt;
 </code></pre></div><p>Sometimes however, sites tend to attempt to filter out certain PHP commands. So, in order to increase the chances of success, a base64 encoded version ends up being my favourite:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">?file=data:;base64,PD9waHAgc3lzdGVtKCRfR0VUW2NdKTsgPz4=&amp;c=dir
 </code></pre></div><p>I used this and now had shell access to the box. Remembering the basic tips of enumerate-&gt;exploit-&gt;post-exploit, I ran a few simple commands, just to get a better feel for the environment that I was facing. I was using Google Chrome. If you add &lsquo;view-source:&rsquo; to the front of a url, or right click-&gt; view source, then you will see the output for your command shell in a much neater and easier to read layout. I ran the commands <code>id; uname -a; sestatus; pwd; ls -lah /home; cat /etc/passwd</code>:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/relativity_command_injection.png"/> 
+<figure><img src="https://leonjza.github.io/images/relativity_command_injection.png"/>
 </figure>
 
 <p>From this we know that the server is running Fedora Core 17, with the 3.9.8-100 kernel. SELinux is disabled. There are 2 users with /home directories, of which <code>jetta</code>&rsquo;s directory is protected from me reading it at the moment. root, mauk and jetta all have valid logins shells too.</p>

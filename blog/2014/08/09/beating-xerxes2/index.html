@@ -303,14 +303,12 @@ nc-data: MPEG ADTS, layer III, v2,  <span style="color:#f60">64</span> kbps, 22.
 <p>Sadly, this file kept me busy for quite some time, trying to find a hidden message. In the end, I gave up and moved on to the other ports open the VM. Maybe I had to come back to this later, but the little progress I had made had me hope I didn&rsquo;t have to.</p>
 <h2 id="first-shell-access">first shell access</h2>
 <p>Moving on to tcp/80, a standard website with not much interesting apart from a cool looking Xerxes2 logo was found:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/xerxesII_home.png"/> 
+<figure><img src="https://leonjza.github.io/images/xerxesII_home.png"/>
 </figure>
 
 <p>However, moving on to tcp/8888, we see it identified as <code>Tornado httpd 2.3</code>. Some of you may recognize Tornado as a python httpd server. So, off to a browser we go!</p>
 <p>tcp/8888 hosted a <a href="http://ipython.org/notebook.html">IPython Notebook</a>. We were able to easily create a new note, and abuse the shell command functionality of it for our own purposes. Shell command access could be achieved by prefixing typical shell commands with a <code>!</code>. I used this to enumerate a small bit of the current environment, and quickly decided to add myself a ssh key so that I can play further. So, I generated a new key pair just for Xerxes, and uploaded it for the <code>delacroix</code> user:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/xerxesII_ipython.png"/> 
+<figure><img src="https://leonjza.github.io/images/xerxesII_ipython.png"/>
 </figure>
 
 <p>And then a easy SSH in:</p>
@@ -605,8 +603,7 @@ polito@xerxes2:~$ crontab -l
 @reboot <span style="color:#f00">while</span> true ; <span style="color:#f00">do</span> nc -l -p <span style="color:#f60">4444</span> &lt; /home/polito/audio.txt ; <span style="color:#f00">done</span>
 polito@xerxes2:~$
 </code></pre></div><p>There was not much I could do with the <code>dump.gpg</code> yet, so I decided to open up the pdf in a pdf viewer:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/xerxesII_polito_pdf.png"/> 
+<figure><img src="https://leonjza.github.io/images/xerxesII_polito_pdf.png"/>
 </figure>
 
 <p>That is all the PDF had. The QR code resolves to &ldquo;XERXES is watching&hellip;&rdquo;. I tried to highlight all of the text in the PDF to maybe reveal a piece of text that was white in color, but nothing apparent came out. The next step was to run the PDF through the <code>file</code> utility.</p>
@@ -657,8 +654,7 @@ second: Dyalog APL
 root@kali:~#
 </code></pre></div><p>Opening <code>first</code> in a PDF viewer gave a blank PDF, and <code>second</code> gave the PDF we saw originally with <code>polito.pdf</code>. <code>first</code> was still seen as as x86 boot sector file. I searched furiously for way to analyze bootsector code, learned about the <a href="http://en.wikipedia.org/wiki/Master_boot_record#Sector_layout">structure</a> etc. Eventually it was time to take a break and come back with a fresh look at this.</p>
 <p>I came back with some new ideas. One of them being that I should quickly create a VM, attach <code>first</code> as a disk and try run it and see what the output would be. VirtualBox did not like the file format of <code>first</code> :( Next I resorted to using <code>qemu</code>. And success!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/xerxesII_qemu_boot.png"/> 
+<figure><img src="https://leonjza.github.io/images/xerxesII_qemu_boot.png"/>
 </figure>
 
 <p>Running <code>$ qemu first</code>, booted a vm and ran the bootsector code, revealing a password of <em>amFuaWNl</em>. The next part was pretty easy. I assumed this was the password word for the potentially GPG encrypted <code>dump</code> file:</p>

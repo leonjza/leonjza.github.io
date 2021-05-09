@@ -447,15 +447,13 @@ A sample command to get this running would be: <code>python proxpy.py -p 8090 -x
 <p>Ensure that your MiTM is successful, and watch as digest authentication gets downgraded to basic auth, and your credentials echoed to the terminal :P Something like this&hellip;</p>
 </li>
 </ol>
-<figure>
-    <img src="https://leonjza.github.io/images/dtobpoc.png"/> 
+<figure><img src="https://leonjza.github.io/images/dtobpoc.png"/>
 </figure>
 
 <h3 id="what-is-the-user-experience-with-this">What is the user experience with this?</h3>
 <p>That is a good question. The actual dialog that the user sees, again, is up to the browser to render. Depending on <strong>which</strong> browser you use on <strong>which</strong> OS, this may look different. In the back, the client <em>should</em> function normally, blissfully unaware that the headers for stronger authentication were swapped out.</p>
 <p>On my computer, the authentication dialog has the follow look and feel:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/dtobhttpauth.png"/> 
+<figure><img src="https://leonjza.github.io/images/dtobhttpauth.png"/>
 </figure>
 
 <p>Notice the &ldquo;Server Says:&rdquo; Section. This is typically the <code>realm</code> part of the authentication request. When using the <code>dtob.py</code> plugin, it is changed to <code>pwnd</code>. This dialog looks no different when using any form of HTTP based authentication. Hence, when the downgrade attack occurs, the user is unaware that anything different is happening in the background.</p>

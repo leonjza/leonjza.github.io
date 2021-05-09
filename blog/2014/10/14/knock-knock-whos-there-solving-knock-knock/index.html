@@ -479,8 +479,7 @@ destination = <span style="color:#87ceeb">&#34;192.168.56.203&#34;</span>
 <p>I know that I could test to see if say <code>tcp/22</code> was open, but I went with the assumption that you don&rsquo;t know what the actual ports are that should be opened, and hence the complete run of all of the permutations.</p>
 <h2 id="may-i-burn-the-door-now">may I burn the door now?</h2>
 <p>So, focus shifted to the web server at <code>tcp/80</code>. Browsing to the web server presented us with the following:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/knock_knock_web.png"/> 
+<figure><img src="https://leonjza.github.io/images/knock_knock_web.png"/>
 </figure>
 
 <p>Any path/file that you browse to will return this exact same picture. Sound familiar? :) This kinda breaks any form of scanning and or enumeration via things like <code>wfuzz</code> etc. With the hint <em>Gotta look harder</em>, I decided to move my attention to the door image itself.</p>
@@ -777,13 +776,11 @@ gdb-peda$
 <p><em>For this part, I have to give a <strong>big</strong> high five to <a href="https://twitter.com/recrudesce">@recrudesce</a> for helping me understand parts of the pseudo code.</em></p>
 <p>Right. Essentially, in order for us to better understand what exactly is happening within <code>xcrypt()</code>, we would ideally want to get some pseudo code generated from the asm. Decompiling wont give you exactly the sources for the function (and in many cases its <em>reaaaaaly</em> hard to comprehend), but it <em>really</em> helps in getting the mind to understand the flow.</p>
 <p>For the pseudo code, I downloaded a demo version of <a href="http://www.hopperapp.com/">Hopper</a>. The demo has a boat load of restrictions, including a 30min session limit, however it allows the pseudo code generation, so it was fine for this use. I fired up Hopper, loaded <code>tfc</code>, located the <code>xcrypt()</code> function and slapped the Pseudo code generation button:</p>
-<figure>
-    <img src="https://leonjza.github.io/images/knock_knock_hopper_pseudo.png"/> 
+<figure><img src="https://leonjza.github.io/images/knock_knock_hopper_pseudo.png"/>
 </figure>
 
 <p>While looking around for pseudo code generation options, I came across the <a href="http://decompiler.fit.vutbr.cz/decompilation/">Retargetable Decompiler</a> online service, which had the following image as a control flow graph for the calls in <code>xcrypt()</code>.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/knock_knock_crypter_control_flow.png"/> 
+<figure><img src="https://leonjza.github.io/images/knock_knock_crypter_control_flow.png"/>
 </figure>
 
 <p>Armed this this graph and the pseudo code, I was ready to start writing a python version of it.</p>
@@ -979,8 +976,7 @@ gdb-peda$
 </code></pre></div><p>This resulted in a crash at <code>0x42424242</code> in <code>gdb</code> which was perfect!</p>
 <h2 id="exploiting-tfc">exploiting tfc</h2>
 <p>The only thing that was left to do was to find a <code>JMP ESP</code> instruction we could jump to, and add some shell code on to the stack. Since the binary compiled with <code>NO NX</code>, it should happily execute code on it.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/knock_knock_jmp_esp.png"/> 
+<figure><img src="https://leonjza.github.io/images/knock_knock_jmp_esp.png"/>
 </figure>
 
 <p>Using Evans Debugger (run with <code>edb --run ./tfc</code>), I searched for a <em>JMP ESP</em> instruction and found one in <code>tfc</code> itself at <code>0x08048e93</code>. This is where we will tell EIP to point to when we corrupt the memory. That means our contents will change to:</p>

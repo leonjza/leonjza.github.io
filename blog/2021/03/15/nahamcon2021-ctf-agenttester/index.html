@@ -246,18 +246,15 @@ if (!doNotTrack) {
 <h2 id="solution">solution</h2>
 <p>We&rsquo;re given an archive to download, <code>agenttester.zip</code>. This contained a Dockerfile and a python web application. The files in the archive had many secrets redacted which were set using environment variables. One specifically interesting one was <code>CHALLENGE_FLAG</code>, which we could assume was the target value to leak.</p>
 <p>The challenge URL dropped us on a page where we need to login. So, create an account, login and land on the home page of the agent tester.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/agent_tester.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester.png"/>
 </figure>
 
 <p>In burp we&rsquo;ll see that WebSocket requests are being made when we submit an &ldquo;agent&rdquo;.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/agent_tester_ws.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester_ws.png"/>
 </figure>
 
 <p>From both playing with the application and the Python source code, we could spot an SQL injection vulnerability.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/agent_tester_sql.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester_sql.png"/>
 </figure>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">query = db.session.execute(
@@ -280,8 +277,7 @@ if (!doNotTrack) {
     <span style="color:#f00">except</span> Exception <span style="color:#f00">as</span> e:
         <span style="color:#f00">print</span>(str(e), flush=True)
 </code></pre></div><p>Thankfully Burp allows for repeating web socket requests, so crafting a payload to disclose the admin user&rsquo;s password is relatively easy.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/agent_tester_admin_creds.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester_admin_creds.png"/>
 </figure>
 
 <p>With admin creds, we can now browse to the <code>/debug</code> endpoint which was protected by the admin session (session id <code>1</code>).</p>

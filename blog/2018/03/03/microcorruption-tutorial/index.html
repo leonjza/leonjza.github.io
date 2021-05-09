@@ -10,7 +10,6 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta property="og:title" content="microcorruption - tutorial" />
 <meta property="og:description" content="
-     
 
 
 These posts will detail my answers to solving various microcorruption.com ctf challenges. To begin, you should have at least had a look at the lock manual for a number of helpful hints. These challenges are built to run on a MSP430 microcontroller unit, so if you need any assembly references, that is the architecture your are looking for!
@@ -24,7 +23,6 @@ Lets look at the tutorial level first." />
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="microcorruption - tutorial"/>
 <meta name="twitter:description" content="
-     
 
 
 These posts will detail my answers to solving various microcorruption.com ctf challenges. To begin, you should have at least had a look at the lock manual for a number of helpful hints. These challenges are built to run on a MSP430 microcontroller unit, so if you need any assembly references, that is the architecture your are looking for!
@@ -176,7 +174,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption-tutorial%2f&name=microcorruption%20-%20tutorial&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThese%20posts%20will%20detail%20my%20answers%20to%20solving%20various%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges.%20To%20begin%2c%20you%20should%20have%20at%20least%20had%20a%20look%20at%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%2fmanual.pdf%22%3elock%20manual%3c%2fa%3e%20for%20a%20number%20of%20helpful%20hints.%20These%20challenges%20are%20built%20to%20run%20on%20a%20MSP430%20microcontroller%20unit%2c%20so%20if%20you%20need%20any%20assembly%20references%2c%20that%20is%20the%20architecture%20your%20are%20looking%20for%21%3c%2fp%3e%0a%3cp%3eLets%20look%20at%20the%20tutorial%20level%20first.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption-tutorial%2f&name=microcorruption%20-%20tutorial&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThese%20posts%20will%20detail%20my%20answers%20to%20solving%20various%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges.%20To%20begin%2c%20you%20should%20have%20at%20least%20had%20a%20look%20at%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%2fmanual.pdf%22%3elock%20manual%3c%2fa%3e%20for%20a%20number%20of%20helpful%20hints.%20These%20challenges%20are%20built%20to%20run%20on%20a%20MSP430%20microcontroller%20unit%2c%20so%20if%20you%20need%20any%20assembly%20references%2c%20that%20is%20the%20architecture%20your%20are%20looking%20for%21%3c%2fp%3e%0a%3cp%3eLets%20look%20at%20the%20tutorial%20level%20first.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -248,8 +246,7 @@ if (!doNotTrack) {
 
   
     <div class="content" itemprop="articleBody">
-      <figure>
-    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+      <figure><img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/>
 </figure>
 
 <p>These posts will detail my answers to solving various <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges. To begin, you should have at least had a look at the <a href="https://microcorruption.com/manual.pdf">lock manual</a> for a number of helpful hints. These challenges are built to run on a MSP430 microcontroller unit, so if you need any assembly references, that is the architecture your are looking for!</p>
@@ -267,8 +264,7 @@ if (!doNotTrack) {
 </span><span style="color:#0f0"></span><span style="color:#f60">4492</span>:  <span style="color:#f60">0224</span>           <span style="color:#7fffd4">jeq</span>   <span style="color:#0f0">#0x4498 &lt;check_password+0x14&gt;
 </span></code></pre></div><p>Once you hit the instruction at <code>0x4484</code>, the first character of the password you entered is loaded into <code>r14</code> (which you can see from the memory layout if you were to browse to <code>0x439c</code>) from the memory location pointed to in <code>r15</code>. Next, the registers <code>r12</code> and <code>r15</code> are incremented. This will continue until a null byte (a typical string terminator in C) is reached, causing the jump at <code>0x448c</code> not to be followed, making the <code>cmp</code> be the next instruction.</p>
 <p>If <code>r12</code> ends up being <code>0x0009</code> (indicating that out passwords was 8 characters long with a null byte), then the jump at <code>0x4492</code> will occur, finally calling the interrupt to unlock the lock.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/microcorruption/microcorruption_tutorial.png"/> 
+<figure><img src="https://leonjza.github.io/images/microcorruption/microcorruption_tutorial.png"/>
 </figure>
 
 <h2 id="solution">solution</h2>
@@ -390,7 +386,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption-tutorial%2f&name=microcorruption%20-%20tutorial&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThese%20posts%20will%20detail%20my%20answers%20to%20solving%20various%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges.%20To%20begin%2c%20you%20should%20have%20at%20least%20had%20a%20look%20at%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%2fmanual.pdf%22%3elock%20manual%3c%2fa%3e%20for%20a%20number%20of%20helpful%20hints.%20These%20challenges%20are%20built%20to%20run%20on%20a%20MSP430%20microcontroller%20unit%2c%20so%20if%20you%20need%20any%20assembly%20references%2c%20that%20is%20the%20architecture%20your%20are%20looking%20for%21%3c%2fp%3e%0a%3cp%3eLets%20look%20at%20the%20tutorial%20level%20first.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f03%2fmicrocorruption-tutorial%2f&name=microcorruption%20-%20tutorial&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThese%20posts%20will%20detail%20my%20answers%20to%20solving%20various%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges.%20To%20begin%2c%20you%20should%20have%20at%20least%20had%20a%20look%20at%20the%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%2fmanual.pdf%22%3elock%20manual%3c%2fa%3e%20for%20a%20number%20of%20helpful%20hints.%20These%20challenges%20are%20built%20to%20run%20on%20a%20MSP430%20microcontroller%20unit%2c%20so%20if%20you%20need%20any%20assembly%20references%2c%20that%20is%20the%20architecture%20your%20are%20looking%20for%21%3c%2fp%3e%0a%3cp%3eLets%20look%20at%20the%20tutorial%20level%20first.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

