@@ -1,20 +1,49 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> microcorruption - hanoi | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2018/03/05/microcorruption-hanoi/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="microcorruption - hanoi" />
+<title>
+microcorruption - hanoi ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content=" This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Sydney. This challenge is titled Hanoi.
+If you were to read the description when you enter the challenge, one would see the following towards the bottom:
+ LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.
+ Ok, so mention of a HSM here. Neat! Lets take a look at how that works!
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2018/03/05/microcorruption-hanoi/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="microcorruption - hanoi">
+<meta name=twitter:description content="
+    
+    
+  
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Sydney. This challenge is titled Hanoi.
+If you were to read the description when you enter the challenge, one would see the following towards the bottom:
+
+LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.
+
+Ok, so mention of a HSM here. Neat! Lets take a look at how that works!">
+<meta property="og:title" content="microcorruption - hanoi">
 <meta property="og:description" content="
+    
+    
+  
 
 
 This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Sydney. This challenge is titled Hanoi.
@@ -22,507 +51,206 @@ If you were to read the description when you enter the challenge, one would see 
 
 LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.
 
-Ok, so mention of a HSM here. Neat! Lets take a look at how that works!" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2018/03/05/microcorruption-hanoi/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2018-03-05T19:08:33+02:00" />
-<meta property="article:modified_time" content="2018-03-05T19:08:33+02:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="microcorruption - hanoi"/>
-<meta name="twitter:description" content="
-
-
-This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Sydney. This challenge is titled Hanoi.
-If you were to read the description when you enter the challenge, one would see the following towards the bottom:
-
-LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.
-
-Ok, so mention of a HSM here. Neat! Lets take a look at how that works!"/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+Ok, so mention of a HSM here. Neat! Lets take a look at how that works!">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2018/03/05/microcorruption-hanoi/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-03-05T19:08:33+02:00">
+<meta property="article:modified_time" content="2018-03-05T19:08:33+02:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2018/03/04/microcorruption-sydney/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2018/03/06/microcorruption-cusco/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&text=microcorruption%20-%20hanoi" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&is_video=false&description=microcorruption%20-%20hanoi" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=microcorruption%20-%20hanoi&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&name=microcorruption%20-%20hanoi&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f04%2fmicrocorruption---sydney%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eSydney%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eHanoi%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eIf%20you%20were%20to%20read%20the%20description%20when%20you%20enter%20the%20challenge%2c%20one%20would%20see%20the%20following%20towards%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eLockIT%20Pro%20Hardware%20Security%20Module%201%20stores%20the%20login%20password%2c%20ensuring%20users%20can%20not%20access%20the%20password%20through%20other%20means.%20The%20LockIT%20Pro%20can%20send%20the%20LockIT%20Pro%20HSM-1%20a%20password%2c%20and%20the%20HSM%20will%20return%20if%20the%20password%20is%20correct%20by%20setting%20a%20flag%20in%20memory.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eOk%2c%20so%20mention%20of%20a%20HSM%20here.%20Neat%21%20Lets%20take%20a%20look%20at%20how%20that%20works%21%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&t=microcorruption%20-%20hanoi" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#hanoi">hanoi</a>
-      <ul>
-        <li><a href="#debugging">debugging</a></li>
-      </ul>
-    </li>
-    <li><a href="#solution">solution</a></li>
-    <li><a href="#other-challenges">other challenges</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>microcorruption - hanoi</h1>
+<div class=post-meta>
+<span class=post-date>
+2018-03-05
+</span>
+<span class=post-read-time>— 5 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        microcorruption - hanoi
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2018-03-05 19:08:33 &#43;0200 SAST" itemprop="datePublished">2018-03-05</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/exploit">exploit</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/assembly">assembly</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/microcorruption">microcorruption</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/hanoi">hanoi</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <figure><img src="https://leonjza.github.io/images/microcorruption/microcorruption.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#hanoi>hanoi</a>
+<ul>
+<li><a href=#debugging>debugging</a></li>
+</ul>
+</li>
+<li><a href=#solution>solution</a></li>
+<li><a href=#other-challenges>other challenges</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<figure class=left>
+<img src=/images/microcorruption/microcorruption.png>
 </figure>
-
-<p>This post is part of the series of solving <a href="https://microcorruption.com">microcorruption.com</a> ctf challenges which continues from the <a href="https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/">previous challenge</a> called <em>Sydney</em>. This challenge is titled <em>Hanoi</em>.</p>
+<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/>previous challenge</a> called <em>Sydney</em>. This challenge is titled <em>Hanoi</em>.</p>
 <p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
 <blockquote>
 <p>LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.</p>
 </blockquote>
 <p>Ok, so mention of a HSM here. Neat! Lets take a look at how that works!</p>
-<h2 id="hanoi">hanoi</h2>
+<h2 id=hanoi>hanoi</h2>
 <p>This time round, our <code>main</code> function is quite a bit shorter than the previous programs we have analysed:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4438 &lt;<span style="color:#ff0">main</span>&gt;
-4438:  <span style="color:#ff0">b012</span> <span style="color:#f60">2045</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4520 &lt;login&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">443</span><span style="color:#7fffd4">c</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f43</span>           <span style="color:#7fffd4">clr</span>   <span style="color:#7fffd4">r15</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#960050;background-color:#1e0010>4438</span> <span style=color:#960050;background-color:#1e0010>&lt;</span><span style=color:#a6e22e>main</span><span style=color:#960050;background-color:#1e0010>&gt;</span>
+<span style=color:#960050;background-color:#1e0010>4438:</span>  <span style=color:#a6e22e>b012</span> <span style=color:#ae81ff>2045</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x4520 &lt;login&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>443</span><span style=color:#66d9ef>c</span>:  <span style=color:#ae81ff>0</span><span style=color:#66d9ef>f43</span>           <span style=color:#66d9ef>clr</span>   <span style=color:#66d9ef>r15</span>
 </code></pre></div><p>Just a call to <code>login</code> which in turn has a similar flow to that which we saw in the previous <code>main</code> functions. A semi-shortened, annotated version of <code>login</code> is:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4520 &lt;<span style="color:#ff0">login</span>&gt;
-4520:  <span style="color:#ff0">c243</span> <span style="color:#f60">1024</span>      <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x0, &amp;0x2410
-</span><span style="color:#0f0"></span><span style="color:#f60">4524</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">f40</span> <span style="color:#f60">7</span><span style="color:#7fffd4">e44</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x447e &#34;Enter the password to continue.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4528</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span>
-<span style="color:#0f0">; but what if i put in more than 16 characters? ;)
-</span><span style="color:#0f0"></span>452c:  3<span style="color:#ff0">f40</span> <span style="color:#f60">9</span><span style="color:#7fffd4">e44</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x449e &#34;Remember: passwords are between 8 and 16 characters.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4530</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span>
-[<span style="color:#ff0">..</span> <span style="color:#7fffd4">routine</span> <span style="color:#7fffd4">to</span> <span style="color:#7fffd4">get</span> <span style="color:#7fffd4">the</span> <span style="color:#7fffd4">password</span> <span style="color:#7fffd4">..</span>]
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#960050;background-color:#1e0010>4520</span> <span style=color:#960050;background-color:#1e0010>&lt;</span><span style=color:#a6e22e>login</span><span style=color:#960050;background-color:#1e0010>&gt;</span>
+<span style=color:#960050;background-color:#1e0010>4520:</span>  <span style=color:#a6e22e>c243</span> <span style=color:#ae81ff>1024</span>      <span style=color:#66d9ef>mov.b</span> <span style=color:#75715e>#0x0, &amp;0x2410
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4524</span>:  <span style=color:#ae81ff>3</span><span style=color:#66d9ef>f40</span> <span style=color:#ae81ff>7</span><span style=color:#66d9ef>e44</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x447e &#34;Enter the password to continue.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4528</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>; but what if i put in more than 16 characters? ;)
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>452</span>c:  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>f40</span> <span style=color:#ae81ff>9</span><span style=color:#66d9ef>e44</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x449e &#34;Remember: passwords are between 8 and 16 characters.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4530</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#960050;background-color:#1e0010>[</span><span style=color:#a6e22e>..</span> <span style=color:#66d9ef>routine</span> <span style=color:#66d9ef>to</span> <span style=color:#66d9ef>get</span> <span style=color:#66d9ef>the</span> <span style=color:#66d9ef>password</span> <span style=color:#66d9ef>..</span>]
 
-4544:  <span style="color:#ff0">b012</span> <span style="color:#f60">5444</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4454 &lt;test_password_valid&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">4548</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">f93</span>           <span style="color:#7fffd4">tst</span>   <span style="color:#7fffd4">r15</span>
-454a:  0324           <span style="color:#ff0">jz</span>    <span style="color:#7fffd4">$</span>+<span style="color:#f60">0x8</span>
+<span style=color:#960050;background-color:#1e0010>4544:</span>  <span style=color:#a6e22e>b012</span> <span style=color:#ae81ff>5444</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x4454 &lt;test_password_valid&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4548</span>:  <span style=color:#ae81ff>0</span><span style=color:#66d9ef>f93</span>           <span style=color:#66d9ef>tst</span>   <span style=color:#66d9ef>r15</span>
+<span style=color:#960050;background-color:#1e0010>454</span>a:  <span style=color:#960050;background-color:#1e0010>0324</span>           <span style=color:#a6e22e>jz</span>    <span style=color:#66d9ef>$</span><span style=color:#960050;background-color:#1e0010>+</span><span style=color:#ae81ff>0x8</span>
 
-<span style="color:#0f0">; erm? what is going on here?
-</span><span style="color:#0f0"></span>454c:  <span style="color:#ff0">f240</span> <span style="color:#f60">5000</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x50, &amp;0x2410
-</span><span style="color:#0f0"></span><span style="color:#f60">4552</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">f40</span> <span style="color:#7fffd4">d344</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44d3 &#34;Testing if password is valid.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4556</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span>
-<span style="color:#0f0">; and what about here?
-</span><span style="color:#0f0"></span>455a:  <span style="color:#ff0">f290</span> <span style="color:#f60">6300</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">cmp.b</span> <span style="color:#0f0">#0x63, &amp;0x2410
-</span><span style="color:#0f0"></span><span style="color:#f60">4560</span>:  <span style="color:#f60">0720</span>           <span style="color:#7fffd4">jne</span>   <span style="color:#0f0">#0x4570 &lt;login+0x50o&gt;
-</span><span style="color:#0f0"></span>
-<span style="color:#0f0">; grants us access!
-</span><span style="color:#0f0"></span>4562:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">f144</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44f1 &#34;Access granted.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4566</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">a</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">4844</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4448 &lt;unlock_door&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">e</span>:  <span style="color:#f60">3041</span>           <span style="color:#7fffd4">ret</span>
+<span style=color:#75715e>; erm? what is going on here?
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>454</span>c:  <span style=color:#a6e22e>f240</span> <span style=color:#ae81ff>5000</span> <span style=color:#ae81ff>1024</span> <span style=color:#66d9ef>mov.b</span> <span style=color:#75715e>#0x50, &amp;0x2410
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4552</span>:  <span style=color:#ae81ff>3</span><span style=color:#66d9ef>f40</span> <span style=color:#66d9ef>d344</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x44d3 &#34;Testing if password is valid.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4556</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>; and what about here?
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>455</span>a:  <span style=color:#a6e22e>f290</span> <span style=color:#ae81ff>6300</span> <span style=color:#ae81ff>1024</span> <span style=color:#66d9ef>cmp.b</span> <span style=color:#75715e>#0x63, &amp;0x2410
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4560</span>:  <span style=color:#ae81ff>0720</span>           <span style=color:#66d9ef>jne</span>   <span style=color:#75715e>#0x4570 &lt;login+0x50o&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>; grants us access!
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>4562:</span>  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>f40</span> <span style=color:#66d9ef>f144</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x44f1 &#34;Access granted.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4566</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>456</span><span style=color:#66d9ef>a</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#ae81ff>4844</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x4448 &lt;unlock_door&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>456</span><span style=color:#66d9ef>e</span>:  <span style=color:#ae81ff>3041</span>           <span style=color:#66d9ef>ret</span>
 
-<span style="color:#0f0">; failed
-</span><span style="color:#0f0"></span>4570:  3<span style="color:#ff0">f40</span> <span style="color:#f60">0145</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x4501 &#34;That password is not correct.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4574</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">4578</span>:  <span style="color:#f60">3041</span>           <span style="color:#7fffd4">ret</span>
+<span style=color:#75715e>; failed
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>4570:</span>  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>f40</span> <span style=color:#ae81ff>0145</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x4501 &#34;That password is not correct.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4574</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4578</span>:  <span style=color:#ae81ff>3041</span>           <span style=color:#66d9ef>ret</span>
 </code></pre></div><p>Some interesting things happening there it seems. I think the next routine to check out is most definitely <code>test_password_valid</code>. Taking a look at that routine looks as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">4454 &lt;<span style="color:#ff0">test_password_valid</span>&gt;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#960050;background-color:#1e0010>4454</span> <span style=color:#960050;background-color:#1e0010>&lt;</span><span style=color:#a6e22e>test_password_valid</span><span style=color:#960050;background-color:#1e0010>&gt;</span>
 
-<span style="color:#0f0">; move a bunch of stuff around
-</span><span style="color:#0f0"></span>4454:  0412           <span style="color:#ff0">push</span>  <span style="color:#7fffd4">r4</span>
-4456:  0441           <span style="color:#ff0">mov</span>   <span style="color:#7fffd4">sp</span>, <span style="color:#7fffd4">r4</span>
-4458:  2453           <span style="color:#ff0">incd</span>  <span style="color:#7fffd4">r4</span>
-445a:  2183           <span style="color:#ff0">decd</span>  <span style="color:#7fffd4">sp</span>
-445c:  <span style="color:#ff0">c443</span> <span style="color:#7fffd4">fcff</span>      <span style="color:#7fffd4">mov.b</span> <span style="color:#0f0">#0x0, -0x4(r4)  ; 0x2400 at this stage
-</span><span style="color:#0f0"></span><span style="color:#f60">4460</span>:  <span style="color:#f60">3</span><span style="color:#7fffd4">e40</span> <span style="color:#7fffd4">fcff</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0xfffc, r14
-</span><span style="color:#0f0"></span><span style="color:#f60">4464</span>:  <span style="color:#f60">0</span><span style="color:#7fffd4">e54</span>           <span style="color:#7fffd4">add</span>   <span style="color:#7fffd4">r4</span>, <span style="color:#7fffd4">r14</span>
-4466:  0<span style="color:#ff0">e12</span>           <span style="color:#7fffd4">push</span>  <span style="color:#7fffd4">r14</span>
-4468:  0<span style="color:#ff0">f12</span>           <span style="color:#7fffd4">push</span>  <span style="color:#7fffd4">r15</span>
+<span style=color:#75715e>; move a bunch of stuff around
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>4454:</span>  <span style=color:#960050;background-color:#1e0010>0412</span>           <span style=color:#a6e22e>push</span>  <span style=color:#66d9ef>r4</span>
+<span style=color:#960050;background-color:#1e0010>4456:</span>  <span style=color:#960050;background-color:#1e0010>0441</span>           <span style=color:#a6e22e>mov</span>   <span style=color:#66d9ef>sp</span>, <span style=color:#66d9ef>r4</span>
+<span style=color:#960050;background-color:#1e0010>4458:</span>  <span style=color:#960050;background-color:#1e0010>2453</span>           <span style=color:#a6e22e>incd</span>  <span style=color:#66d9ef>r4</span>
+<span style=color:#960050;background-color:#1e0010>445</span>a:  <span style=color:#960050;background-color:#1e0010>2183</span>           <span style=color:#a6e22e>decd</span>  <span style=color:#66d9ef>sp</span>
+<span style=color:#960050;background-color:#1e0010>445</span>c:  <span style=color:#a6e22e>c443</span> <span style=color:#66d9ef>fcff</span>      <span style=color:#66d9ef>mov.b</span> <span style=color:#75715e>#0x0, -0x4(r4)  ; 0x2400 at this stage
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4460</span>:  <span style=color:#ae81ff>3</span><span style=color:#66d9ef>e40</span> <span style=color:#66d9ef>fcff</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0xfffc, r14
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4464</span>:  <span style=color:#ae81ff>0</span><span style=color:#66d9ef>e54</span>           <span style=color:#66d9ef>add</span>   <span style=color:#66d9ef>r4</span>, <span style=color:#66d9ef>r14</span>
+<span style=color:#960050;background-color:#1e0010>4466:</span>  <span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>e12</span>           <span style=color:#66d9ef>push</span>  <span style=color:#66d9ef>r14</span>
+<span style=color:#960050;background-color:#1e0010>4468:</span>  <span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>f12</span>           <span style=color:#66d9ef>push</span>  <span style=color:#66d9ef>r15</span>
 
-<span style="color:#0f0">; push 0x7d into the stack and prep for a syscall
-</span><span style="color:#0f0"></span>446a:  3012 7<span style="color:#ff0">d00</span>      <span style="color:#7fffd4">push</span>  <span style="color:#0f0">#0x7d
-</span><span style="color:#0f0"></span><span style="color:#f60">446</span><span style="color:#7fffd4">e</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">7</span><span style="color:#7fffd4">a45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x457a &lt;INT&gt;
-</span><span style="color:#0f0"></span>
-[<span style="color:#ff0">..</span> <span style="color:#7fffd4">end</span> <span style="color:#7fffd4">this</span> <span style="color:#7fffd4">routine</span> <span style="color:#7fffd4">..</span>]
-447c:  3041           <span style="color:#ff0">ret</span>
+<span style=color:#75715e>; push 0x7d into the stack and prep for a syscall
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>446</span>a:  <span style=color:#960050;background-color:#1e0010>3012</span> <span style=color:#960050;background-color:#1e0010>7</span><span style=color:#a6e22e>d00</span>      <span style=color:#66d9ef>push</span>  <span style=color:#75715e>#0x7d
+</span><span style=color:#75715e></span><span style=color:#ae81ff>446</span><span style=color:#66d9ef>e</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#ae81ff>7</span><span style=color:#66d9ef>a45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x457a &lt;INT&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#960050;background-color:#1e0010>[</span><span style=color:#a6e22e>..</span> <span style=color:#66d9ef>end</span> <span style=color:#66d9ef>this</span> <span style=color:#66d9ef>routine</span> <span style=color:#66d9ef>..</span>]
+<span style=color:#960050;background-color:#1e0010>447</span>c:  <span style=color:#960050;background-color:#1e0010>3041</span>           <span style=color:#a6e22e>ret</span>
 </code></pre></div><p>Hmm ok, a bunch of <code>mov</code> instructions and other arithmetic and finally syscall with interrupt <code>0x7d</code> which is described as <em>&ldquo;Interface with the HSM-1. Set a flag in memory if the password passed in is
-correct.&quot;</em> according to the locks <a href="https://microcorruption.com/manual.pdf">manual</a>.</p>
+correct."</em> according to the locks <a href=https://microcorruption.com/manual.pdf>manual</a>.</p>
 <p>So not <em>that</em> interesting after all. Looking at <code>login</code> again, it seems like we would ideally want to have <code>unlock_door</code> called from <code>login</code> at <code>0x456a</code> to win. But how to get there?</p>
-<h3 id="debugging">debugging</h3>
+<h3 id=debugging>debugging</h3>
 <p>My static analysis capabilities were pretty much exhausted here, and it was now time for some runtime debugging. I manually stepped through the program, focussing on the <code>test_password_valid</code> routine. I noticed the password I entered as <code>12345678</code> was stored at offset <code>0x2400</code> and referenced when the interrupt for the HSM to check was set up.</p>
-<figure><img src="https://leonjza.github.io/images/microcorruption/hanoi_password_in_memory.png"/>
+<figure class=left>
+<img src=/images/microcorruption/hanoi_password_in_memory.png>
 </figure>
-
 <p>A few steps through this routine with no obvious ways to fool it, I decided to park it for now and see what happens after <code>test_password_valid</code> is done. This is now back at <code>login</code> once <code>test_password_valid</code> has returned:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm"><span style="color:#0f0">; test_password_valid has returned
-</span><span style="color:#0f0"></span>4552:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">d344</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44d3 &#34;Testing if password is valid.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4556</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span>
-<span style="color:#0f0">; what is this cmp doing?
-</span><span style="color:#0f0"></span>455a:  <span style="color:#ff0">f290</span> <span style="color:#f60">6300</span> <span style="color:#f60">1024</span> <span style="color:#7fffd4">cmp.b</span> <span style="color:#0f0">#0x63, &amp;0x2410
-</span><span style="color:#0f0"></span><span style="color:#f60">4560</span>:  <span style="color:#f60">0720</span>           <span style="color:#7fffd4">jne</span>   <span style="color:#0f0">#0x4570 &lt;login+0x50&gt;
-</span><span style="color:#0f0"></span>
-<span style="color:#0f0">; making the jne not get taken will land us at unlock_door
-</span><span style="color:#0f0"></span>4562:  3<span style="color:#ff0">f40</span> <span style="color:#7fffd4">f144</span>      <span style="color:#7fffd4">mov</span>   <span style="color:#0f0">#0x44f1 &#34;Access granted.&#34;, r15
-</span><span style="color:#0f0"></span><span style="color:#f60">4566</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#7fffd4">de45</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x45de &lt;puts&gt;
-</span><span style="color:#0f0"></span><span style="color:#f60">456</span><span style="color:#7fffd4">a</span>:  <span style="color:#7fffd4">b012</span> <span style="color:#f60">4844</span>      <span style="color:#7fffd4">call</span>  <span style="color:#0f0">#0x4448 &lt;unlock_door&gt;
-</span></code></pre></div><p>I noticed the <code>cmp.b #0x63, &amp;0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#75715e>; test_password_valid has returned
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>4552:</span>  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>f40</span> <span style=color:#66d9ef>d344</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x44d3 &#34;Testing if password is valid.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4556</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>; what is this cmp doing?
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>455</span>a:  <span style=color:#a6e22e>f290</span> <span style=color:#ae81ff>6300</span> <span style=color:#ae81ff>1024</span> <span style=color:#66d9ef>cmp.b</span> <span style=color:#75715e>#0x63, &amp;0x2410
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4560</span>:  <span style=color:#ae81ff>0720</span>           <span style=color:#66d9ef>jne</span>   <span style=color:#75715e>#0x4570 &lt;login+0x50&gt;
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>; making the jne not get taken will land us at unlock_door
+</span><span style=color:#75715e></span><span style=color:#960050;background-color:#1e0010>4562:</span>  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>f40</span> <span style=color:#66d9ef>f144</span>      <span style=color:#66d9ef>mov</span>   <span style=color:#75715e>#0x44f1 &#34;Access granted.&#34;, r15
+</span><span style=color:#75715e></span><span style=color:#ae81ff>4566</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#66d9ef>de45</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x45de &lt;puts&gt;
+</span><span style=color:#75715e></span><span style=color:#ae81ff>456</span><span style=color:#66d9ef>a</span>:  <span style=color:#66d9ef>b012</span> <span style=color:#ae81ff>4844</span>      <span style=color:#66d9ef>call</span>  <span style=color:#75715e>#0x4448 &lt;unlock_door&gt;
+</span></code></pre></div><p>I noticed the <code>cmp.b #0x63, &0x2410</code> instruction again and realised that <code>0x2410</code> is close to the area where my password buffer was being stored in memory. Infact, this was just 16 bytes away from <code>0x2400</code>! Now remember that message telling us passwords are supposed to be 8 to 16 characters long? Well, looks like that is because char 17 and 18 forms part of this <code>cmp.b</code> instruction!</p>
 <p>If we can make the aforementioned instruction pass the test checking if the value at that memory address is <code>0x63</code>, (ASCII character <code>c</code>), then we can get past the <code>jne</code> instruction at <code>0x4560</code>, eventually landing us in <code>unlock_door</code> routine.</p>
 <p>So given that the distance to <code>0x2410</code> is 16 bytes from <code>0x2400</code> where our password buffer is stored, lets see if we can overflow the buffer to <code>0x2410</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">&gt;&gt;&gt; print(<span style="color:#87ceeb">&#39;A&#39;</span> * <span style="color:#f60">16</span> + <span style="color:#87ceeb">&#39;c&#39;</span>)
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>&gt;&gt;&gt;</span> print(<span style=color:#e6db74>&#39;A&#39;</span> <span style=color:#f92672>*</span> <span style=color:#ae81ff>16</span> <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;c&#39;</span>)
 AAAAAAAAAAAAAAAAc
 </code></pre></div><p>I set a breakpoint at <code>0x455a</code> with <code>break 455a</code> in the debugger and continued the CPU entering <code>AAAAAAAAAAAAAAAAc</code> as the password when prompted.</p>
-<figure><img src="https://leonjza.github.io/images/microcorruption/hanoi_jump_little_endian.png"/>
+<figure class=left>
+<img src=/images/microcorruption/hanoi_jump_little_endian.png>
 </figure>
-
 <p>After hitting the breakpoint and inspecting the contents of memory address <code>0x2410</code> with <code>read 2410</code> in the debugger reveals that the byte <code>0x63</code> is at <code>0x2410</code> (thanks to our overflow). This results in the <code>cmp.b</code> instruction setting the status register to <code>0x3</code> (CZ), which in turn means the jump is not taken!</p>
 <p>Turns out <code>test_password_valid</code> was just a decoy and the real vulnerability was a simple buffer overflow.</p>
-<h2 id="solution">solution</h2>
+<h2 id=solution>solution</h2>
 <p>Enter <code>AAAAAAAAAAAAAAAAc</code> as ASCII or <code>4141414141414141414141414141414163</code> as hex encoded input.</p>
-<h2 id="other-challenges">other challenges</h2>
-<p>For my other write ups in the microcorruption series, checkout <a href="https://leonjza.github.io/categories/microcorruption/">this</a> link.</p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#hanoi">hanoi</a>
-      <ul>
-        <li><a href="#debugging">debugging</a></li>
-      </ul>
-    </li>
-    <li><a href="#solution">solution</a></li>
-    <li><a href="#other-challenges">other challenges</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&text=microcorruption%20-%20hanoi" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&is_video=false&description=microcorruption%20-%20hanoi" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=microcorruption%20-%20hanoi&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&title=microcorruption%20-%20hanoi" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&name=microcorruption%20-%20hanoi&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fmicrocorruption%2fmicrocorruption.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20post%20is%20part%20of%20the%20series%20of%20solving%20%3ca%20href%3d%22https%3a%2f%2fmicrocorruption.com%22%3emicrocorruption.com%3c%2fa%3e%20ctf%20challenges%20which%20continues%20from%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f04%2fmicrocorruption---sydney%2f%22%3eprevious%20challenge%3c%2fa%3e%20called%20%3cem%3eSydney%3c%2fem%3e.%20This%20challenge%20is%20titled%20%3cem%3eHanoi%3c%2fem%3e.%3c%2fp%3e%0a%3cp%3eIf%20you%20were%20to%20read%20the%20description%20when%20you%20enter%20the%20challenge%2c%20one%20would%20see%20the%20following%20towards%20the%20bottom%3a%3c%2fp%3e%0a%3cblockquote%3e%0a%3cp%3eLockIT%20Pro%20Hardware%20Security%20Module%201%20stores%20the%20login%20password%2c%20ensuring%20users%20can%20not%20access%20the%20password%20through%20other%20means.%20The%20LockIT%20Pro%20can%20send%20the%20LockIT%20Pro%20HSM-1%20a%20password%2c%20and%20the%20HSM%20will%20return%20if%20the%20password%20is%20correct%20by%20setting%20a%20flag%20in%20memory.%3c%2fp%3e%0a%3c%2fblockquote%3e%0a%3cp%3eOk%2c%20so%20mention%20of%20a%20HSM%20here.%20Neat%21%20Lets%20take%20a%20look%20at%20how%20that%20works%21%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f05%2fmicrocorruption-hanoi%2f&t=microcorruption%20-%20hanoi" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+<h2 id=other-challenges>other challenges</h2>
+<p>For my other write ups in the microcorruption series, checkout <a href=https://leonjza.github.io/categories/microcorruption/>this</a> link.</p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2018/03/06/microcorruption-cusco/>
+<span class=button__icon>←</span>
+<span class=button__text>microcorruption - cusco</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2018/03/04/microcorruption-sydney/>
+<span class=button__text>microcorruption - sydney</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

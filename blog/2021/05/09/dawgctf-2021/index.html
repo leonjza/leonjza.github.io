@@ -1,287 +1,151 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> DawgCTF 2021 | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="DawgCTF 2021" />
+<title>
+DawgCTF 2021 ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="foreword DawgCTF 20201 was the first CTF I played together with some local people much smarter than me over at Hack South. We managed to grab 28th place too.
+ I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
+solutions reversing - calculator  Category: Reversing Points: 50 Files: Windows PE  This was the duplicate challenge, but I&amp;rsquo;m writing up how I did it anyways.">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="DawgCTF 2021">
+<meta name=twitter:description content="foreword DawgCTF 20201 was the first CTF I played together with some local people much smarter than me over at Hack South. We managed to grab 28th place too.
+ I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
+solutions reversing - calculator  Category: Reversing Points: 50 Files: Windows PE  This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways.">
+<meta property="og:title" content="DawgCTF 2021">
 <meta property="og:description" content="foreword DawgCTF 20201 was the first CTF I played together with some local people much smarter than me over at Hack South. We managed to grab 28th place too.
  I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
-solutions reversing - calculator  Category: Reversing Points: 50 Files: Windows PE  This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-05-09T08:04:40+02:00" />
-<meta property="article:modified_time" content="2021-05-09T08:04:40+02:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="DawgCTF 2021"/>
-<meta name="twitter:description" content="foreword DawgCTF 20201 was the first CTF I played together with some local people much smarter than me over at Hack South. We managed to grab 28th place too.
- I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
-solutions reversing - calculator  Category: Reversing Points: 50 Files: Windows PE  This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways."/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+solutions reversing - calculator  Category: Reversing Points: 50 Files: Windows PE  This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-05-09T08:04:40+02:00">
+<meta property="article:modified_time" content="2021-05-09T08:04:40+02:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&text=DawgCTF%202021" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&is_video=false&description=DawgCTF%202021" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=DawgCTF%202021&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&name=DawgCTF%202021&description=foreword%20DawgCTF%2020201%20was%20the%20first%20CTF%20I%20played%20together%20with%20some%20local%20people%20much%20smarter%20than%20me%20over%20at%20Hack%20South.%20We%20managed%20to%20grab%2028th%20place%20too.%0a%20I%20only%20solved%20three%20challenges%20with%20the%20time%20I%20had%20in%20the%20morning%20%28of%20which%20one%20was%20a%20dupe%20because%20reading%20is%20hard%20%3aP%29.%0asolutions%20reversing%20-%20calculator%20%20Category%3a%20Reversing%20Points%3a%2050%20Files%3a%20Windows%20PE%20%20This%20was%20the%20duplicate%20challenge%2c%20but%20I%26rsquo%3bm%20writing%20up%20how%20I%20did%20it%20anyways." aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&t=DawgCTF%202021" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#reversing---calculator">reversing - calculator</a></li>
-    <li><a href="#reversing---back-to-the-lab-1">reversing - back to the lab 1</a></li>
-    <li><a href="#misc---identifications">misc - identifications</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>DawgCTF 2021</h1>
+<div class=post-meta>
+<span class=post-date>
+2021-05-09
+</span>
+<span class=post-read-time>— 5 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        DawgCTF 2021
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2021-05-09 08:04:40 &#43;0200 SAST" itemprop="datePublished">2021-05-09</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/writeup">writeup</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/hacksouth">hacksouth</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/dawgctf">dawgctf</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/2021">2021</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <figure><img src="https://leonjza.github.io/images/dawgctf_2021/dawgctf.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li><a href=#foreword>foreword</a></li>
+<li><a href=#solutions>solutions</a>
+<ul>
+<li><a href=#reversing---calculator>reversing - calculator</a></li>
+<li><a href=#reversing---back-to-the-lab-1>reversing - back to the lab 1</a></li>
+<li><a href=#misc---identifications>misc - identifications</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<figure class=left>
+<img src=/images/dawgctf_2021/dawgctf.png>
 </figure>
-
-<h1 id="foreword">foreword</h1>
-<p><a href="https://umbccd.io/">DawgCTF 20201</a> was the first CTF I played together with some local people much smarter than me over at <a href="https://hacksouth.africa/">Hack South</a>. We managed to grab 28th place too.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/dawgctf_placement.png"/>
+<h1 id=foreword>foreword</h1>
+<p><a href=https://umbccd.io/>DawgCTF 20201</a> was the first CTF I played together with some local people much smarter than me over at <a href=https://hacksouth.africa/>Hack South</a>. We managed to grab 28th place too.</p>
+<figure class=left>
+<img src=/images/dawgctf_2021/dawgctf_placement.png>
 </figure>
-
 <p>I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).</p>
-<h1 id="solutions">solutions</h1>
-<h2 id="reversing---calculator">reversing - calculator</h2>
+<h1 id=solutions>solutions</h1>
+<h2 id=reversing---calculator>reversing - calculator</h2>
 <ul>
 <li>Category: Reversing</li>
 <li>Points: 50</li>
 <li>Files: Windows PE</li>
 </ul>
 <p>This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways. We get a Windows PE file that if run would ask for input files.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/calculator_1.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/calculator_1.png>
 </figure>
-
 <p>Reversing the binary in Cutter, we can see a check for two arguments provided to the program, and another check if a variable is <code>0x40</code> to enter a block that looks like it will print the flag.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f00">if</span> ((<span style="color:#ee82ee">int32_t</span>)argv &lt; <span style="color:#f60">3</span>) {
-    fcn<span style="color:#f60">.0041104</span>b((<span style="color:#ee82ee">int32_t</span>)<span style="color:#87ceeb">&#34;Please supply input files to calculate</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span>, unaff_EDI);
-    uVar1 = <span style="color:#f60">0xffffffff</span>;
-    uVar3 = extraout_EDX;
-} <span style="color:#f00">else</span> {
-    var_ch = fcn<span style="color:#f60">.00411348</span>(envp[<span style="color:#f60">1</span>]);
-    var_18h = fcn<span style="color:#f60">.00411348</span>(envp[<span style="color:#f60">2</span>]);
-    fcn<span style="color:#f60">.0041104</span>b((<span style="color:#ee82ee">int32_t</span>)<span style="color:#87ceeb">&#34;calculated: %d</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span>, var_ch * var_18h);
-    uVar3 = extraout_EDX_00;
-    <span style="color:#f00">if</span> (var_ch * var_18h == <span style="color:#f60">0x40</span>) {
-        fcn<span style="color:#f60">.004110f</span>a(&amp;var_120h, <span style="color:#f60">0</span>, <span style="color:#f60">0x100</span>);
-        fcn<span style="color:#f60">.004111</span>c2((<span style="color:#ee82ee">int32_t</span>)&amp;var_120h);
-        fcn<span style="color:#f60">.0041104</span>b((<span style="color:#ee82ee">int32_t</span>)<span style="color:#87ceeb">&#34;final flag: %s</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span>, (<span style="color:#ee82ee">int32_t</span>)&amp;var_120h);
-        uVar3 = extraout_EDX_01;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>if</span> ((<span style=color:#66d9ef>int32_t</span>)argv <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>3</span>) {
+    fcn<span style=color:#ae81ff>.0041104</span>b((<span style=color:#66d9ef>int32_t</span>)<span style=color:#e6db74>&#34;Please supply input files to calculate</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>, unaff_EDI);
+    uVar1 <span style=color:#f92672>=</span> <span style=color:#ae81ff>0xffffffff</span>;
+    uVar3 <span style=color:#f92672>=</span> extraout_EDX;
+} <span style=color:#66d9ef>else</span> {
+    var_ch <span style=color:#f92672>=</span> fcn<span style=color:#ae81ff>.00411348</span>(envp[<span style=color:#ae81ff>1</span>]);
+    var_18h <span style=color:#f92672>=</span> fcn<span style=color:#ae81ff>.00411348</span>(envp[<span style=color:#ae81ff>2</span>]);
+    fcn<span style=color:#ae81ff>.0041104</span>b((<span style=color:#66d9ef>int32_t</span>)<span style=color:#e6db74>&#34;calculated: %d</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>, var_ch <span style=color:#f92672>*</span> var_18h);
+    uVar3 <span style=color:#f92672>=</span> extraout_EDX_00;
+    <span style=color:#66d9ef>if</span> (var_ch <span style=color:#f92672>*</span> var_18h <span style=color:#f92672>==</span> <span style=color:#ae81ff>0x40</span>) {
+        fcn<span style=color:#ae81ff>.004110f</span>a(<span style=color:#f92672>&amp;</span>var_120h, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0x100</span>);
+        fcn<span style=color:#ae81ff>.004111</span>c2((<span style=color:#66d9ef>int32_t</span>)<span style=color:#f92672>&amp;</span>var_120h);
+        fcn<span style=color:#ae81ff>.0041104</span>b((<span style=color:#66d9ef>int32_t</span>)<span style=color:#e6db74>&#34;final flag: %s</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>, (<span style=color:#66d9ef>int32_t</span>)<span style=color:#f92672>&amp;</span>var_120h);
+        uVar3 <span style=color:#f92672>=</span> extraout_EDX_01;
     }
-    uVar1 = <span style="color:#f60">0</span>;
+    uVar1 <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
 }
 </code></pre></div><p>Getting past the first check is simple, provide two arguments. For the second check though we could do one of two things. Either we reverse the whole application to figure out how to get that variable to be <code>0x40</code>, or we can apply a binary patch to just flow there regardless of the variable values. Reading the assembly for the value comparison to <code>0x40</code> we see:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-asm" data-lang="asm">0<span style="color:#ff0">x00411bf2</span>      <span style="color:#7fffd4">add</span>     <span style="color:#7fffd4">esp</span>, <span style="color:#f60">8</span>
-0<span style="color:#ff0">x00411bf5</span>      <span style="color:#7fffd4">mov</span>     <span style="color:#7fffd4">eax</span>, <span style="color:#7fffd4">dword</span> [<span style="color:#7fffd4">var_ch</span>]
-0<span style="color:#ff0">x00411bf8</span>      <span style="color:#7fffd4">imul</span>    <span style="color:#7fffd4">eax</span>, <span style="color:#7fffd4">dword</span> [<span style="color:#7fffd4">var_18h</span>]
-0<span style="color:#ff0">x00411bfc</span>      <span style="color:#7fffd4">cmp</span>     <span style="color:#7fffd4">eax</span>, <span style="color:#f60">0x40</span>  <span style="color:#0f0">; 64
-</span><span style="color:#0f0"></span><span style="color:#f60">0x00411bff</span>      <span style="color:#7fffd4">jne</span>     <span style="color:#f60">0x411c3a</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>x00411bf2</span>      <span style=color:#66d9ef>add</span>     <span style=color:#66d9ef>esp</span>, <span style=color:#ae81ff>8</span>
+<span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>x00411bf5</span>      <span style=color:#66d9ef>mov</span>     <span style=color:#66d9ef>eax</span>, <span style=color:#66d9ef>dword</span> [<span style=color:#66d9ef>var_ch</span>]
+<span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>x00411bf8</span>      <span style=color:#66d9ef>imul</span>    <span style=color:#66d9ef>eax</span>, <span style=color:#66d9ef>dword</span> [<span style=color:#66d9ef>var_18h</span>]
+<span style=color:#960050;background-color:#1e0010>0</span><span style=color:#a6e22e>x00411bfc</span>      <span style=color:#66d9ef>cmp</span>     <span style=color:#66d9ef>eax</span>, <span style=color:#ae81ff>0x40</span>  <span style=color:#75715e>; 64
+</span><span style=color:#75715e></span><span style=color:#ae81ff>0x00411bff</span>      <span style=color:#66d9ef>jne</span>     <span style=color:#ae81ff>0x411c3a</span>
 </code></pre></div><p>The <code>jne</code> (jump not equal) can be changed to <code>je</code> (jump equal). Cutter makes this super simple. Right click the instruction in the disassembly view and edit it. You can actually do this in the decompiler view as well. Crazy powerful.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/calculator_2.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/calculator_2.png>
 </figure>
-
 <p>Copy the modified binary you opened in Cutter to a Windows VM and watch the flag get spewed out.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/calculator_3.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/calculator_3.png>
 </figure>
-
 <p>Flag: <code>final flag: DawgCTF{c4LcU14T0r_64}</code>.</p>
-<h2 id="reversing---back-to-the-lab-1">reversing - back to the lab 1</h2>
+<h2 id=reversing---back-to-the-lab-1>reversing - back to the lab 1</h2>
 <ul>
 <li>Category: Reversing</li>
 <li>Points: 150</li>
@@ -294,39 +158,39 @@ Note: To run the program, you&rsquo;ll need some rather expensive software; look
 Author: nb</p>
 </blockquote>
 <p>The file we got was not something I was familiar with. Figuring out what can read a <code>.vi</code> file, I <code>strings</code> the file, and Google a printable part of the header I get.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_1.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_1.png>
 </figure>
-
-<p>The challenge hinted towards a community edition, so I got a copy of it <a href="https://www.ni.com/en-us/shop/labview/select-edition/labview-community-edition.html">here</a>. A 2GB download and installation that took forever later, I could open the file we got.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_2.png"/>
+<p>The challenge hinted towards a community edition, so I got a copy of it <a href=https://www.ni.com/en-us/shop/labview/select-edition/labview-community-edition.html>here</a>. A 2GB download and installation that took forever later, I could open the file we got.</p>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_2.png>
 </figure>
-
 <p>At first glance this looked like it could be some ICS related reversing challenge. I have never used (or heard of) this application before, so I took quite a bit to figure out how to use it. Eventually I found the &ldquo;source&rdquo; (don&rsquo;t even know if that is what you&rsquo;d call it, but whatever) by right clicking one of the widgets and clicking &ldquo;Find Terminal&rdquo;.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_3.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_3.png>
 </figure>
-
 <p>That dropped me into a sort-of visual editor.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_4.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_4.png>
 </figure>
-
 <p>After a significant amount of time I got used to reading it, right-clicking things to see what the different widgets meant and following the paths of the connected parts to see how data flows from the initial flag field in the upper left corner. There were two loops that processed parts of the string you&rsquo;d input as the flag. Those would eventually end up in a <code>And</code> operation that would light up the thingy that indicated you had the correct flag.</p>
 <p>The debugger was the trickiest to figure out. You could right-click a widget and set a breakpoint. Once you run the thing (application? I honestly don&rsquo;t know what you&rsquo;d call this thing haha), execution would pause much like you&rsquo;d expect a traditional debugger to do. The thing was though, where the heck do you see the values in the different flows. Turns out, when you click this tiny &ldquo;retain wire values&rdquo; button, you can hover over the different links to see the current values in a &ldquo;Probe Window&rdquo;.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_5.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_5.png>
 </figure>
-
 <p>Being able to see the values as you step though the schematic made it easier for me to reimplement the operations performed on the input data, in reverse in a tiny Python script.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/labview_6.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/labview_6.png>
 </figure>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>C1 <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;AdrbFQC~hwZGPWK0Zop&#34;</span>
+C2 <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;s:)DHK8Uj&amp;]Uj+&#34;</span>
 
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">C1 = <span style="color:#87ceeb">&#34;AdrbFQC~hwZGPWK0Zop&#34;</span>
-C2 = <span style="color:#87ceeb">&#34;s:)DHK8Uj&amp;]Uj+&#34;</span>
+p1 <span style=color:#f92672>=</span> [chr(ord(x) <span style=color:#f92672>^</span> <span style=color:#ae81ff>5</span>) <span style=color:#66d9ef>for</span> x <span style=color:#f92672>in</span> C1]
+p2 <span style=color:#f92672>=</span> [chr(ord(x) <span style=color:#f92672>+</span> <span style=color:#ae81ff>10</span>) <span style=color:#66d9ef>for</span> x <span style=color:#f92672>in</span> C2][::<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>]
 
-p1 = [chr(ord(x) ^ <span style="color:#f60">5</span>) <span style="color:#f00">for</span> x in C1]
-p2 = [chr(ord(x) + <span style="color:#f60">10</span>) <span style="color:#f00">for</span> x in C2][::-<span style="color:#f60">1</span>]
-
-print(<span style="color:#87ceeb">&#34;&#34;</span>.join(p1 + p2))
+print(<span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>.</span>join(p1 <span style=color:#f92672>+</span> p2))
 </code></pre></div><p>Flag: <code>DawgCTF{mr_BURN5_ju5t_g0t_BURN3D}</code></p>
-<h2 id="misc---identifications">misc - identifications</h2>
+<h2 id=misc---identifications>misc - identifications</h2>
 <ul>
 <li>Category: Miscellaneous</li>
 <li>Points: 125</li>
@@ -339,185 +203,45 @@ identifications.7z: <a href="https://drive.google.com/file/d/1YkzVIwbNKWKG4I0K8F
 Once you figure out the CLLI code, make sure to wrap it in DawgCTF{}.<br>
 Author: nb</p>
 </blockquote>
-<p>We get two images to start and talk of a CLLI. A quick Google reveals that CLLI&rsquo;s are codes used to <a href="https://en.wikipedia.org/wiki/CLLI_code">ID telco sites</a> in the US.</p>
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/identifications_1.png"/>
+<p>We get two images to start and talk of a CLLI. A quick Google reveals that CLLI&rsquo;s are codes used to <a href=https://en.wikipedia.org/wiki/CLLI_code>ID telco sites</a> in the US.</p>
+<figure class=left>
+<img src=/images/dawgctf_2021/identifications_1.png>
 </figure>
-
-<figure><img src="https://leonjza.github.io/images/dawgctf_2021/identifications_2.png"/>
+<figure class=left>
+<img src=/images/dawgctf_2021/identifications_2.png>
 </figure>
-
-<p>The second image has some output on a device that shows wireless network in the area. So, using <a href="https://wigle.net/">WiGLE</a> I search for <code>DC:9F:DB:F5:68:93</code> (first network in the list) and find a location. Opening the location on Google maps with street view, I pinpoint exactly where that building in the image is.</p>
+<p>The second image has some output on a device that shows wireless network in the area. So, using <a href=https://wigle.net/>WiGLE</a> I search for <code>DC:9F:DB:F5:68:93</code> (first network in the list) and find a location. Opening the location on Google maps with street view, I pinpoint exactly where that building in the image is.</p>
 <p><a href="https://www.google.com/maps/@39.367583,-77.1647889,3a,75y,114.95h,76.63t/data=!3m6!1e1!3m4!1suVXHOWHg8__NiAn8G56x2A!2e0!7i13312!8i6656">https://www.google.com/maps/@39.367583,-77.1647889,3a,75y,114.95h,76.63t/data=!3m6!1e1!3m4!1suVXHOWHg8__NiAn8G56x2A!2e0!7i13312!8i6656</a></p>
 <p>The address appears to be:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">1305 MD-808
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>1305 MD-808
 Mt Airy, Maryland
-</code></pre></div><p>The next part was to find how to lookup CLLI&rsquo;s given that I know the address now. I found <a href="https://www.telcodata.us/search-area-code-exchange-by-clli?cllicode=MTARMDMARS1">this</a> URL after using the search term <code>verizon &quot;clli&quot; mt airy</code> which revealed <code>MTARMDMARS1</code> as the CLLI for the site.</p>
+</code></pre></div><p>The next part was to find how to lookup CLLI&rsquo;s given that I know the address now. I found <a href="https://www.telcodata.us/search-area-code-exchange-by-clli?cllicode=MTARMDMARS1">this</a> URL after using the search term <code>verizon "clli" mt airy</code> which revealed <code>MTARMDMARS1</code> as the CLLI for the site.</p>
 <p>Flag: <code>DawgCTF{MTARMDMARS1}</code></p>
-
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#reversing---calculator">reversing - calculator</a></li>
-    <li><a href="#reversing---back-to-the-lab-1">reversing - back to the lab 1</a></li>
-    <li><a href="#misc---identifications">misc - identifications</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&text=DawgCTF%202021" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&is_video=false&description=DawgCTF%202021" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=DawgCTF%202021&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&title=DawgCTF%202021" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&name=DawgCTF%202021&description=foreword%20DawgCTF%2020201%20was%20the%20first%20CTF%20I%20played%20together%20with%20some%20local%20people%20much%20smarter%20than%20me%20over%20at%20Hack%20South.%20We%20managed%20to%20grab%2028th%20place%20too.%0a%20I%20only%20solved%20three%20challenges%20with%20the%20time%20I%20had%20in%20the%20morning%20%28of%20which%20one%20was%20a%20dupe%20because%20reading%20is%20hard%20%3aP%29.%0asolutions%20reversing%20-%20calculator%20%20Category%3a%20Reversing%20Points%3a%2050%20Files%3a%20Windows%20PE%20%20This%20was%20the%20duplicate%20challenge%2c%20but%20I%26rsquo%3bm%20writing%20up%20how%20I%20did%20it%20anyways." aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f05%2f09%2fdawgctf-2021%2f&t=DawgCTF%202021" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/>
+<span class=button__text>hack the box - cyber apocalypse ctf '21</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

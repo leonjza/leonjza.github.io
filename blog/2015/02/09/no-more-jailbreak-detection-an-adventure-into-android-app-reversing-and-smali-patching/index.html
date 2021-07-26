@@ -1,322 +1,181 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> no more jailbreak detection an adventure into Android app reversing and smali patching | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="no more jailbreak detection an adventure into Android app reversing and smali patching" />
+<title>
+no more jailbreak detection an adventure into Android app reversing and smali patching ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="introduction I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&amp;rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
+ Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations.
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="no more jailbreak detection an adventure into Android app reversing and smali patching">
+<meta name=twitter:description content="introduction
+I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
+
+  
+    
+    
+  
+
+
+Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations.">
+<meta property="og:title" content="no more jailbreak detection an adventure into Android app reversing and smali patching">
 <meta property="og:description" content="introduction
 I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
 
-
-
-Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2015-02-09T19:10:23+00:00" />
-<meta property="article:modified_time" content="2015-02-09T19:10:23+00:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="no more jailbreak detection an adventure into Android app reversing and smali patching"/>
-<meta name="twitter:description" content="introduction
-I will start by saying that I am by no means a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.
-
-
-
-Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations."/>
-
-  
   
     
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
     
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+  
 
-  
-  
+
+Recently I had the opportunity to poke at an Android .apk. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the apk, I needed to get some tools setup and learn a few things about the Android environment really fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the apk had and let it continue normal operations.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2015-02-09T19:10:23+00:00">
+<meta property="article:modified_time" content="2015-02-09T19:10:23+00:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&text=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&is_video=false&description=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&name=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eI%20will%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%20means%3c%2fem%3e%20a%20expert%20in%20anything%20you%20are%20about%20to%20read.%20I%20am%20also%20not%20100%25%20sure%20about%20the%20correct%20terminology%20for%20this%20type%20of%20patching.%20Maybe%20it%20should%20have%20been%20called%20binary%20patching%3f%20I%20don%26rsquo%3bt%20know%2c%20but%20I%20do%20know%20that%20I%20was%20quite%20literally%20shocked%20by%20the%20ease%20of%20getting%20this%20job%20done%2c%20and%20figured%20its%20time%20to%20make%20some%20notes%20for%20me%20to%20reflect%20on%20later%20again.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fandroid_jailbreak_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20had%20the%20opportunity%20to%20poke%20at%20an%20Android%20%3ccode%3e.apk%3c%2fcode%3e.%20My%20task%20was%20a%20little%20different%20from%20what%20I%20am%20about%20to%20blog%20about%2c%20but%20the%20fundamental%20idea%20remained%20the%20same.%20I%20wanted%20to%20inspect%20some%20traffic%20of%20an%20application%2c%20but%20the%20application%20had%20jailbreak%20detection%20built%20in%20and%20refused%20to%20run%20if%20the%20device%20its%20running%20on%20is%20detected%20as%20jailbroken.%20This%20had%20to%20be%20bypassed%20first.%20To%20play%20with%20the%20%3ccode%3eapk%3c%2fcode%3e%2c%20I%20needed%20to%20get%20some%20tools%20setup%20and%20learn%20a%20few%20things%20about%20the%20Android%20environment%20%3cem%3ereally%3c%2fem%3e%20fast.%20There%20are%20tons%20of%20resources%20available%20online%20to%20describe%20to%20you%20the%20general%20idea%20behind%20Android%2c%20as%20well%20as%20how%20its%20all%20stitched%20together.%20You%20will%20quickly%20come%20to%20realize%20that%20apps%20can%20be%20written%20in%20Java.%20For%20the%20purpose%20of%20this%20post%2c%20the%20focus%20is%20to%20bypass%20the%20jailbreak%20detection%20the%20%3ccode%3eapk%3c%2fcode%3e%20had%20and%20let%20it%20continue%20normal%20operations.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&t=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#so-what-about-jailbreaking">so what about jailbreaking</a></li>
-    <li><a href="#getting-started">getting started</a></li>
-    <li><a href="#preparing-an-actual-emulator">preparing an actual emulator</a></li>
-    <li><a href="#looking-at-the-apk-getting-the-juicy-bits">looking at the apk, getting the juicy bits</a></li>
-    <li><a href="#decompiling-the-classesdex">decompiling the classes.dex</a></li>
-    <li><a href="#preparing-the-patch">preparing the patch</a></li>
-    <li><a href="#repackaging-and-signing-the-apk">repackaging and signing the apk</a></li>
-    <li><a href="#notes-about-traffic-interception">notes about traffic interception</a></li>
-    <li><a href="#summary">summary</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>no more jailbreak detection an adventure into Android app reversing and smali patching</h1>
+<div class=post-meta>
+<span class=post-date>
+2015-02-09
+</span>
+<span class=post-read-time>— 18 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        no more jailbreak detection an adventure into Android app reversing and smali patching
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2015-02-09 19:10:23 &#43;0000 UTC" itemprop="datePublished">2015-02-09</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/android">android</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/jailbreak">jailbreak</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/root">root</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/reverse-engineer">reverse engineer</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/sandbox">sandbox</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/java">java</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/smali">smali</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <h2 id="introduction">introduction</h2>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#introduction>introduction</a></li>
+<li><a href=#so-what-about-jailbreaking>so what about jailbreaking</a></li>
+<li><a href=#getting-started>getting started</a></li>
+<li><a href=#preparing-an-actual-emulator>preparing an actual emulator</a></li>
+<li><a href=#looking-at-the-apk-getting-the-juicy-bits>looking at the apk, getting the juicy bits</a></li>
+<li><a href=#decompiling-the-classesdex>decompiling the classes.dex</a></li>
+<li><a href=#preparing-the-patch>preparing the patch</a></li>
+<li><a href=#repackaging-and-signing-the-apk>repackaging and signing the apk</a></li>
+<li><a href=#notes-about-traffic-interception>notes about traffic interception</a></li>
+<li><a href=#summary>summary</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<h2 id=introduction>introduction</h2>
 <p>I will start by saying that I am by <em>no means</em> a expert in anything you are about to read. I am also not 100% sure about the correct terminology for this type of patching. Maybe it should have been called binary patching? I don&rsquo;t know, but I do know that I was quite literally shocked by the ease of getting this job done, and figured its time to make some notes for me to reflect on later again.</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_logo.png"/>
+<figure class=left>
+<img src=/images/android_jailbreak_logo.png>
 </figure>
-
 <p>Recently I had the opportunity to poke at an Android <code>.apk</code>. My task was a little different from what I am about to blog about, but the fundamental idea remained the same. I wanted to inspect some traffic of an application, but the application had jailbreak detection built in and refused to run if the device its running on is detected as jailbroken. This had to be bypassed first. To play with the <code>apk</code>, I needed to get some tools setup and learn a few things about the Android environment <em>really</em> fast. There are tons of resources available online to describe to you the general idea behind Android, as well as how its all stitched together. You will quickly come to realize that apps can be written in Java. For the purpose of this post, the focus is to bypass the jailbreak detection the <code>apk</code> had and let it continue normal operations.</p>
-<h2 id="so-what-about-jailbreaking">so what about jailbreaking</h2>
+<h2 id=so-what-about-jailbreaking>so what about jailbreaking</h2>
 <p>While I refer to jailbreaking, there are a number of terms used out there to describe the same thing. In the Android world, <em>rooting</em> seems to be what is more commonly known. However, the premise remains the same. Rooting/Jailbreaking your device means that you escape the OS implemented sandboxing and gain full <code>root</code> access to your device. Many mobile applications are against this as a compromised sandbox may have occurred unknowingly, effectively meaning that the device is compromised. So, as a safety measure, applications check for this and refuse to run because of it.</p>
 <p>Jailbreak detection itself is a interesting field. From simple static file existence checks, to checking the exit codes of calls to <code>fork()</code> and <code>su</code> all the way to inspecting loaded <code>dynalibs</code> (in the iOS world), everything is fair game. While a compromised device is a totally legit reason to not run any sensitive applications (think credential theft, traffic redirection etc), there are cases where a jailbroken device occurred on purpose. In these cases, power users may find application jailbreak detection very annoying :)</p>
-<h2 id="getting-started">getting started</h2>
-<p>The very first thing one would obviously need is the application you want to modify. I already had the <code>apk</code> I wanted to modify at hand. If you don’t have it then there are many ways to get an already installed <code>apk</code> off a device. You just need to Google it :) Like, <a href="http://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device">this</a>.</p>
-<p>Just having the <code>apk</code> though was not very useful. I needed something to run it on. I don’t have a hardware device handy so in comes the Android Studio, which includes the SDK and a Emulator. I downloaded the Android Studio <a href="http://developer.android.com/sdk/index.html">here</a> and promptly installed it. I fired it up and clicked next furiously, waiting for more crap to download, till finally it looked like it was done.</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_android_studio.png"/>
+<h2 id=getting-started>getting started</h2>
+<p>The very first thing one would obviously need is the application you want to modify. I already had the <code>apk</code> I wanted to modify at hand. If you don’t have it then there are many ways to get an already installed <code>apk</code> off a device. You just need to Google it :) Like, <a href=http://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device>this</a>.</p>
+<p>Just having the <code>apk</code> though was not very useful. I needed something to run it on. I don’t have a hardware device handy so in comes the Android Studio, which includes the SDK and a Emulator. I downloaded the Android Studio <a href=http://developer.android.com/sdk/index.html>here</a> and promptly installed it. I fired it up and clicked next furiously, waiting for more crap to download, till finally it looked like it was done.</p>
+<figure class=left>
+<img src=/images/android_jailbreak_android_studio.png>
 </figure>
-
 <p>The next daunting task was to find the SDK updater. I wanted to install the x86 Emulator Accelerator amongst other things. Some searching around got me to the directory <code>~/Library/Android/sdk/tools</code> which had the <code>android</code> and <code>emulator</code> programs I was after. I fired up the SDK updater with <code>~/Library/Android/sdk/tools/android</code> and updated/installed all the stuff I wanted (yay more downloading). In the end, my installed packages ended up as follows:</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_sdk_manager.png"/>
+<figure class=left>
+<img src=/images/android_jailbreak_sdk_manager.png>
 </figure>
-
-<h2 id="preparing-an-actual-emulator">preparing an actual emulator</h2>
+<h2 id=preparing-an-actual-emulator>preparing an actual emulator</h2>
 <p>With the software I needed for the emulator downloaded and ready, it was time to configure a <code>avd</code> (Android Virtual Device). I fired up the command <code>~/Library/Android/sdk/tools/android avd</code> and was presented with the Android Virtual Device Manager. I then proceeded to create a New device as follows:</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_avd.png"/>
+<figure class=left>
+<img src=/images/android_jailbreak_avd.png>
 </figure>
-
 <p>Saved that and quit the AVD Manager. That is all that I needed for the hardware portion. To test the <code>avd</code> that I have just made, I chose to run it quickly using <code>~/Library/Android/sdk/tools/emulator -avd test</code>:</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_emulator_running.png"/>
+<figure class=left>
+<img src=/images/android_jailbreak_emulator_running.png>
 </figure>
-
 <p>Aaaand it works! I was actually testing network connectivity of the <code>apk</code> in question, so I will add the information for that at the end of the post as a small FYI.</p>
 <p>With the emulator running and working, it was time to install the <code>apk</code> to test. To do this, we use a tool call <code>adb</code>. This can be found in <code>~/Library/Android/sdk/platform-tools/adb</code>. A number of features are available to us using <code>adb</code>, such as pushing files to and from the device and installing applications. The <code>apk</code> I was testing, was installed while the emulator was running:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
-* daemon not running. starting it now on port <span style="color:#f60">5037</span> *
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@laptop » ~/Library/Android/sdk/platform-tools/adb install ~/MyApplication.apk
+* daemon not running. starting it now on port <span style=color:#ae81ff>5037</span> *
 * daemon started successfully *
-<span style="color:#f60">2383</span> KB/s (<span style="color:#f60">4184313</span> bytes in 1.714s)
+<span style=color:#ae81ff>2383</span> KB/s <span style=color:#f92672>(</span><span style=color:#ae81ff>4184313</span> bytes in 1.714s<span style=color:#f92672>)</span>
     pkg: /data/local/tmp/MyApplication.apk
 Success
 </code></pre></div><p>The application popped up under the menu on the emulator and I was able to launch it. However, the application sees the Andriod Emulator as a jailbroken device, and refuses to start up. Not a problem :)</p>
 <p><strong>Note</strong> If you get a error such as <em>INSTALL_FAILED_DUPLICATE_PERMISSION</em>, it usually meant that the application is already installed. Simply uninstall it from the emulator and retry the install. The storage on the emulator was persistent throughout reboots for me which was quite nice too.</p>
-<h2 id="looking-at-the-apk-getting-the-juicy-bits">looking at the apk, getting the juicy bits</h2>
-<p>Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a <code>apk</code> gets to be, and what it contains. Most importantly, the <code>apk</code> can be unzipped and its contents further examined. <a href="http://en.wikipedia.org/wiki/Android_application_package">Wikipedia</a> does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in <code>classes.dex</code>. This is what looks like to be the compiled logic in the [dex file format](<a href="http://en.wikipedia.org/wiki/Dalvik_(software)">http://en.wikipedia.org/wiki/Dalvik_(software)</a> understandable by the Dalvik virtual machine. Ok. But how do I make that into something <strong>I</strong> can understand?</p>
-<p>In comes <a href="https://code.google.com/p/dex2jar/">dex2jar</a>. A utility that will convert android dex files into Java source. :) I <a href="https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip">downloaded</a> the latest archive and extracted it. I then extracted classes.dex from the <code>apk</code> too:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » unzip MyApplication.apk classes.dex
+<h2 id=looking-at-the-apk-getting-the-juicy-bits>looking at the apk, getting the juicy bits</h2>
+<p>Before I could even begin to think about where to look for the Jailbreak checking code, I first had to understand very quickly how a <code>apk</code> gets to be, and what it contains. Most importantly, the <code>apk</code> can be unzipped and its contents further examined. <a href=http://en.wikipedia.org/wiki/Android_application_package>Wikipedia</a> does a very good of giving you a rundown on a very high level. Just enough to grasp which parts may be of interest. It seemed like the juicy bits I am after will be in <code>classes.dex</code>. This is what looks like to be the compiled logic in the [dex file format](<a href=http://en.wikipedia.org/wiki/Dalvik_(software)>http://en.wikipedia.org/wiki/Dalvik_(software)</a> understandable by the Dalvik virtual machine. Ok. But how do I make that into something <strong>I</strong> can understand?</p>
+<p>In comes <a href=https://code.google.com/p/dex2jar/>dex2jar</a>. A utility that will convert android dex files into Java source. :) I <a href=https://dex2jar.googlecode.com/files/dex2jar-0.0.9.15.zip>downloaded</a> the latest archive and extracted it. I then extracted classes.dex from the <code>apk</code> too:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@Laptop » unzip MyApplication.apk classes.dex
 Archive:  MyApplication.apk
   inflating: classes.dex
 </code></pre></div><p>With the <code>classes.dex</code> file ready, I ran it through <code>dex2jar</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » dex2jar-0.0.9.15/dex2jar.sh classes.dex
-this cmd is deprecated, use the d2j-dex2jar <span style="color:#f00">if</span> possible
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@Laptop » dex2jar-0.0.9.15/dex2jar.sh classes.dex
+this cmd is deprecated, use the d2j-dex2jar <span style=color:#66d9ef>if</span> possible
 dex2jar version: translator-0.0.9.15
 dex2jar classes.dex -&gt; classes_dex2jar.jar
 Done.
-</code></pre></div><p>I now have a <code>jar</code> file that I could open up in something like <a href="http://deathmarine.github.io/Luyten/">Luyten</a> and examine further. I downloaded the latest <a href="https://github.com/deathmarine/Luyten/releases/download/v0.4.3/luyten-0.4.3.jar">Luyten jar</a> and opened the <code>classes_dex2jar.jar</code> file with <code>java -jar luyten-0.4.3.jar classes_dex2jar.jar</code>. This totally looks like Java sources for the application :D</p>
+</code></pre></div><p>I now have a <code>jar</code> file that I could open up in something like <a href=http://deathmarine.github.io/Luyten/>Luyten</a> and examine further. I downloaded the latest <a href=https://github.com/deathmarine/Luyten/releases/download/v0.4.3/luyten-0.4.3.jar>Luyten jar</a> and opened the <code>classes_dex2jar.jar</code> file with <code>java -jar luyten-0.4.3.jar classes_dex2jar.jar</code>. This totally looks like Java sources for the application :D</p>
 <p>I went through quite a large amount of code, trying to piece together how everything fits into one another. After some time, I finally came across <code>RootDetection.class</code>:</p>
-<figure><img src="https://leonjza.github.io/images/android_jailbreak_root_detection_class.png"/>
+<figure class=left>
+<img src=/images/android_jailbreak_root_detection_class.png>
 </figure>
-
 <p>This is only a section of the code that attempts to detect if the device that the application is running on is rooted. Quite a number of checks are present, however the failure comes in where its only 1 method that is being used to return the Jailbreak status. This method was right at the end and was called <code>isRooted</code>. You will see in the next few paragraphs how trivial it is to bypass this.</p>
-<h2 id="decompiling-the-classesdex">decompiling the classes.dex</h2>
-<p>With some knowledge about the code, and knowing what I am after (the <code>RootDetection</code> class, <code>isRooted</code> method), it was time to move on to decompiling the dex to smali. This can be done easily using <a href="https://code.google.com/p/smali/">smali/baksmali</a> which is an assembler/disassembler for Android&rsquo;s dex format. I downloaded the latest versions of <a href="https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar">smali</a> and <a href="https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar">baksmali</a> and prepared to disassemble the <code>classes.dex</code> file that we used earlier to get some Java sources out of.</p>
+<h2 id=decompiling-the-classesdex>decompiling the classes.dex</h2>
+<p>With some knowledge about the code, and knowing what I am after (the <code>RootDetection</code> class, <code>isRooted</code> method), it was time to move on to decompiling the dex to smali. This can be done easily using <a href=https://code.google.com/p/smali/>smali/baksmali</a> which is an assembler/disassembler for Android&rsquo;s dex format. I downloaded the latest versions of <a href=https://bitbucket.org/JesusFreke/smali/downloads/smali-2.0.5.jar>smali</a> and <a href=https://bitbucket.org/JesusFreke/smali/downloads/baksmali-2.0.5.jar>baksmali</a> and prepared to disassemble the <code>classes.dex</code> file that we used earlier to get some Java sources out of.</p>
 <p>Using the <code>baksmali</code> tool, I pushed <code>classes.dex</code> through it to a output directory of <code>out</code> with <code>java -jar baksmali-2.0.5.jar classes.dex -o out</code>. This produced the disassembled version of the classes.dex and allowed me to read through it. I don’t really get a lot of this <code>smali</code>, but it is not that hard to find what you may be looking for. A simple grep may reveal all the answers:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » grep -Ri isRooted out/
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@Laptop » grep -Ri isRooted out/
 Binary file out//classes.dex matches
-out//com/MyApplication/utils/RootDetection.smali:.method public isRooted(Landroid/content/pm/PackageManager;)Z
+out//com/MyApplication/utils/RootDetection.smali:.method public isRooted<span style=color:#f92672>(</span>Landroid/content/pm/PackageManager;<span style=color:#f92672>)</span>Z
 </code></pre></div><p>Yay. the <code>isRooted</code> method is easily identifiable. Opening the file containing the the <code>isRooted</code> method reveals the smali too:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">.method public isRooted(Landroid/content/pm/PackageManager;)Z
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>.method public isRooted(Landroid/content/pm/PackageManager;)Z
     .registers 3
     .param p1, &#34;pm&#34;    # Landroid/content/pm/PackageManager;
 
@@ -336,25 +195,25 @@ out//com/MyApplication/utils/RootDetection.smali:.method public isRooted(Landroi
     goto :goto_19
 .end method
 </code></pre></div><p>Awesome.</p>
-<h2 id="preparing-the-patch">preparing the patch</h2>
+<h2 id=preparing-the-patch>preparing the patch</h2>
 <p>As we can see, <code>isRooted</code> has quite a bit of logic in it. Referring back to the <code>jar</code> file I created with <code>dex2jar</code>, we can deduce that we want <code>isRooted</code> to return <code>false</code>. Makes sense right? Now, I don’t write smali out of my head, but that did not stop me. How can I see what smali code would look like to just return <code>false</code>? Well, I could just write my own <code>.java</code> code, compile it, and check what the output is like once its disassembled right? Yep!</p>
 <p>So I created <code>RootDetection.java</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f00">public</span> <span style="color:#f00">class</span> RootDetection
-{
-    <span style="color:#f00">public</span> <span style="color:#ee82ee">boolean</span> <span style="color:#ff0">isRooted</span>() {
-        <span style="color:#f00">return</span> <span style="color:#f00">false</span>;
-    }
-}
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>RootDetection</span>
+<span style=color:#f92672>{</span>
+    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>boolean</span> <span style=color:#a6e22e>isRooted</span><span style=color:#f92672>()</span> <span style=color:#f92672>{</span>
+        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>false</span><span style=color:#f92672>;</span>
+    <span style=color:#f92672>}</span>
+<span style=color:#f92672>}</span>
 </code></pre></div><p>As you can see, <code>isRooted</code> will now just return false as I&rsquo;d like it to! I had to hack away a bit at it to get the compilation to pass without errors, and this is probably the step that will usually require a bit of intuition. An important thing to note here is that I had to remove the argument from the original <code>isRooted</code> call. I had to keep this in mind when I was going to patch the original method. Anyways, I compiled the file <code>RootDetection.java</code> using the <code>javac</code> command line:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » javac -source 1.6 -target 1.6 RootDetection.java
-warning: [options] bootstrap class path not set in conjunction with -source 1.6
-<span style="color:#f60">1</span> warning
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@Laptop » javac -source 1.6 -target 1.6 RootDetection.java
+warning: <span style=color:#f92672>[</span>options<span style=color:#f92672>]</span> bootstrap class path not set in conjunction with -source 1.6
+<span style=color:#ae81ff>1</span> warning
 ------------------------------------------------------------
 leonjza@Laptop » file RootDetection.class
-RootDetection.class: compiled Java class data, version 50.0 (Java 1.6)
+RootDetection.class: compiled Java class data, version 50.0 <span style=color:#f92672>(</span>Java 1.6<span style=color:#f92672>)</span>
 </code></pre></div><p>You will notice I specified the <code>-source</code> and <code>-target</code> flags for <code>javac</code>. If I did not do this, <code>baksmali</code> would have not been able to decompile the java class :(</p>
-<p>With my compiled method ready, it was time to see what this looks like in smali. There was just one more thing stopping me from seeing that though. The compiled java is not in the dex format that Andriod uses. Luckily there is a tool to convert this that comes with the Android sdk and lives in <code>~/Library/Android/sdk/build-tools/21.1.1/dx</code>. I converted the <code>class</code> to <code>dex</code> format using the command <code>~/Library/Android/sdk/build-tools/21.1.1/dx --dex  --output=RootDetection.dex RootDetection.class</code>. This produced a new file called <code>RootDetection.dex</code> which is recognizable by <code>baksmali</code>. I  then proceeded to decompile the generated <code>.dex</code> with <code>baksmali</code> and set the output to <code>RootDetection/</code> with <code>java -jar baksmali-2.0.5.jar RootDetection.dex -o RootDetection/</code>. Inspecting the generated smali code, I now had a sample of what it would look like if it should simply return false:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># virtual methods
+<p>With my compiled method ready, it was time to see what this looks like in smali. There was just one more thing stopping me from seeing that though. The compiled java is not in the dex format that Andriod uses. Luckily there is a tool to convert this that comes with the Android sdk and lives in <code>~/Library/Android/sdk/build-tools/21.1.1/dx</code>. I converted the <code>class</code> to <code>dex</code> format using the command <code>~/Library/Android/sdk/build-tools/21.1.1/dx --dex --output=RootDetection.dex RootDetection.class</code>. This produced a new file called <code>RootDetection.dex</code> which is recognizable by <code>baksmali</code>. I then proceeded to decompile the generated <code>.dex</code> with <code>baksmali</code> and set the output to <code>RootDetection/</code> with <code>java -jar baksmali-2.0.5.jar RootDetection.dex -o RootDetection/</code>. Inspecting the generated smali code, I now had a sample of what it would look like if it should simply return false:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text># virtual methods
 .method public isRooted()Z
     .registers 2
 
@@ -366,420 +225,280 @@ RootDetection.class: compiled Java class data, version 50.0 (Java 1.6)
 .end method
 </code></pre></div><p>The plan now was to simply replace the originally generated smali from the <code>apk</code>&rsquo;s <code>classes.dex</code> and re-assemble it using <code>smali</code>. I opened up the original <code>isRooted</code> code and replaced it with the sample that I had generated myself. Remembering the argument I had to remove from my compiled version, I figured that because the original method defined <code>.registers 3</code>, and mine defined <code>.registers 2</code>, I had to up it to 3 to keep the method argument in mind. This was the last modification that I did.</p>
 <p>With the <code>RootDetection</code> class now patched, I re-assembled the <code>classes.dex</code> file from the generated smali code with <code>java -jar smali-2.0.5.jar -o classes.dex out</code>. The Reassembly generated no errors so I assumed it was successful.</p>
-<h2 id="repackaging-and-signing-the-apk">repackaging and signing the apk</h2>
+<h2 id=repackaging-and-signing-the-apk>repackaging and signing the apk</h2>
 <p>With the patch applied and the new <code>classes.dex</code> generated, it was time to repackage the <code>apk</code>. The first step was to add the new <code>classes.dex</code> to the <code>apk</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">leonjza@Laptop » zip MyApplication.apk classes.dex
-updating: classes.dex (deflated 56%)
-</code></pre></div><p>Next, the package has to be resigned as the <code>classes.dex</code> will no longer have the same hashes in <code>META-INF/MANIFEST.MF</code> as it originally had. Attempts to install the repackeged <code>apk</code> without resigning it may result in a error such as <em>Failure [INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION]</em>. I used a tool called &lsquo;sign&rsquo; found <a href="https://github.com/appium/sign">here</a> to get hold of <code>sign.jar</code>. This would sign my apk using the test keys. I downloaded it using <code>wget https://github.com/appium/sign/raw/master/dist/sign.jar</code>, and ran it to sign my patched <code>apk</code> with <code>java -jar sign.jar MyApplication_no_root.apk</code>. This produced a file called <code>MyApplication_no_root.s.apk</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@Laptop » zip MyApplication.apk classes.dex
+updating: classes.dex <span style=color:#f92672>(</span>deflated 56%<span style=color:#f92672>)</span>
+</code></pre></div><p>Next, the package has to be resigned as the <code>classes.dex</code> will no longer have the same hashes in <code>META-INF/MANIFEST.MF</code> as it originally had. Attempts to install the repackeged <code>apk</code> without resigning it may result in a error such as <em>Failure [INSTALL_PARSE_FAILED_UNEXPECTED_EXCEPTION]</em>. I used a tool called &lsquo;sign&rsquo; found <a href=https://github.com/appium/sign>here</a> to get hold of <code>sign.jar</code>. This would sign my apk using the test keys. I downloaded it using <code>wget https://github.com/appium/sign/raw/master/dist/sign.jar</code>, and ran it to sign my patched <code>apk</code> with <code>java -jar sign.jar MyApplication_no_root.apk</code>. This produced a file called <code>MyApplication_no_root.s.apk</code>.</p>
 <p>Excellent. The only thing left for me to do was to install the application using <code>adb</code> and see if my patch worked, which it did! :D The usual error message about the jailbreak no longer displayed and I could continue with the rest of my testing.</p>
-<h2 id="notes-about-traffic-interception">notes about traffic interception</h2>
+<h2 id=notes-about-traffic-interception>notes about traffic interception</h2>
 <p>I have covered what I originally intended with the jailbreak detection patching, but want to add a few notes about traffic interception using the Emulator.</p>
-<p>I used <a href="http://portswigger.net/burp/">Burp Suite</a> to intercept traffic and had it running locally, with a proxy open on <code>tcp/8080</code>. To redirect the emulators traffic though, I had to add a startup option to the emulator as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8080
+<p>I used <a href=http://portswigger.net/burp/>Burp Suite</a> to intercept traffic and had it running locally, with a proxy open on <code>tcp/8080</code>. To redirect the emulators traffic though, I had to add a startup option to the emulator as follows:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8080
 </code></pre></div><p>This proved affective and I was able to see <code>http</code> traffic just fine. However, when it came to <code>https</code> traffic, I wanted to take a spoon and remove my eye. Requests would just &lsquo;hang&rsquo;, the browser would freak out, the application I was testing would just stall, it was just a mess. Some research into the topic revealed I was not the only one planning some personal surgery and a few bright people have come up with some solutions.</p>
-<p>The first pain I had was even though I installed the PortSwagger CA onto the device (via <code>~/Library/Android/sdk/platform-tools/adb push ~/Downloads/BurpCa.cer /storage/sdcard</code> and then the devices Settings -&gt; Security -&gt; Install form SD Card), the certificate validation would still just fail due to date errors. So, I moved the devices date on by 3 days, and viola! Grr.</p>
+<p>The first pain I had was even though I installed the PortSwagger CA onto the device (via <code>~/Library/Android/sdk/platform-tools/adb push ~/Downloads/BurpCa.cer /storage/sdcard</code> and then the devices Settings -> Security -> Install form SD Card), the certificate validation would still just fail due to date errors. So, I moved the devices date on by 3 days, and viola! Grr.</p>
 <p>The next pain was the fact that the Emulator (or Android OS?) would not attempt to make a request to hostnames, but to the IP&rsquo;s directly, making it very hard to trace in Burp. Luckily though, I found a script (and lost the original source, but I take no credit for this), that will help with the rewrites to hostnames and pass them to Burp as expected. This was mostly a problem in the application itself and not so much the web browser. The script to help with this was:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># TODO&#39;s:</span>
-<span style="color:#0f0"># - Script currently doesn&#39;t treat TCP connections a streamed data. Normally we should buffer input</span>
-<span style="color:#0f0">#   untill enough data has been received and then do our checks. However since the connections are</span>
-<span style="color:#0f0">#   local all data is received at once (most of the time) so this code does work :)</span>
-<span style="color:#f00">import</span> twisted
-<span style="color:#f00">from</span> twisted.names <span style="color:#f00">import</span> server, dns, client
-<span style="color:#f00">from</span> twisted.internet <span style="color:#f00">import</span> reactor, defer
-<span style="color:#f00">from</span> twisted.internet.endpoints <span style="color:#f00">import</span> TCP4ServerEndpoint
-<span style="color:#f00">from</span> twisted.protocols <span style="color:#f00">import</span> portforward
-<span style="color:#f00">import</span> re
-<span style="color:#f00">from</span> socket <span style="color:#f00">import</span> *
-<span style="color:#f00">import</span> struct
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># TODO&#39;s:</span>
+<span style=color:#75715e># - Script currently doesn&#39;t treat TCP connections a streamed data. Normally we should buffer input</span>
+<span style=color:#75715e>#   untill enough data has been received and then do our checks. However since the connections are</span>
+<span style=color:#75715e>#   local all data is received at once (most of the time) so this code does work :)</span>
+<span style=color:#f92672>import</span> twisted
+<span style=color:#f92672>from</span> twisted.names <span style=color:#f92672>import</span> server, dns, client
+<span style=color:#f92672>from</span> twisted.internet <span style=color:#f92672>import</span> reactor, defer
+<span style=color:#f92672>from</span> twisted.internet.endpoints <span style=color:#f92672>import</span> TCP4ServerEndpoint
+<span style=color:#f92672>from</span> twisted.protocols <span style=color:#f92672>import</span> portforward
+<span style=color:#f92672>import</span> re
+<span style=color:#f92672>from</span> socket <span style=color:#f92672>import</span> <span style=color:#f92672>*</span>
+<span style=color:#f92672>import</span> struct
 
-<span style="color:#0f0"># symbolic definition of getsockopt parameter</span>
-SO_ORIGINAL_DST = <span style="color:#f60">80</span>
+<span style=color:#75715e># symbolic definition of getsockopt parameter</span>
+SO_ORIGINAL_DST <span style=color:#f92672>=</span> <span style=color:#ae81ff>80</span>
 
-<span style="color:#0f0"># Mapping of domain name to given unique IP</span>
-mappings = dict()
-<span style="color:#0f0"># Mapping of given unique IP to domain name</span>
-reversemappings = dict()
-
-
-<span style="color:#0f0"># --------------------------------------- DNS SERVER ---------------------------------------</span>
+<span style=color:#75715e># Mapping of domain name to given unique IP</span>
+mappings <span style=color:#f92672>=</span> dict()
+<span style=color:#75715e># Mapping of given unique IP to domain name</span>
+reversemappings <span style=color:#f92672>=</span> dict()
 
 
-<span style="color:#0f0"># Custom DNS server which assigns a unique IP address to every domain, even if</span>
-<span style="color:#0f0"># in reality two domains share the same IP.</span>
-<span style="color:#f00">class</span> ProxyResolver(client.Resolver):
-
-        <span style="color:#0f0"># Start with IP 1.1.1.1</span>
-        <span style="color:#f00">def</span> __init__(self, servers):
-                client.Resolver.__init__(self, servers=servers)
-                self.ttl = <span style="color:#f60">10</span>
-                self.ip = [<span style="color:#f60">1</span>, <span style="color:#f60">1</span>, <span style="color:#f60">1</span>, <span style="color:#f60">1</span>]
-
-        <span style="color:#0f0"># Helper function: Move to next IP and return it as a string</span>
-        <span style="color:#f00">def</span> <span style="color:#ff0">nextIp</span>(self):
-                self.ip[<span style="color:#f60">3</span>] += <span style="color:#f60">1</span>
-                <span style="color:#f00">for</span> i in range(<span style="color:#f60">3</span>,<span style="color:#f60">1</span>,-<span style="color:#f60">1</span>):
-                        <span style="color:#f00">if</span> (self.ip[i] == <span style="color:#f60">255</span>):
-                                self.ip[i] = <span style="color:#f60">1</span>
-                                self.ip[i-<span style="color:#f60">1</span>] += <span style="color:#f60">1</span>
-                <span style="color:#f00">return</span> str(self.ip[<span style="color:#f60">0</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> + str(self.ip[<span style="color:#f60">1</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> +str(self.ip[<span style="color:#f60">2</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> +str(self.ip[<span style="color:#f60">3</span>])
-
-        <span style="color:#f00">def</span> <span style="color:#ff0">lookupAddress</span>(self, name, timeout = <span style="color:#f00">None</span>):
-                <span style="color:#0f0"># If it&#39;s the first time a DNS lookup is done for this domain, assign it</span>
-                <span style="color:#0f0"># a unique IP and update the mappings</span>
-                <span style="color:#f00">if</span> (not mappings.has_key(name)):
-                        ip = self.nextIp()
-                        mappings[name] = ip
-                        reversemappings[str(self.ip[<span style="color:#f60">0</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> + str(self.ip[<span style="color:#f60">1</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> +str(self.ip[<span style="color:#f60">2</span>]) + <span style="color:#87ceeb">&#34;.&#34;</span> +str(self.ip[<span style="color:#f60">3</span>])] = name
-
-                <span style="color:#0f0"># Get the mapped IP!</span>
-                ip = mappings[name]
-                print <span style="color:#87ceeb">&#34;DNS:&#34;</span>, name, <span style="color:#87ceeb">&#34;-&gt;&#34;</span>, ip
-
-                <span style="color:#0f0"># From the manual: &#34;Defer is useful when you&#39;re writing synchronous code to an asynchronous</span>
-                <span style="color:#0f0"># interface: i.e., some code is calling you expecting a Deferred result, but you don&#39;t actually</span>
-                <span style="color:#0f0"># need to do anything asynchronous. Just return defer.succeed(theResult).&#34;</span>
-                <span style="color:#f00">return</span> defer.succeed([(dns.RRHeader(name, dns.A, dns.IN, self.ttl, dns.Record_A(ip, self.ttl)),), (), ()])
+<span style=color:#75715e># --------------------------------------- DNS SERVER ---------------------------------------</span>
 
 
-<span style="color:#0f0"># --------------------------------------- HTTP PROXY ---------------------------------------</span>
+<span style=color:#75715e># Custom DNS server which assigns a unique IP address to every domain, even if</span>
+<span style=color:#75715e># in reality two domains share the same IP.</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProxyResolver</span>(client<span style=color:#f92672>.</span>Resolver):
+
+        <span style=color:#75715e># Start with IP 1.1.1.1</span>
+        <span style=color:#66d9ef>def</span> __init__(self, servers):
+                client<span style=color:#f92672>.</span>Resolver<span style=color:#f92672>.</span>__init__(self, servers<span style=color:#f92672>=</span>servers)
+                self<span style=color:#f92672>.</span>ttl <span style=color:#f92672>=</span> <span style=color:#ae81ff>10</span>
+                self<span style=color:#f92672>.</span>ip <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>]
+
+        <span style=color:#75715e># Helper function: Move to next IP and return it as a string</span>
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>nextIp</span>(self):
+                self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>3</span>] <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+                <span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> range(<span style=color:#ae81ff>3</span>,<span style=color:#ae81ff>1</span>,<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>):
+                        <span style=color:#66d9ef>if</span> (self<span style=color:#f92672>.</span>ip[i] <span style=color:#f92672>==</span> <span style=color:#ae81ff>255</span>):
+                                self<span style=color:#f92672>.</span>ip[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+                                self<span style=color:#f92672>.</span>ip[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+                <span style=color:#66d9ef>return</span> str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>0</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span> str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>1</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span>str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>2</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span>str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>3</span>])
+
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>lookupAddress</span>(self, name, timeout <span style=color:#f92672>=</span> <span style=color:#66d9ef>None</span>):
+                <span style=color:#75715e># If it&#39;s the first time a DNS lookup is done for this domain, assign it</span>
+                <span style=color:#75715e># a unique IP and update the mappings</span>
+                <span style=color:#66d9ef>if</span> (<span style=color:#f92672>not</span> mappings<span style=color:#f92672>.</span>has_key(name)):
+                        ip <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>nextIp()
+                        mappings[name] <span style=color:#f92672>=</span> ip
+                        reversemappings[str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>0</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span> str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>1</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span>str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>2</span>]) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;.&#34;</span> <span style=color:#f92672>+</span>str(self<span style=color:#f92672>.</span>ip[<span style=color:#ae81ff>3</span>])] <span style=color:#f92672>=</span> name
+
+                <span style=color:#75715e># Get the mapped IP!</span>
+                ip <span style=color:#f92672>=</span> mappings[name]
+                print <span style=color:#e6db74>&#34;DNS:&#34;</span>, name, <span style=color:#e6db74>&#34;-&gt;&#34;</span>, ip
+
+                <span style=color:#75715e># From the manual: &#34;Defer is useful when you&#39;re writing synchronous code to an asynchronous</span>
+                <span style=color:#75715e># interface: i.e., some code is calling you expecting a Deferred result, but you don&#39;t actually</span>
+                <span style=color:#75715e># need to do anything asynchronous. Just return defer.succeed(theResult).&#34;</span>
+                <span style=color:#66d9ef>return</span> defer<span style=color:#f92672>.</span>succeed([(dns<span style=color:#f92672>.</span>RRHeader(name, dns<span style=color:#f92672>.</span>A, dns<span style=color:#f92672>.</span>IN, self<span style=color:#f92672>.</span>ttl, dns<span style=color:#f92672>.</span>Record_A(ip, self<span style=color:#f92672>.</span>ttl)),), (), ()])
 
 
-<span style="color:#0f0"># Communication between your actual proxy (Burp, WebScarab, ..) and our script.</span>
-<span style="color:#f00">class</span> ProxyClient(portforward.ProxyClient):
-        <span style="color:#f00">def</span> __init__(self):
-                self.gotestablished = <span style="color:#f00">False</span>
-                self.requestdata = <span style="color:#f00">None</span>
-
-        <span style="color:#f00">def</span> <span style="color:#ff0">setRequestData</span>(self, data):
-                self.requestdata = data
-
-        <span style="color:#f00">def</span> <span style="color:#ff0">dataReceived</span>(self, data):
-                <span style="color:#0f0"># TODO: How does this work when proxying a real device?! Connect shouldn&#39;t be sent then?!</span>
-                <span style="color:#f00">if</span> self.gotestablished or self.requestdata == <span style="color:#f00">None</span>:
-                        <span style="color:#0f0"># If the connection has been established just forward the data to the emulator</span>
-                        <span style="color:#0f0"># TODO: Check this</span>
-                        portforward.ProxyClient.dataReceived(self, data)
-                <span style="color:#f00">else</span>:
-                        <span style="color:#0f0"># TODO: Check this</span>
-                        <span style="color:#f00">if</span> not <span style="color:#87ceeb">&#34;HTTP/1.0 200 Connection established</span><span style="color:#87ceeb">\r\n\r\n</span><span style="color:#87ceeb">&#34;</span> in data:
-                                print <span style="color:#87ceeb">&#34;Warning: Unexpected proxy reply:&#34;</span>, repr(data[:<span style="color:#f60">30</span>])
-                        <span style="color:#f00">else</span>:
-                                print <span style="color:#87ceeb">&#34;Proxy CONNECT reply: &gt;&#34;</span>, repr(data[:<span style="color:#f60">30</span>])
-
-                        self.gotestablished = <span style="color:#f00">True</span>
-                        <span style="color:#0f0"># Forward data to Android</span>
-                        self.transport.write(self.requestdata)
+<span style=color:#75715e># --------------------------------------- HTTP PROXY ---------------------------------------</span>
 
 
-<span style="color:#0f0"># TODO: Check this</span>
-<span style="color:#f00">class</span> ProxyClientFactory(portforward.ProxyClientFactory):
-        protocol = ProxyClient
+<span style=color:#75715e># Communication between your actual proxy (Burp, WebScarab, ..) and our script.</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProxyClient</span>(portforward<span style=color:#f92672>.</span>ProxyClient):
+        <span style=color:#66d9ef>def</span> __init__(self):
+                self<span style=color:#f92672>.</span>gotestablished <span style=color:#f92672>=</span> <span style=color:#66d9ef>False</span>
+                self<span style=color:#f92672>.</span>requestdata <span style=color:#f92672>=</span> <span style=color:#66d9ef>None</span>
+
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>setRequestData</span>(self, data):
+                self<span style=color:#f92672>.</span>requestdata <span style=color:#f92672>=</span> data
+
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>dataReceived</span>(self, data):
+                <span style=color:#75715e># TODO: How does this work when proxying a real device?! Connect shouldn&#39;t be sent then?!</span>
+                <span style=color:#66d9ef>if</span> self<span style=color:#f92672>.</span>gotestablished <span style=color:#f92672>or</span> self<span style=color:#f92672>.</span>requestdata <span style=color:#f92672>==</span> <span style=color:#66d9ef>None</span>:
+                        <span style=color:#75715e># If the connection has been established just forward the data to the emulator</span>
+                        <span style=color:#75715e># TODO: Check this</span>
+                        portforward<span style=color:#f92672>.</span>ProxyClient<span style=color:#f92672>.</span>dataReceived(self, data)
+                <span style=color:#66d9ef>else</span>:
+                        <span style=color:#75715e># TODO: Check this</span>
+                        <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> <span style=color:#e6db74>&#34;HTTP/1.0 200 Connection established</span><span style=color:#ae81ff>\r\n\r\n</span><span style=color:#e6db74>&#34;</span> <span style=color:#f92672>in</span> data:
+                                print <span style=color:#e6db74>&#34;Warning: Unexpected proxy reply:&#34;</span>, repr(data[:<span style=color:#ae81ff>30</span>])
+                        <span style=color:#66d9ef>else</span>:
+                                print <span style=color:#e6db74>&#34;Proxy CONNECT reply: &gt;&#34;</span>, repr(data[:<span style=color:#ae81ff>30</span>])
+
+                        self<span style=color:#f92672>.</span>gotestablished <span style=color:#f92672>=</span> <span style=color:#66d9ef>True</span>
+                        <span style=color:#75715e># Forward data to Android</span>
+                        self<span style=color:#f92672>.</span>transport<span style=color:#f92672>.</span>write(self<span style=color:#f92672>.</span>requestdata)
 
 
-<span style="color:#0f0"># Custom HTTP proxy. Intercepts the CONNECT &lt;ip&gt; command, looks up the corresponding domain name, and</span>
-<span style="color:#0f0"># forwards the correct CONNECT &lt;domain&gt; command to your actual proxy.</span>
-<span style="color:#f00">class</span> ProxyServer(portforward.ProxyServer):
-        clientProtocolFactory = ProxyClientFactory
-
-        <span style="color:#f00">def</span> __init__(self):
-                self.receivedfirst = <span style="color:#f00">False</span>
-                self.connectre = re.compile(<span style="color:#87ceeb">r</span><span style="color:#87ceeb">&#39;CONNECT (\d+\.\d+\.\d+\.\d+):\d+ HTTP&#39;</span>)
-                self.otherre = re.compile(<span style="color:#87ceeb">r</span><span style="color:#87ceeb">&#39;\w+ http://(\d+\.\d+\.\d+\.\d+)&#39;</span>)
-                self.firstdata = <span style="color:#f00">None</span>
+<span style=color:#75715e># TODO: Check this</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProxyClientFactory</span>(portforward<span style=color:#f92672>.</span>ProxyClientFactory):
+        protocol <span style=color:#f92672>=</span> ProxyClient
 
 
-        <span style="color:#f00">def</span> <span style="color:#ff0">dataReceived</span>(self, data):
-                <span style="color:#0f0"># The first time we recieve data we must check for invisible proxiying and rewrite</span>
-                <span style="color:#0f0"># the CONNECT/GET requests to use the actual domain name.</span>
-                <span style="color:#f00">if</span> not self.receivedfirst:
-                        print <span style="color:#87ceeb">&#34;INCOMING TCP CONN: &gt;&#34;</span>, repr(data.split(<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\r</span><span style="color:#87ceeb">&#34;</span>)[<span style="color:#f60">0</span>][:<span style="color:#f60">40</span>])
+<span style=color:#75715e># Custom HTTP proxy. Intercepts the CONNECT &lt;ip&gt; command, looks up the corresponding domain name, and</span>
+<span style=color:#75715e># forwards the correct CONNECT &lt;domain&gt; command to your actual proxy.</span>
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProxyServer</span>(portforward<span style=color:#f92672>.</span>ProxyServer):
+        clientProtocolFactory <span style=color:#f92672>=</span> ProxyClientFactory
 
-                        <span style="color:#0f0"># Of course invisible proxying is unnecessairy if the CONNECT command is actually used!</span>
-
-                        <span style="color:#0f0"># ------------------------- Invisible Proxying Support ---------------------------</span>
-
-                        <span style="color:#0f0"># TODO: This is UNTESTED and EXPERIMENTAL code</span>
-                        <span style="color:#87ceeb">&#34;&#34;&#34;
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">                        # TODO: Get ourselves an Android VMWare image and test this :)
-</span><span style="color:#87ceeb">                        # Only do invisible proxifying if there is no CONNECT command
-</span><span style="color:#87ceeb">                        # TODO: We should actually check if it *START* with CONNECT
-</span><span style="color:#87ceeb">                        if not &#34;CONNECT&#34; in data:
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">                                # We support invisible proxying for real Android devicec, where the computer is configured
-</span><span style="color:#87ceeb">                                # as the router, and all HTTP(S) traffic is redirected to our tool. In this scenario we
-</span><span style="color:#87ceeb">                                # don&#39;t receive a CONNECT request. Instead we get the original destination IP address and
-</span><span style="color:#87ceeb">                                # manually construct the CONNECT request.
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">                                # TODO: Test this on other operating systems than Linux
-</span><span style="color:#87ceeb">                                try:
-</span><span style="color:#87ceeb">                                        # Ask the OS the original destination of the connection
-</span><span style="color:#87ceeb">                                        dst = socket.getsockopt(self.transport.socket, SOL_IP, SO_ORIGINAL_DST, 16)
-</span><span style="color:#87ceeb">                                        # Exclamation mark tells unpack that dst is big-endian
-</span><span style="color:#87ceeb">                                        # 2x  : two pad bytes
-</span><span style="color:#87ceeb">                                        # H   : unsigned short (port)
-</span><span style="color:#87ceeb">                                        # 4s  : char string of 4 bytes (ip)
-</span><span style="color:#87ceeb">                                        # 8x  : eight pad bytes
-</span><span style="color:#87ceeb">                                        srv_port, srv_ip = struct.unpack(&#34;!2xH4s8x&#34;, dst)
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">                                        if srv_port == 443:
-</span><span style="color:#87ceeb">                                                self.peer.setRequestData(data)
-</span><span style="color:#87ceeb">                                                data = &#34;CONNECT &#34; + inet_ntoa(srv_ip) + &#34;:&#34; + str(srv_port) + &#34; HTTP/1.1</span><span style="color:#87ceeb">\r\n\r\n</span><span style="color:#87ceeb">&#34;
-</span><span style="color:#87ceeb">                                                print &#34;PROXIFYING HTTPS: &#34; + repr(data.strip())
-</span><span style="color:#87ceeb">                                        # NOTE: If you uncomment this elif block, your proxy must support invisible proxying
-</span><span style="color:#87ceeb">                                        elif srv_port == 80:
-</span><span style="color:#87ceeb">                                                # Rewrite to absolute GET request if info available
-</span><span style="color:#87ceeb">                                                if reversemappings.has_key(inet_ntoa(srv_ip)):
-</span><span style="color:#87ceeb">                                                        data = re.sub(r&#39;^GET &#39;, &#34;GET http://&#34; + reversemappings[inet_ntoa(srv_ip)] + &#34;:&#34; + str(srv_port), data)
-</span><span style="color:#87ceeb">                                                else:
-</span><span style="color:#87ceeb">                                                        print &#34;Warning: got redirected HTTP request but unable to find destination hostname:port&#34;
-</span><span style="color:#87ceeb">
-</span><span style="color:#87ceeb">                                except Exception, e:
-</span><span style="color:#87ceeb">                                        print &#34;Something went wrong with invisible proxying:&#34;, e.getMessage()
-</span><span style="color:#87ceeb">                        &#34;&#34;&#34;</span>
-
-                        <span style="color:#0f0"># ------------------- Rewrite CONNECT/GET/POST with domain name ---------------------</span>
-
-                        resultconnect = self.connectre.match(data)
-                        resultother = self.otherre.match(data)
-
-                        <span style="color:#0f0"># TODO: We shouldn&#39;t use a normal replace after using regular expressions..</span>
-                        <span style="color:#0f0"># Replace IP in CONNECT</span>
-                        <span style="color:#f00">if</span> (resultconnect != <span style="color:#f00">None</span> and reversemappings.has_key(resultconnect.group(<span style="color:#f60">1</span>))):
-                                data = data.replace(resultconnect.group(<span style="color:#f60">1</span>), reversemappings[resultconnect.group(<span style="color:#f60">1</span>)])
-                                print <span style="color:#87ceeb">&#34;REWRITING CONNECT:&#34;</span>, resultconnect.group(<span style="color:#f60">1</span>), <span style="color:#87ceeb">&#34;-&gt;&#34;</span>, reversemappings[resultconnect.group(<span style="color:#f60">1</span>)]
-                        <span style="color:#0f0"># Replace IP in GET, POST, HEAD, etc</span>
-                        <span style="color:#f00">elif</span> (resultother != <span style="color:#f00">None</span> and reversemappings.has_key(resultother.group(<span style="color:#f60">1</span>))):
-                                data = data.replace(resultother.group(<span style="color:#f60">1</span>), reversemappings[resultother.group(<span style="color:#f60">1</span>)])
-                                print <span style="color:#87ceeb">&#34;REWRITING HTTP METHOD:&#34;</span>, resultother.group(<span style="color:#f60">1</span>), <span style="color:#87ceeb">&#34;-&gt;&#34;</span>, reversemappings[resultother.group(<span style="color:#f60">1</span>)]
-
-                        self.firstdata = data
-                        self.receivedfirst = <span style="color:#f00">True</span>
-
-                        print <span style="color:#87ceeb">&#34;OUTGOING TCP: &gt;&#34;</span>, repr(data.split(<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\r</span><span style="color:#87ceeb">&#34;</span>)[<span style="color:#f60">0</span>][:<span style="color:#f60">40</span>])
+        <span style=color:#66d9ef>def</span> __init__(self):
+                self<span style=color:#f92672>.</span>receivedfirst <span style=color:#f92672>=</span> <span style=color:#66d9ef>False</span>
+                self<span style=color:#f92672>.</span>connectre <span style=color:#f92672>=</span> re<span style=color:#f92672>.</span>compile(<span style=color:#e6db74>r</span><span style=color:#e6db74>&#39;CONNECT (\d+\.\d+\.\d+\.\d+):\d+ HTTP&#39;</span>)
+                self<span style=color:#f92672>.</span>otherre <span style=color:#f92672>=</span> re<span style=color:#f92672>.</span>compile(<span style=color:#e6db74>r</span><span style=color:#e6db74>&#39;\w+ http://(\d+\.\d+\.\d+\.\d+)&#39;</span>)
+                self<span style=color:#f92672>.</span>firstdata <span style=color:#f92672>=</span> <span style=color:#66d9ef>None</span>
 
 
-                <span style="color:#0f0"># forward data</span>
-                portforward.ProxyServer.dataReceived(self, data)
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>dataReceived</span>(self, data):
+                <span style=color:#75715e># The first time we recieve data we must check for invisible proxiying and rewrite</span>
+                <span style=color:#75715e># the CONNECT/GET requests to use the actual domain name.</span>
+                <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> self<span style=color:#f92672>.</span>receivedfirst:
+                        print <span style=color:#e6db74>&#34;INCOMING TCP CONN: &gt;&#34;</span>, repr(data<span style=color:#f92672>.</span>split(<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\r</span><span style=color:#e6db74>&#34;</span>)[<span style=color:#ae81ff>0</span>][:<span style=color:#ae81ff>40</span>])
+
+                        <span style=color:#75715e># Of course invisible proxying is unnecessairy if the CONNECT command is actually used!</span>
+
+                        <span style=color:#75715e># ------------------------- Invisible Proxying Support ---------------------------</span>
+
+                        <span style=color:#75715e># TODO: This is UNTESTED and EXPERIMENTAL code</span>
+                        <span style=color:#e6db74>&#34;&#34;&#34;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>                        # TODO: Get ourselves an Android VMWare image and test this :)
+</span><span style=color:#e6db74>                        # Only do invisible proxifying if there is no CONNECT command
+</span><span style=color:#e6db74>                        # TODO: We should actually check if it *START* with CONNECT
+</span><span style=color:#e6db74>                        if not &#34;CONNECT&#34; in data:
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>                                # We support invisible proxying for real Android devicec, where the computer is configured
+</span><span style=color:#e6db74>                                # as the router, and all HTTP(S) traffic is redirected to our tool. In this scenario we
+</span><span style=color:#e6db74>                                # don&#39;t receive a CONNECT request. Instead we get the original destination IP address and
+</span><span style=color:#e6db74>                                # manually construct the CONNECT request.
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>                                # TODO: Test this on other operating systems than Linux
+</span><span style=color:#e6db74>                                try:
+</span><span style=color:#e6db74>                                        # Ask the OS the original destination of the connection
+</span><span style=color:#e6db74>                                        dst = socket.getsockopt(self.transport.socket, SOL_IP, SO_ORIGINAL_DST, 16)
+</span><span style=color:#e6db74>                                        # Exclamation mark tells unpack that dst is big-endian
+</span><span style=color:#e6db74>                                        # 2x  : two pad bytes
+</span><span style=color:#e6db74>                                        # H   : unsigned short (port)
+</span><span style=color:#e6db74>                                        # 4s  : char string of 4 bytes (ip)
+</span><span style=color:#e6db74>                                        # 8x  : eight pad bytes
+</span><span style=color:#e6db74>                                        srv_port, srv_ip = struct.unpack(&#34;!2xH4s8x&#34;, dst)
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>                                        if srv_port == 443:
+</span><span style=color:#e6db74>                                                self.peer.setRequestData(data)
+</span><span style=color:#e6db74>                                                data = &#34;CONNECT &#34; + inet_ntoa(srv_ip) + &#34;:&#34; + str(srv_port) + &#34; HTTP/1.1</span><span style=color:#ae81ff>\r\n\r\n</span><span style=color:#e6db74>&#34;
+</span><span style=color:#e6db74>                                                print &#34;PROXIFYING HTTPS: &#34; + repr(data.strip())
+</span><span style=color:#e6db74>                                        # NOTE: If you uncomment this elif block, your proxy must support invisible proxying
+</span><span style=color:#e6db74>                                        elif srv_port == 80:
+</span><span style=color:#e6db74>                                                # Rewrite to absolute GET request if info available
+</span><span style=color:#e6db74>                                                if reversemappings.has_key(inet_ntoa(srv_ip)):
+</span><span style=color:#e6db74>                                                        data = re.sub(r&#39;^GET &#39;, &#34;GET http://&#34; + reversemappings[inet_ntoa(srv_ip)] + &#34;:&#34; + str(srv_port), data)
+</span><span style=color:#e6db74>                                                else:
+</span><span style=color:#e6db74>                                                        print &#34;Warning: got redirected HTTP request but unable to find destination hostname:port&#34;
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>                                except Exception, e:
+</span><span style=color:#e6db74>                                        print &#34;Something went wrong with invisible proxying:&#34;, e.getMessage()
+</span><span style=color:#e6db74>                        &#34;&#34;&#34;</span>
+
+                        <span style=color:#75715e># ------------------- Rewrite CONNECT/GET/POST with domain name ---------------------</span>
+
+                        resultconnect <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>connectre<span style=color:#f92672>.</span>match(data)
+                        resultother <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>otherre<span style=color:#f92672>.</span>match(data)
+
+                        <span style=color:#75715e># TODO: We shouldn&#39;t use a normal replace after using regular expressions..</span>
+                        <span style=color:#75715e># Replace IP in CONNECT</span>
+                        <span style=color:#66d9ef>if</span> (resultconnect <span style=color:#f92672>!=</span> <span style=color:#66d9ef>None</span> <span style=color:#f92672>and</span> reversemappings<span style=color:#f92672>.</span>has_key(resultconnect<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>))):
+                                data <span style=color:#f92672>=</span> data<span style=color:#f92672>.</span>replace(resultconnect<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>), reversemappings[resultconnect<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>)])
+                                print <span style=color:#e6db74>&#34;REWRITING CONNECT:&#34;</span>, resultconnect<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>), <span style=color:#e6db74>&#34;-&gt;&#34;</span>, reversemappings[resultconnect<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>)]
+                        <span style=color:#75715e># Replace IP in GET, POST, HEAD, etc</span>
+                        <span style=color:#66d9ef>elif</span> (resultother <span style=color:#f92672>!=</span> <span style=color:#66d9ef>None</span> <span style=color:#f92672>and</span> reversemappings<span style=color:#f92672>.</span>has_key(resultother<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>))):
+                                data <span style=color:#f92672>=</span> data<span style=color:#f92672>.</span>replace(resultother<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>), reversemappings[resultother<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>)])
+                                print <span style=color:#e6db74>&#34;REWRITING HTTP METHOD:&#34;</span>, resultother<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>), <span style=color:#e6db74>&#34;-&gt;&#34;</span>, reversemappings[resultother<span style=color:#f92672>.</span>group(<span style=color:#ae81ff>1</span>)]
+
+                        self<span style=color:#f92672>.</span>firstdata <span style=color:#f92672>=</span> data
+                        self<span style=color:#f92672>.</span>receivedfirst <span style=color:#f92672>=</span> <span style=color:#66d9ef>True</span>
+
+                        print <span style=color:#e6db74>&#34;OUTGOING TCP: &gt;&#34;</span>, repr(data<span style=color:#f92672>.</span>split(<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\r</span><span style=color:#e6db74>&#34;</span>)[<span style=color:#ae81ff>0</span>][:<span style=color:#ae81ff>40</span>])
+
+
+                <span style=color:#75715e># forward data</span>
+                portforward<span style=color:#f92672>.</span>ProxyServer<span style=color:#f92672>.</span>dataReceived(self, data)
 
 
 
-<span style="color:#f00">class</span> ProxyFactory(portforward.ProxyFactory):
-        protocol = ProxyServer
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>ProxyFactory</span>(portforward<span style=color:#f92672>.</span>ProxyFactory):
+        protocol <span style=color:#f92672>=</span> ProxyServer
 
-        <span style="color:#f00">def</span> <span style="color:#ff0">doStart</span>(self):
-                print <span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\t</span><span style="color:#87ceeb">==== Android Proxy Up and Running ====</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span>
+        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>doStart</span>(self):
+                print <span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\t</span><span style=color:#e6db74>==== Android Proxy Up and Running ====</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>
 
 
-<span style="color:#f00">def</span> <span style="color:#ff0">main</span>():
-        print <span style="color:#87ceeb">&#34;AndroidProxy   ---   (C) Mathy Vanhoef&#34;</span>
-        print <span style="color:#87ceeb">&#34;This program comes with ABSOLUTELY NO WARRANTY.&#34;</span>
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>main</span>():
+        print <span style=color:#e6db74>&#34;AndroidProxy   ---   (C) Mathy Vanhoef&#34;</span>
+        print <span style=color:#e6db74>&#34;This program comes with ABSOLUTELY NO WARRANTY.&#34;</span>
         print
-        print <span style="color:#87ceeb">&#34;DNS server will listen on localhost:53&#34;</span>
-        print <span style="color:#87ceeb">&#34;HTTP Proxy will listen on localhost:8007&#34;</span>
+        print <span style=color:#e6db74>&#34;DNS server will listen on localhost:53&#34;</span>
+        print <span style=color:#e6db74>&#34;HTTP Proxy will listen on localhost:8007&#34;</span>
         print
-        <span style="color:#0f0">#print &#34;Physical device: Configure your computer dns server and as router (NOT as proxy) and execute&#34;</span>
-        <span style="color:#0f0">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8007&#34;</span>
-        <span style="color:#0f0">#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8007&#34;</span>
-        <span style="color:#0f0">#print</span>
-        print <span style="color:#87ceeb">&#34;Emulator: start it using: emulator @AvdName -http-proxy http://localhost:8007 -dns-server localhost&#34;</span>
+        <span style=color:#75715e>#print &#34;Physical device: Configure your computer dns server and as router (NOT as proxy) and execute&#34;</span>
+        <span style=color:#75715e>#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8007&#34;</span>
+        <span style=color:#75715e>#print &#34;\tiptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 8007&#34;</span>
+        <span style=color:#75715e>#print</span>
+        print <span style=color:#e6db74>&#34;Emulator: start it using: emulator @AvdName -http-proxy http://localhost:8007 -dns-server localhost&#34;</span>
         print
-        print <span style="color:#87ceeb">&#34;Don&#39;t forget to start your normal proxy on localhost:8080&#34;</span>
+        print <span style=color:#e6db74>&#34;Don&#39;t forget to start your normal proxy on localhost:8080&#34;</span>
         print
 
-        <span style="color:#0f0"># Setup custom DNS server</span>
-        resolvers = []
-        <span style="color:#0f0">#resolvers.append(ProxyResolver([(&#39;8.8.8.8&#39;, 53)]))</span>
-        resolvers.append(ProxyResolver([(<span style="color:#87ceeb">&#39;10.0.141.20&#39;</span>, <span style="color:#f60">53</span>)]))
-        f = server.DNSServerFactory(clients=resolvers)
-        p = dns.DNSDatagramProtocol(f)
-        reactor.listenUDP(<span style="color:#f60">53</span>, p)
+        <span style=color:#75715e># Setup custom DNS server</span>
+        resolvers <span style=color:#f92672>=</span> []
+        <span style=color:#75715e>#resolvers.append(ProxyResolver([(&#39;8.8.8.8&#39;, 53)]))</span>
+        resolvers<span style=color:#f92672>.</span>append(ProxyResolver([(<span style=color:#e6db74>&#39;10.0.141.20&#39;</span>, <span style=color:#ae81ff>53</span>)]))
+        f <span style=color:#f92672>=</span> server<span style=color:#f92672>.</span>DNSServerFactory(clients<span style=color:#f92672>=</span>resolvers)
+        p <span style=color:#f92672>=</span> dns<span style=color:#f92672>.</span>DNSDatagramProtocol(f)
+        reactor<span style=color:#f92672>.</span>listenUDP(<span style=color:#ae81ff>53</span>, p)
 
-        <span style="color:#0f0"># Setup TCP proxy server</span>
-        endpoint = TCP4ServerEndpoint(reactor, <span style="color:#f60">8007</span>)
-        endpoint.listen(ProxyFactory(<span style="color:#87ceeb">&#39;localhost&#39;</span>, <span style="color:#f60">8080</span>))
+        <span style=color:#75715e># Setup TCP proxy server</span>
+        endpoint <span style=color:#f92672>=</span> TCP4ServerEndpoint(reactor, <span style=color:#ae81ff>8007</span>)
+        endpoint<span style=color:#f92672>.</span>listen(ProxyFactory(<span style=color:#e6db74>&#39;localhost&#39;</span>, <span style=color:#ae81ff>8080</span>))
 
-        <span style="color:#0f0"># Start DNS and TCP server</span>
-        reactor.run();
+        <span style=color:#75715e># Start DNS and TCP server</span>
+        reactor<span style=color:#f92672>.</span>run();
 
 
-<span style="color:#f00">if</span> __name__ == <span style="color:#87ceeb">&#34;__main__&#34;</span>:
+<span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;__main__&#34;</span>:
         main()
 </code></pre></div><p>Run this with <code>sudo python AndroidProxy.py</code> (assuming you saved it as that), and change your Emulators launch options to <code>~/Library/Android/sdk/tools/emulator -avd test -http-proxy localhost:8007 -dns-server localhost -debug-proxy</code>. Running it with sudo is needed as the script starts a DNS server locally. The <code>-debug-proxy</code> option is optional, but is useful for further debugging of the traffic.</p>
-<p>As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as <code>DNS: clients3.google.com -&gt; 1.1.1.4</code>. This is just the internal storage key and not the IP it resolved :D</p>
-<h2 id="summary">summary</h2>
+<p>As a final note on the proxy script. At some stage it looked as though names were not being resolved correctly as I was seeing output as <code>DNS: clients3.google.com -> 1.1.1.4</code>. This is just the internal storage key and not the IP it resolved :D</p>
+<h2 id=summary>summary</h2>
 <p>Like I previously mentioned, with limited knowledge about smali and all that jazz, I was able to patch the application to not do the jailbreak detection it is intended to do. Removing jailbreak detection may not be such a big deal, but what else can you change, and how do you protect against that?</p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#so-what-about-jailbreaking">so what about jailbreaking</a></li>
-    <li><a href="#getting-started">getting started</a></li>
-    <li><a href="#preparing-an-actual-emulator">preparing an actual emulator</a></li>
-    <li><a href="#looking-at-the-apk-getting-the-juicy-bits">looking at the apk, getting the juicy bits</a></li>
-    <li><a href="#decompiling-the-classesdex">decompiling the classes.dex</a></li>
-    <li><a href="#preparing-the-patch">preparing the patch</a></li>
-    <li><a href="#repackaging-and-signing-the-apk">repackaging and signing the apk</a></li>
-    <li><a href="#notes-about-traffic-interception">notes about traffic interception</a></li>
-    <li><a href="#summary">summary</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&text=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&is_video=false&description=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&title=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&name=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3eI%20will%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%20means%3c%2fem%3e%20a%20expert%20in%20anything%20you%20are%20about%20to%20read.%20I%20am%20also%20not%20100%25%20sure%20about%20the%20correct%20terminology%20for%20this%20type%20of%20patching.%20Maybe%20it%20should%20have%20been%20called%20binary%20patching%3f%20I%20don%26rsquo%3bt%20know%2c%20but%20I%20do%20know%20that%20I%20was%20quite%20literally%20shocked%20by%20the%20ease%20of%20getting%20this%20job%20done%2c%20and%20figured%20its%20time%20to%20make%20some%20notes%20for%20me%20to%20reflect%20on%20later%20again.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fandroid_jailbreak_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eRecently%20I%20had%20the%20opportunity%20to%20poke%20at%20an%20Android%20%3ccode%3e.apk%3c%2fcode%3e.%20My%20task%20was%20a%20little%20different%20from%20what%20I%20am%20about%20to%20blog%20about%2c%20but%20the%20fundamental%20idea%20remained%20the%20same.%20I%20wanted%20to%20inspect%20some%20traffic%20of%20an%20application%2c%20but%20the%20application%20had%20jailbreak%20detection%20built%20in%20and%20refused%20to%20run%20if%20the%20device%20its%20running%20on%20is%20detected%20as%20jailbroken.%20This%20had%20to%20be%20bypassed%20first.%20To%20play%20with%20the%20%3ccode%3eapk%3c%2fcode%3e%2c%20I%20needed%20to%20get%20some%20tools%20setup%20and%20learn%20a%20few%20things%20about%20the%20Android%20environment%20%3cem%3ereally%3c%2fem%3e%20fast.%20There%20are%20tons%20of%20resources%20available%20online%20to%20describe%20to%20you%20the%20general%20idea%20behind%20Android%2c%20as%20well%20as%20how%20its%20all%20stitched%20together.%20You%20will%20quickly%20come%20to%20realize%20that%20apps%20can%20be%20written%20in%20Java.%20For%20the%20purpose%20of%20this%20post%2c%20the%20focus%20is%20to%20bypass%20the%20jailbreak%20detection%20the%20%3ccode%3eapk%3c%2fcode%3e%20had%20and%20let%20it%20continue%20normal%20operations.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f09%2fno-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching%2f&t=no%20more%20jailbreak%20detection%20an%20adventure%20into%20Android%20app%20reversing%20and%20smali%20patching" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/>
+<span class=button__icon>←</span>
+<span class=button__text>a trivial iOS jailbreak detection bypass</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/>
+<span class=button__text>hoof to root solving pegasus 1</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

