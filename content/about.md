@@ -9,7 +9,11 @@ toc: false
 showReadingTime: false
 ---
 
-['Caffeine fueled', '(╯°□°)╯︵ ┻━┻', 'Security guy', 'Metalhead', 'I saw your password', 'KOOBo+KXleKAv+KXlSnjgaM=']
+{{< figure src="/images/profile.png" width="100px" >}}
+
+**['Caffeine fueled', '(╯°□°)╯︵ ┻━┻', 'Security guy', 'Metalhead', 'I saw your password', 'KOOBo+KXleKAv+KXlSnjgaM=']**
+
+---
 
 I am usually busy thinkering, tinkering, toggling, tweaking and testing!
 
