@@ -1,11 +1,13 @@
-+++
-categories = []
-date = "2016-01-08T19:03:56+02:00"
-description = "About Me"
-keywords = []
-title = "About Me"
-menu = "main"
-+++
+---
+date: 
+published: true
+title: 'How To: Extremely simple python Jabber Broadcast Bot'
+description: 'About Me'
+title: 'About Me'
+menu: 'main'
+toc: false
+showReadingTime: false
+---
 
 ['Caffeine fueled', '(╯°□°)╯︵ ┻━┻', 'Security guy', 'Metalhead', 'I saw your password', 'KOOBo+KXleKAv+KXlSnjgaM=']
 
