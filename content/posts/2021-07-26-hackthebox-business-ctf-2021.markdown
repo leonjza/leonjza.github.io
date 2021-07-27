@@ -10,13 +10,13 @@ categories:
 cover: /images/htbbusiness21/htb_business_logo.png
 ---
 
-The [HackTheBox Business CTF 2021](https://www.hackthebox.eu/htb-business-ctf-2021) ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost and we managed to score [*5th*](https://ctf.hackthebox.eu/ctf/131/scoreboard) place amongst 374 other teams!
+The [HackTheBox Business CTF 2021](https://www.hackthebox.eu/htb-business-ctf-2021) ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score [*5th*](https://ctf.hackthebox.eu/ctf/131/scoreboard) place amongst 374 other teams!
 
 {{< figure src="/images/htbbusiness21/htb_placement.png" >}}
 
 {{< figure src="/images/htbbusiness21/htb_graph.png" >}}
 
-The team was composed of (those with twitterz!): [felmoltor](https://twitter.com/felmoltor), [JCoertze](https://twitter.com/JCoertze), [TH3_GOAT_FARM3R](https://twitter.com/TH3_GOAT_FARM3R), [Titanex8](https://twitter.com/Titanex8), [_cablethief](https://twitter.com/_cablethief), [gav1no_](https://twitter.com/gav1no_) and [GMILTE](https://twitter.com/GMILTE).
+The team consisted of (those with twitterz!): [felmoltor](https://twitter.com/felmoltor), [JCoertze](https://twitter.com/JCoertze), [TH3_GOAT_FARM3R](https://twitter.com/TH3_GOAT_FARM3R), [Titanex8](https://twitter.com/Titanex8), [_cablethief](https://twitter.com/_cablethief), [gav1no_](https://twitter.com/gav1no_) and [GMILTE](https://twitter.com/GMILTE).
 <!--more-->
 
 # solutions
