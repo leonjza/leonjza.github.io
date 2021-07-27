@@ -131,7 +131,7 @@ The team was composed of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_F
 </figure>
 <p>The team was composed of (those with twitterz!): <a href=https://twitter.com/felmoltor>felmoltor</a>, <a href=https://twitter.com/JCoertze>JCoertze</a>, <a href=https://twitter.com/TH3_GOAT_FARM3R>TH3_GOAT_FARM3R</a>, <a href=https://twitter.com/Titanex8>Titanex8</a>, <a href=https://twitter.com/_cablethief>_cablethief</a>, <a href=https://twitter.com/gav1no_>gav1no_</a> and <a href=https://twitter.com/GMILTE>GMILTE</a>.</p>
 <h1 id=solutions>solutions</h1>
-<p>We solved 36 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there&rsquo;s just too many to write up. Anyways, here goes!</p>
+<p>We solved 38 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there&rsquo;s just too many to write up. Anyways, here goes!</p>
 <h2 id=webemergency>web/Emergency</h2>
 <ul>
 <li>Name: Emergency</li>
@@ -419,7 +419,7 @@ b&#39;sRBm6KWZigygdqvPZw==&#39;
 <figure class=left>
 <img src=/images/htbbusiness21/htb_dfir_8.png>
 </figure>
-<p>A call to <code>MapVirtualKeyExW</code>!? A keylogger!? I tested a few things to make sure I wasn&rsquo;t going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at <code>anVzdGFuW1l.txt</code>, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used <a href=https://www.baremetalsoft.com/baretail/>baretail</a> to tail the fail as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!</p>
+<p>A call to <code>MapVirtualKeyExW</code>!? A keylogger!? I tested a few things to make sure I wasn&rsquo;t going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at <code>anVzdGFuW1l.txt</code>, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used <a href=https://www.baremetalsoft.com/baretail/>baretail</a> to tail the file as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!</p>
 <p>Eventually I wondered how they could have built the application, and it being Python and all I recalled a thing called <a href=https://www.pyinstaller.org/>Pyinstaller</a>. Essentially, you can create Windows executables from Python projects. Next, I wondered if there were tools that could extract objects/code from a Pyinstaller generated exe (assuming a bit that this was how <code>svchost.exe</code> was built), and came across a project called <a href=https://github.com/extremecoders-re/pyinstxtractor>pyinstxtractor</a>. I quickly set that up and ran it. This time round I had more python files than those I found in the <code>_MEI5882</code> temp folder! In fact, there were some <code>.pyc</code> files now!</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>❯ cd svchost.exe_extracted
 ❯ ll
