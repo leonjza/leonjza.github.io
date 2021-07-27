@@ -21,7 +21,7 @@ The team was composed of (those with twitterz!): [felmoltor](https://twitter.com
 
 # solutions
 
-We solved 36 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there's just too many to write up. Anyways, here goes!
+We solved 38 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there's just too many to write up. Anyways, here goes!
 
 ## web/Emergency
 
@@ -399,7 +399,7 @@ I can bore you with the details of the next section, but I'll skip to the chase.
 
 {{< figure src="/images/htbbusiness21/htb_dfir_8.png" >}}
 
-A call to `MapVirtualKeyExW`!? A keylogger!? I tested a few things to make sure I wasn't going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at `anVzdGFuW1l.txt`, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used [baretail](https://www.baremetalsoft.com/baretail/) to tail the fail as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!
+A call to `MapVirtualKeyExW`!? A keylogger!? I tested a few things to make sure I wasn't going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at `anVzdGFuW1l.txt`, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used [baretail](https://www.baremetalsoft.com/baretail/) to tail the file as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!
 
 Eventually I wondered how they could have built the application, and it being Python and all I recalled a thing called [Pyinstaller](https://www.pyinstaller.org/). Essentially, you can create Windows executables from Python projects. Next, I wondered if there were tools that could extract objects/code from a Pyinstaller generated exe (assuming a bit that this was how `svchost.exe` was built), and came across a project called [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor). I quickly set that up and ran it. This time round I had more python files than those I found in the `_MEI5882` temp folder! In fact, there were some `.pyc` files now!
 
