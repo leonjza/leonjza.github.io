@@ -238,7 +238,7 @@ Anyways, some older versions of Laravel suffered from a classic PHP deserialisat
 ...
 ```
 
-Knowing that, all we needed was to use the `poc.php` file from the previous post (with [phpggc](https://github.com/ambionics/phpggc) setup in the path as well), and viola:
+Knowing that, all we needed was to use the `poc.php` file from the previous post (with [phpggc](https://github.com/ambionics/phpggc) setup in the path as well), and voila:
 
 ```php
 <?php
