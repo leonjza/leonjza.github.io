@@ -7,7 +7,8 @@ categories:
 - hackthebox
 - business
 - 2021
-cover: /images/htbbusiness21/htb_business_logo.png
+cover:
+  image: /images/htbbusiness21/htb_business_logo.png
 ---
 
 The [HackTheBox Business CTF 2021](https://www.hackthebox.eu/htb-business-ctf-2021) ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score [*5th*](https://ctf.hackthebox.eu/ctf/131/scoreboard) place amongst 374 other teams!

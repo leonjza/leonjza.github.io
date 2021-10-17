@@ -1,18 +1,61 @@
 baseUrl: https://leonjza.github.io
 languageCode: en-us
-theme: hello-friend
+theme: PaperMod
 copyright: '<a href="https://twitter.com/leonjza">@leonjza</a>'
 paginate: 10
 permalinks:
   posts: /blog/:year/:month/:day/:title/
 googleAnalytics: UA-44457032-2
 
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+
 params:
+  env: production
+  author: Leon Jacobs
+  keywords: [blog,hack,ctf,leonjza,pentester,red team,attack]
   contentTypeName: posts
-  defaultTheme: dark
+  defaultTheme: auto
   showMenuItems: 3 
   showReadingTime: true
-  toc: true
+  ShowShareButtons: true
+  ShowReadingTime: true
+  displayFullLangName: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowToc: true
+
+  homeInfoParams:
+    Title: "#!/bin/note"
+    Content: >
+      Welcome to my personal corner of the Internet!  
+
+      Here you'lll find all of my security reserach and CTF writeups in one place!
+      For more about me, check out the [about me](about/) section!
+
+  socialIcons:
+    - name: twitter
+      url: "https://twitter.com/leonjza"
+    - name: github
+      url: "https://github.com/leonjza"
+    - name: rss
+      url: "index.xml"
+
+  editPost:
+    URL: "https://github.com/leonjza/leonjza.github.io/tree/source/content"
+    Text: "Suggest Changes"
+    appendFilePath: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
 
 markup:
   tableOfContents:
@@ -24,7 +67,6 @@ languages:
     title: |
       #!/bin/note
     subtitle: a checkbox uncheckers notepad
-    keywords: 'blog,hack,ctf,leonjza,pentester,red team,attack'
     menuMore: Show more
     writtenBy: Written by
     readMore: Read more
@@ -43,12 +85,15 @@ languages:
     
     menu:
       main:
-      - identifier: posts
-        name: Posts
-        url: /posts
+      - name: Archive
+        url: archives
+      - identifier: search
+        name: Search
+        url: search/
       - identifier: categories
         name: Categories
         url: /categories
 
 minify:
+  disableXML: true
   minifyOutput: true

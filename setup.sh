@@ -13,6 +13,9 @@ echo -e "\033[0;32mCloning blog source..\033[0m"
 git clone -b source $GIT $DESTINATION
 cd $DESTINATION
 
+echo -e "\033[0;32m updating submodules..\033[0m"
+git submodule update --init --recursive
+
 echo -e "\033[0;32mCloning blog build directory (public)..\033[0m"
 git clone -b master $GIT public
 
