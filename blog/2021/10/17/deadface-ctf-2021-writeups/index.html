@@ -1,0 +1,352 @@
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>deadface ctf 2021 writeups | #!/bin/note
+</title>
+<meta name=keywords content>
+<meta name=description content="The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn&rsquo;t too fond of that, especially as a non-US player where our prime time often had no challenges left.
+Here are some of the challenges I solved playing for Hack South, where we managed to get 11th place out of 1195 teams that scored.
+
+     
+">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2021/10/17/deadface-ctf-2021-writeups/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="deadface ctf 2021 writeups">
+<meta property="og:description" content="The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn&rsquo;t too fond of that, especially as a non-US player where our prime time often had no challenges left.
+Here are some of the challenges I solved playing for Hack South, where we managed to get 11th place out of 1195 teams that scored.
+
+     
+">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leonjza.github.io/blog/2021/10/17/deadface-ctf-2021-writeups/">
+<meta property="og:image" content="https://leonjza.github.io/images/deadface21/logo_deadface_2021.png"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-10-17T11:37:48+02:00">
+<meta property="article:modified_time" content="2021-10-17T11:37:48+02:00"><meta property="og:site_name" content="#!/bin/note
+">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://leonjza.github.io/images/deadface21/logo_deadface_2021.png">
+<meta name=twitter:title content="deadface ctf 2021 writeups">
+<meta name=twitter:description content="The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn&rsquo;t too fond of that, especially as a non-US player where our prime time often had no challenges left.
+Here are some of the challenges I solved playing for Hack South, where we managed to get 11th place out of 1195 teams that scored.
+
+     
+">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"deadface ctf 2021 writeups","item":"https://leonjza.github.io/blog/2021/10/17/deadface-ctf-2021-writeups/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"deadface ctf 2021 writeups","name":"deadface ctf 2021 writeups","description":"The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn\u0026rsquo;t too fond of that, especially as a non-US player where our prime time often had no challenges left.\nHere are some of the challenges I solved playing for Hack South, where we managed to get 11th place out of 1195 teams that scored.\n ","keywords":[],"articleBody":"The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn’t too fond of that, especially as a non-US player where our prime time often had no challenges left.\nHere are some of the challenges I solved playing for Hack South, where we managed to get 11th place out of 1195 teams that scored.\n  solutions The challenges weren’t available when I got to this writeup, so lot’s of detail on that front is missing.\nstarter Flag: flag{themz_the_ru1es}\nI noticed this flag before the CTF even started in this medium article. The flag was at the bottom.\n  programming Flag: flag{0h-look-a-FlaG}\nI forgot the name of this challenge, but it was the first programming one. We get some code:\n#!/usr/bin/env python3 from binascii import unhexlify as u def get_flag(): flag = '666c61677b30682d6c6f6f6b2d612d466c61477d' return u(flag).decode('utf-8') print(f'The flag is: ') Solve by calling get_flag().\nprint(f'The flag is: ' + get_flag()) cereal killer Flag: flag{c0unt-ch0cula-cereal-FTW}\nWe’re given Windows and Linux bins. Decompilation reveals a bunch of work that looks like a string getting XOR’d before asking the user for input.\n  Solve by breaking anywhere after that really and checking out stack contents. Either:\n break on main with b *main r disas main b *0x0000555555555119 where 0x0000555555555119 is the address to call 0x555555555080  c and read flag off stack  or\n break on the call to puts with b puts r read flag off stack    poor megan Flag: flag{Six-Parts-Honey-One-Part-Garlic}\nI don’t really know how this works, but thanks to CyberChef’s “magic” module it somehow figured out the custom character set needed to base64 decode it.\nGiven the input j2rXjx9dkhW9eLKsnMR9cLDVjh/9dwz1QfGXm+b9=wKslL1Zpb45, this recipe reveals the flag.\nfile 101 Flag: flag{Easy_Right}\nYou got a zip file to download that you had to crack the password for. Use zip2john to get a hash, and then your favourite password cracker to finally reveal pumpkinpie as the password (Reelix solved that part, thanks!).\nNext, the image you get from the zipfile is corrupt. Use a hex editor to fix up the header (I used another valid PNG as reference) and open the file to reveal the flag.\n  the count Flag: flag{d1c037808d23acd0dc0e3b897f344571ddce4b294e742b434888b3d9f69d9944}\nThis challenge was hosted. Connecting to the target gave you the instructions:\nDEADFACE gatekeeper: Let us see how good your programming skills are. If a = 0, b = 1, c = 2, etc.. Tell me what the sum of this word is: You have 5 seconds to give me an answer. Your word is: calendar A alphabetic character position counter it is! One cool thing I learnt here is that I can call index() on the character sets provided by string to get the alphabetic position!\nimport string from pwn import * pos = lambda t : string.ascii_lowercase.index(t) r = remote('code.deadface.io', 50000) r.recvuntil('Your word is:') w = r.recvline().strip().decode() v = sum([pos(x) for x in w]) print(f'{w}= {v}') r.send(f'{v}\\n') r.interactive() r.close()   TheZeal0t’s Cryptoware IOC 1 Flag: flag{DEADFACE_LLABS_CRYPTOWARE/6.69}\nRun the binary you get and view the network traffic in Wireshark to reveal the flag as the User-Agent header in an HTTP request.\n  Cereal Killer 3 Flag: flag{B00-B00-B00-Bury-IZ-DA-BOMB}\nI remember laughing at this challenge. It was worth something like 500 points, and I think it was one I solved the fastest xD\nRun the bin in gdb, then:\n break on puts with b puts r c read the flag as a string in $ecx. lol    El Paso Flag: flag{$877,401.00}\nSome challenges built on top a “leaked” MySQL database that you had to run some queries on. The query to solve this challenge was:\nselect sum(loans.balance) from employees right join loans on loans.employee_id = employees.employee_id where employees.city = 'El Paso'; Trick or Treat Flag: flag{CaNT_ch34t_d34th}\nThis challenge was built on PyGame, where you get the source code.\n  I originally solved it by commenting out the code that checked for collisions. Leaving that running, after a while the flag simply printed to the terminal. Later I realised, I could have just run a function called gs() manually that would print the flag as well.\nSyncopated Beat Flag: flag{ELECTRIC-LIGHT-ORCHESTRA}\nThis was an audio steganography challenge. We’re given a video where the audio track sounds obviously weird at ~2 minutes in. I couldn’t make out what exactly it was, so I played around with it in Sonic Visualiser at first. That revealed nothing interesting.\nNext, after extracting the audio from the video, opening the track in audacity reveals the section of interest pretty clearly.\n  I cut that section out and applied the “reverse” effect by browsing the menu system: “Effect - Reverse”. Next, play the audio to hear the flag.\nDecrypting Lytton Labs Cryptoware 2 Flag: flag{PEANUT-BUTTER-Crunch-Mixed-With-Cocoa-Puffs-Beats-All-Those-Cereals!}\nMore Golang malware (puke), but this one took me a while. We also got a decryptor this time. The code flow for the encryptor was not too different when compared to the first cryptoware challenge, which helped. The function to focus on was fetchKey. As usual, a “key” was fetched remotely that could be revealed in Wireshark (or by blocking network access to the bin causing a panic that reveals the URL as well).\nWhile normally I use (and really like) the Ghidra decompiler in cutter/r2, this time jsdec helped a lot in realising that once the key was fetched, an MD5 sum is calculated of the content. This was also visible in the disassembly, but I missed that initially\n  To decrypt the file, I ran ./zealotcrypt-02-decrypt.bin d8f5c876b36f019254a7307c1eb0fe09.\nThe Victims of Lytton Labs Flag: flag{D0nt-ME$$-with-The-ZEAL0t!!!}\n(I didn’t solve this challenge myself completely, but it was interesting enough to writeup.)\nWe’re given a (fairly large) pcap to work with. There’s a lot going on, but after spending some time you’d see what looks like an FTP credential brute force that’s eventually successful. Then, some files are downloaded.\n  To extract the files from the pcap, just follow the TCP stream, view as Raw and hig “Save As”. This way you’d end up with a “secret” (encryption-password-cgeschicker.txt), an encryptor (lytton-crypt.bin) and some encrypted files (*.lcr files). There was also what looked like a small reverse shell in a binary called secret_decoder.bin.\nRunning the cryptor, we’d see a few flags could be passed:\n$ ./lytton-crypt.bin Usage is: ./lytton-crypt.bin -[orc][-sN] file1 file2.. -o Write output to standard out -r Do NOT remove input files after processing -c Do NOT compress files before encryption -sN How many times to overwrite input files with random data A lot of the cryptor logic was wrapped up in the main function, and depending on what files you passed it it, the cryptor figured out if it needed to encrypt or decrypt the input file.\n  As for the secret file you got, the value 75AC98147C07752767E09EF781CF998E401D19B01E30CBAA5109D6AD7EC9A174 from the encryption-password-cgeschicker.txt was not a valid encryption key.\n$ echo \"75AC98147C07752767E09EF781CF998E401D19B01E30CBAA5109D6AD7EC9A174\" | ./lytton-crypt.bin david-k.txt.lcr Encryption key: Invalid encryption key for file: david-k.txt.lcr Stuck here for quite a while, @carlmonning realised the key value is actually a SHA256 hash, that when cracked is demagorgon.\n  So, do decrypt the files and reveal the flag run:\necho \"demagorgon\" | ../lytton-crypt.bin *.lcr ","wordCount":"1189","inLanguage":"en","image":"https://leonjza.github.io/images/deadface21/logo_deadface_2021.png","datePublished":"2021-10-17T11:37:48+02:00","dateModified":"2021-10-17T11:37:48+02:00","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2021/10/17/deadface-ctf-2021-writeups/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
+</head>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
+</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
+</ul>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+deadface ctf 2021 writeups
+</h1>
+<div class=post-meta>October 17, 2021&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2021-10-17-deadface-ctf-2021.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
+</div>
+</header>
+<figure class=entry-cover><img loading=lazy src=https://leonjza.github.io/images/deadface21/logo_deadface_2021.png alt>
+</figure><div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#solutions aria-label=solutions>solutions</a><ul>
+<li>
+<a href=#starter aria-label=starter>starter</a></li>
+<li>
+<a href=#programming aria-label=programming>programming</a></li>
+<li>
+<a href=#cereal-killer aria-label="cereal killer">cereal killer</a></li>
+<li>
+<a href=#poor-megan aria-label="poor megan">poor megan</a></li>
+<li>
+<a href=#file-101 aria-label="file 101">file 101</a></li>
+<li>
+<a href=#the-count aria-label="the count">the count</a></li>
+<li>
+<a href=#thezeal0ts-cryptoware-ioc-1 aria-label="TheZeal0t&amp;rsquo;s Cryptoware IOC 1">TheZeal0t&rsquo;s Cryptoware IOC 1</a></li>
+<li>
+<a href=#cereal-killer-3 aria-label="Cereal Killer 3">Cereal Killer 3</a></li>
+<li>
+<a href=#el-paso aria-label="El Paso">El Paso</a></li>
+<li>
+<a href=#trick-or-treat aria-label="Trick or Treat">Trick or Treat</a></li>
+<li>
+<a href=#syncopated-beat aria-label="Syncopated Beat">Syncopated Beat</a></li>
+<li>
+<a href=#decrypting-lytton-labs-cryptoware-2 aria-label="Decrypting Lytton Labs Cryptoware 2">Decrypting Lytton Labs Cryptoware 2</a></li>
+<li>
+<a href=#the-victims-of-lytton-labs aria-label="The Victims of Lytton Labs">The Victims of Lytton Labs</a>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</details>
+</div>
+<div class=post-content><p>The coolest part of this blog post may be the CTF art! DEADFACE CTF was great, with many of the challenges being a mixture of things to do. The CTF had this phased thing going on, so challenges were gradually released in 5 phases. I wasn&rsquo;t too fond of that, especially as a non-US player where our prime time often had no challenges left.</p>
+<p>Here are some of the challenges I solved playing for <a href=https://hacksouth.africa/>Hack South</a>, where we managed to get 11th place out of 1195 teams that scored.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/hs-score.png>
+</figure>
+<h1 id=solutions>solutions<a hidden class=anchor aria-hidden=true href=#solutions>#</a></h1>
+<p>The challenges weren&rsquo;t available when I got to this writeup, so lot&rsquo;s of detail on that front is missing.</p>
+<h2 id=starter>starter<a hidden class=anchor aria-hidden=true href=#starter>#</a></h2>
+<p>Flag: <code>flag{themz_the_ru1es}</code></p>
+<p>I noticed this flag before the CTF even started in <a href=https://defcon201.medium.com/dcg-201-online-ctf-deadface-ctf-2021-october-15th-16th-c9c529e68927>this</a> medium article. The flag was at the bottom.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/starter.png>
+</figure>
+<h2 id=programming>programming<a hidden class=anchor aria-hidden=true href=#programming>#</a></h2>
+<p>Flag: <code>flag{0h-look-a-FlaG}</code></p>
+<p>I forgot the name of this challenge, but it was the first programming one. We get some code:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/env python3</span>
+<span style=color:#f92672>from</span> binascii <span style=color:#f92672>import</span> unhexlify <span style=color:#66d9ef>as</span> u
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>get_flag</span>():
+    flag <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;666c61677b30682d6c6f6f6b2d612d466c61477d&#39;</span>
+    <span style=color:#66d9ef>return</span> u(flag)<span style=color:#f92672>.</span>decode(<span style=color:#e6db74>&#39;utf-8&#39;</span>)
+
+
+print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#39;The flag is: &#39;</span>)
+</code></pre></div><p>Solve by calling <code>get_flag()</code>.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#39;The flag is: &#39;</span> <span style=color:#f92672>+</span> get_flag())
+</code></pre></div><h2 id=cereal-killer>cereal killer<a hidden class=anchor aria-hidden=true href=#cereal-killer>#</a></h2>
+<p>Flag: <code>flag{c0unt-ch0cula-cereal-FTW}</code></p>
+<p>We&rsquo;re given Windows and Linux bins. Decompilation reveals a bunch of work that looks like a string getting XOR&rsquo;d before asking the user for input.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/cereal-killer-1.png>
+</figure>
+<p>Solve by breaking anywhere after that really and checking out stack contents. Either:</p>
+<ol>
+<li>break on <code>main</code> with <code>b *main</code></li>
+<li><code>r</code></li>
+<li><code>disas main</code></li>
+<li><code>b *0x0000555555555119</code> where <code>0x0000555555555119</code> is the address to <code>call 0x555555555080 &lt;puts@plt></code></li>
+<li><code>c</code> and read flag off stack</li>
+</ol>
+<p>or</p>
+<ol>
+<li>break on the call to <code>puts</code> with <code>b puts</code></li>
+<li><code>r</code></li>
+<li>read flag off stack</li>
+</ol>
+<figure>
+<img loading=lazy src=/images/deadface21/cereal-killer-1-gdb.png>
+</figure>
+<h2 id=poor-megan>poor megan<a hidden class=anchor aria-hidden=true href=#poor-megan>#</a></h2>
+<p>Flag: <code>flag{Six-Parts-Honey-One-Part-Garlic}</code></p>
+<p>I don&rsquo;t really know how this works, but thanks to CyberChef&rsquo;s &ldquo;magic&rdquo; module it somehow figured out the custom character set needed to base64 decode it.</p>
+<p>Given the input <code>j2rXjx9dkhW9eLKsnMR9cLDVjh/9dwz1QfGXm+b9=wKslL1Zpb45</code>, <a href="https://gchq.github.io/CyberChef/#recipe=From_Base64('3GHIJKLMNOPQRSTUb%3DcdefghijklmnopWXYZ/12%2B406789VaqrstuvwxyzABCDEF5',true)&input=ajJyWGp4OWRraFc5ZUxLc25NUjljTERWamgvOWR3ejFRZkdYbStiOT13S3NsTDFacGI0NQ">this</a> recipe reveals the flag.</p>
+<h2 id=file-101>file 101<a hidden class=anchor aria-hidden=true href=#file-101>#</a></h2>
+<p>Flag: <code>flag{Easy_Right}</code></p>
+<p>You got a zip file to download that you had to crack the password for. Use <code>zip2john</code> to get a hash, and then your favourite password cracker to finally reveal <code>pumpkinpie</code> as the password (Reelix solved that part, thanks!).</p>
+<p>Next, the image you get from the zipfile is corrupt. Use a hex editor to fix up the header (I used another valid PNG as reference) and open the file to reveal the flag.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/file-101.png>
+</figure>
+<h2 id=the-count>the count<a hidden class=anchor aria-hidden=true href=#the-count>#</a></h2>
+<p>Flag: <code>flag{d1c037808d23acd0dc0e3b897f344571ddce4b294e742b434888b3d9f69d9944}</code></p>
+<p>This challenge was hosted. Connecting to the target gave you the instructions:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>DEADFACE gatekeeper: Let us see how good your programming skills are.
+If a = 0, b = 1, c = 2, etc.. Tell me what the sum of this word is:
+
+ You have 5 seconds to give me an answer.
+
+Your word is: calendar
+</code></pre></div><p>A alphabetic character position counter it is! One cool thing I learnt here is that I can call <code>index()</code> on the character sets provided by <code>string</code> to get the alphabetic position!</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> string
+<span style=color:#f92672>from</span> pwn <span style=color:#f92672>import</span> <span style=color:#f92672>*</span>
+
+pos <span style=color:#f92672>=</span> <span style=color:#66d9ef>lambda</span> t : string<span style=color:#f92672>.</span>ascii_lowercase<span style=color:#f92672>.</span>index(t)
+
+r <span style=color:#f92672>=</span> remote(<span style=color:#e6db74>&#39;code.deadface.io&#39;</span>, <span style=color:#ae81ff>50000</span>)
+r<span style=color:#f92672>.</span>recvuntil(<span style=color:#e6db74>&#39;Your word is:&#39;</span>)
+
+w <span style=color:#f92672>=</span> r<span style=color:#f92672>.</span>recvline()<span style=color:#f92672>.</span>strip()<span style=color:#f92672>.</span>decode()
+v <span style=color:#f92672>=</span> sum([pos(x) <span style=color:#66d9ef>for</span> x <span style=color:#f92672>in</span> w])
+
+print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#39;</span><span style=color:#e6db74>{</span>w<span style=color:#e6db74>}</span><span style=color:#e6db74> = </span><span style=color:#e6db74>{</span>v<span style=color:#e6db74>}</span><span style=color:#e6db74>&#39;</span>)
+
+r<span style=color:#f92672>.</span>send(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#39;</span><span style=color:#e6db74>{</span>v<span style=color:#e6db74>}</span><span style=color:#ae81ff>\n</span><span style=color:#e6db74>&#39;</span>)
+r<span style=color:#f92672>.</span>interactive()
+r<span style=color:#f92672>.</span>close()
+</code></pre></div><figure>
+<img loading=lazy src=/images/deadface21/the-count.png>
+</figure>
+<h2 id=thezeal0ts-cryptoware-ioc-1>TheZeal0t&rsquo;s Cryptoware IOC 1<a hidden class=anchor aria-hidden=true href=#thezeal0ts-cryptoware-ioc-1>#</a></h2>
+<p>Flag: <code>flag{DEADFACE_LLABS_CRYPTOWARE/6.69}</code></p>
+<p>Run the binary you get and view the network traffic in Wireshark to reveal the flag as the User-Agent header in an HTTP request.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/the-zealots-crypto-1.png>
+</figure>
+<h2 id=cereal-killer-3>Cereal Killer 3<a hidden class=anchor aria-hidden=true href=#cereal-killer-3>#</a></h2>
+<p>Flag: <code>flag{B00-B00-B00-Bury-IZ-DA-BOMB}</code></p>
+<p>I remember laughing at this challenge. It was worth something like 500 points, and I think it was one I solved the fastest xD</p>
+<p>Run the bin in gdb, then:</p>
+<ol>
+<li>break on <code>puts</code> with <code>b puts</code></li>
+<li><code>r</code></li>
+<li><code>c</code></li>
+<li>read the flag as a string in <code>$ecx</code>.</li>
+<li>lol</li>
+</ol>
+<figure>
+<img loading=lazy src=/images/deadface21/cereal-killer-3.png>
+</figure>
+<h2 id=el-paso>El Paso<a hidden class=anchor aria-hidden=true href=#el-paso>#</a></h2>
+<p>Flag: <code>flag{$877,401.00}</code></p>
+<p>Some challenges built on top a &ldquo;leaked&rdquo; MySQL database that you had to run some queries on. The query to solve this challenge was:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sql data-lang=sql><span style=color:#66d9ef>select</span> <span style=color:#66d9ef>sum</span>(loans.balance) <span style=color:#66d9ef>from</span> employees
+ <span style=color:#66d9ef>right</span> <span style=color:#66d9ef>join</span> loans <span style=color:#66d9ef>on</span> loans.employee_id <span style=color:#f92672>=</span> employees.employee_id
+<span style=color:#66d9ef>where</span> employees.city <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;El Paso&#39;</span>;
+</code></pre></div><h2 id=trick-or-treat>Trick or Treat<a hidden class=anchor aria-hidden=true href=#trick-or-treat>#</a></h2>
+<p>Flag: <code>flag{CaNT_ch34t_d34th}</code></p>
+<p>This challenge was built on <a href=https://www.pygame.org/>PyGame</a>, where you get the source code.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/trick-or-treat.png>
+</figure>
+<p>I originally solved it by commenting out the code that checked for collisions. Leaving that running, after a while the flag simply printed to the terminal. Later I realised, I could have just run a function called <code>gs()</code> manually that would print the flag as well.</p>
+<h2 id=syncopated-beat>Syncopated Beat<a hidden class=anchor aria-hidden=true href=#syncopated-beat>#</a></h2>
+<p>Flag: <code>flag{ELECTRIC-LIGHT-ORCHESTRA}</code></p>
+<p>This was an audio steganography challenge. We&rsquo;re given a video where the audio track sounds obviously weird at ~2 minutes in. I couldn&rsquo;t make out what exactly it was, so I played around with it in <a href=https://www.sonicvisualiser.org/>Sonic Visualiser</a> at first. That revealed nothing interesting.</p>
+<p>Next, after extracting the audio from the video, opening the track in audacity reveals the section of interest pretty clearly.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/syncopated-beat-1.png>
+</figure>
+<p>I cut that section out and applied the &ldquo;reverse&rdquo; effect by browsing the menu system: &ldquo;Effect -> Reverse&rdquo;. Next, play the audio to hear the flag.</p>
+<h2 id=decrypting-lytton-labs-cryptoware-2>Decrypting Lytton Labs Cryptoware 2<a hidden class=anchor aria-hidden=true href=#decrypting-lytton-labs-cryptoware-2>#</a></h2>
+<p>Flag: <code>flag{PEANUT-BUTTER-Crunch-Mixed-With-Cocoa-Puffs-Beats-All-Those-Cereals!}</code></p>
+<p>More Golang malware (puke), but this one took me a while. We also got a decryptor this time. The code flow for the encryptor was not too different when compared to the first cryptoware challenge, which helped. The function to focus on was <code>fetchKey</code>. As usual, a &ldquo;key&rdquo; was fetched remotely that could be revealed in Wireshark (or by blocking network access to the bin causing a panic that reveals the URL as well).</p>
+<p>While normally I use (and really like) the Ghidra decompiler in cutter/r2, this time jsdec helped <strong>a lot</strong> in realising that once the key was fetched, an MD5 sum is calculated of the content. This was also visible in the disassembly, but I missed that initially</p>
+<figure>
+<img loading=lazy src=/images/deadface21/cryptoware-2-a.png>
+</figure>
+<p>To decrypt the file, I ran <code>./zealotcrypt-02-decrypt.bin d8f5c876b36f019254a7307c1eb0fe09</code>.</p>
+<h2 id=the-victims-of-lytton-labs>The Victims of Lytton Labs<a hidden class=anchor aria-hidden=true href=#the-victims-of-lytton-labs>#</a></h2>
+<p>Flag: <code>flag{D0nt-ME$$-with-The-ZEAL0t!!!}</code></p>
+<p>(I didn&rsquo;t solve this challenge myself completely, but it was interesting enough to writeup.)</p>
+<p>We&rsquo;re given a (fairly large) pcap to work with. There&rsquo;s a lot going on, but after spending some time you&rsquo;d see what looks like an FTP credential brute force that&rsquo;s eventually successful. Then, some files are downloaded.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/victims-of-lytton-wireshark.png>
+</figure>
+<p>To extract the files from the pcap, just follow the TCP stream, view as Raw and hig &ldquo;Save As&rdquo;. This way you&rsquo;d end up with a &ldquo;secret&rdquo; (<code>encryption-password-cgeschicker.txt</code>), an encryptor (<code>lytton-crypt.bin</code>) and some encrypted files (<code>*.lcr</code> files). There was also what looked like a small reverse shell in a binary called <code>secret_decoder.bin</code>.</p>
+<p>Running the cryptor, we&rsquo;d see a few flags could be passed:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>$ ./lytton-crypt.bin
+Usage is: ./lytton-crypt.bin -[orc][-sN] file1 file2..
+  -o Write output to standard out
+  -r Do NOT remove input files after processing
+  -c Do NOT compress files before encryption
+  -sN How many times to overwrite input files with random data
+</code></pre></div><p>A lot of the cryptor logic was wrapped up in the main function, and depending on what files you passed it it, the cryptor figured out if it needed to encrypt or decrypt the input file.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/victims-of-lytton-cryptor.png>
+</figure>
+<p>As for the secret file you got, the value <code>75AC98147C07752767E09EF781CF998E401D19B01E30CBAA5109D6AD7EC9A174</code> from the <code>encryption-password-cgeschicker.txt</code> was not a valid encryption key.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>$ echo &#34;75AC98147C07752767E09EF781CF998E401D19B01E30CBAA5109D6AD7EC9A174&#34; | ./lytton-crypt.bin david-k.txt.lcr
+Encryption key:
+Invalid encryption key for file: david-k.txt.lcr
+</code></pre></div><p>Stuck here for quite a while, <a href=https://twitter.com/carlmonnig>@carlmonning</a> realised the key value is actually a SHA256 hash, that when cracked is <code>demagorgon</code>.</p>
+<figure>
+<img loading=lazy src=/images/deadface21/victims-of-lytton-crack.png>
+</figure>
+<p>So, do decrypt the files and reveal the flag run:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>echo <span style=color:#e6db74>&#34;demagorgon&#34;</span> | ../lytton-crypt.bin *.lcr
+</code></pre></div>
+</div>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=next href=https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>
+<span class=title>Next Page »</span>
+<br>
+<span>hackthebox business ctf 2021 writeups</span>
+</a>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on twitter" href="https://twitter.com/intent/tweet/?text=deadface%20ctf%202021%20writeups&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f&title=deadface%20ctf%202021%20writeups&summary=deadface%20ctf%202021%20writeups&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f&title=deadface%20ctf%202021%20writeups"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on whatsapp" href="https://api.whatsapp.com/send?text=deadface%20ctf%202021%20writeups%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share deadface ctf 2021 writeups on telegram" href="https://telegram.me/share/url?text=deadface%20ctf%202021%20writeups&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f10%2f17%2fdeadface-ctf-2021-writeups%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
+</div>
+</footer>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
+</body>
+</html>
