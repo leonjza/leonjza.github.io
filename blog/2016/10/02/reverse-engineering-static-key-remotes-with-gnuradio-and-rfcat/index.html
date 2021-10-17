@@ -1,49 +1,39 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-reverse engineering static key remotes with gnuradio and rfcat ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>reverse engineering static key remotes with gnuradio and rfcat | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
-My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally know nothing about really did make for this bit of research to be pretty daunting at first.
- Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.
-">
 <meta name=keywords content="sdr,rfcat,gnuradio,remote">
-<meta name=robots content="noodp">
-<link rel=canonical href=https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="reverse engineering static key remotes with gnuradio and rfcat">
-<meta name=twitter:description content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
+<meta name=description content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
 My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally  know nothing about really did make for this bit of research to be pretty daunting at first.
 
-  
-    
-    
-  
+     
 
 
 Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.">
-<meta property="og:title" content="reverse engineering static key remotes with gnuradio and rfcat">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="reverse engineering static key remotes with gnuradio and rfcat">
 <meta property="og:description" content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
 My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally  know nothing about really did make for this bit of research to be pretty daunting at first.
 
-  
-    
-    
-  
+     
 
 
 Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.">
@@ -52,79 +42,112 @@ Nonetheless, here is my adventure into reverse engineering a plain static key re
 <meta property="article:published_time" content="2016-10-02T16:05:22+02:00">
 <meta property="article:modified_time" content="2016-10-02T16:05:22+02:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="reverse engineering static key remotes with gnuradio and rfcat">
+<meta name=twitter:description content="At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.
+My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally  know nothing about really did make for this bit of research to be pretty daunting at first.
+
+     
+
+
+Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"reverse engineering static key remotes with gnuradio and rfcat","item":"https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"reverse engineering static key remotes with gnuradio and rfcat","name":"reverse engineering static key remotes with gnuradio and rfcat","description":"At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.\nMy interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally know nothing about really did make for this bit of research to be pretty daunting at first.\n  Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.\n","keywords":["sdr","rfcat","gnuradio","remote"],"articleBody":"At defcon24 this year, I impulsively bought myself some new toys. Amongst what I got included a YARD Stick One and a Ubertooth One. I already owned a DVB-T dongle much like this one that I bought at defcon23 the previous year.\nMy interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I totally know nothing about really did make for this bit of research to be pretty daunting at first.\n  Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.\nthe terminology Where to start? In hindsight, I guess a sane point of departure would have been to first figure out what all of these new acronyms mean. OOK, PWM, AM, FSK etc were all things I have only seen but never actually knew what they meant. I read a whole bunch of blog posts and other RTL-SDR related stuff, thinking I could just dive right in. It was not long before I realized that its pretty important when someone talks about Pulse Width Modulation(PWM) that I actually know that this means!\nSo, as I progressed through the resources I found online, I made a note of looking up the acronyms and what the general idea behind them were. The most important of the acronyms you should know is listed below. You should seriously take some time to look into these in more detail and not just rely on my silly descriptions:\n  AM - Amplitude Modulation\nWhen talking AM, we are referring to the fact that the signal strength (or amplitude) is varied according to the waveform that is being transmitted. This gif shows a comparison between AM and FM (Frequency Modulation) for the same signal. It should be clear that for the same signal, AM increases the amplitude of the waveform, and FM increases the frequency of the waveform\n  PWM - Pulse Width Modulation\nIn addition to AM, in the case of these static key remotes, they make use of PWM. Basically, the duration of a pulse determines the bit that is being send. A long pulse is a zero, and a short pulse is a one.\n  OOK - On-off keying\nOn-off keying is a form of Amplitude-shift keying where a binary value is represented based on the duration of the presence of a carrier signal (or a just a high amplitude signal).\n  the gear Once I had a good idea of what all of this stuff means, it was time to get some gear to play with. I went to a local electronics store to pick up a few things. The most important being a static key remote. I also needed something that will switch on when the remote is pressed. For this, I settled on a small LED light, just to give an indication of life. All in all I must have spent close to R600 (~40USD) for everything. The list of lab toys included:\n 1 x Basic 433Mhz Binary Code Transmitter 1 x 12V Power Supply 1 x Generic, Static Key Receiver 1 x 10W LED Light (wow this thing is bright!) 1 x Enclosure Some wiring etc.  I setup, wired together and tested everything. The LED light was wired up to the normally open contact so that when the remote button is pressed, the light will go on for a brief period of time and then switch off.\n  I paired my remote with a random position of the 12 dip switches on it to the receiver and tested that the light actually goes on under normal conditions. Sweet.\nthe signal capture Capturing the remotes signal turned out to be a little easier than I initially expected. I found plenty of resources online that helped me get familiar with ways to do it. The most common capture method I could see was to use a tool called GXRQ. GQRX allows you to tune into the frequency and make a raw recording of the signal to file. This is probably the fastest way to get the recordings to file. The recorded file can then be opened up in gnuradio or inspectrum. You can do a number of fun things with GQRX, like listening to radio! (I had to enable Hardware AGC in GQRX for this to work) :)\n  Anyways. I got stuck trying to decode the key from the remote using a GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn’t set it to record AM? Who knows. Anyways.\nthe gnuradio reveal Speaking to @elasticninja (thanks for your epic patience dude!), I got tipped off to an absolutely great video by Michael Ossmann in he’s Software Defined Radio with HackRF series here. More specifically, lesson 8 deals with on-off keying and was excellent in getting me started with gnuradio.\nThis lesson does a great job of showing you how to find out more details about a specific remote that you are interested in by looking up its hardware specs, test results and any other pieces of information. It then goes on to explain how to get your first flow graph up and running in gnuradio in no time.\npreparing gnuradio Before building gnuradio flow graphs, a little bit of preparation was needed. I was using a Kali Virtual Machine in VMWare for testing and had to install a few extra packages on top of the base installation. While we on the topic of dependencies, I am just going to list everything needed to replicate that which you will find in this post:\napt install gnu-radio rfcat gr-osmosdr audacity If you want audio to work, I had to enable pulseaudio with these commands followed by a reboot:\nsystemctl --user enable pulseaudio \u0026\u0026 systemctl --user start pulseaudio With that out of the way, I was ready to replicate that flow graph from the lesson.\nbuilding the flow graph Just like the session explained, I launched gnuradio-companion and built the flow graph the same way:\n Launch GNU radio (and start a new WX GUI Graph). I noticed it defaults to the QT GUI in the options block, so just right-click edit that and flip it over to WX GUI. Add a new osmocom Source block to receive data from your RTL-SDR. If you cant find the block, click on any item on the list on the right and hit ctrl-f to filter. Add a new WX GUI FFT Sink and connect the osmocon Source and new FFT sink by clicking on the output and input of each. Set a higher sample rate of 2000000 in the samp_rate variable by editing the Variable block. Edit the osmocon Source block and set the RF Gain to 0 and the frequency to the one you are hoping to listen in on. In my case this is 4339e5, or 4339200000.  Once this is done, save the flow graph and run it (with your RTL-SDR plugged in) to visualize the signal when you press your remote!\n  Fast forward a bit through the lesson, and we finally get to part where we can visualize the key on the remote as a demodulated waveform with the addition of the second scope sink (around 30mins in). To get a nice and clear picture of the on-off keying, we want to measure the magnitude over time of a sample. This can be done by adding a type converter to the flow graph. The Complex to Mag type converter will do the job just fine. To add this:\n Find the type converter block called Complex to Mag and drag it onto the flow graph. Connect the output from the osmocon Source to the Complex to Mag input. Connect the output of the Complex to Mag converter to the Scope sink input. Change the input expected by the scope sink from complex to float.  With this done, run the graph again. You will need to fiddle a little with the seconds per division and counts per division values to get the visualization just right. Unticking the Autorange box will also greatly help you narrow down the signal. As a last tip, if you experience the graph jumping around too much (from left to right), you can toggle a ‘center’ by focussing the Trig tab and setting the lines that appear with the level toggles.\n  As you can see in this screenshot, the keying seems to represent the values:\n[short, short, short, long, long, short, short, long, short, short, long, short] Or:\n[1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1] This indeed matches the switch positions on my remote. Yay!\n  storing the recordings Looking at those waveforms is cool and all, but it isn’t always practical to keep your finger on a button. Instead, we can record the output to a file for later use. You may choose to record the raw, unprocessed signal from the radio (in cases where you may need to still do some processing on the file maybe?) or save the demodulated waveform. To do this, simply add a new Wave File Sink block after the Complex to Mag block and specify a destination filename.\n  Now, just launch the graph and press down on the remote for a while. When done, stop the graph and check if your file has been written in the location you specified:\n~ # ls -lah remote.wav -rw-r--r-- 1 root root 7.2M Oct 3 22:07 remote.wav Great. If you need to re-use this file at a later stage in gnuradio, simply add a File Source / Wave File Source block as needed and reconnect the other blocks where appropriate.\nviewing in audacity If you saved the demodulated wave file, then you can open this file in Audacity. Simply launch audacity (we already installed it) and open the recorded wave file. Viewing the recording at first may look something like this:\n  However, when you zoom in a little, you may start seeing the on-off keying becoming obvious:\n  Admittedly, getting this far was relatively easy thanks to the ton of research out there already!\nintroducing rfcat I guess the main reason why I decided on the YARD Stick One was because of the fact that it comes pre-flashed with the RFcat firmware. It was only after the fact that I realized its actually a pretty good RF device in general. There are some other radios (maybe cheaper?) that you can flash to work with RFCat such as the CC1111emk dongle or the dongle that comes with the Chronos watch development kit. The RFCat wiki also has a list of compatible dongles.\nAs for RFcat itself, I guess the most important thing to realize is that you effectively have a python interface to the underlying radio when using it. Admittedly, there isn’t a lot of documentation for RFCat and you may very quickly come to realize that you will have to make use of the help() strings and the source code of rflib to learn the necessary. This coupled with existing projects and work online doesn’t make it too hard to get going.\nTo give you an idea, below is a sample snippet of starting rfcat in ‘research’ (-r) mode and sending a string as a ‘ping’ packet. Using RFcat this way, the object d is used to call methods for the radio:\n  As you can see in the screenshot, there is a banner message giving you some useful hints on how you can interact with the dongle. Methods such as setFreq(), setMdmModulation() etc is all things we will be needing soon™ when we want to start replaying the signal of this remote (and switch on that very bright LED!).\nsending the signal with RFcat As you may have noticed by now, sending signals with RFCat is as simple as d.RFxmit(data='DEADBEEF'). To get the receiver to understand my replay, I didn’t think it would be as easy just playing the raw binary string of 111001101101 back. I tested anyways by writing a small script to start sending signals and then captured them using my SDR and gnuradio. The values for the frequency and baud rate is something that you should be able to get from the data sheets of the remote you are attempting to replay. (I will show you how to calculate the baud rate later though). The original script I used was:\n#!/usr/bin/python import rflib d = rflib.RfCat() # Set Modulation. We using On-Off Keying here d.setMdmModulation(rflib.MOD_ASK_OOK) d.makePktFLEN(12) # Set the RFData packet length d.setMdmDRate(3800) # Set the Baud Rate d.setMdmSyncMode(0) # Disable preamble d.setFreq(433920000) # Set the frequency d.RFxmit('111001101101') d.setModeIDLE() I ran this script together with a gnuradio flow graph that was set up to dump the signal to a file. I then used this signal as a source to a Scope Sink that was prefixed with a Complex to Mag block. As expected, with this initial attempt I could not find anything in my graphs that even remotely looked like on-off keying!\n  No easy win here was ok as it forced me to dive a little into the RFCat source code in an attempt to figure out how exactly the data should be sent. I also searched online for examples of how to send data correctly and came across a number of examples to help me.\nTurns out, I need to get my data into bytes to send with RFxmit(). No big deal, lets do just that!\n#!/usr/bin/python import rflib data = '111001101101' # Convert the data to hex rf_data = hex(int(data, 2)) d = rflib.RfCat() # Set Modulation. We using On-Off Keying here d.setMdmModulation(rflib.MOD_ASK_OOK) d.makePktFLEN(len(rf_data)) # Set the RFData packet length d.setMdmDRate(3800) # Set the Baud Rate d.setMdmSyncMode(0) # Disable preamble d.setFreq(433920000) # Set the frequency # Send the data string a few times d.RFxmit(rf_data, repeat=500) d.setModeIDLE() I now added the hex conversation of the original binary string and added the repeat=500 value to RFxmit() to help me find the signal with gnuradio. This was finally what I needed to be able to send data that appeared to look like on-off keying!\n  This was not exactly the same as the signal that I originally captured using the actual remote, but, it was progress, and I believed it to be good progress.\ngetting the on-off keying right I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this blog post where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a 1 for a high amplitude and a 0 for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.\nSo to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:\n  One important difference that I noticed with my remote compared to many similar posts I saw online was that I had this long starting high amplitude before the actual on-off keying signal started. It looked like about half of a pulse was this high amplitude, and the other half signal. I assumed these will all just be handled by adding a bunch of 1’s in front of my final key as it may have served as some form of preamble or something. ¯\\_(ツ)_/¯\n  If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the clock signal.\nThe distance of a high pulse followed by a low pulse (relative to the clock signal) signifies the bits that is being transferred. This is actually also known as Pulse-width Modulation. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 1’s and the 0) is:\n# PWM Key version of 111001101101 100100100110110100100110100100110100 If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings 1’s and 0’s are represented as 100 for a 1 and 110 for a 0 to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:\n# PWM to Bitstring comparison 100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100 1 1 1 0 0 1 1 0 1 1 0 1 This matches our initial bit string of 111001101101, and helps us conclude that for a full PWM key (with the leading bunch of 1’s) the resultant key would be:\n# Full PWM Key 111111111111111111111111111111111110100100100110110100100110100100110100 baud rate hate Before I get to the rest of the newly updated script, lets talk about baud rate quickly. This is something that caused me a lot of pain. I managed to get the original waveform from my remote and my generated waveform using scripts to look similar, but there was a serious issue with getting the length of the pulses to match. If you look closely at the below screenshot you will notice there is actually a problem with the key too (missing a bit), but heh, the clock signal is whats important here:\n  This problem existed until I finally managed to figure out what the math for the baud rate calculation was. I noticed that this value is not an exact science though. You can be off by quite a lot, and yet the signal will still have a high change of succeeding. YMMV.\nUnfortunately I can not remember the post / code that lead me to this, but the basic idea for calculating baud rate is as follows:\n The source wave file would have been recorded at a certain Sample Rate. We recorded at a sample rate of 2M from gnuradio. We want to figure out how many samples makes up the distance of the shortest high aptitude in the pulse (much like we needed for the PWM key calculation) The number of samples in the shortest high amplitude bit, divided by the sample rate over 1 should give you the baud rate.  In other words:\nbaud = (1.0 / (length of shortest high peak / sample rate)) Practically, you can determine the values needed for the formula by opening a wave file you recorded using gnuradio, zooming and selecting one of the short pulses and changing the selection at the bottom dropdown to length and samples.\n  Here you can see my sample range for the shortest high peak is 740 samples, and on the far left you can see the sample rate of 2000000. That means that my baud rate will be 1.0/(740/2000000), which is ~2702 baud. Not 100% accurate, but accurate enough to work.\nlet there be light One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the bitstring module to handle the conversion to bytes. What a fantastic library :P\nThe final, updated script follows:\n#!/usr/bin/python # Send a PWM String using RfCat import rflib import bitstring # That prefix string. This was determined by literally # just looking at the waveform, and calculating it relative # to the clock signal value. # Your remote may not need this. prefix = '111111111111111111111111111111111110' # The key from our static key remote. key = '111001101101' # Convert the data to a PWM key by looping over the # data string and replacing a 1 with 100 and a 0 # with 110 pwm_key = ''.join(['100' if b == '1' else '110' for b in key]) # Join the prefix and the data for the full pwm key full_pwm = '{}{}'.format(prefix, pwm_key) print('Sending full PWM key: {}'.format(full_pwm)) # Convert the data to hex rf_data = bitstring.BitArray(bin=full_pwm).tobytes() # Start up RfCat d = rflib.RfCat() # Set Modulation. We using On-Off Keying here d.setMdmModulation(rflib.MOD_ASK_OOK) # Configure the radio d.makePktFLEN(len(rf_data)) # Set the RFData packet length d.setMdmDRate(2702) # Set the Baud Rate d.setMdmSyncMode(0) # Disable preamble d.setFreq(433920000) # Set the frequency # Send the data string a few times d.RFxmit(rf_data, repeat=25) d.setModeIDLE() I ran this newly updated script and BAM, my labs LED light illuminates! \\o/\n  resources Below is basically a link dump of stuff that was super helpful in getting as far as I did with this. These posts may help clear things up that made no sense in this post!\nGeneral On-off keying stuff:\n http://andrewmohawk.com/2012/09/06/hacking-fixed-key-remotes/ https://zeta-two.com/radio/2015/06/23/ook-ask-sdr.html http://www.rtl-sdr.com/using-a-yardstick-one-hackrf-and-inspectrum-to-decode-and-duplicate-an-ook-signal/ https://blog.compass-security.com/2016/09/software-defied-radio-sdr-and-decoding-on-off-keying-ook/ http://leetupload.com/blagosphere/index.php/2014/02/24/non-return-to-zero-askook-signal-replay/ http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html http://dani.foroselectronica.es/rfcat-ti-chronos-and-replaying-rf-signals-337/  Sample code:\n https://github.com/AndrewMohawk/RfCatHelpers https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py  further work With that done, I set off to write a toolkit that allows you to work with rfcat and On-off keying data sources such as wave files, or just simple recordings from rfcat itself. After finishing the polishing, I’ll release it along with a post detailing its internals and usage! In the meantime, keep an eye on this repository https://github.com/leonjza/ooktools\n  Happy hacking!\n","wordCount":"3639","inLanguage":"en","datePublished":"2016-10-02T16:05:22+02:00","dateModified":"2016-10-02T16:05:22+02:00","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2016/10/02/reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-</nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
 </span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
-</header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>reverse engineering static key remotes with gnuradio and rfcat</h1>
-<div class=post-meta>
-<span class=post-date>
-2016-10-02
-</span>
-<span class=post-read-time>— 18 min read</span>
 </div>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
+<ul id=menu>
 <li>
-<ul>
-<li><a href=#the-terminology>the terminology</a></li>
-<li><a href=#the-gear>the gear</a></li>
-<li><a href=#the-signal-capture>the signal capture</a></li>
-<li><a href=#the-gnuradio-reveal>the gnuradio reveal</a></li>
-<li><a href=#preparing-gnuradio>preparing gnuradio</a></li>
-<li><a href=#building-the-flow-graph>building the flow graph</a></li>
-<li><a href=#storing-the-recordings>storing the recordings</a></li>
-<li><a href=#viewing-in-audacity>viewing in audacity</a></li>
-<li><a href=#introducing-rfcat>introducing rfcat</a></li>
-<li><a href=#sending-the-signal-with-rfcat>sending the signal with RFcat</a></li>
-<li><a href=#getting-the-on-off-keying-right>getting the on-off keying right</a></li>
-<li><a href=#baud-rate-hate>baud rate hate</a></li>
-<li><a href=#let-there-be-light>let there be light</a></li>
-<li><a href=#resources>resources</a></li>
-<li><a href=#further-work>further work</a></li>
-</ul>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
 </li>
 </ul>
-</nav></aside>
-<p>At <a href=https://www.defcon.org/html/defcon-24/dc-24-index.html>defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href=https://greatscottgadgets.com/yardstickone/>YARD Stick One</a> and a <a href=https://greatscottgadgets.com/ubertoothone/>Ubertooth One</a>. I already owned a DVB-T dongle much like <a href=https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W>this one</a> that I bought at defcon23 the previous year.</p>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+reverse engineering static key remotes with gnuradio and rfcat
+</h1>
+<div class=post-meta>October 2, 2016&nbsp;·&nbsp;18 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2016-10-02-reverse-engineering-static-key-remotes-with-gnuradio-and-rfcat.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
+</div>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
+<li>
+<a href=#the-terminology aria-label="the terminology">the terminology</a></li>
+<li>
+<a href=#the-gear aria-label="the gear">the gear</a></li>
+<li>
+<a href=#the-signal-capture aria-label="the signal capture">the signal capture</a></li>
+<li>
+<a href=#the-gnuradio-reveal aria-label="the gnuradio reveal">the gnuradio reveal</a></li>
+<li>
+<a href=#preparing-gnuradio aria-label="preparing gnuradio">preparing gnuradio</a></li>
+<li>
+<a href=#building-the-flow-graph aria-label="building the flow graph">building the flow graph</a></li>
+<li>
+<a href=#storing-the-recordings aria-label="storing the recordings">storing the recordings</a></li>
+<li>
+<a href=#viewing-in-audacity aria-label="viewing in audacity">viewing in audacity</a></li>
+<li>
+<a href=#introducing-rfcat aria-label="introducing rfcat">introducing rfcat</a></li>
+<li>
+<a href=#sending-the-signal-with-rfcat aria-label="sending the signal with RFcat">sending the signal with RFcat</a></li>
+<li>
+<a href=#getting-the-on-off-keying-right aria-label="getting the on-off keying right">getting the on-off keying right</a></li>
+<li>
+<a href=#baud-rate-hate aria-label="baud rate hate">baud rate hate</a></li>
+<li>
+<a href=#let-there-be-light aria-label="let there be light">let there be light</a></li>
+<li>
+<a href=#resources aria-label=resources>resources</a></li>
+<li>
+<a href=#further-work aria-label="further work">further work</a>
+</li>
+</ul>
+</div>
+</details>
+</div>
+<div class=post-content><p>At <a href=https://www.defcon.org/html/defcon-24/dc-24-index.html>defcon24</a> this year, I impulsively bought myself some new toys. Amongst what I got included a <a href=https://greatscottgadgets.com/yardstickone/>YARD Stick One</a> and a <a href=https://greatscottgadgets.com/ubertoothone/>Ubertooth One</a>. I already owned a DVB-T dongle much like <a href=https://www.amazon.co.uk/Digital-DVB-T-RTL2832U-FC0013B-Receiver/dp/B00NOP0P6W>this one</a> that I bought at defcon23 the previous year.</p>
 <p>My interest in Software Defined Radio has long been one of those where I just felt so overwhelmed with the idea for a very long time that I dare not try it. This, together with the fact that its something I <em>totally</em> know nothing about really did make for this bit of research to be pretty daunting at first.</p>
-<figure class=left>
-<img src=/images/re_static_key_banner.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_banner.png>
 </figure>
 <p>Nonetheless, here is my adventure into reverse engineering a plain static key remote and successfully replaying it from my computer.</p>
-<h2 id=the-terminology>the terminology</h2>
+<h2 id=the-terminology>the terminology<a hidden class=anchor aria-hidden=true href=#the-terminology>#</a></h2>
 <p>Where to start? In hindsight, I guess a sane point of departure would have been to first figure out what all of these new acronyms mean. OOK, PWM, AM, FSK etc were all things I have only seen but never actually knew what they meant. I read a whole bunch of blog posts and other RTL-SDR related stuff, thinking I could just dive right in. It was not long before I realized that its pretty important when someone talks about Pulse Width Modulation(PWM) that I <strong>actually</strong> know that this means!</p>
 <p>So, as I progressed through the resources I found online, I made a note of looking up the acronyms and what the general idea behind them were. The most important of the acronyms you should know is listed below. You should seriously take some time to look into these in more detail and not just rely on my silly descriptions:</p>
 <ul>
@@ -141,7 +164,7 @@ In addition to <strong>AM</strong>, in the case of these static key remotes, the
 On-off keying is a form of <a href=https://en.wikipedia.org/wiki/Amplitude-shift_keying>Amplitude-shift keying</a> where a binary value is represented based on the duration of the presence of a carrier signal (or a just a high amplitude signal).</p>
 </li>
 </ul>
-<h2 id=the-gear>the gear</h2>
+<h2 id=the-gear>the gear<a hidden class=anchor aria-hidden=true href=#the-gear>#</a></h2>
 <p>Once I had a good idea of what all of this stuff means, it was time to get some gear to play with. I went to a local <a href=http://www.communica.co.za/>electronics store</a> to pick up a few things. The most important being a static key remote. I also needed something that will <em>switch on</em> when the remote is pressed. For this, I settled on a small LED light, just to give an indication of life. All in all I must have spent close to R600 (~40USD) for everything. The list of lab toys included:</p>
 <ul>
 <li>1 x <a href=http://www.communica.co.za/Catalog/Details/P3842375875>Basic 433Mhz Binary Code Transmitter</a></li>
@@ -152,26 +175,26 @@ On-off keying is a form of <a href=https://en.wikipedia.org/wiki/Amplitude-shift
 <li>Some wiring etc.</li>
 </ul>
 <p>I setup, wired together and tested everything. The LED light was wired up to the normally open contact so that when the remote button is pressed, the light will go on for a brief period of time and then switch off.</p>
-<figure class=left>
-<img src=/images/re_static_key_lab_gear.jpg>
+<figure>
+<img loading=lazy src=/images/re_static_key_lab_gear.jpg>
 </figure>
 <p>I paired my remote with a random position of the 12 dip switches on it to the receiver and tested that the light actually goes on under normal conditions. Sweet.</p>
-<h2 id=the-signal-capture>the signal capture</h2>
+<h2 id=the-signal-capture>the signal capture<a hidden class=anchor aria-hidden=true href=#the-signal-capture>#</a></h2>
 <p>Capturing the remotes signal turned out to be a little easier than I initially expected. I found <strong>plenty</strong> of resources online that helped me get familiar with ways to do it. The most common capture method I could see was to use a tool called <a href=http://gqrx.dk/>GXRQ</a>. GQRX allows you to tune into the frequency and make a raw recording of the signal to file. This is probably the fastest way to get the recordings to file. The recorded file can then be opened up in <a href=http://gnuradio.org/>gnuradio</a> or <a href=https://github.com/miek/inspectrum>inspectrum</a>. You can do a number of fun things with GQRX, like listening to radio! (I had to enable Hardware AGC in GQRX for this to work) :)</p>
-<figure class=left>
-<img src=/images/re_static_key_fm_radio.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_fm_radio.png>
 </figure>
 <p>Anyways. I got stuck trying to decode the key from the remote using a GQRX recording. No matter how I loaded it into inspectrum or audacity (or even raw parsing attempts at some stage), I just could not make head or tail of what I was looking at. In fact, it all just turned out to be garbage to me. Maybe because I didn&rsquo;t set it to record AM? Who knows. Anyways.</p>
-<h2 id=the-gnuradio-reveal>the gnuradio reveal</h2>
+<h2 id=the-gnuradio-reveal>the gnuradio reveal<a hidden class=anchor aria-hidden=true href=#the-gnuradio-reveal>#</a></h2>
 <p>Speaking to <a href=https://twitter.com/elasticninja>@elasticninja</a> (<em>thanks for your epic patience dude!</em>), I got tipped off to an absolutely <strong>great</strong> video by <a href=https://twitter.com/michaelossmann>Michael Ossmann</a> in he&rsquo;s <em>Software Defined Radio with HackRF</em> series <a href=https://greatscottgadgets.com/sdr/>here</a>. More specifically, <a href=https://greatscottgadgets.com/sdr/8/>lesson 8</a> deals with on-off keying and was excellent in getting me started with gnuradio.</p>
 <p>This lesson does a great job of showing you how to find out more details about a specific remote that you are interested in by looking up its hardware specs, test results and any other pieces of information. It then goes on to explain how to get your first flow graph up and running in gnuradio in no time.</p>
-<h2 id=preparing-gnuradio>preparing gnuradio</h2>
+<h2 id=preparing-gnuradio>preparing gnuradio<a hidden class=anchor aria-hidden=true href=#preparing-gnuradio>#</a></h2>
 <p>Before building gnuradio flow graphs, a little bit of preparation was needed. I was using a Kali Virtual Machine in VMWare for testing and had to install a few extra packages on top of the base installation. While we on the topic of dependencies, I am just going to list everything needed to replicate that which you will find in this post:</p>
-<pre><code>apt install gnu-radio rfcat gr-osmosdr audacity
+<pre tabindex=0><code>apt install gnu-radio rfcat gr-osmosdr audacity
 </code></pre><p>If you want audio to work, I had to enable pulseaudio with these commands followed by a reboot:</p>
-<pre><code>systemctl --user enable pulseaudio &amp;&amp; systemctl --user start pulseaudio
+<pre tabindex=0><code>systemctl --user enable pulseaudio &amp;&amp; systemctl --user start pulseaudio
 </code></pre><p>With that out of the way, I was ready to replicate that flow graph from the lesson.</p>
-<h2 id=building-the-flow-graph>building the flow graph</h2>
+<h2 id=building-the-flow-graph>building the flow graph<a hidden class=anchor aria-hidden=true href=#building-the-flow-graph>#</a></h2>
 <p>Just like the session explained, I launched <code>gnuradio-companion</code> and built the flow graph the same way:</p>
 <ul>
 <li>Launch GNU radio (and start a new WX GUI Graph). I noticed it defaults to the QT GUI in the options block, so just right-click edit that and flip it over to WX GUI.</li>
@@ -181,8 +204,8 @@ On-off keying is a form of <a href=https://en.wikipedia.org/wiki/Amplitude-shift
 <li>Edit the <em>osmocon Source</em> block and set the RF Gain to 0 and the frequency to the one you are hoping to listen in on. In my case this is 4339e5, or 4339200000.</li>
 </ul>
 <p>Once this is done, save the flow graph and run it (with your RTL-SDR plugged in) to visualize the signal when you press your remote!</p>
-<figure class=left>
-<img src=/images/re_static_key_gnu_radio1.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_gnu_radio1.png>
 </figure>
 <p>Fast forward a bit through the lesson, and we finally get to part where we can visualize the key on the remote as a demodulated waveform with the addition of the second scope sink (around 30mins in). To get a nice and clear picture of the on-off keying, we want to measure the magnitude over time of a sample. This can be done by adding a type converter to the flow graph. The <em>Complex to Mag</em> type converter will do the job just fine. To add this:</p>
 <ul>
@@ -192,47 +215,47 @@ On-off keying is a form of <a href=https://en.wikipedia.org/wiki/Amplitude-shift
 <li>Change the input expected by the scope sink from <em>complex</em> to <em>float</em>.</li>
 </ul>
 <p>With this done, run the graph again. You will need to fiddle a little with the seconds per division and counts per division values to get the visualization just right. Unticking the <em>Autorange</em> box will also greatly help you narrow down the signal. As a last tip, if you experience the graph jumping around too much (from left to right), you can toggle a &lsquo;center&rsquo; by focussing the <em>Trig</em> tab and setting the lines that appear with the level toggles.</p>
-<figure class=left>
-<img src=/images/re_static_key_demodulated_scope.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_demodulated_scope.png>
 </figure>
 <p>As you can see in this screenshot, the keying seems to represent the values:</p>
-<pre><code>[short, short, short, long, long, short, short, long, short, short, long, short]
+<pre tabindex=0><code>[short, short, short, long, long, short, short, long, short, short, long, short]
 </code></pre><p>Or:</p>
-<pre><code>[1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1]
+<pre tabindex=0><code>[1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1]
 </code></pre><p>This indeed matches the switch positions on my remote. Yay!</p>
-<figure class=left>
-<img src=/images/re_static_key_real_remote.jpg>
+<figure>
+<img loading=lazy src=/images/re_static_key_real_remote.jpg>
 </figure>
-<h2 id=storing-the-recordings>storing the recordings</h2>
+<h2 id=storing-the-recordings>storing the recordings<a hidden class=anchor aria-hidden=true href=#storing-the-recordings>#</a></h2>
 <p>Looking at those waveforms is cool and all, but it isn&rsquo;t always practical to keep your finger on a button. Instead, we can record the output to a file for later use. You may choose to record the raw, unprocessed signal from the radio (in cases where you may need to still do some processing on the file maybe?) or save the demodulated waveform. To do this, simply add a new <em>Wave File Sink</em> block after the <em>Complex to Mag</em> block and specify a destination filename.</p>
-<figure class=left>
-<img src=/images/re_static_key_wave_file_sink.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_wave_file_sink.png>
 </figure>
 <p>Now, just launch the graph and press down on the remote for a while. When done, stop the graph and check if your file has been written in the location you specified:</p>
-<pre><code>~ # ls -lah remote.wav
+<pre tabindex=0><code>~ # ls -lah remote.wav
 -rw-r--r-- 1 root root 7.2M Oct  3 22:07 remote.wav
 </code></pre><p>Great. If you need to re-use this file at a later stage in gnuradio, simply add a <em>File Source</em> / <em>Wave File Source</em> block as needed and reconnect the other blocks where appropriate.</p>
-<h2 id=viewing-in-audacity>viewing in audacity</h2>
+<h2 id=viewing-in-audacity>viewing in audacity<a hidden class=anchor aria-hidden=true href=#viewing-in-audacity>#</a></h2>
 <p>If you saved the demodulated wave file, then you can open this file in <a href=http://www.audacityteam.org/>Audacity</a>. Simply launch audacity (we already installed it) and open the recorded wave file. Viewing the recording at first may look something like this:</p>
-<figure class=left>
-<img src=/images/re_static_key_audacity_full.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_audacity_full.png>
 </figure>
 <p>However, when you zoom in a little, you may start seeing the on-off keying becoming obvious:</p>
-<figure class=left>
-<img src=/images/re_static_key_audacity_zoomed.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_audacity_zoomed.png>
 </figure>
 <p>Admittedly, getting this far was relatively easy thanks to the ton of research out there already!</p>
-<h2 id=introducing-rfcat>introducing rfcat</h2>
+<h2 id=introducing-rfcat>introducing rfcat<a hidden class=anchor aria-hidden=true href=#introducing-rfcat>#</a></h2>
 <p>I guess the main reason why I decided on the YARD Stick One was because of the fact that it comes pre-flashed with the <a href=https://bitbucket.org/atlas0fd00m/rfcat>RFcat</a> firmware. It was only after the fact that I realized its actually a <a href=https://greatscottgadgets.com/yardstickone/>pretty good RF device in general</a>. There are some other radios (maybe cheaper?) that you can flash to work with RFCat such as the <a href=http://www.ti.com/tool/cc1111emk868-915>CC1111emk</a> dongle or the dongle that comes with the <a href=http://www.ti.com/tool/ez430-chronos>Chronos watch development kit</a>. The <a href=https://bitbucket.org/atlas0fd00m/rfcat/wiki/SupportedDongles>RFCat wiki</a> also has a list of compatible dongles.</p>
 <p>As for RFcat itself, I guess the most important thing to realize is that you effectively have a python interface to the underlying radio when using it. Admittedly, there isn&rsquo;t a lot of documentation for RFCat and you may very quickly come to realize that you will have to make use of the <code>help()</code> strings and the source code of <code>rflib</code> to learn the necessary. This coupled with existing projects and work online doesn&rsquo;t make it <em>too hard</em> to get going.</p>
 <p>To give you an idea, below is a sample snippet of starting <code>rfcat</code> in <em>&lsquo;research&rsquo; (-r)</em> mode and sending a string as a &lsquo;ping&rsquo; packet. Using RFcat this way, the object <code>d</code> is used to call methods for the radio:</p>
-<figure class=left>
-<img src=/images/re_static_key_rfcat_ping.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_rfcat_ping.png>
 </figure>
 <p>As you can see in the screenshot, there is a banner message giving you some useful hints on how you can interact with the dongle. Methods such as <code>setFreq()</code>, <code>setMdmModulation()</code> etc is all things we will be needing soon™ when we want to start replaying the signal of this remote (and switch on that very bright LED!).</p>
-<h2 id=sending-the-signal-with-rfcat>sending the signal with RFcat</h2>
+<h2 id=sending-the-signal-with-rfcat>sending the signal with RFcat<a hidden class=anchor aria-hidden=true href=#sending-the-signal-with-rfcat>#</a></h2>
 <p>As you may have noticed by now, sending signals with RFCat is as simple as <code>d.RFxmit(data='DEADBEEF')</code>. To get the receiver to understand my replay, I didn&rsquo;t think it would be as easy just playing the raw binary string of <code>111001101101</code> back. I tested anyways by writing a small script to start sending signals and then captured them using my SDR and gnuradio. The values for the frequency and baud rate is something that you <em>should</em> be able to get from the data sheets of the remote you are attempting to replay. (I will show you how to calculate the baud rate later though). The original script I used was:</p>
-<pre><code>#!/usr/bin/python
+<pre tabindex=0><code>#!/usr/bin/python
 
 import rflib
 
@@ -249,12 +272,12 @@ d.setFreq(433920000) # Set the frequency
 d.RFxmit('111001101101')
 d.setModeIDLE()
 </code></pre><p>I ran this script together with a gnuradio flow graph that was set up to dump the signal to a file. I then used this signal as a source to a <em>Scope Sink</em> that was prefixed with a <em>Complex to Mag</em> block. As expected, with this initial attempt I could not find anything in my graphs that even remotely looked like on-off keying!</p>
-<figure class=left>
-<img src=/images/re_static_key_raw_binary_xmit.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_raw_binary_xmit.png>
 </figure>
 <p>No easy win here was ok as it forced me to dive a little into the RFCat source code in an attempt to figure out how exactly the data should be sent. I also searched online for examples of how to send data correctly and came across a number of examples to help me.</p>
 <p>Turns out, I need to get my data into bytes to send with <code>RFxmit()</code>. No big deal, lets do just that!</p>
-<pre><code>#!/usr/bin/python
+<pre tabindex=0><code>#!/usr/bin/python
 
 import rflib
 
@@ -278,35 +301,35 @@ d.RFxmit(rf_data, repeat=500)
 
 d.setModeIDLE()
 </code></pre><p>I now added the hex conversation of the original binary string and added the <code>repeat=500</code> value to <code>RFxmit()</code> to help me find the signal with gnuradio. This was finally what I needed to be able to send data that appeared to look like on-off keying!</p>
-<figure class=left>
-<img src=/images/re_static_key_non_pwm_gnuradio.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_non_pwm_gnuradio.png>
 </figure>
 <p>This was not exactly the same as the signal that I originally captured using the actual remote, but, it was progress, and I believed it to be <strong>good</strong> progress.</p>
-<h2 id=getting-the-on-off-keying-right>getting the on-off keying right</h2>
+<h2 id=getting-the-on-off-keying-right>getting the on-off keying right<a hidden class=anchor aria-hidden=true href=#getting-the-on-off-keying-right>#</a></h2>
 <p>I played around quite a bit at this stage with my attempts to represent the same waveform as the ones captured from the remote I am trying to replicate. I made a major breakthrough when I came across this <a href=http://adamsblog.aperturelabs.com/2013/03/you-can-ring-my-bell-adventures-in-sub.html>blog post</a> where the author explains a method in which to accurately convert the signal into a true on-off keying waveform. The general idea being that you should take note of the smallest distance of amplitude and use that as a single binary digit. You then count the bits relative to this distance and convert to them to a <code>1</code> for a high amplitude and a <code>0</code> for a low amplitude. Effectively we are simply calculating the Pulse-width Modulation key for our binary code manually now.</p>
 <p>So to replicate this in my example, I went back to the original wave file I recorded and extracted a single full pulse:</p>
-<figure class=left>
-<img src=/images/re_static_key_audacity_full_zoom.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_audacity_full_zoom.png>
 </figure>
 <p>One important difference that I noticed with my remote compared to many similar posts I saw online was that I had this long starting high amplitude before the actual on-off keying signal started. It looked like about half of a pulse was this high amplitude, and the other half signal. I assumed these will all just be handled by adding a bunch of <code>1</code>&rsquo;s in front of my final key as it may have served as some form of preamble or something. ¯\_(ツ)_/¯</p>
-<figure class=left>
-<img src=/images/re_static_key_audacity_full_zoom_pwm.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_audacity_full_zoom_pwm.png>
 </figure>
 <p>If you look closely at the above image, you would notice that the second half of the pulse is divided up into equal length sections that are of similar size as that of the smallest pulse. This size can be seen as the <a href=https://en.wikipedia.org/wiki/Clock_signal>clock signal</a>.</p>
 <p>The distance of a high pulse followed by a low pulse (relative to the clock signal) signifies the bits that is being transferred. This is actually also known as <a href=https://en.wikipedia.org/wiki/Pulse-width_modulation#Telecommunications>Pulse-width Modulation</a>. Applying this logic (as shown in the screenshot where the bits are filled in) to the waveform, we can deduce that the Pulse-width Modulation key (without the prefix of the 35 <code>1</code>&rsquo;s and the <code>0</code>) is:</p>
-<pre><code># PWM Key version of 111001101101
+<pre tabindex=0><code># PWM Key version of 111001101101
 100100100110110100100110100100110100
 </code></pre><p>If we take an even closer look at the above PWM key, one might even notice that in relation to the waveform, the bit strings <code>1</code>&rsquo;s and <code>0</code>&rsquo;s are represented as <code>100</code> for a <code>1</code> and <code>110</code> for a <code>0</code> to form the full PWM key. We can visualize this logic in the below snippet where the PWM key is separated by a | and the original bitstring is filled in below it:</p>
-<pre><code># PWM to Bitstring comparison
+<pre tabindex=0><code># PWM to Bitstring comparison
 100 | 100 | 100 | 110 | 110 | 100 | 100 | 110 | 100 | 100 | 110 | 100
  1     1     1     0     0     1     1     0     1     1     0     1
 </code></pre><p>This matches our initial bit string of <code>111001101101</code>, and helps us conclude that for a full PWM key (with the leading bunch of <code>1</code>&rsquo;s) the resultant key would be:</p>
-<pre><code># Full PWM Key
+<pre tabindex=0><code># Full PWM Key
 111111111111111111111111111111111110100100100110110100100110100100110100
-</code></pre><h2 id=baud-rate-hate>baud rate hate</h2>
+</code></pre><h2 id=baud-rate-hate>baud rate hate<a hidden class=anchor aria-hidden=true href=#baud-rate-hate>#</a></h2>
 <p>Before I get to the rest of the newly updated script, lets talk about <a href=https://en.wikipedia.org/wiki/Baud>baud rate</a> quickly. This is something that caused me <strong>a lot</strong> of pain. I managed to get the original waveform from my remote and my generated waveform using scripts to look similar, but there was a serious issue with getting the length of the pulses to match. <em>If you look closely at the below screenshot you will notice there is actually a problem with the key too (missing a bit), but heh, the clock signal is whats important here:</em></p>
-<figure class=left>
-<img src=/images/re_static_key_baud_rate_miss.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_baud_rate_miss.png>
 </figure>
 <p>This problem existed until I finally managed to figure out what the math for the baud rate calculation was. I noticed that this value is not an exact science though. You can be off by <em>quite a lot</em>, and yet the signal will still have a high change of succeeding. YMMV.</p>
 <p>Unfortunately I can not remember the post / code that lead me to this, but the basic idea for calculating baud rate is as follows:</p>
@@ -316,16 +339,16 @@ d.setModeIDLE()
 <li>The number of samples in the shortest high amplitude bit, divided by the sample rate over 1 should give you the baud rate.</li>
 </ul>
 <p>In other words:</p>
-<pre><code>baud = (1.0 / (length of shortest high peak / sample rate))
+<pre tabindex=0><code>baud = (1.0 / (length of shortest high peak / sample rate))
 </code></pre><p>Practically, you can determine the values needed for the formula by opening a wave file you recorded using gnuradio, zooming and selecting one of the short pulses and changing the selection at the bottom dropdown to <em>length and samples</em>.</p>
-<figure class=left>
-<img src=/images/re_static_key_audacity_baud_rate.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_audacity_baud_rate.png>
 </figure>
 <p>Here you can see my sample range for the shortest high peak is <strong>740</strong> samples, and on the far left you can see the sample rate of <strong>2000000</strong>. That means that my baud rate will be <code>1.0/(740/2000000)</code>, which is ~<strong>2702</strong> baud. Not 100% accurate, but accurate enough to work.</p>
-<h2 id=let-there-be-light>let there be light</h2>
+<h2 id=let-there-be-light>let there be light<a hidden class=anchor aria-hidden=true href=#let-there-be-light>#</a></h2>
 <p>One last hurdle! I had some troubles with the conversions to hex for the long bit string as a result of the PWM conversion. Thankfully, I came across the <a href=https://pypi.python.org/pypi/bitstring/3.1.3>bitstring</a> module to handle the conversion to bytes. What a fantastic library :P</p>
 <p>The final, updated script follows:</p>
-<pre><code>#!/usr/bin/python
+<pre tabindex=0><code>#!/usr/bin/python
 
 # Send a PWM String using RfCat
 
@@ -369,10 +392,10 @@ d.setFreq(433920000)        # Set the frequency
 d.RFxmit(rf_data, repeat=25)
 d.setModeIDLE()
 </code></pre><p>I ran this newly updated script and <strong>BAM</strong>, my labs LED light illuminates! \o/</p>
-<figure class=left>
-<img src=/images/re_static_key_light_on.jpg>
+<figure>
+<img loading=lazy src=/images/re_static_key_light_on.jpg>
 </figure>
-<h2 id=resources>resources</h2>
+<h2 id=resources>resources<a hidden class=anchor aria-hidden=true href=#resources>#</a></h2>
 <p>Below is basically a link dump of stuff that was super helpful in getting as far as I did with this. These posts may help clear things up that made no sense in this post!</p>
 <p>General On-off keying stuff:</p>
 <ul>
@@ -390,43 +413,56 @@ d.setModeIDLE()
 <li><a href=https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py>https://github.com/ade-ma/LibOut/blob/master/scripts/rfcat-libout.py</a></li>
 <li><a href=https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py>https://github.com/alextspy/rolljam/blob/master/rf_car_jam.py</a></li>
 </ul>
-<h2 id=further-work>further work</h2>
+<h2 id=further-work>further work<a hidden class=anchor aria-hidden=true href=#further-work>#</a></h2>
 <p>With that done, I set off to write a toolkit that allows you to work with rfcat and On-off keying data sources such as wave files, or just simple recordings from rfcat itself. After finishing the polishing, I&rsquo;ll release it along with a post detailing its internals and usage! In the meantime, keep an eye on this repository <a href=https://github.com/leonjza/ooktools>https://github.com/leonjza/ooktools</a></p>
-<figure class=left>
-<img src=/images/re_static_key_ooktools.png>
+<figure>
+<img loading=lazy src=/images/re_static_key_ooktools.png>
 </figure>
 <p>Happy hacking!</p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/>
-<span class=button__icon>←</span>
-<span class=button__text>ooktools: on-off keying tools for your sdr</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=prev href=https://leonjza.github.io/blog/2016/10/08/ooktools-on-off-keying-tools-for-your-sdr/>
+<span class=title>« Prev Page</span>
+<br>
+<span>ooktools: on-off keying tools for your sdr</span>
 </a>
-</span>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/>
-<span class=button__text>awesome nmap grep</span>
-<span class=button__icon>→</span>
+<a class=next href=https://leonjza.github.io/blog/2016/07/09/awesome-nmap-grep/>
+<span class=title>Next Page »</span>
+<br>
+<span>awesome nmap grep</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on twitter" href="https://twitter.com/intent/tweet/?text=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f&title=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat&summary=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f&title=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on whatsapp" href="https://api.whatsapp.com/send?text=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share reverse engineering static key remotes with gnuradio and rfcat on telegram" href="https://telegram.me/share/url?text=reverse%20engineering%20static%20key%20remotes%20with%20gnuradio%20and%20rfcat&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2016%2f10%2f02%2freverse-engineering-static-key-remotes-with-gnuradio-and-rfcat%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

@@ -1,266 +1,242 @@
-<!doctype html><html lang=en>
-<head>
-<meta name=generator content="Hugo 0.86.0">
-<title>
-#!/bin/note
-—
-a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>#!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="a checkbox uncheckers notepad">
 <meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
+<meta name=description content>
+<meta name=author content="Leon Jacobs">
 <link rel=canonical href=https://leonjza.github.io/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="#!/bin/note
-">
-<meta name=twitter:description content>
-<meta property="og:title" content="#!/bin/note
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<link rel=alternate type=application/rss+xml href=https://leonjza.github.io/index.xml>
+<link rel=alternate type=application/json href=https://leonjza.github.io/index.json>
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="#!/bin/note
 ">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://leonjza.github.io/"><meta property="og:site_name" content="#!/bin/note
 ">
-<link rel=alternate type=application/rss+xml href=/index.xml title="#!/bin/note
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="#!/bin/note
 ">
+<meta name=twitter:description content>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","name":"#!/bin/note\n","url":"https://leonjza.github.io","description":"","thumbnailUrl":"https://leonjza.github.io/favicon.ico","sameAs":["https://twitter.com/leonjza","https://github.com/leonjza","index.xml"]}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body class=list id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=posts>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-bad-blog/>NahamCon2021 CTF - Bad Blog</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category web - medium
+<main class=main>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Bad Blog
+</h2>
+</header>
+<section class=entry-content>
+<p>category web - medium
 solution The challenge URL drops us on a page where we need to login. So, create an account, login and land on the home page of a blog.
 After creating a new post, you can see who visited your blog in the profile section.
-Poking around will reveal that if you tamper with your user agent string, that is what will show up in the analytics section.
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-bad-blog/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-cereal-and-milk/>NahamCon2021 CTF - Cereal and Milk</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
+Poking around will reveal that if you tamper with your user agent string, that is what will show up in the analytics section....</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;1 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Bad Blog" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-bad-blog/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Cereal and Milk
+</h2>
+</header>
+<section class=entry-content>
+<p>category web - medium
 solution The challenge URL drops us on a page where we can submit cereals.
 We are also given two files to download, index.php & log.php. I quickly spotted an unsafe deserialisation bug in the provided files. The cleaned up and relevant PHP code from both files were:
 index.php
-&lt;?php include 'log.php'; class CerealAndMilk { public $logs = "request-logs.txt"; public $request = ''; public $cereal = 'Captain Crunch'; public $milk = ''; public function processed_data($output) { echo "Deserilized data:&lt;br> Coming soon.
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-cereal-and-milk/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-imposter/>NahamCon2021 CTF - Imposter</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
+&lt;?php include 'log.php'; class CerealAndMilk { public $logs = "request-logs.txt"; public $request = ''; public $cereal = 'Captain Crunch'; public $milk = ''; public function processed_data($output) { echo "Deserilized data:&lt;br> Coming soon....</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Cereal and Milk" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-cereal-and-milk/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Imposter
+</h2>
+</header>
+<section class=entry-content>
+<p>category web - medium
 solution This was a tricker, but fun one. The challenge URL drops us on a login page with an OTP field.
 Signing up for an account responsed with a JSON structure containing a url key with an otpauth URI.
 Request
-POST /signup HTTP/1.1 Host: challenge.nahamcon.com:30809 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: application/json Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Referer: http://challenge.nahamcon.com:30809/signup Content-Type: application/json Origin: http://challenge.
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-imposter/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-echo/>NahamCon2021 CTF - Echo</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category warmups - easy
+POST /signup HTTP/1.1 Host: challenge.nahamcon.com:30809 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: application/json Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Referer: http://challenge....</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Imposter" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-imposter/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Echo
+</h2>
+</header>
+<section class=entry-content>
+<p>category warmups - easy
 solution The challenge URL had a web based echo service.
 Many special characters, except for &lt; and ` were filtered. It took me a while but I found the param had command injection. For example:
-GET /?echo=`id` HTTP/1.1 Host: challenge.nahamcon.com:30074 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Referer: http://challenge.nahamcon.com:30074/?echo=food Cookie: auth2=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E; auth=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E Upgrade-Insecure-Requests: 1 Would respond with:
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-echo/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-homeward-bound/>NahamCon2021 CTF - Homeward Bound</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category web - easy
+GET /?echo=`id` HTTP/1.1 Host: challenge.nahamcon.com:30074 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Referer: http://challenge.nahamcon.com:30074/?echo=food Cookie: auth2=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E; auth=eyJpZCI6MX0....</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;1 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Echo" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-echo/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Homeward Bound
+</h2>
+</header>
+<section class=entry-content>
+<p>category web - easy
 solution The challenge URL returns the message Sorry, this page is not accessible externally.
 Add the X-Forwarded-For: 127.0.0.1 header to reveal the flag.
 GET / HTTP/1.1 Host: challenge.nahamcon.com:30903 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close X-Forwarded-For: 127.0.0.1 Cookie: auth2=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E; auth=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E Upgrade-Insecure-Requests: 1 The response has the flag.
-&lt;p class="card-text"> &lt;div class="alert alert-success" role="alert"> &lt;b>Welcome!
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-homeward-bound/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-esab64/>NahamCon2021 CTF - Esab64</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-esab64/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-pollex/>NahamCon2021 CTF - Pollex</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category warmups - easy
+&lt;p class="card-text"> &lt;div class="alert alert-success" role="alert"> &lt;b>Welcome!...</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;1 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Homeward Bound" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-homeward-bound/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Esab64
+</h2>
+</header>
+<section class=entry-content>
+<p>category warmups - easy
+solution The downloaded file contained a string, which looked like it was base64 encoded. The challenge title was also base64 reversed, esab64.
+❯ cat esab64 mxWYntnZiVjMxEjY0kDOhZWZ4cjYxIGZwQmY2ATMxEzNlFjNl13X To solve, reverse the string, base64 decode and then reverse it again.
+import base64 with open("esab64", "r") as f: s = f.readline() s = s[::-1] d = base64.b64decode(s) print(d[::-1][:-1]) Running it gives us the flag.
+$ python3 solve.py b'flag{fb5211b498afe87b1bd0db601117e16e}' </p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;1 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Esab64" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-esab64/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>NahamCon2021 CTF - Pollex
+</h2>
+</header>
+<section class=entry-content>
+<p>category warmups - easy
 solution The downloaded file you get is an image, when opened looks like this:
 Output of exiftool shows that there is a thumbnail, with a hint to extract it right at the bottom.
-❯ exiftool pollex.jpg ExifTool Version Number : 12.16 File Name : pollex.jpg Directory : . File Size : 37 KiB File Modification Date/Time : 2021:03:13 13:40:45+02:00 File Access Date/Time : 2021:03:15 09:53:11+02:00 File Inode Change Date/Time : 2021:03:15 09:53:11+02:00 File Permissions : rw-r--r-- File Type : JPEG File Type Extension : jpg MIME Type : image/jpeg JFIF Version : 1.
-</div>
-<div><a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-pollex/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2020/12/30/the-2020-kinglecon-3-holiday-hack-challenge/>the 2020 kinglecon 3 holiday hack challenge</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2020-12-30
-</span>
-<span class=post-read-time>— 69 min read</span>
-</div>
-<div class=post-content>
-foreword After tweaking the final bits for a successful MD5 hash collision in a tampered blockchain block, I&rsquo;m met with a &ldquo;Congratulations&rdquo; message as I had just completed the final objective for the 2020 SANS Holiday Hack Challenge!
-For a few days during my holiday break I set out to play the challenge this year. I&rsquo;ve dabbled with Holiday Hack challenges in the past, however, this was the first one I actually finished (thanks COVID?
-</div>
-<div><a class="read-more button" href=/blog/2020/12/30/the-2020-kinglecon-3-holiday-hack-challenge/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/>microcorruption - santa cruz</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-11
-</span>
-<span class=post-read-time>— 10 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/>previous challenge</a> called <em>Johannesburg</em>. This challenge is titled <em>Santa Cruz</em>.</p>
-<p>The challenge has the following description when you start:</p>
-<blockquote>
-<p>This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.</p>
-</blockquote>
-<p>Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.</p>
-</div>
-<div><a class="read-more button" href=/blog/2018/03/11/microcorruption-santa-cruz/>Read more →</a></div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/09/microcorruption-johannesburg/>microcorruption - johannesburg</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-09
-</span>
-<span class=post-read-time>— 3 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/>previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
-<p>The challenge has the following description when you start:</p>
-<blockquote>
-<p>This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.</p>
-</blockquote>
-<p>Alright. This might mean that we are done with the overflow challenges? Lets dive in!</p>
-</div>
-<div><a class="read-more button" href=/blog/2018/03/09/microcorruption-johannesburg/>Read more →</a></div>
-</div>
-<div class=pagination>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=/>
-<span class=button__icon>←</span>
-<span class=button__text>Newer posts</span>
-</a>
-</span>
-<span class="button next">
-<a href=/page/3/>
-<span class=button__text>Older posts</span>
-<span class=button__icon>→</span>
-</a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
-</div>
+❯ exiftool pollex.jpg ExifTool Version Number : 12.16 File Name : pollex.jpg Directory : . File Size : 37 KiB File Modification Date/Time : 2021:03:13 13:40:45+02:00 File Access Date/Time : 2021:03:15 09:53:11+02:00 File Inode Change Date/Time : 2021:03:15 09:53:11+02:00 File Permissions : rw-r--r-- File Type : JPEG File Type Extension : jpg MIME Type : image/jpeg JFIF Version : 1....</p>
+</section>
+<footer class=entry-footer>March 15, 2021&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to NahamCon2021 CTF - Pollex" href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-pollex/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>the 2020 kinglecon 3 holiday hack challenge
+</h2>
+</header>
+<section class=entry-content>
+<p>foreword After tweaking the final bits for a successful MD5 hash collision in a tampered blockchain block, I’m met with a “Congratulations” message as I had just completed the final objective for the 2020 SANS Holiday Hack Challenge!
+For a few days during my holiday break I set out to play the challenge this year. I’ve dabbled with Holiday Hack challenges in the past, however, this was the first one I actually finished (thanks COVID?...</p>
+</section>
+<footer class=entry-footer>December 30, 2020&nbsp;·&nbsp;72 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to the 2020 kinglecon 3 holiday hack challenge" href=https://leonjza.github.io/blog/2020/12/30/the-2020-kinglecon-3-holiday-hack-challenge/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>microcorruption - santa cruz
+</h2>
+</header>
+<section class=entry-content>
+<p> This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
+The challenge has the following description when you start:
+This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
+Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.
+...</p>
+</section>
+<footer class=entry-footer>March 11, 2018&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to microcorruption - santa cruz" href=https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/></a>
+</article>
+<article class=post-entry>
+<header class=entry-header>
+<h2>microcorruption - johannesburg
+</h2>
+</header>
+<section class=entry-content>
+<p> This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Montevideo. This challenge is titled Johannesburg.
+The challenge has the following description when you start:
+This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.
+Alright. This might mean that we are done with the overflow challenges? Lets dive in!
+...</p>
+</section>
+<footer class=entry-footer>March 9, 2018&nbsp;·&nbsp;3 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to microcorruption - johannesburg" href=https://leonjza.github.io/blog/2018/03/09/microcorruption-johannesburg/></a>
+</article>
+<footer class=page-footer>
+<nav class=pagination>
+<a class=prev href=https://leonjza.github.io/>« Prev Page</a>
+<a class=next href=https://leonjza.github.io/page/3/>Next Page »</a>
+</nav>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
 </body>
 </html>

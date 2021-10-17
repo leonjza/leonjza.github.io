@@ -1,874 +1,109 @@
-<!doctype html><html lang=en>
-<head>
-<title>
-CTF ::
-#!/bin/note
-— a checkbox uncheckers notepad
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>CTF | #!/bin/note
 </title>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=keywords content>
 <meta name=description content>
-<meta name=keywords content="blog,hack,ctf,leonjza,pentester,red team,attack">
-<meta name=robots content="noodp">
+<meta name=author content="Leon Jacobs">
 <link rel=canonical href=https://leonjza.github.io/categories/ctf/>
-<link rel=stylesheet href=https://leonjza.github.io/assets/style.css>
-<link rel=stylesheet href=https://leonjza.github.io/style.css>
-<link rel=apple-touch-icon-precomposed sizes=144x144 href=https://leonjza.github.io/img/apple-touch-icon-144-precomposed.png>
-<link rel="shortcut icon" href=https://leonjza.github.io/img/favicon.png>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Italic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Regular.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Medium.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-MediumItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-Bold.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<link href=https://leonjza.github.io/assets/fonts/Inter-BoldItalic.woff2 rel=preload type=font/woff2 as=font crossorigin>
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="CTF">
-<meta name=twitter:description content>
-<meta property="og:title" content="CTF">
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<link rel=icon href=https://leonjza.github.io/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=https://leonjza.github.io/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=https://leonjza.github.io/favicon-32x32.png>
+<link rel=apple-touch-icon href=https://leonjza.github.io/apple-touch-icon.png>
+<link rel=mask-icon href=https://leonjza.github.io/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<link rel=alternate type=application/rss+xml href=https://leonjza.github.io/categories/ctf/index.xml>
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="CTF">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://leonjza.github.io/categories/ctf/"><meta property="og:site_name" content="#!/bin/note
 ">
-<link rel=alternate type=application/rss+xml href=/categories/ctf/index.xml title="#!/bin/note
-">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="CTF">
+<meta name=twitter:description content>
 </head>
-<body class=dark-theme>
-<div class=container>
+<body class=list id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
-<span class=header__inner>
-<a href=/ class=logo style=text-decoration:none>
-<span class=logo__mark><svg xmlns="http://www.w3.org/2000/svg" class="greater-icon" viewBox="0 0 44 44"><path fill="none" d="M15 8l14.729 14.382L15 35.367"/></svg>
-</span>
-<span class=logo__text>#!/bin/note
-</span>
-<span class=logo__cursor></span>
+<nav class=nav>
+<div class=logo>
+<a href=https://leonjza.github.io accesskey=h title="#!/bin/note
+ (Alt + H)">#!/bin/note
 </a>
-<span class=header__right>
-<nav class=menu>
-<ul class="menu__inner menu__inner--desktop">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
-</ul>
-<ul class="menu__inner menu__inner--mobile">
-<li><a href=/about/>About Me</a></li>
-<li><a href=/categories>Categories</a></li>
-<li><a href=/posts>Posts</a></li>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
+</div>
+<ul id=menu>
+<li>
+<a href=https://leonjza.github.io/about/ title="About Me">
+<span>About Me</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/categories title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=https://leonjza.github.io/search/ title="Search (Alt + /)" accesskey=/>
+<span>Search</span>
+</a>
+</li>
 </ul>
 </nav>
-<span class=menu-trigger><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
-</span>
-<span class=theme-toggle><svg class="theme-toggler" width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 41c10.4934.0 19-8.5066 19-19C41 11.5066 32.4934 3 22 3 11.5066 3 3 11.5066 3 22s8.5066 19 19 19zM7 22C7 13.7157 13.7157 7 22 7V37C13.7157 37 7 30.2843 7 22z"/></svg>
-</span>
-</span>
-</span>
 </header>
-<div class=content>
-<div class=posts>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>hackthebox business ctf 2021 writeups</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-07-26
-</span>
-<span class=post-read-time>— 18 min read</span>
-</div>
-<figure class=post-cover>
-<img src=https://leonjza.github.io/images/htbbusiness21/htb_business_logo.png alt="hackthebox business ctf 2021 writeups">
-</figure>
-<div class=post-content>
-<p>The <a href=https://www.hackthebox.eu/htb-business-ctf-2021>HackTheBox Business CTF 2021</a> ran this weekend, and I played with a few colleagues at Orange Cyberdefense / SensePost. We managed to score <a href=https://ctf.hackthebox.eu/ctf/131/scoreboard><em>5th</em></a> place amongst 374 other teams!</p>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_placement.png>
-</figure>
-<figure class=left>
-<img src=/images/htbbusiness21/htb_graph.png>
-</figure>
-<p>The team consisted of (those with twitterz!): <a href=https://twitter.com/felmoltor>felmoltor</a>, <a href=https://twitter.com/JCoertze>JCoertze</a>, <a href=https://twitter.com/TH3_GOAT_FARM3R>TH3_GOAT_FARM3R</a>, <a href=https://twitter.com/Titanex8>Titanex8</a>, <a href=https://twitter.com/_cablethief>_cablethief</a>, <a href=https://twitter.com/gav1no_>gav1no_</a> and <a href=https://twitter.com/GMILTE>GMILTE</a>.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/07/26/hackthebox-business-ctf-2021-writeups/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/05/09/dawgctf-2021/>DawgCTF 2021</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-05-09
-</span>
-<span class=post-read-time>— 5 min read</span>
-</div>
-<div class=post-content>
-foreword DawgCTF 20201 was the first CTF I played together with some local people much smarter than me over at Hack South. We managed to grab 28th place too.
-I only solved three challenges with the time I had in the morning (of which one was a dupe because reading is hard :P).
-solutions reversing - calculator Category: Reversing Points: 50 Files: Windows PE This was the duplicate challenge, but I&rsquo;m writing up how I did it anyways.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/05/09/dawgctf-2021/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/>hack the box - cyber apocalypse ctf &lsquo;21</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-04-24
-</span>
-<span class=post-read-time>— 19 min read</span>
-</div>
-<div class=post-content>
-foreword The HTB Cyber Apocalypse 2021 event was a nice and polished CTF. Apart from the usual start time load issues, everything ran pretty smoothly with nearly zero issues my side. Kudo&rsquo;s HTB! Here are the solutions for the ~20 challenges I managed to solve.
-solutions category - web - BlitzProp Category: Web Difficulty: 1/4 Files: Web app source & build env The challenge landing page already had a hint in the &ldquo;ASTa la vista baby&rdquo; song.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/04/24/hack-the-box-cyber-apocalypse-ctf-21/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-iot-itchy-scratchy-secureiot-co/>NahamCon2021 CTF - IoT Itchy & Scratchy SecureIoT Co</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category iot - hard
-solution unfortunately the infra was down by the time I got to the writeup
-We&rsquo;re given an IP and credentials, along with a reference to mosquito. There was also a URL that accepted a username, a password and OTP.
-I used MQTT Explorer to connect to the mosquito server. With a bit of patience, an office topic received a message with a &ldquo;u&rdquo; and &ldquo;p&rdquo; flag, base64 encoded.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-iot-itchy-scratchy-secureiot-co/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-microscopium/>NahamCon2021 CTF - Microscopium</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category mobile - medium
-solution This was a fun one. We get an .apk to download. Open it in jadx and quickly see this is a React App.
-package com.microscopium; import com.facebook.react.ReactActivity; public class MainActivity extends ReactActivity { /* access modifiers changed from: protected */ @Override // com.facebook.react.ReactActivity public String getMainComponentName() { return "Microscopium"; } } Being React, I expected a large chunk of the logic to be in a JavaScript file, which could be found in the resources section.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-microscopium/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-resourceful/>NahamCon2021 CTF - Resourceful</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-resourceful/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-andra/>NahamCon2021 CTF - Andra</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-andra/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-ret2basic/>NahamCon2021 CTF - Ret2basic</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category binary exploitation - easy
-solution The file we download is a ELF executable.
-$ file ret2basic ret2basic: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=3ca85eae693fed659275c0eed9c313e7f0083b85, for GNU/Linux 4.4.0, not stripped Running it hints the vuln.
-$ ./ret2basic Can you overflow this?: AAAA Nope :( $ $ ./ret2basic Can you overflow this?: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA [1] 9615 segmentation fault ./ret2basic $ Disassembling the binary, we find that main() eventually calls vuln where the overflow exists.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-ret2basic/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-asserted/>NahamCon2021 CTF - Asserted</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
-solution The challenge URL dropped us on a page related to fitness, with not a lot of interesting interactions.
-Navigating the pages you&rsquo;d see a URL scheme where a page parameter is set. Eg: page=about. An about.php also exists, so this was potentially vuln to LFI. Using .. in the page parameter resulted in a warning message indicating that some filtering was taking place.
-$ curl "http://challenge.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-asserted/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-agenttester/>NahamCon2021 CTF - AgentTester</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
-solution We&rsquo;re given an archive to download, agenttester.zip. This contained a Dockerfile and a python web application. The files in the archive had many secrets redacted which were set using environment variables. One specifically interesting one was CHALLENGE_FLAG, which we could assume was the target value to leak.
-The challenge URL dropped us on a page where we need to login. So, create an account, login and land on the home page of the agent tester.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-agenttester/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-bad-blog/>NahamCon2021 CTF - Bad Blog</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category web - medium
-solution The challenge URL drops us on a page where we need to login. So, create an account, login and land on the home page of a blog.
-After creating a new post, you can see who visited your blog in the profile section.
-Poking around will reveal that if you tamper with your user agent string, that is what will show up in the analytics section.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-bad-blog/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-cereal-and-milk/>NahamCon2021 CTF - Cereal and Milk</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
-solution The challenge URL drops us on a page where we can submit cereals.
-We are also given two files to download, index.php & log.php. I quickly spotted an unsafe deserialisation bug in the provided files. The cleaned up and relevant PHP code from both files were:
-index.php
-&lt;?php include 'log.php'; class CerealAndMilk { public $logs = "request-logs.txt"; public $request = ''; public $cereal = 'Captain Crunch'; public $milk = ''; public function processed_data($output) { echo "Deserilized data:&lt;br> Coming soon.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-cereal-and-milk/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-imposter/>NahamCon2021 CTF - Imposter</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category web - medium
-solution This was a tricker, but fun one. The challenge URL drops us on a login page with an OTP field.
-Signing up for an account responsed with a JSON structure containing a url key with an otpauth URI.
-Request
-POST /signup HTTP/1.1 Host: challenge.nahamcon.com:30809 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: application/json Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Referer: http://challenge.nahamcon.com:30809/signup Content-Type: application/json Origin: http://challenge.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-imposter/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-echo/>NahamCon2021 CTF - Echo</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category warmups - easy
-solution The challenge URL had a web based echo service.
-Many special characters, except for &lt; and ` were filtered. It took me a while but I found the param had command injection. For example:
-GET /?echo=`id` HTTP/1.1 Host: challenge.nahamcon.com:30074 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close Referer: http://challenge.nahamcon.com:30074/?echo=food Cookie: auth2=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E; auth=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E Upgrade-Insecure-Requests: 1 Would respond with:
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-echo/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-homeward-bound/>NahamCon2021 CTF - Homeward Bound</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-category web - easy
-solution The challenge URL returns the message Sorry, this page is not accessible externally.
-Add the X-Forwarded-For: 127.0.0.1 header to reveal the flag.
-GET / HTTP/1.1 Host: challenge.nahamcon.com:30903 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:87.0) Gecko/20100101 Firefox/87.0 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8 Accept-Language: en-US,en;q=0.5 Accept-Encoding: gzip, deflate Connection: close X-Forwarded-For: 127.0.0.1 Cookie: auth2=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E; auth=eyJpZCI6MX0.YEp7Wg.fHdsxIGEolHgYQD0d_cvExass8E Upgrade-Insecure-Requests: 1 The response has the flag.
-&lt;p class="card-text"> &lt;div class="alert alert-success" role="alert"> &lt;b>Welcome!
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-homeward-bound/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-esab64/>NahamCon2021 CTF - Esab64</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 1 min read</span>
-</div>
-<div class=post-content>
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-esab64/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2021/03/15/nahamcon2021-ctf-pollex/>NahamCon2021 CTF - Pollex</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2021-03-15
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-category warmups - easy
-solution The downloaded file you get is an image, when opened looks like this:
-Output of exiftool shows that there is a thumbnail, with a hint to extract it right at the bottom.
-❯ exiftool pollex.jpg ExifTool Version Number : 12.16 File Name : pollex.jpg Directory : . File Size : 37 KiB File Modification Date/Time : 2021:03:13 13:40:45+02:00 File Access Date/Time : 2021:03:15 09:53:11+02:00 File Inode Change Date/Time : 2021:03:15 09:53:11+02:00 File Permissions : rw-r--r-- File Type : JPEG File Type Extension : jpg MIME Type : image/jpeg JFIF Version : 1.
-</div>
-<div>
-<a class="read-more button" href=/blog/2021/03/15/nahamcon2021-ctf-pollex/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/11/microcorruption-santa-cruz/>microcorruption - santa cruz</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-11
-</span>
-<span class=post-read-time>— 10 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/09/microcorruption---johannesburg/>previous challenge</a> called <em>Johannesburg</em>. This challenge is titled <em>Santa Cruz</em>.</p>
-<p>The challenge has the following description when you start:</p>
-<blockquote>
-<p>This is Software Revision 05. We have added further mechanisms to verify that passwords which are too long will be rejected.</p>
-</blockquote>
-<p>Maybe we are finally done with the overflow problems? This challenge took me quite a bit of time to solve thanks to the new checks that were introduced. Like, a really long time. Lets go through the process.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/11/microcorruption-santa-cruz/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/09/microcorruption-johannesburg/>microcorruption - johannesburg</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-09
-</span>
-<span class=post-read-time>— 3 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/>previous challenge</a> called <em>Montevideo</em>. This challenge is titled <em>Johannesburg</em>.</p>
-<p>The challenge has the following description when you start:</p>
-<blockquote>
-<p>This is Software Revision 04. We have improved the security of the lock by ensuring passwords that are too long will be rejected.</p>
-</blockquote>
-<p>Alright. This might mean that we are done with the overflow challenges? Lets dive in!</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/09/microcorruption-johannesburg/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/08/microcorruption-montevideo/>microcorruption - montevideo</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-08
-</span>
-<span class=post-read-time>— 6 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/07/microcorruption---whitehorse/>previous challenge</a> called <em>Whitehorse</em>. This challenge is titled <em>Montevideo</em>.</p>
-<p>The challenge has the following description when you start:</p>
-<blockquote>
-<p>This is Software Revision 03. We have received unconfirmed reports of issues with the previous series of locks. We have reimplemented much of the code according to our internal Secure Development Process.</p>
-</blockquote>
-<p>Cool. So this one is going to be unbreakable right? Lets see!</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/08/microcorruption-montevideo/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/07/microcorruption-whitehorse/>microcorruption - whitehorse</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-07
-</span>
-<span class=post-read-time>— 5 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/06/microcorruption---reykjavik/>previous challenge</a> called <em>Reykjavik</em>. This challenge is titled <em>Whitehorse</em>.</p>
-<p>This challenge has the following description towards the bottom:</p>
-<blockquote>
-<p>This is Software Revision 01. The firmware has been updated to connect with the new hardware security module. We have removed the function to unlock the door from the LockIT Pro firmware.</p>
-</blockquote>
-<p>Not a lot of information to go on. Lets dig into the code to learn more.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/07/microcorruption-whitehorse/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/06/microcorruption-reykjavik/>microcorruption - reykjavik</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-06
-</span>
-<span class=post-read-time>— 8 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/06/microcorruption---cusco/>previous challenge</a> called <em>Cusco</em>. This challenge is titled <em>Reykjavik</em>.</p>
-<p>This challenge has the following description towards the bottom:</p>
-<blockquote>
-<p>This is Software Revision 02. This release contains military-grade encryption so users can be confident that the passwords they enter can not be read from memory. We apologize for making it too easy for the password to be recovered on prior versions. The engineers responsible have been sacked.</p>
-</blockquote>
-<p>Rough. But ok, time to see of its better this time. Also, &ldquo;military-grade encryption&rdquo;, hah! :P</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/06/microcorruption-reykjavik/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/06/microcorruption-cusco/>microcorruption - cusco</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-06
-</span>
-<span class=post-read-time>— 3 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/>previous challenge</a> called <em>Hanoi</em>. This challenge is titled <em>Cusco</em>.</p>
-<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
-<blockquote>
-<p>This is Software Revision 02. We have improved the security of the lock by removing a conditional flag that could accidentally get set by passwords that were too long.</p>
-</blockquote>
-<p>Oops :P Lets take a closer look at how this fixed version works.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/06/microcorruption-cusco/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/05/microcorruption-hanoi/>microcorruption - hanoi</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-05
-</span>
-<span class=post-read-time>— 5 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>This post is part of the series of solving <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges which continues from the <a href=https://leonjza.github.io/blog/2018/03/04/microcorruption---sydney/>previous challenge</a> called <em>Sydney</em>. This challenge is titled <em>Hanoi</em>.</p>
-<p>If you were to read the description when you enter the challenge, one would see the following towards the bottom:</p>
-<blockquote>
-<p>LockIT Pro Hardware Security Module 1 stores the login password, ensuring users can not access the password through other means. The LockIT Pro can send the LockIT Pro HSM-1 a password, and the HSM will return if the password is correct by setting a flag in memory.</p>
-</blockquote>
-<p>Ok, so mention of a HSM here. Neat! Lets take a look at how that works!</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/05/microcorruption-hanoi/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/04/microcorruption-sydney/>microcorruption - sydney</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-04
-</span>
-<span class=post-read-time>— 4 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>The next post in the series of solving the <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges continues from the <a href=https://leonjza.github.io/blog/2018/03/03/microcorruption---new-orleans/>previous challenge</a> called <em>New Orleans</em>. This challenge is titled <em>Sydney</em>.</p>
-<p>If you were to read the description when you enter the challenge, one would see the following right at the bottom:</p>
-<blockquote>
-<p>This is Software Revision 02. We have received reports that the prior version of the lock was bypassable without knowing the password. We have fixed this and removed the password from memory.</p>
-</blockquote>
-<p>Lol. Lets take a closer look.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/04/microcorruption-sydney/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/03/microcorruption-new-orleans/>microcorruption - new orleans</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-03
-</span>
-<span class=post-read-time>— 4 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>The next post in the series of solving the <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges continues from the <a href=https://leonjza.github.io/blog/2018/03/03/microcorruption---tutorial/>previous small tutorial challenge</a> post. This challenge is titled <em>New Orleans</em>.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/03/microcorruption-new-orleans/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2018/03/03/microcorruption-tutorial/>microcorruption - tutorial</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2018-03-03
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/microcorruption/microcorruption.png>
-</figure>
-<p>These posts will detail my answers to solving various <a href=https://microcorruption.com>microcorruption.com</a> ctf challenges. To begin, you should have at least had a look at the <a href=https://microcorruption.com/manual.pdf>lock manual</a> for a number of helpful hints. These challenges are built to run on a MSP430 microcontroller unit, so if you need any assembly references, that is the architecture your are looking for!</p>
-<p>Lets look at the tutorial level first.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2018/03/03/microcorruption-tutorial/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2016/06/16/rooting-darknet/>rooting darknet</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2016-06-16
-</span>
-<span class=post-read-time>— 22 min read</span>
-</div>
-<div class=post-content>
-<p>Its been a while since I have done a vulnerable boot2root from <a href=https://twitter.com/vulnhub>@VulnHub</a>. So, I decided to pick up where I last left. After paging back from the latest VM&rsquo;s to where I roughly stopped last year, my attention was drawn to <a href=https://www.vulnhub.com/entry/darknet-10,120/>Darknet</a> by <a href=https://twitter.com/Q3rv0>@Q3rv0</a>.</p>
-<figure class=left>
-<img src=/images/darknet_logo.png>
-</figure>
-<p>This is how I managed to solve a VM that totally kicked my ass! While I was solving this VM, I also tried out a Kali Docker image! This actually worked out great.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2016/06/16/rooting-darknet/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2015/08/21/flick-ii-vuln-vm-with-a-mobile-twist/>flick II vuln vm with a mobile twist</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2015-08-21
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-tl;dr Flick II just got published on Vulnhub! You should try it =)
-introduction After about a year since Flick I, I have finally managed to get Flick II out to VulnHub. I learned a lot from Flick I and as a result applied it to Flick II. The making of Flick II was also a very different story. If I have to compare it to the first one (which took 3 nights to build start to finish), Flick II took waay longer.
-</div>
-<div>
-<a class="read-more button" href=/blog/2015/08/21/flick-ii-vuln-vm-with-a-mobile-twist/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2015/05/08/playing-exploit-exercises-nebula/>playing exploit-exercises - nebula</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2015-05-08
-</span>
-<span class=post-read-time>— 47 min read</span>
-</div>
-<div class=post-content>
-<h2 id=introduction>introduction</h2>
-<p>Recently I decided I wanted to have a look at what <a href=https://exploit-exercises.com/>Exploit Exercises</a> had to offer. I was after the memory corruption related exploitation stuff to play with, until I saw the details for <a href=https://exploit-exercises.com/nebula/>Nebula</a>. <em>Nebula covers a variety of simple and intermediate challenges that cover Linux privilege escalation, common scripting language issues, and file system race conditions.</em></p>
-<figure class=left>
-<img src=/images/nebula_logo.png>
-</figure>
-<p>I did not really have a lot of time on my hands and figured I should start with the &ldquo;easy&rdquo; stuff. Many of the levels Nebula presented were in fact very, very easy. However, towards final levels my knowledge was definitely being tested. Levels started taking much longer to complete as I was yet again realizing that the more you learn, the more you realize you you still have to learn. :)</p>
-<p>This is the path I took to solve the 20 challenges.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2015/05/08/playing-exploit-exercises-nebula/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/>beating sokar the vulnhub turns 0b10 challenge</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2015-02-21
-</span>
-<span class=post-read-time>— 31 min read</span>
-</div>
-<div class=post-content>
-<h2 id=introduction>introduction</h2>
-<p><a href=http://blog.vulnhub.com/2015/01/vulnhub-is-0b10.html>Vulnhub is 0b10</a> years old. That is binary for 2 :) In order to celebrate this, <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a>
-created <a href=https://www.vulnhub.com/entry/sokar-1,113/>Sokar</a>.</p>
-<figure class=left>
-<img src=/images/sokar_logo.png>
-</figure>
-<p>Sokar was used as another writeup competition (the first for 2015), similar to the <a href=https://leonjza.github.io/blog/2014/09/18/from-persistence/>Persistence</a> challenge from Sep &lsquo;14.
-From the <a href=http://blog.vulnhub.com/2015/01/competition-sokar.html>competition announcement blogpost</a>, the rules of engagement were pretty familiar. Boot the VM, pwn it via the network and find the flag.
-Of course, modifying the VM in order to help you get the flag (things like single user mode, rescue disks etc) are not allowed and you have to actually be able to prove how you got r00t.</p>
-<p>Sokar frustrated me. A lot. However, almost all of the challenges and configurations of Sokar were plausible. Most of the vulnerabilities are valid in the sense that it may as well be out there in wild. So, it was a great learning experience once again!</p>
-<p>Here is my entry for the competition. Enjoy! :)</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2015/02/21/beating-sokar-the-vulnhub-turns-0b10-challenge/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/12/23/hoof-to-root-solving-pegasus-1/>hoof to root solving pegasus 1</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-12-23
-</span>
-<span class=post-read-time>— 21 min read</span>
-</div>
-<div class=post-content>
-<h2 id=introduction>introduction</h2>
-<p><a href=https://www.vulnhub.com/entry/pegasus-1,109/>Pegasus 1</a> is a boot2root hosted on <a href=https://www.vulnhub.com/>VulnHub</a> built by <a href=https://twitter.com/theknapsy>@TheKnapsy</a>. He wrote a <a href=http://knapsy.github.io/blog/2014/12/16/pegasus-has-arrived-my-first-boot2root-vm/>blogpost</a> about it too containing a small introduction with Pegasus as his first boot2root (hoof2root? ;p).</p>
-<figure class=left>
-<img src=/images/pegasus_logo.png>
-</figure>
-<p>Having recently played in the <a href=https://leonjza.github.io/blog/2014/12/06/playing-in-the-playground-a-offsec-virtual-pentesting-labs-review/>Offsec Playground</a> a little after having completed my OSCP, I was relatively exhausted. Pegasus had its fair share of frustrations and had me digging around quite a bit. I did however learn a very valuable lesson&mldr; <em>again</em>. You will see this in the <strong>my_first</strong> section.</p>
-<p>Like many other write ups I do, I will also recommend you try this one first before you read on. For me, Pegasus was definitely slightly more difficult than the usual VulnHub stuff you would see, but part of that may just as well be due to fatigue and that year end holiday mode ;p. However, that should not discourage you to give it a bash anyways!</p>
-<p>Lets begin.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/12/23/hoof-to-root-solving-pegasus-1/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/11/09/solving-kvasir-netcat-edition/>solving kvasir netcat edition</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-11-09
-</span>
-<span class=post-read-time>— 43 min read</span>
-</div>
-<div class=post-content>
-<h2 id=introduction>introduction</h2>
-<p><a href=http://vulnhub.com/entry/kvasir-i,106/>Kvasir</a>, a boot2root by <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a> has to be one of my most favorite boot2roots to date, if not the most favorite. Favorite however does not mean it was easy. It also proved to be one of the most challenging ones I have had the chance to try!</p>
-<figure class=left>
-<img src=/images/netcat.png>
-</figure>
-<p>Kvasir is <em>extremely</em> well polished, and it can be seen throughout the VM that <a href=https://twitter.com/_RastaMouse>@_RastaMouse</a> has gone through a lot of effort to make every challenge as rewarding as possible. From exploiting simple web based vulnerabilities to service misconfigurations, traffic sniffing, steganography, forensics and cryptopraphy, Kvasir has it all! Solving it also had me make really heavy use of good old netcat.</p>
-<p>This writeup details the path I took to read the final flag :)</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/11/09/solving-kvasir-netcat-edition/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/>knock-knock who’s there? solving knock knock</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-10-14
-</span>
-<span class=post-read-time>— 30 min read</span>
-</div>
-<div class=post-content>
-<h2 id=introduction>introduction</h2>
-<p><a href=http://vulnhub.com/series/knock-knock,53/>Knock-Knock</a> is a vulnerable boot2root VM by <a href=https://twitter.com/zer0w1re>@zer0w1re</a> and sure as heck was packed with interesting twists and things to learn!</p>
-<p>I figured I&rsquo;d just <em>have a quick look™</em>, and midnight that evening ended up with <em>root</em> privileges :D</p>
-<p>As always, if you have not done this VM yet, this post is a massive spoiler and I would highly recommend you close up here and try it first :)
-This is my experience &lsquo;knocking&rsquo; on the door.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/10/14/knock-knock-whos-there-solving-knock-knock/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/10/10/another-troll-tamed-solving-troll-2/>another troll tamed solving troll 2</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-10-10
-</span>
-<span class=post-read-time>— 16 min read</span>
-</div>
-<div class=post-content>
-<h2 id=foreword>foreword</h2>
-<p><a href=https://www.vulnhub.com/entry/tr0ll-2,107/>Tr0ll2</a> is a successor in a boot2root series by <a href=https://twitter.com/Maleus21>@Maleus21</a> hosted over at <a href=http://vulnhub.com/>VulnHub</a>. Having been able to <a href=https://leonjza.github.io/blog/2014/08/15/taming-the-troll/>pwn Tr0ll1</a>, I gave this one a shot too.</p>
-<p>Here is my experience taming the troll, again.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/10/10/another-troll-tamed-solving-troll-2/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/09/18/from-persistence/>From Persistence</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-09-18
-</span>
-<span class=post-read-time>— 33 min read</span>
-</div>
-<div class=post-content>
-<h2 id=persist-we-must>persist we must!</h2>
-<p>Persistence! A new boot2root hosted <a href=https://twitter.com/vulnhub>@VulnHub</a>, authored by <a href=https://twitter.com/superkojiman>@superkojiman</a> and sagi- definitely got the attention from the community it deserves! Persistence was actually part of a <a href=http://blog.vulnhub.com/2014/09/competition-persistence.html>writeup competition</a> launched on September the 7th, and ran up until October th 5th.</p>
-<p>This is my experience while trying to complete the challenge. Persistence, once again, challenged me to learn about things that would normally have me just go &ldquo;meh, next&rdquo;. As expected, this post is also a very big spoiler if you have not completed it yourself yet, so be warned!</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/09/18/from-persistence/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/08/15/taming-the-troll/>taming the troll</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-08-15
-</span>
-<span class=post-read-time>— 8 min read</span>
-</div>
-<div class=post-content>
-<h2 id=foreword>foreword</h2>
-<p>Having recently started the road to <a href=http://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/>OSCP</a>, <a href=https://twitter.com/Maleus21>@Maleus21</a> released <a href=http://vulnhub.com/entry/tr0ll-1,100/>Tr0ll</a> on <a href=https://twitter.com/VulnHub>@VulnHub</a>. I figured since the description was <em>Difficulty: Beginner ; Type: boot2root</em>, I could give it a smash in a evening as a bit of distraction.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/08/15/taming-the-troll/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/08/09/beating-xerxes2/>Beating Xerxes2</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-08-09
-</span>
-<span class=post-read-time>— 28 min read</span>
-</div>
-<div class=post-content>
-<h2 id=foreword>foreword</h2>
-<p>Xerxes2 is a successor in a boot2root series by <a href=https://twitter.com/barrebas>@barrebas</a> hosted by <a href=https://twitter.com/vulnhub>@VulnHub</a>. If you haven&rsquo;t done it yet, close this article <em>now</em> and go learn by doing it!</p>
-<p>Xerxes2, like most other boot2root type CTF&rsquo;s, has once again forced me to learn a whole lot more than I thought possible. In total it took me about 3 or 4 days on and off to complete. The goal was as usual, read <code>/root/flag.txt</code>. This is the path I took to read the flag and gain root command execution. Enjoy!</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/08/09/beating-xerxes2/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/08/07/flick-can-you-find-the-flag/>flick can you find the flag?</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-08-07
-</span>
-<span class=post-read-time>— 2 min read</span>
-</div>
-<div class=post-content>
-<figure class=left>
-<img src=/images/flick_logo.png>
-</figure>
-<h3 id=tldr>TL;DR</h3>
-<p>I made a CTF! You should try it! Find it <a href=http://vulnhub.com/entry/flick-1,99/>on Vulnhub</a></p>
-<h2 id=foreword>foreword</h2>
-<p>So, security CTF&rsquo;s are fun. A lot of fun. And can be one heck of a time sink! Checking my laptops time and realizing its 3am on a week night is normal when I get pulled into one. The frustration, the trolls, the tremendous amounts of learning is all part of the experience of a successful CTF in my opinion.</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/08/07/flick-can-you-find-the-flag/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/07/20/hell-would-just-not-freeze-over/>Hell would just not freeze over!</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-07-20
-</span>
-<span class=post-read-time>— 30 min read</span>
-</div>
-<div class=post-content>
-<p>##foreword
-Lets start by saying that this is probably one of the toughest boot2root&rsquo;s I have tried thus far. Even though I have managed to get <code>/root/flag.txt</code>, I am yet to actually <em>root</em> this beast. I believe I have arguably come quite far and there is only one hurdle left, however, almost 3 days later I have learnt a <strong>TON</strong> of stuff, and am satisfied to start jotting the experience down. Obviously, should I finally get <strong>root</strong>, I&rsquo;ll update here and reflect. This is also a relatively long post as there were a ton of things to do. Give yourself some time if you plan on reading the whole post :)</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/07/20/hell-would-just-not-freeze-over/>Read more →</a>
-</div>
-</div>
-<div class="post on-list">
-<h1 class=post-title><a href=https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/>Climbing the SkyTower</a></h1>
-<div class=post-meta>
-<span class=post-date>
-2014-07-17
-</span>
-<span class=post-read-time>— 12 min read</span>
-</div>
-<div class=post-content>
-<h2 id=foreword>foreword</h2>
-<p>Recently, at a local Security Conference, <a href=https://twitter.com/telspacesystems>@telspacesystems</a> ran a CTF. It was a classic &lsquo;read /root/flag.txt&rsquo; CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on <a href=http://vulnhub.com/entry/skytower-1,96/>VulnHub</a>, and was promptly downloaded and loaded into VirtualBox.</p>
-<p>In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)</p>
-</div>
-<div>
-<a class="read-more button" href=/blog/2014/07/17/climbing-the-skytower/>Read more →</a>
-</div>
-</div>
-<div class=pagination>
-<div class=pagination__buttons>
-<span class="button previous">
-<a href=/categories/ctf/page/4/>
-<span class=button__icon>←</span>
-<span class=button__text>Newer posts</span>
-</a>
-</span>
-</div>
-</div>
-</div>
-</div>
-<footer class=footer>
-<div class=footer__inner>
-<div class="copyright copyright--user"><a href=https://twitter.com/leonjza>@leonjza</a></div>
-</div>
+<main class=main>
+<header class=page-header><div class=breadcrumbs><a href=https://leonjza.github.io>Home</a>&nbsp;»&nbsp;<a href=https://leonjza.github.io/categories/>Categories</a></div>
+<h1>CTF</h1>
+</header>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Climbing the SkyTower
+</h2>
+</header>
+<section class=entry-content>
+<p>foreword Recently, at a local Security Conference, @telspacesystems ran a CTF. It was a classic ‘read /root/flag.txt’ CTF hosted on a wireless network. Sadly the wifi sucked, a lot, and due to this and a flat battery I was not able to attempt this CTF properly at the con. Nonetheless, the VM was released on VulnHub, and was promptly downloaded and loaded into VirtualBox.
+In summary, this CTF taught me some interesting things about SQL injection where filters are present. More specifically, commas were filtered out and resulted in the need from some creative thinking :)
+...</p>
+</section>
+<footer class=entry-footer>July 17, 2014&nbsp;·&nbsp;12 min&nbsp;·&nbsp;Leon Jacobs</footer>
+<a class=entry-link aria-label="post link to Climbing the SkyTower" href=https://leonjza.github.io/blog/2014/07/17/climbing-the-skytower/></a>
+</article>
+<footer class=page-footer>
+<nav class=pagination>
+<a class=prev href=https://leonjza.github.io/categories/ctf/page/4/>« Prev Page</a>
+</nav>
 </footer>
-<script src=https://leonjza.github.io/assets/main.js></script>
-<script src=https://leonjza.github.io/assets/prism.js></script>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-44457032-2','auto'),ga('send','pageview'))</script>
+</main>
+<footer class=footer>
+<span>@leonjza</span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
+</footer>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
 </body>
 </html>
